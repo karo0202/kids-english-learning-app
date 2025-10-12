@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: 'A fun and interactive English learning app for kids ages 3-12',
   keywords: ['kids', 'english', 'learning', 'education', 'games', 'speaking', 'writing'],
   authors: [{ name: 'Kids Learning Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
 }
 
 export default function RootLayout({

@@ -802,17 +802,20 @@ export default function WritingModule() {
                     </p>
                   </div>
 
-                  <canvas
+                  <div className="mobile-canvas-container">
+                    <canvas
                     ref={canvasRef}
                     width={300}
                     height={300}
-                    className="border-4 border-gray-200 rounded-2xl mx-auto bg-white cursor-crosshair"
+                    className="border-4 border-gray-200 rounded-2xl mx-auto bg-white cursor-crosshair touch-none select-none"
+                    style={{ touchAction: 'none', userSelect: 'none' }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}
                     onMouseLeave={stopDrawing}
                     onTouchStart={(e) => {
                       e.preventDefault()
+                      e.stopPropagation()
                       const touch = e.touches[0]
                       const rect = canvasRef.current?.getBoundingClientRect()
                       if (rect) {
@@ -823,6 +826,7 @@ export default function WritingModule() {
                     }}
                     onTouchMove={(e) => {
                       e.preventDefault()
+                      e.stopPropagation()
                       const touch = e.touches[0]
                       const rect = canvasRef.current?.getBoundingClientRect()
                       if (rect) {
@@ -833,9 +837,11 @@ export default function WritingModule() {
                     }}
                     onTouchEnd={(e) => {
                       e.preventDefault()
+                      e.stopPropagation()
                       stopDrawing()
                     }}
                   />
+                  </div>
 
                   <div className="flex justify-center gap-4 mt-6">
                     <Button onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} variant="outline">

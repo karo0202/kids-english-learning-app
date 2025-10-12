@@ -3,6 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile touch fixes */
+@media (max-width: 768px) {
+  body {
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent screen jumping on mobile */
+  .mobile-canvas-container {
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+  }
+  
+  /* Fix for mobile viewport */
+  .mobile-viewport-fix {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+    overflow: hidden;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
