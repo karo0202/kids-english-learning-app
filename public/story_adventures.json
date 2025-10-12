@@ -1,0 +1,48 @@
+[
+  {
+    "id": "magic-forest",
+    "title": "The Magic Forest",
+    "nodes": [
+      { "text": "You enter a forest that sparkles with tiny lights. Two paths appear.", "choices": [ { "text": "Go left", "next": 1, "points": 5 }, { "text": "Go right", "next": 2, "points": 5 } ] },
+      { "text": "You meet a friendly fairy who offers a glowing key.", "choices": [ { "text": "Take the key", "next": 3, "points": 10 }, { "text": "Say no thanks", "next": 4 } ] },
+      { "text": "You find a tall tree with a ladder leading up.", "choices": [ { "text": "Climb the ladder", "next": 5, "points": 10 }, { "text": "Walk past it", "next": 4 } ] },
+      { "text": "The key opens a tiny door in a tree. Inside is a treasure of new words!", "choices": [ { "text": "Celebrate!", "next": -1, "points": 10 } ] },
+      { "text": "You keep walking and learn from the sounds of birds and wind.", "choices": [ { "text": "Listen closely", "next": -1, "points": 5 } ] },
+      { "text": "At the top, you can see the whole forest and a rainbow library.", "choices": [ { "text": "Visit the library", "next": -1, "points": 10 } ] }
+    ]
+  },
+  {
+    "id": "space-trip",
+    "title": "Trip to Space",
+    "nodes": [
+      { "text": "Your rocket is ready. The captain asks: are you ready to launch?", "choices": [ { "text": "Launch now!", "next": 1, "points": 5 }, { "text": "Wait and check", "next": 2 } ] },
+      { "text": "Three, two, one... blast off! Stars sparkle outside.", "choices": [ { "text": "Look for the moon", "next": 3, "points": 10 }, { "text": "Float in the cabin", "next": 4 } ] },
+      { "text": "You check all systems. Everything looks good.", "choices": [ { "text": "Launch safely", "next": 1, "points": 5 } ] },
+      { "text": "You orbit the moon and take photos of craters.", "choices": [ { "text": "Send photos home", "next": -1, "points": 10 } ] },
+      { "text": "You do a space flip and laugh with your team.", "choices": [ { "text": "Return to seat", "next": -1, "points": 5 } ] }
+    ]
+  },
+  {
+    "id": "ocean-rescue",
+    "title": "Ocean Rescue",
+    "nodes": [
+      { "text": "You are on a boat and hear a dolphin calling for help.", "choices": [ { "text": "Sail left", "next": 1, "points": 5 }, { "text": "Sail right", "next": 2, "points": 5 } ] },
+      { "text": "You find seaweed tangled around a turtle.", "choices": [ { "text": "Cut the seaweed", "next": 3, "points": 10 }, { "text": "Call a ranger", "next": 4, "points": 5 } ] },
+      { "text": "You find nets stuck on a rock.", "choices": [ { "text": "Pull the nets", "next": 3, "points": 10 }, { "text": "Mark the spot", "next": 4, "points": 5 } ] },
+      { "text": "The animals are free and swim happily.", "choices": [ { "text": "Wave goodbye", "next": -1, "points": 10 } ] },
+      { "text": "Help arrives and thanks you for caring for the ocean.", "choices": [ { "text": "Smile proudly", "next": -1, "points": 10 } ] }
+    ]
+  },
+  {
+    "id": "castle-mystery",
+    "title": "Castle Mystery",
+    "nodes": [
+      { "text": "You enter an old castle with many doors.", "choices": [ { "text": "Open the blue door", "next": 1, "points": 5 }, { "text": "Open the gold door", "next": 2, "points": 5 } ] },
+      { "text": "A gentle dragon asks for a riddle answer.", "choices": [ { "text": "Answer kindly", "next": 3, "points": 10 }, { "text": "Ask for a hint", "next": 4, "points": 5 } ] },
+      { "text": "You enter a library filled with glowing books.", "choices": [ { "text": "Read a magic book", "next": 5, "points": 10 }, { "text": "Look for a map", "next": 4, "points": 5 } ] },
+      { "text": "You solve the mystery and the castle shines with light.", "choices": [ { "text": "Celebrate with the dragon", "next": -1, "points": 10 } ] },
+      { "text": "You find a map that leads to a friendly feast.", "choices": [ { "text": "Join the feast", "next": -1, "points": 10 } ] },
+      { "text": "The book teaches a new word that glows in the air.", "choices": [ { "text": "Say the word", "next": -1, "points": 10 } ] }
+    ]
+  }
+]

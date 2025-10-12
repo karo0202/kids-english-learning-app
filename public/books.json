@@ -1,0 +1,362 @@
+[
+  {
+    "id": "1",
+    "title": "The Friendly Cat",
+    "author": "Story Time",
+    "coverImage": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300",
+    "ageGroup": "AGE_3_5",
+    "difficulty": 1,
+    "estimatedTime": 5,
+    "pages": [
+      {
+        "id": "1-1",
+        "pageNumber": 1,
+        "text": "Once upon a time, there was a friendly cat named Whiskers.",
+        "imageUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400"
+      },
+      {
+        "id": "1-2",
+        "pageNumber": 2,
+        "text": "Whiskers loved to play with children and purr loudly when happy.",
+        "imageUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400"
+      },
+      {
+        "id": "1-3",
+        "pageNumber": 3,
+        "text": "Every day, Whiskers would visit the park to make new friends.",
+        "imageUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400"
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Lila and the Magic Seed",
+    "author": "Sunny Village Stories",
+    "coverImage": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=300", 
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 7,
+    "pages": [
+      {
+        "id": "4-1",
+        "pageNumber": 1,
+        "text": "Once upon a time, in a sunny village, there lived a curious girl named Lila. She asked questions about everything—clouds, rain, flowers, even the tiny ants!",
+        "imageUrl": "https://images.unsplash.com/photo-1524594154908-edd057d1b9cc?w=400"
+      },
+      {
+        "id": "4-2",
+        "pageNumber": 2,
+        "text": "One day, Grandma gave Lila a tiny brown seed. 'This is a magic seed,' she said. 'It will grow only if you care for it every day.'",
+        "imageUrl": "https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=400"
+      },
+      {
+        "id": "4-3",
+        "pageNumber": 3,
+        "text": "Lila planted the seed in her garden, watered it gently, and whispered, 'Grow strong and tall, little seed.' The next morning—nothing happened.",
+        "imageUrl": "https://images.unsplash.com/photo-1492496913980-501348b61469?w=400"
+      },
+      {
+        "id": "4-4",
+        "pageNumber": 4,
+        "text": "Tomo the turtle walked by. 'Good things take time,' he said. Lila kept caring for the seed—watering, pulling weeds, and making sure it had sunshine.",
+        "imageUrl": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400"
+      },
+      {
+        "id": "4-5",
+        "pageNumber": 5,
+        "text": "Days turned into weeks. Then one morning a tiny green sprout popped out of the ground! 'It's growing!' Lila cheered.",
+        "imageUrl": "https://images.unsplash.com/photo-1465406325905-6c78c278f0d5?w=400"
+      },
+      {
+        "id": "4-6",
+        "pageNumber": 6,
+        "text": "The sprout grew taller and taller until it became a big, bright sunflower. Bees and butterflies came to visit, and Lila smiled proudly.",
+        "imageUrl": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400"
+      },
+      {
+        "id": "4-7",
+        "pageNumber": 7,
+        "text": "'I did it!' said Lila. Grandma hugged her. 'Yes, my dear. You grew a beautiful flower—and you also grew your patience.'",
+        "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400"
+      },
+      {
+        "id": "4-8",
+        "pageNumber": 8,
+        "text": "Moral: Good things take time. Be patient, keep caring, and never give up!",
+        "imageUrl": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=400",
+        "vocabulary": [
+          { "word": "Curious", "definition": "Wanting to learn or know more", "example": "Lila was curious about how the seed would grow." },
+          { "word": "Seed", "definition": "The small part of a plant that can grow into a new plant", "example": "She planted the seed in the garden." },
+          { "word": "Water (verb)", "definition": "To pour water on plants to help them grow", "example": "Lila waters her seed every morning." },
+          { "word": "Weed", "definition": "An unwanted plant that grows in the garden", "example": "Lila pulled out the weeds to help her seed grow." },
+          { "word": "Sprout", "definition": "A small new plant just starting to grow", "example": "Lila saw a tiny sprout coming out of the soil." },
+          { "word": "Patience", "definition": "The ability to wait calmly for something", "example": "Lila learned the importance of patience." }
+        ]
+      },
+      {
+        "id": "4-9",
+        "pageNumber": 9,
+        "text": "Practice Questions",
+        "questions": [
+          "Who gave Lila the seed?",
+          "What did Lila do to help the seed grow?",
+          "Why did Lila feel sad at first?",
+          "What did Tomo the turtle tell her?",
+          "What did the seed become at the end?",
+          "What is the moral of the story?",
+          "How can you show patience in your own life?"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "The Magic School Bus",
+    "author": "Adventure Stories",
+    "coverImage": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 8,
+    "pages": [
+      {
+        "id": "2-1",
+        "pageNumber": 1,
+        "text": "Emma and her friends boarded the magic school bus for an amazing adventure.",
+        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+      },
+      {
+        "id": "2-2",
+        "pageNumber": 2,
+        "text": "They visited different countries and learned new words in each place.",
+        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+      },
+      {
+        "id": "2-3",
+        "pageNumber": 3,
+        "text": "The bus could fly, swim, and even travel through time!",
+        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "The Adventure of Learning",
+    "author": "Educational Tales",
+    "coverImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300",
+    "ageGroup": "AGE_9_12",
+    "difficulty": 3,
+    "estimatedTime": 12,
+    "pages": [
+      {
+        "id": "3-1",
+        "pageNumber": 1,
+        "text": "Sophie discovered that learning English was like going on a great adventure.",
+        "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400"
+      },
+      {
+        "id": "3-2",
+        "pageNumber": 2,
+        "text": "Every new word was like finding a treasure, and every sentence was like solving a puzzle.",
+        "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400"
+      },
+      {
+        "id": "3-3",
+        "pageNumber": 3,
+        "text": "With practice and determination, Sophie became a master of the English language.",
+        "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400"
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Mina and the Magical Numbers",
+    "author": "Numberville Stories",
+    "coverImage": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 8,
+    "pages": [
+      {
+        "id": "5-1",
+        "pageNumber": 1,
+        "text": "In a colorful town called Numberville, there lived a clever girl named Mina. She loved solving puzzles and counting everything around her — the stars, the apples, and even her cat's whiskers!",
+        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+      },
+      {
+        "id": "5-2",
+        "pageNumber": 2,
+        "text": "One morning, Mina found a shiny blue calculator in her school bag. When she pressed the number 2, the calculator suddenly spoke!",
+        "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400"
+      },
+      {
+        "id": "5-3",
+        "pageNumber": 3,
+        "text": "'Hello, Mina! I'm Calc the Calculator. Let's go on a math adventure!' Mina gasped. 'Wow! You can talk?' 'Yes,' said Calc, 'but to keep me alive, you must solve my math challenges!'",
+        "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400"
+      },
+      {
+        "id": "5-4",
+        "pageNumber": 4,
+        "text": "Calc showed her a tree with 3 apples. 'If you pick 2 apples, how many will be left?' Mina counted on her fingers. 'One!' 'Correct!' said Calc, flashing bright lights.",
+        "imageUrl": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400"
+      },
+      {
+        "id": "5-5",
+        "pageNumber": 5,
+        "text": "Next, they walked to the park where 5 birds were sitting on a fence. 'If 2 fly away, how many stay?' Mina thought carefully. 'Three birds stay!' 'You're amazing!' said Calc.",
+        "imageUrl": "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400"
+      },
+      {
+        "id": "5-6",
+        "pageNumber": 6,
+        "text": "After solving more questions, Calc said, 'Mina, you've learned the magic of numbers. Math is not scary — it's everywhere!'",
+        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+      },
+      {
+        "id": "5-7",
+        "pageNumber": 7,
+        "text": "When Mina got home, she smiled and said, 'Math isn't just in school. It's in the apples we eat, the birds we see, and the stars we count!'",
+        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+      },
+      {
+        "id": "5-8",
+        "pageNumber": 8,
+        "text": "Moral: Math is fun and all around us — we just need to look closely!",
+        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+        "vocabulary": [
+          { "word": "Count", "definition": "To find how many there are", "example": "Mina can count from 1 to 20." },
+          { "word": "Subtract", "definition": "To take away one number from another", "example": "She learned to subtract apples from the tree." },
+          { "word": "Calculator", "definition": "A small machine used for math", "example": "Calc helped Mina solve problems." },
+          { "word": "Challenge", "definition": "Something that tests your skills", "example": "The math challenges helped Mina learn." },
+          { "word": "Adventure", "definition": "An exciting journey", "example": "Mina went on a math adventure." }
+        ]
+      },
+      {
+        "id": "5-9",
+        "pageNumber": 9,
+        "text": "Practice Questions",
+        "questions": [
+          "What is the name of the talking calculator?",
+          "How many apples were left after Mina picked two?",
+          "How many birds stayed on the fence?",
+          "What did Calc teach Mina?",
+          "Where can we find math in our daily life?"
+        ]
+      }
+    ]
+  }
+  ,
+  {
+    "id": "6",
+    "title": "Timmy and the Talking Tree",
+    "author": "Nature & Recycling",
+    "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 6,
+    "pages": [
+      { "id": "6-1", "pageNumber": 1, "text": "Timmy loved snacks but always threw wrappers on the ground. One day, the big oak tree in the park whispered, 'Please don't hurt me, Timmy. When you drop trash, the earth feels sad.'", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400" },
+      { "id": "6-2", "pageNumber": 2, "text": "Timmy was shocked! He started picking up litter and teaching his friends to recycle.", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400" },
+      { "id": "6-3", "pageNumber": 3, "text": "Soon, the park became clean and full of singing birds again.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
+      { "id": "6-4", "pageNumber": 4, "text": "Moral: Keep the Earth clean — nature needs our care.", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400", "vocabulary": [
+        { "word": "Recycle", "definition": "To use something again instead of throwing it away", "example": "Timmy learned to recycle bottles." },
+        { "word": "Litter", "definition": "Trash that is left on the ground", "example": "The park was full of litter before Timmy cleaned it." },
+        { "word": "Earth", "definition": "The planet we live on", "example": "We must take care of our Earth." },
+        { "word": "Tree", "definition": "A tall plant with leaves and branches", "example": "The big oak tree could talk!" },
+        { "word": "Clean", "definition": "Free from dirt or mess", "example": "The park looked clean and beautiful." }
+      ] },
+      { "id": "6-5", "pageNumber": 5, "text": "Practice Questions", "questions": [
+        "What bad habit did Timmy have?",
+        "What did the tree say to him?",
+        "How did Timmy help the Earth?",
+        "What does 'recycle' mean?",
+        "What lesson did Timmy learn?"
+      ] }
+    ]
+  }
+  ,
+  {
+    "id": "7",
+    "title": "Lila and the Lost Marble",
+    "author": "Honesty Tales",
+    "coverImage": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 6,
+    "pages": [
+      { "id": "7-1", "pageNumber": 1, "text": "Lila found a shiny blue marble on the playground. She wanted to keep it but then saw her friend Amir crying nearby. 'It's my favorite marble,' said Amir.", "imageUrl": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?w=400" },
+      { "id": "7-2", "pageNumber": 2, "text": "Lila took a deep breath and gave it back. Amir smiled and said, 'Thank you, Lila! You're an honest friend.'", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400" },
+      { "id": "7-3", "pageNumber": 3, "text": "That night, Lila felt proud and happy inside. She learned that honesty is the best treasure.", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400" },
+      { "id": "7-4", "pageNumber": 4, "text": "Moral: Always tell the truth, even when it's hard.", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400", "vocabulary": [
+        { "word": "Marble", "definition": "A small round toy ball", "example": "Lila found a shiny blue marble." },
+        { "word": "Honest", "definition": "Always telling the truth", "example": "Lila was honest and returned the marble." },
+        { "word": "Friend", "definition": "Someone you like and care about", "example": "Amir is Lila's best friend." },
+        { "word": "Truth", "definition": "What is real or right", "example": "It is important to tell the truth." },
+        { "word": "Treasure", "definition": "Something very special or valuable", "example": "Honesty is a treasure." }
+      ] },
+      { "id": "7-5", "pageNumber": 5, "text": "Practice Questions", "questions": [
+        "What did Lila find on the playground?",
+        "Why was Amir crying?",
+        "What choice did Lila make?",
+        "What does it mean to be honest?",
+        "How did Lila feel at the end?"
+      ] }
+    ]
+  }
+  ,
+  {
+    "id": "8",
+    "title": "The Turtle Team",
+    "author": "Teamwork Stories",
+    "coverImage": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 6,
+    "pages": [
+      { "id": "8-1", "pageNumber": 1, "text": "The forest animals wanted to build a playground. Rabbit tried to do it alone, but he couldn't finish.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
+      { "id": "8-2", "pageNumber": 2, "text": "Then Turtle, Fox, and Bird joined him — each helping in their own way. When they finished, Rabbit said, 'Together we did what I couldn't do alone!'", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
+      { "id": "8-3", "pageNumber": 3, "text": "The playground became a place where everyone played happily.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
+      { "id": "8-4", "pageNumber": 4, "text": "Moral: Teamwork makes big dreams possible.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400", "vocabulary": [
+        { "word": "Teamwork", "definition": "Working together to reach a goal", "example": "Teamwork helped the animals build the playground." },
+        { "word": "Together", "definition": "With other people or things", "example": "The animals worked together." },
+        { "word": "Help", "definition": "To do something for someone", "example": "Turtle helped Rabbit finish the job." },
+        { "word": "Playground", "definition": "A place where children play", "example": "The animals built a playground in the forest." },
+        { "word": "Share", "definition": "To give part of something to others", "example": "The animals shared their work." }
+      ] },
+      { "id": "8-5", "pageNumber": 5, "text": "Practice Questions", "questions": [
+        "Who tried to build the playground first?",
+        "Who helped Rabbit?",
+        "What did they build together?",
+        "What is teamwork?",
+        "Why is teamwork important?"
+      ] }
+    ]
+  },
+  {
+    "id": "9",
+    "title": "Emma and the Magic Library",
+    "author": "Reading & Imagination",
+    "coverImage": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=300",
+    "ageGroup": "AGE_6_8",
+    "difficulty": 2,
+    "estimatedTime": 7,
+    "pages": [
+      { "id": "9-1", "pageNumber": 1, "text": "Emma didn’t like reading. She thought books were boring. One rainy day, she found a glowing book in the library. When she opened it — whoosh! She was inside the story, flying with dragons and solving riddles!", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400" },
+      { "id": "9-2", "pageNumber": 2, "text": "When she came back, she smiled and said, 'Books are magic — they can take you anywhere!'", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400" },
+      { "id": "9-3", "pageNumber": 3, "text": "Moral: Reading opens the door to imagination and adventure.", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400", "vocabulary": [
+        { "word": "Library", "definition": "A place full of books to read or borrow", "example": "Emma went to the library on a rainy day." },
+        { "word": "Book", "definition": "A set of pages with stories or information", "example": "She opened a glowing book." },
+        { "word": "Imagine", "definition": "To create pictures or ideas in your mind", "example": "Emma imagined flying with dragons." },
+        { "word": "Adventure", "definition": "An exciting experience or journey", "example": "The story took her on a big adventure." },
+        { "word": "Read", "definition": "To look at and understand words", "example": "Emma learned to love reading." }
+      ] },
+      { "id": "9-4", "pageNumber": 4, "text": "Practice Questions", "questions": [
+        "Why didn’t Emma like reading at first?",
+        "What did she find in the library?",
+        "What happened when she opened the book?",
+        "What did Emma learn about books?",
+        "What can reading help us do?"
+      ] }
+    ]
+  }
+]

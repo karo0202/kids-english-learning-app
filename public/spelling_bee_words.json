@@ -1,0 +1,17 @@
+[
+  { "word": "APPLE", "hint": "A round red or green fruit", "difficulty": 1 },
+  { "word": "BANANA", "hint": "A long yellow fruit", "difficulty": 1 },
+  { "word": "ELEPHANT", "hint": "A large animal with a trunk", "difficulty": 2 },
+  { "word": "BUTTERFLY", "hint": "A colorful flying insect", "difficulty": 2 },
+  { "word": "RAINBOW", "hint": "Many colors after rain", "difficulty": 1 },
+  { "word": "UMBRELLA", "hint": "Keeps you dry in rain", "difficulty": 1 },
+  { "word": "MOUNTAIN", "hint": "A very tall hill", "difficulty": 2 },
+  { "word": "FRIEND", "hint": "Someone you like to play with", "difficulty": 1 },
+  { "word": "SCHOOL", "hint": "A place to learn", "difficulty": 1 },
+  { "word": "TELEPHONE", "hint": "You talk through it", "difficulty": 2 },
+  { "word": "LIBRARY", "hint": "A place with many books", "difficulty": 2 },
+  { "word": "PRESENT", "hint": "Another word for gift", "difficulty": 1 },
+  { "word": "KANGAROO", "hint": "An animal that hops", "difficulty": 2 },
+  { "word": "HOSPITAL", "hint": "A place to get better", "difficulty": 2 },
+  { "word": "DISCOVER", "hint": "Find something new", "difficulty": 2 }
+]

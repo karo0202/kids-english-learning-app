@@ -1,0 +1,161 @@
+
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { validateCredentials, setUserSession } from '@/lib/simple-auth'
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Mascot } from '@/components/ui/mascot'
+import { Mail, Lock, ArrowLeft } from 'lucide-react'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      setError('Authentication failed. Please try again.')
+    }
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('') // Clear previous errors
+
+    const user = validateCredentials(formData.email, formData.password)
+    
+    if (user) {
+      setUserSession(user)
+      router.push('/dashboard')
+    } else {
+      setError('Invalid email or password. Please try again.')
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-violet-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+      </div>
+      
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md relative z-10"
+      >
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl">
+          <CardHeader className="text-center pb-2">
+            <div className="flex justify-center mb-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-3xl">🎓</span>
+              </div>
+            </div>
+            <motion.h1 
+              className="text-3xl font-bold text-white"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Welcome Back!
+            </motion.h1>
+            <p className="text-white/80">Continue your learning adventure</p>
+          </CardHeader>
+
+          <CardContent className="space-y-6 p-8">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-center">
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur text-white placeholder-white/60 focus:border-violet-400 focus:bg-white/20 transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur text-white placeholder-white/60 focus:border-violet-400 focus:bg-white/20 transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <motion.div
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white py-4 text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+                >
+                  {loading ? 'Signing In...' : 'Continue Learning! 🎓'}
+                </Button>
+              </motion.div>
+            </form>
+
+            {/* Demo Account Info */}
+            <div className="bg-white/10 backdrop-blur border border-white/20 p-4 rounded-2xl">
+              <p className="text-sm text-white/90 text-center">
+                <strong>Try the Demo:</strong><br/>
+                Email: john@doe.com<br/>
+                Password: johndoe123
+              </p>
+            </div>
+
+            <div className="text-center pt-4">
+              <p className="text-white/80">
+                Don't have an account?{' '}
+                <button
+                  onClick={() => router.push('/register')}
+                  className="text-violet-300 hover:text-violet-200 font-semibold underline hover:no-underline transition-all duration-300"
+                >
+                  Create Account
+                </button>
+              </p>
+            </div>
+
+            <div className="text-center">
+              <Button
+                variant="ghost"
+                onClick={() => router.push('/')}
+                className="text-white/70 hover:text-white hover:bg-white/10 transition-all duration-300 rounded-xl"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
+  )
+}

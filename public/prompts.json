@@ -1,0 +1,18 @@
+[
+  {
+    "title": "A Day at the Park",
+    "prompt": "Write a short story about a fun day at the park with your friends.",
+    "words": ["play", "tree", "slide", "sunny"]
+  },
+  {
+    "title": "My Magic Pet",
+    "prompt": "Imagine you have a magic pet. What can it do? What adventures do you have together?",
+    "words": ["magic", "friend", "fly", "secret"]
+  },
+  {
+    "title": "Rainy Day",
+    "prompt": "It is raining outside. Describe what you do at home and how you feel.",
+    "words": ["rain", "window", "warm", "music"]
+  }
+]
+

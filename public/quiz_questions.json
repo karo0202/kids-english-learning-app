@@ -1,0 +1,12 @@
+[
+  {"question":"Which animal says 'meow'?","options":["Dog","Cat","Cow","Bird"],"correct":1,"explanation":"Cats say 'meow'."},
+  {"question":"What do we call a baby dog?","options":["Calf","Chick","Puppy","Kitten"],"correct":2,"explanation":"A baby dog is a puppy."},
+  {"question":"Which one is a fruit?","options":["Carrot","Apple","Broccoli","Potato"],"correct":1,"explanation":"Apple is a fruit."},
+  {"question":"How many days are in a week?","options":["5","6","7","8"],"correct":2,"explanation":"There are 7 days in a week."},
+  {"question":"What color do you get by mixing blue and yellow?","options":["Purple","Green","Orange","Pink"],"correct":1,"explanation":"Blue + Yellow = Green."},
+  {"question":"Which is the largest land animal?","options":["Elephant","Lion","Giraffe","Horse"],"correct":0,"explanation":"Elephants are the largest land animals."},
+  {"question":"Which planet do we live on?","options":["Mars","Earth","Jupiter","Venus"],"correct":1,"explanation":"We live on Earth."},
+  {"question":"What do bees make?","options":["Milk","Honey","Juice","Butter"],"correct":1,"explanation":"Bees make honey."},
+  {"question":"Which shape has 3 sides?","options":["Square","Triangle","Circle","Rectangle"],"correct":1,"explanation":"Triangles have 3 sides."},
+  {"question":"Which season is usually the coldest?","options":["Summer","Winter","Spring","Autumn"],"correct":1,"explanation":"Winter is the coldest season."}
+]

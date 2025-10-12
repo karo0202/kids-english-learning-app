@@ -1,0 +1,22 @@
+[
+  {
+    "id": "s1",
+    "title": "Morning Song",
+    "lines": [
+      "Good morning, good morning, rise and shine!",
+      "Brush your teeth and feel so fine!",
+      "Pack your bag, it is time for school!",
+      "Learn and play and follow the rules!"
+    ]
+  },
+  {
+    "id": "s2",
+    "title": "Numbers Song",
+    "lines": [
+      "One, two, three, come sing with me!",
+      "Four, five, six, clap joyfully!",
+      "Seven, eight, nine, we will do just fine!",
+      "Ten we cheer, a perfect line!"
+    ]
+  }
+]
