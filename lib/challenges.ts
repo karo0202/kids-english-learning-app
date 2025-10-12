@@ -207,9 +207,11 @@ export class ChallengeManager {
 
   private loadChallenges(): void {
     try {
-      const saved = localStorage.getItem('daily_challenges')
-      if (saved) {
-        this.challenges = JSON.parse(saved)
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('daily_challenges')
+        if (saved) {
+          this.challenges = JSON.parse(saved)
+        }
       }
     } catch (error) {
       console.error('Error loading challenges:', error)
@@ -218,7 +220,9 @@ export class ChallengeManager {
 
   private saveAdaptiveSettings(): void {
     try {
-      localStorage.setItem('adaptive_settings', JSON.stringify(this.adaptiveSettings))
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('adaptive_settings', JSON.stringify(this.adaptiveSettings))
+      }
     } catch (error) {
       console.error('Error saving adaptive settings:', error)
     }
@@ -226,9 +230,11 @@ export class ChallengeManager {
 
   private loadAdaptiveSettings(): void {
     try {
-      const saved = localStorage.getItem('adaptive_settings')
-      if (saved) {
-        this.adaptiveSettings = JSON.parse(saved)
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('adaptive_settings')
+        if (saved) {
+          this.adaptiveSettings = JSON.parse(saved)
+        }
       }
     } catch (error) {
       console.error('Error loading adaptive settings:', error)

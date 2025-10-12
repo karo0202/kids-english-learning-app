@@ -74,10 +74,12 @@ export class ProgressManager {
   // Load progress from localStorage
   loadProgress(userId: string): UserProgress | null {
     try {
-      const saved = localStorage.getItem(`progress_${userId}`)
-      if (saved) {
-        this.progress = JSON.parse(saved)
-        return this.progress
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(`progress_${userId}`)
+        if (saved) {
+          this.progress = JSON.parse(saved)
+          return this.progress
+        }
       }
     } catch (error) {
       console.error('Error loading progress:', error)
@@ -87,7 +89,7 @@ export class ProgressManager {
 
   // Save progress to localStorage
   saveProgress(): void {
-    if (this.progress) {
+    if (this.progress && typeof window !== 'undefined') {
       try {
         localStorage.setItem(`progress_${this.progress.userId}`, JSON.stringify(this.progress))
       } catch (error) {
