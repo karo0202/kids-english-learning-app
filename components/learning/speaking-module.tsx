@@ -170,7 +170,15 @@ export default function SpeakingModule() {
       difficulty: 1
     },
     {
-      id: '2', 
+      id: '2',
+      word: 'banana',
+      pronunciation: '/bəˈnɑː.nə/',
+      definition: 'A long curved yellow fruit',
+      imageUrl: 'https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center',
+      difficulty: 1
+    },
+    {
+      id: '3', 
       word: 'butterfly',
       pronunciation: '/ˈbʌt.ər.flaɪ/',
       definition: 'A colorful flying insect',
@@ -178,7 +186,7 @@ export default function SpeakingModule() {
       difficulty: 2
     },
     {
-      id: '3',
+      id: '4',
       word: 'elephant',
       pronunciation: '/ˈɛl.ɪ.fənt/',
       definition: 'A large gray animal with a trunk',
@@ -186,7 +194,7 @@ export default function SpeakingModule() {
       difficulty: 2
     },
     {
-      id: '4',
+      id: '5',
       word: 'rainbow',
       pronunciation: '/ˈreɪn.boʊ/',
       definition: 'Colorful arc in the sky after rain',
@@ -222,7 +230,7 @@ export default function SpeakingModule() {
     // Load words from public JSON; fallback to sampleWords
     const loadWords = async () => {
       try {
-        const res = await fetch('/pronunciation_words.json', { cache: 'no-store' })
+        const res = await fetch(`/pronunciation_words.json?v=${Date.now()}`, { cache: 'no-store' })
         if (res.ok) {
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
@@ -236,6 +244,7 @@ export default function SpeakingModule() {
                 imageUrl: typeof w.imageUrl === 'string' ? w.imageUrl : undefined,
                 difficulty: Number.isFinite(w.difficulty) ? Number(w.difficulty) : 1,
               }))
+            console.log('Loaded words from JSON:', normalized.length, 'words')
             setWords(normalized)
             setTotalWords(normalized.length)
             setWordIndex(0)
@@ -245,6 +254,7 @@ export default function SpeakingModule() {
         }
       } catch {}
       // Fallback
+      console.log('Using fallback sampleWords:', sampleWords.length, 'words')
       setWords(sampleWords)
       setTotalWords(sampleWords.length)
       setWordIndex(0)
