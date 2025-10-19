@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { ThemeProvider } from '@/lib/theme-context'
+import PortraitLock from '@/components/portrait-lock'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description: 'A fun and interactive English learning app for kids ages 3-12',
   keywords: ['kids', 'english', 'learning', 'education', 'games', 'speaking', 'writing'],
   authors: [{ name: 'Kids Learning Team' }],
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, orientation=portrait',
 }
 
 export default function RootLayout({
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <Providers>
           <ThemeProvider>
+            <PortraitLock />
             <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
               {children}
             </div>
