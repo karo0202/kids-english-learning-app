@@ -280,10 +280,19 @@ export default function GamesModule() {
     const words = ['CAT', 'DOG', 'SUN', 'TREE', 'FISH', 'BIRD']
     const gameCards: GameCard[] = []
     
+    const wordImages: { [key: string]: string } = {
+      'CAT': 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop&crop=center',
+      'DOG': 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop&crop=center',
+      'SUN': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop&crop=center',
+      'TREE': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200&h=200&fit=crop&crop=center',
+      'FISH': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=200&fit=crop&crop=center',
+      'BIRD': 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=200&h=200&fit=crop&crop=center'
+    }
+    
     words.forEach((word, index) => {
       gameCards.push(
         { id: `${word}-word`, word, image: '', matched: false, flipped: false },
-        { id: `${word}-img`, word, image: `https://placehold.co/200x200?text=${word}`, matched: false, flipped: false }
+        { id: `${word}-img`, word, image: wordImages[word] || `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop&crop=center`, matched: false, flipped: false }
       )
     })
 

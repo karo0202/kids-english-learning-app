@@ -166,7 +166,7 @@ export default function SpeakingModule() {
       word: 'apple',
       pronunciation: '/ˈæp.əl/',
       definition: 'A round red or green fruit',
-      imageUrl: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300',
+      imageUrl: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center',
       difficulty: 1
     },
     {
@@ -174,7 +174,7 @@ export default function SpeakingModule() {
       word: 'butterfly',
       pronunciation: '/ˈbʌt.ər.flaɪ/',
       definition: 'A colorful flying insect',
-      imageUrl: 'https://placehold.co/1200x600/e2e8f0/1e293b?text=A_colorful_butterfly',
+      imageUrl: 'https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=300&h=300&fit=crop&crop=center',
       difficulty: 2
     },
     {
@@ -182,7 +182,7 @@ export default function SpeakingModule() {
       word: 'elephant',
       pronunciation: '/ˈɛl.ɪ.fənt/',
       definition: 'A large gray animal with a trunk',
-      imageUrl: 'https://images.unsplash.com/photo-1564760290292-23341e4df6ec?w=300',
+      imageUrl: 'https://images.unsplash.com/photo-1564760290292-23341e4df6ec?w=300&h=300&fit=crop&crop=center',
       difficulty: 2
     },
     {
@@ -190,7 +190,7 @@ export default function SpeakingModule() {
       word: 'rainbow',
       pronunciation: '/ˈreɪn.boʊ/',
       definition: 'Colorful arc in the sky after rain',
-      imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300',
+      imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300&h=300&fit=crop&crop=center',
       difficulty: 3
     }
   ]

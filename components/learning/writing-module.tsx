@@ -127,19 +127,37 @@ export default function WritingModule() {
       word: 'CAT',
       letters: ['C', 'A', 'T', 'D', 'O', 'G'],
       hint: 'A furry pet that says "meow"',
-      imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200'
+      imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop&crop=center'
     },
     {
       word: 'SUN',
       letters: ['S', 'U', 'N', 'M', 'O', 'R'],
       hint: 'Bright star in the sky',
-      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200'
+      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop&crop=center'
     },
     {
       word: 'TREE',
       letters: ['T', 'R', 'E', 'E', 'F', 'L'],
       hint: 'Green plant with branches',
-      imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200'
+      imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop&crop=center'
+    },
+    {
+      word: 'HOUSE',
+      letters: ['H', 'O', 'U', 'S', 'E', 'H'],
+      hint: 'A place where people live',
+      imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=300&fit=crop&crop=center'
+    },
+    {
+      word: 'FAMILY',
+      letters: ['F', 'A', 'M', 'I', 'L', 'Y'],
+      hint: 'People who live with you',
+      imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&h=300&fit=crop&crop=center'
+    },
+    {
+      word: 'BALL',
+      letters: ['B', 'A', 'L', 'L', 'T', 'O'],
+      hint: 'Round toy for playing',
+      imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center'
     }
   ]
 
