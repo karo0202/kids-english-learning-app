@@ -51,5 +51,17 @@ export function getUserSession(): User | null {
 export function clearUserSession() {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('user')
+    localStorage.removeItem('children')
+    localStorage.removeItem('currentChild')
+    localStorage.removeItem('progress')
   }
+}
+
+export function hasStoredData(): boolean {
+  if (typeof window !== 'undefined') {
+    const user = localStorage.getItem('user')
+    const children = localStorage.getItem('children')
+    return !!(user || children)
+  }
+  return false
 }

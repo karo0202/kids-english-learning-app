@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { useState } from 'react'
@@ -37,6 +38,37 @@ export default function RegisterPage() {
 
       // Store user session
       setUserSession(user)
+      
+      // Save child information to localStorage
+      if (typeof window !== 'undefined') {
+        const childData = {
+          id: `child-${Date.now()}`,
+          name: formData.childName,
+          age: parseInt(formData.childAge),
+          parentId: user.id,
+          createdAt: new Date().toISOString()
+        }
+        
+        // Get existing children or create new array
+        const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
+        existingChildren.push(childData)
+        localStorage.setItem('children', JSON.stringify(existingChildren))
+        
+        // Set current child
+        localStorage.setItem('currentChild', JSON.stringify(childData))
+        
+        // Initialize progress for the child
+        const progress = {
+          [childData.id]: {
+            completedLessons: [],
+            completedChallenges: [],
+            currentLevel: 1,
+            totalScore: 0,
+            lastActivity: new Date().toISOString()
+          }
+        }
+        localStorage.setItem('progress', JSON.stringify(progress))
+      }
       
       // Redirect to dashboard
       router.push('/dashboard')

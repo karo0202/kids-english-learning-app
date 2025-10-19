@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getUserSession } from '@/lib/simple-auth'
+import { getUserSession, hasStoredData } from '@/lib/simple-auth'
 import WelcomePage from '@/components/welcome-page'
 
 export default function HomePage() {
@@ -10,8 +10,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const user = getUserSession()
-    if (user) {
+    // Check if user has stored data (either logged in or has children data)
+    if (hasStoredData()) {
       router.push('/dashboard')
     } else {
       setLoading(false)
