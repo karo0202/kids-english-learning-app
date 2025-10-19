@@ -843,36 +843,60 @@ export default function WritingModule() {
                   />
                   </div>
 
-                  <div className="flex justify-center gap-4 mt-6">
-                    <Button onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} variant="outline">
-                      Previous
-                    </Button>
-                    <Button onClick={clearCanvas} variant="outline">
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Clear
-                    </Button>
-                    <Button onClick={checkCurrentStroke} className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white">
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Check Stroke
-                    </Button>
-                    <Button onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}>
-                      Next
-                    </Button>
+                  {/* Mobile-optimized button layout */}
+                  <div className="mt-6 space-y-4">
+                    {/* Primary action row */}
+                    <div className="flex justify-center">
+                      <Button 
+                        onClick={checkCurrentStroke} 
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-3 text-lg font-semibold shadow-lg"
+                        size="lg"
+                      >
+                        <CheckCircle className="w-5 h-5 mr-2" />
+                        Check Stroke
+                      </Button>
+                    </div>
+                    
+                    {/* Secondary actions row */}
+                    <div className="flex justify-center gap-3">
+                      <Button 
+                        onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} 
+                        variant="outline"
+                        className="px-4 py-2"
+                      >
+                        Previous
+                      </Button>
+                      <Button 
+                        onClick={clearCanvas} 
+                        variant="outline"
+                        className="px-4 py-2"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-1" />
+                        Clear
+                      </Button>
+                      <Button 
+                        onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}
+                        className="px-4 py-2"
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="mt-4 text-center">
-                    <div className="text-sm text-gray-600 mb-2">
+                  {/* Progress indicator */}
+                  <div className="mt-6 text-center">
+                    <div className="text-lg font-semibold text-gray-700 mb-3">
                       Step {Math.min(strokesCompleted + 1, requiredStrokes)} of {requiredStrokes}
                     </div>
-                    <div className="flex justify-center gap-1">
+                    <div className="flex justify-center gap-2">
                       {Array.from({ length: requiredStrokes }, (_, i) => (
                         <div
                           key={i}
-                          className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          className={`w-4 h-4 rounded-full transition-all duration-300 ${
                             i < strokesCompleted 
-                              ? 'bg-green-500' 
+                              ? 'bg-green-500 shadow-lg' 
                               : i === strokesCompleted 
-                                ? 'bg-blue-500 animate-pulse' 
+                                ? 'bg-blue-500 shadow-lg animate-pulse' 
                                 : 'bg-gray-300'
                           }`}
                         />
