@@ -1,23 +1,25 @@
 
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { getUserSession } from '@/lib/simple-auth'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import ParentDashboard from '@/components/parent-dashboard'
 
 export default function ParentDashboardPage() {
-  const { data: session, status } = useSession()
+  const [session, setSession] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'loading') return
-    if (!session) {
-      router.push('/login')
+    const currentUser = getUserSession()
+    if (currentUser) {
+      setSession({ user: currentUser })
     }
-  }, [session, status, router])
+    setLoading(false)
+  }, [])
 
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
@@ -26,6 +28,7 @@ export default function ParentDashboardPage() {
   }
 
   if (!session) {
+    router.push('/login')
     return null
   }
 

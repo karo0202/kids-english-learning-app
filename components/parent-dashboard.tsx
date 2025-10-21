@@ -17,7 +17,7 @@ import {
   Lock, Unlock, Timer, Shield, FileText
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
+import { getUserSession, clearUserSession } from '@/lib/simple-auth'
 
 interface Child {
   id: string
@@ -49,7 +49,7 @@ interface ParentControls {
 
 export default function ParentDashboard() {
   const router = useRouter()
-  const { data: session } = useSession() || {}
+  const [session, setSession] = useState<any>(null)
   const [children, setChildren] = useState<Child[]>([])
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
   const [loading, setLoading] = useState(true)
@@ -67,6 +67,10 @@ export default function ParentDashboard() {
   })
 
   useEffect(() => {
+    const currentUser = getUserSession()
+    if (currentUser) {
+      setSession({ user: currentUser })
+    }
     fetchChildren()
     loadParentControls()
   }, [])

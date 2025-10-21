@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { getUserSession } from '@/lib/simple-auth'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -12,7 +12,7 @@ import {
   Mic, PenTool, Gamepad2, User, Trophy, Star, 
   Settings, LogOut, BookOpen, Target, Gift, Crown, Zap, Bell
 } from 'lucide-react'
-import { signOut } from 'next-auth/react'
+import { clearUserSession } from '@/lib/simple-auth'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { progressManager } from '@/lib/progress'
@@ -30,7 +30,7 @@ interface Child {
 }
 
 export default function DashboardClient() {
-  const { data: session } = useSession() || {}
+  const [session, setSession] = useState<any>(null)
   const router = useRouter()
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
   const [children, setChildren] = useState<Child[]>([])
@@ -40,6 +40,10 @@ export default function DashboardClient() {
   const [showConfetti, setShowConfetti] = useState(false)
 
   useEffect(() => {
+    const currentUser = getUserSession()
+    if (currentUser) {
+      setSession({ user: currentUser })
+    }
     fetchChildren()
     initializeProgress()
   }, [])
@@ -199,7 +203,10 @@ export default function DashboardClient() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={() => {
+                  clearUserSession()
+                  router.push('/')
+                }}
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Exit
