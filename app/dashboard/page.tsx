@@ -17,17 +17,24 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const currentUser = getUserSession()
-    if (!currentUser) {
-      router.push('/login')
-      return
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      const currentUser = getUserSession()
+      if (!currentUser) {
+        console.log('No user session found, redirecting to login')
+        router.push('/login')
+        return
+      }
+      console.log('User session found:', currentUser)
+      setUser(currentUser)
+      
+      // Load children from localStorage
+      const storedChildren = JSON.parse(localStorage.getItem('children') || '[]')
+      setChildren(storedChildren)
+      setLoading(false)
+    } else {
+      setLoading(false)
     }
-    setUser(currentUser)
-    
-    // Load children from localStorage
-    const storedChildren = JSON.parse(localStorage.getItem('children') || '[]')
-    setChildren(storedChildren)
-    setLoading(false)
   }, [router])
 
   const handleLogout = () => {
@@ -47,7 +54,31 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If no user after loading, show login prompt
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        <div className="text-center">
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+            <span className="text-3xl">🔒</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Please log in</h2>
+          <p className="text-gray-600 mb-6">You need to be logged in to access the dashboard.</p>
+          <Button 
+            onClick={() => router.push('/login')}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            Go to Login
+          </Button>
+        </div>
       </div>
     )
   }
