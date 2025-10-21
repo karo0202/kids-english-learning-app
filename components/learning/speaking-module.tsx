@@ -255,6 +255,7 @@ export default function SpeakingModule() {
                 difficulty: Number.isFinite(w.difficulty) ? Number(w.difficulty) : 1,
               }))
             console.log('Loaded words from JSON:', normalized.length, 'words')
+            console.log('First word data:', normalized[0])
             setWords(normalized)
             setTotalWords(normalized.length)
             setWordIndex(0)
@@ -266,6 +267,7 @@ export default function SpeakingModule() {
       // Fallback
       const fallbackWords = getSampleWords()
       console.log('Using fallback sampleWords:', fallbackWords.length, 'words')
+      console.log('First fallback word data:', fallbackWords[0])
       setWords(fallbackWords)
       setTotalWords(fallbackWords.length)
       setWordIndex(0)
@@ -654,6 +656,8 @@ export default function SpeakingModule() {
                           src={currentWord.imageUrl} 
                           alt={currentWord.word}
                           className="w-full h-full object-cover"
+                          onLoad={() => console.log('Image loaded successfully:', currentWord.imageUrl)}
+                          onError={(e) => console.error('Image failed to load:', currentWord.imageUrl, e)}
                         />
                       </div>
                     )}
