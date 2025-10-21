@@ -46,12 +46,13 @@ export default function ReadingModule() {
   const [isCorrect, setIsCorrect] = useState(false)
   const [books, setBooks] = useState<Book[] | null>(null)
 
+  const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
   const defaultBooks: Book[] = [
     {
       id: '1',
       title: 'The Friendly Cat',
       author: 'Story Time',
-      coverImage: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300',
+      coverImage: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300${cacheBuster}`,
       ageGroup: 'AGE_3_5',
       difficulty: 1,
       estimatedTime: 5,
@@ -60,19 +61,19 @@ export default function ReadingModule() {
           id: '1-1',
           pageNumber: 1,
           text: 'Once upon a time, there was a friendly cat named Whiskers.',
-          imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
         },
         {
           id: '1-2',
           pageNumber: 2,
           text: 'Whiskers loved to play with children and purr loudly when happy.',
-          imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
         },
         {
           id: '1-3',
           pageNumber: 3,
           text: 'Every day, Whiskers would visit the park to make new friends.',
-          imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
         }
       ]
     },
@@ -80,7 +81,7 @@ export default function ReadingModule() {
       id: '2',
       title: 'The Magic School Bus',
       author: 'Adventure Stories',
-      coverImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=300',
+      coverImage: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=300${cacheBuster}`,
       ageGroup: 'AGE_6_8',
       difficulty: 2,
       estimatedTime: 8,
@@ -89,19 +90,19 @@ export default function ReadingModule() {
           id: '2-1',
           pageNumber: 1,
           text: 'Emma and her friends boarded the magic school bus for an amazing adventure.',
-          imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
         },
         {
           id: '2-2',
           pageNumber: 2,
           text: 'They visited different countries and learned new words in each place.',
-          imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
         },
         {
           id: '2-3',
           pageNumber: 3,
           text: 'The bus could fly, swim, and even travel through time!',
-          imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
         }
       ]
     },
@@ -109,7 +110,7 @@ export default function ReadingModule() {
       id: '3',
       title: 'The Adventure of Learning',
       author: 'Educational Tales',
-      coverImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300',
+      coverImage: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300${cacheBuster}`,
       ageGroup: 'AGE_9_12',
       difficulty: 3,
       estimatedTime: 12,
@@ -118,19 +119,19 @@ export default function ReadingModule() {
           id: '3-1',
           pageNumber: 1,
           text: 'Sophie discovered that learning English was like going on a great adventure.',
-          imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
         },
         {
           id: '3-2',
           pageNumber: 2,
           text: 'Every new word was like finding a treasure, and every sentence was like solving a puzzle.',
-          imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
         },
         {
           id: '3-3',
           pageNumber: 3,
           text: 'With practice and determination, Sophie became a master of the English language.',
-          imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
         }
       ]
     }
@@ -139,7 +140,14 @@ export default function ReadingModule() {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const res = await fetch('/books.json', { cache: 'no-store' })
+        const res = await fetch(`/books.json?v=${Date.now()}&bust=${Math.random()}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        })
         if (res.ok) {
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {

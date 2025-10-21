@@ -230,7 +230,14 @@ export default function SpeakingModule() {
     // Load words from public JSON; fallback to sampleWords
     const loadWords = async () => {
       try {
-        const res = await fetch(`/pronunciation_words.json?v=${Date.now()}`, { cache: 'no-store' })
+        const res = await fetch(`/pronunciation_words.json?v=${Date.now()}&bust=${Math.random()}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        })
         if (res.ok) {
           const data = await res.json()
           if (Array.isArray(data) && data.length > 0) {
