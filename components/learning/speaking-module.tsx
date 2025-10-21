@@ -160,48 +160,51 @@ export default function SpeakingModule() {
   const [targetLine, setTargetLine] = useState<RoleLine | null>(null)
   const currentLineKeyRef = useRef<string | null>(null)
 
-  const sampleWords: Word[] = [
-    {
-      id: '1',
-      word: 'apple',
-      pronunciation: '/ˈæp.əl/',
-      definition: 'A round red or green fruit',
-      imageUrl: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center',
-      difficulty: 1
-    },
-    {
-      id: '2',
-      word: 'banana',
-      pronunciation: '/bəˈnɑː.nə/',
-      definition: 'A long curved yellow fruit',
-      imageUrl: 'https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center',
-      difficulty: 1
-    },
-    {
-      id: '3', 
-      word: 'butterfly',
-      pronunciation: '/ˈbʌt.ər.flaɪ/',
-      definition: 'A colorful flying insect',
-      imageUrl: 'https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=300&h=300&fit=crop&crop=center',
-      difficulty: 2
-    },
-    {
-      id: '4',
-      word: 'elephant',
-      pronunciation: '/ˈɛl.ɪ.fənt/',
-      definition: 'A large gray animal with a trunk',
-      imageUrl: 'https://images.unsplash.com/photo-1564760290292-23341e4df6ec?w=300&h=300&fit=crop&crop=center',
-      difficulty: 2
-    },
-    {
-      id: '5',
-      word: 'rainbow',
-      pronunciation: '/ˈreɪn.boʊ/',
-      definition: 'Colorful arc in the sky after rain',
-      imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300&h=300&fit=crop&crop=center',
-      difficulty: 3
-    }
-  ]
+  const getSampleWords = (): Word[] => {
+    const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
+    return [
+      {
+        id: '1',
+        word: 'apple',
+        pronunciation: '/ˈæp.əl/',
+        definition: 'A round red or green fruit',
+        imageUrl: `https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        difficulty: 1
+      },
+      {
+        id: '2',
+        word: 'banana',
+        pronunciation: '/bəˈnɑː.nə/',
+        definition: 'A long curved yellow fruit',
+        imageUrl: `https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        difficulty: 1
+      },
+      {
+        id: '3', 
+        word: 'butterfly',
+        pronunciation: '/ˈbʌt.ər.flaɪ/',
+        definition: 'A colorful flying insect',
+        imageUrl: `https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        difficulty: 2
+      },
+      {
+        id: '4',
+        word: 'elephant',
+        pronunciation: '/ˈɛl.ɪ.fənt/',
+        definition: 'A large gray animal with a trunk',
+        imageUrl: `https://images.unsplash.com/photo-1564760290292-23341e4df6ec?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        difficulty: 2
+      },
+      {
+        id: '5',
+        word: 'rainbow',
+        pronunciation: '/ˈreɪn.boʊ/',
+        definition: 'Colorful arc in the sky after rain',
+        imageUrl: `https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        difficulty: 3
+      }
+    ]
+  }
 
   useEffect(() => {
     // Initialize speech recognition
@@ -261,11 +264,12 @@ export default function SpeakingModule() {
         }
       } catch {}
       // Fallback
-      console.log('Using fallback sampleWords:', sampleWords.length, 'words')
-      setWords(sampleWords)
-      setTotalWords(sampleWords.length)
+      const fallbackWords = getSampleWords()
+      console.log('Using fallback sampleWords:', fallbackWords.length, 'words')
+      setWords(fallbackWords)
+      setTotalWords(fallbackWords.length)
       setWordIndex(0)
-      setCurrentWord(sampleWords[0])
+      setCurrentWord(fallbackWords[0])
     }
     loadWords()
 

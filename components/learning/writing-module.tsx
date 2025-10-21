@@ -122,8 +122,9 @@ export default function WritingModule() {
     color: TRACING_COLORS[idx % TRACING_COLORS.length]
   }))
 
-  const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
-  const defaultWordBuildingWords: WordBuildingWord[] = [
+  const getDefaultWordBuildingWords = (): WordBuildingWord[] => {
+    const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
+    return [
     {
       word: 'CAT',
       letters: ['C', 'A', 'T', 'D', 'O', 'G'],
@@ -161,6 +162,7 @@ export default function WritingModule() {
       imageUrl: `https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     }
   ]
+  }
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
@@ -181,13 +183,13 @@ export default function WritingModule() {
               }))
             setWordBank(normalized)
           } else {
-            setWordBank(defaultWordBuildingWords)
+            setWordBank(getDefaultWordBuildingWords())
           }
         } else {
-          setWordBank(defaultWordBuildingWords)
+          setWordBank(getDefaultWordBuildingWords())
         }
       } catch {
-        setWordBank(defaultWordBuildingWords)
+        setWordBank(getDefaultWordBuildingWords())
       }
     }
 
@@ -255,7 +257,7 @@ export default function WritingModule() {
       setRequiredStrokes(getRequiredStrokes(tracingLetters[0].letter))
       setStrokesCompleted(0)
     } else if (activityType === 'wordbuilder') {
-      const source = wordBank && wordBank.length ? wordBank : defaultWordBuildingWords
+      const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
       const word = source[0]
       setCurrentWord(word)
       setBuilderLetters(shuffleArray([...word.letters]))
@@ -642,7 +644,7 @@ export default function WritingModule() {
         clearCanvas()
       }, 100)
     } else if (activityType === 'wordbuilder') {
-      const source = wordBank && wordBank.length ? wordBank : defaultWordBuildingWords
+      const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
       const currentIdx = Math.max(0, source.findIndex(w => w.word === currentWord?.word))
       const nextIndex = (currentIdx + 1) % source.length
       const nextWord = source[nextIndex]

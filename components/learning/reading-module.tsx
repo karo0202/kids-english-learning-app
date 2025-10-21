@@ -46,8 +46,9 @@ export default function ReadingModule() {
   const [isCorrect, setIsCorrect] = useState(false)
   const [books, setBooks] = useState<Book[] | null>(null)
 
-  const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
-  const defaultBooks: Book[] = [
+  const getDefaultBooks = (): Book[] => {
+    const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
+    return [
     {
       id: '1',
       title: 'The Friendly Cat',
@@ -136,6 +137,7 @@ export default function ReadingModule() {
       ]
     }
   ]
+  }
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -153,13 +155,13 @@ export default function ReadingModule() {
           if (Array.isArray(data) && data.length > 0) {
             setBooks(data)
           } else {
-            setBooks(defaultBooks)
+            setBooks(getDefaultBooks())
           }
         } else {
-          setBooks(defaultBooks)
+          setBooks(getDefaultBooks())
         }
       } catch {
-        setBooks(defaultBooks)
+        setBooks(getDefaultBooks())
       }
     }
 
@@ -555,7 +557,7 @@ export default function ReadingModule() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {(books || defaultBooks).map((book, index) => (
+          {(books || getDefaultBooks()).map((book, index) => (
             <motion.div
               key={book.id}
               initial={{ opacity: 0, y: 30 }}
