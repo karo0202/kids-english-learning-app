@@ -1,6 +1,6 @@
 [
-  {"id":"1","word":"apple","pronunciation":"/ˈæp.əl/","definition":"A round red or green fruit","imageUrl":"https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center&v=20241221&v=20241221","difficulty":1},
-  {"id":"2","word":"banana","pronunciation":"/bəˈnɑː.nə/","definition":"A long curved yellow fruit","imageUrl":"https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center&v=20241221&v=20241221","difficulty":1},
+  {"id":"1","word":"apple","pronunciation":"/ˈæp.əl/","definition":"A round red or green fruit","imageUrl":"https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center&v=20241221","difficulty":1},
+  {"id":"2","word":"banana","pronunciation":"/bəˈnɑː.nə/","definition":"A long curved yellow fruit","imageUrl":"https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=300&h=300&fit=crop&crop=center&v=20241221","difficulty":1},
   {"id":"3","word":"cat","pronunciation":"/kæt/","definition":"A small furry pet","imageUrl":"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop&crop=center&v=20241221","difficulty":1},
   {"id":"4","word":"dog","pronunciation":"/dɒɡ/","definition":"A friendly animal that barks","imageUrl":"https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop&crop=center&v=20241221","difficulty":1},
   {"id":"5","word":"elephant","pronunciation":"/ˈɛl.ɪ.fənt/","definition":"A large animal with a trunk","imageUrl":"https://images.unsplash.com/photo-1564760290292-23341e4df6ec?w=300&h=300&fit=crop&crop=center&v=20241221","difficulty":2},
