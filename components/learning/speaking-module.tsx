@@ -37,48 +37,11 @@ export default function SpeakingModule() {
   const [totalWords, setTotalWords] = useState(10)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
-  const [activityType, setActivityType] = useState<'pronunciation' | 'roleplay' | 'singspeak'>('pronunciation')
+  const [activityType, setActivityType] = useState<'pronunciation' | 'singspeak'>('pronunciation')
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [lastResult, setLastResult] = useState<{ word: string; transcript: string; correct: boolean } | null>(null)
   const advancingRef = useRef<boolean>(false)
   
-  // Premium content state
-  const [premiumDialogues, setPremiumDialogues] = useState<any[]>([])
-  const [isPremiumUser, setIsPremiumUser] = useState(false)
-  const [showPremiumModal, setShowPremiumModal] = useState(false)
-
-  // Check premium status on component mount
-  useEffect(() => {
-    const checkPremiumStatus = () => {
-      if (typeof window !== 'undefined') {
-        const isPremium = localStorage.getItem('isPremium') === 'true'
-        setIsPremiumUser(isPremium)
-        
-        // Debug: Log premium status
-        console.log('Premium status:', isPremium)
-        console.log('Premium user state:', isPremium)
-        
-        // For testing: Auto-unlock premium after 3 seconds
-        setTimeout(() => {
-          if (!isPremium) {
-            console.log('Auto-unlocking premium for testing...')
-            localStorage.setItem('isPremium', 'true')
-            setIsPremiumUser(true)
-          }
-        }, 3000)
-      }
-    }
-    checkPremiumStatus()
-  }, [])
-
-  // Add a debug function to unlock premium for testing
-  const unlockPremiumForTesting = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('isPremium', 'true')
-      setIsPremiumUser(true)
-      console.log('Premium unlocked for testing!')
-    }
-  }
 
   // Sing & Speak (karaoke) state
   type Song = { id: string; title: string; lines: string[] }
@@ -87,14 +50,6 @@ export default function SpeakingModule() {
   const [songLineIndex, setSongLineIndex] = useState(0)
   const [isSinging, setIsSinging] = useState(false)
 
-  // Roleplay dialog state
-  type RoleLine = { speaker: 'Buddy' | 'You'; text: string }
-  type RoleScene = { title: string; lines: RoleLine[] }
-  const roleScenes: RoleScene[] = []
-  const [sceneIndex, setSceneIndex] = useState(0)
-  const [lineIndex, setLineIndex] = useState(0)
-  const [targetLine, setTargetLine] = useState<RoleLine | null>(null)
-  const currentLineKeyRef = useRef<string | null>(null)
 
   const getSampleWords = (): Word[] => {
     const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
@@ -154,11 +109,7 @@ export default function SpeakingModule() {
       recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript.toLowerCase().trim()
         setUserSpeech(transcript)
-        if (activityType === 'roleplay') {
-          checkRoleplay(transcript)
-        } else {
-          checkPronunciation(transcript)
-        }
+        checkPronunciation(transcript)
       }
 
       recognitionRef.current.onend = () => {
@@ -237,10 +188,6 @@ export default function SpeakingModule() {
       setSongLineIndex(0)
     }
     loadSongs()
-    // Initialize first roleplay line
-    if (roleScenes.length > 0) {
-      setTargetLine(roleScenes[0].lines[0])
-    }
   }, [])
 
   const startListening = () => {
@@ -388,79 +335,10 @@ export default function SpeakingModule() {
     setIsSinging(false)
   }
 
-  // Roleplay helpers
-  const startScene = (index: number) => {
-    if (roleScenes.length === 0) return
-    setSceneIndex(index)
-    setLineIndex(0)
-    const first = roleScenes[index].lines[0]
-    setTargetLine(first)
-  }
 
-  const advanceLine = () => {
-    if (roleScenes.length === 0) return
-    const scene = roleScenes[sceneIndex]
-    const next = lineIndex + 1
-    if (next >= scene.lines.length) {
-      // scene complete
-      setIsCorrect(true)
-      setShowFeedback(true)
-      setScore(prev => prev + 20)
-      setCorrectWords(prev => prev + 1)
-      
-      // Play success sound and update progress
-      audioManager.playSuccess()
-      progressManager.addScore(20, 10)
-      challengeManager.updateChallengeProgress('speaking', 1)
-      
-      setTimeout(() => {
-        setShowFeedback(false)
-        if (roleScenes.length > 0) {
-          const nextScene = (sceneIndex + 1) % roleScenes.length
-          startScene(nextScene)
-        }
-      }, 1800)
-      return
-    }
-    setLineIndex(next)
-    const line = scene.lines[next]
-    setTargetLine(line)
-  }
-
-  const checkRoleplay = (transcript: string) => {
-    if (!targetLine || targetLine.speaker !== 'You') return
-    const target = targetLine.text.toLowerCase()
-    const similarity = calculateSimilarity(transcript, target)
-    const ok = similarity > 0.7 || transcript.includes(target.split(' ')[0])
-    setIsCorrect(ok)
-    setShowFeedback(true)
-    if (ok) {
-      setScore(prev => prev + 10)
-      setTimeout(() => {
-        setShowFeedback(false)
-        advanceLine()
-      }, 800)
-    } else {
-      setTimeout(() => setShowFeedback(false), 900)
-    }
-  }
-
-  // Auto-play buddy lines exactly once per line
-  useEffect(() => {
-    if (activityType !== 'roleplay' || !targetLine) return
-    const key = `${sceneIndex}-${lineIndex}`
-    if (targetLine.speaker === 'Buddy' && currentLineKeyRef.current !== key) {
-      currentLineKeyRef.current = key
-      speakText(targetLine.text)
-      const delay = 1200 + targetLine.text.length * 25
-      const t = setTimeout(() => advanceLine(), delay)
-      return () => clearTimeout(t)
-    }
-  }, [activityType, targetLine, sceneIndex, lineIndex])
 
   const activities = [
     { id: 'pronunciation', name: 'Pronunciation Practice', icon: <Mic className="w-5 h-5" /> },
-    { id: 'roleplay', name: 'Role Play Dialogues', icon: <Play className="w-5 h-5" /> },
     { id: 'singspeak', name: 'Sing & Speak', icon: <Volume2 className="w-5 h-5" /> }
   ]
 
@@ -751,96 +629,6 @@ export default function SpeakingModule() {
         </div>
         )}
 
-        {activityType === 'roleplay' && (
-          <div className="max-w-4xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="card-speaking">
-                <CardContent className="p-8">
-                  <div className="text-center mb-6">
-                    <h3 className="text-3xl font-bold text-gray-800 mb-2">Role Play Dialogues</h3>
-                    <p className="text-gray-600">Practice speaking in short conversations.</p>
-                    {isPremiumUser && (
-                      <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2 rounded-full">
-                        <Star className="w-4 h-4 text-yellow-600" />
-                        <span className="text-sm font-semibold text-yellow-800">Premium Active</span>
-                      </div>
-                    )}
-                    {!isPremiumUser && (
-                      <div className="mt-2">
-                        <Button 
-                          onClick={unlockPremiumForTesting}
-                          size="sm"
-                          className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white"
-                        >
-                          🔓 Unlock Premium (Testing)
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 justify-center mb-6">
-                    {roleScenes.map((s, i) => (
-                      <div key={i} className="relative">
-                        <Button 
-                          variant={sceneIndex === i ? 'default' : 'outline'} 
-                          onClick={() => {
-                            if (s.premium && !isPremiumUser) {
-                              setShowPremiumModal(true)
-                            } else {
-                              startScene(i)
-                            }
-                          }}
-                          className={s.premium && !isPremiumUser ? 'opacity-60' : ''}
-                        >
-                          {s.premium && <Star className="w-4 h-4 mr-2 text-yellow-500" />}
-                          {s.title}
-                        </Button>
-                        {s.premium && !isPremiumUser && (
-                          <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                            PREMIUM
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {targetLine && (
-                    <div className="mb-6">
-                      <div className="text-center text-sm text-gray-500 mb-1">Turn: {targetLine.speaker}</div>
-                      <div className="text-center text-2xl font-bold text-gray-800">{targetLine.text}</div>
-                    </div>
-                  )}
-
-                  <div className="text-center">
-                    <motion.button
-                      onClick={isListening ? stopListening : startListening}
-                      className={`w-28 h-28 rounded-full flex items-center justify-center text-white shadow-xl mx-auto mb-4 ${
-                        isListening ? 'bg-gradient-to-br from-red-400 to-red-600 animate-pulse' : 'bg-gradient-to-br from-blue-400 to-blue-600 hover:scale-110'
-                      } transition-all duration-300`}
-                      whileHover={{ scale: 1.06 }}
-                      whileTap={{ scale: 0.95 }}
-                      disabled={!targetLine}
-                    >
-                      {isListening ? <MicOff className="w-12 h-12" /> : <Mic className="w-12 h-12" />}
-                    </motion.button>
-                    <div className="text-gray-600 mb-4">
-                      {targetLine && targetLine.speaker === 'You' 
-                        ? 'Your turn: say the line' 
-                        : targetLine && targetLine.speaker !== 'You'
-                        ? 'Click mic to continue the conversation'
-                        : 'Listening to buddy...'
-                      }
-                    </div>
-
-                    {userSpeech && (
-                      <div className="bg-gray-100 rounded-xl p-3 inline-block">You said: <strong>"{userSpeech}"</strong></div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        )}
 
         {activityType === 'singspeak' && (
           <div className="max-w-4xl mx-auto">
@@ -919,59 +707,6 @@ export default function SpeakingModule() {
           </Card>
         </motion.div>
 
-        {/* Premium Modal */}
-        {showPremiumModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-2xl p-8 max-w-md mx-4"
-            >
-              <div className="text-center">
-                <Star className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">Premium Content</h3>
-                <p className="text-gray-600 mb-6">
-                  Unlock advanced dialogues with 10+ lines for professional conversations!
-                </p>
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl">
-                    <h4 className="font-bold text-gray-800 mb-2">Premium Features:</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Advanced restaurant dialogues (15+ lines)</li>
-                      <li>• Job interview scenarios (12+ lines)</li>
-                      <li>• Business meeting conversations</li>
-                      <li>• Travel planning discussions</li>
-                      <li>• Doctor visit consultations</li>
-                    </ul>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setShowPremiumModal(false)}
-                      className="flex-1"
-                    >
-                      Maybe Later
-                    </Button>
-                    <Button 
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          localStorage.setItem('isPremium', 'true')
-                          setIsPremiumUser(true)
-                          setShowPremiumModal(false)
-                          // Show success message
-                          alert('🎉 Premium unlocked! You now have access to all advanced dialogues!')
-                        }
-                      }}
-                      className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                    >
-                      Unlock Premium
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
       </div>
     </div>
   )
