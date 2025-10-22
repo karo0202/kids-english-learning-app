@@ -53,10 +53,32 @@ export default function SpeakingModule() {
       if (typeof window !== 'undefined') {
         const isPremium = localStorage.getItem('isPremium') === 'true'
         setIsPremiumUser(isPremium)
+        
+        // Debug: Log premium status
+        console.log('Premium status:', isPremium)
+        console.log('Premium user state:', isPremium)
+        
+        // For testing: Auto-unlock premium after 3 seconds
+        setTimeout(() => {
+          if (!isPremium) {
+            console.log('Auto-unlocking premium for testing...')
+            localStorage.setItem('isPremium', 'true')
+            setIsPremiumUser(true)
+          }
+        }, 3000)
       }
     }
     checkPremiumStatus()
   }, [])
+
+  // Add a debug function to unlock premium for testing
+  const unlockPremiumForTesting = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('isPremium', 'true')
+      setIsPremiumUser(true)
+      console.log('Premium unlocked for testing!')
+    }
+  }
 
   // Sing & Speak (karaoke) state
   type Song = { id: string; title: string; lines: string[] }
@@ -881,6 +903,17 @@ export default function SpeakingModule() {
                       <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2 rounded-full">
                         <Star className="w-4 h-4 text-yellow-600" />
                         <span className="text-sm font-semibold text-yellow-800">Premium Active</span>
+                      </div>
+                    )}
+                    {!isPremiumUser && (
+                      <div className="mt-2">
+                        <Button 
+                          onClick={unlockPremiumForTesting}
+                          size="sm"
+                          className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white"
+                        >
+                          🔓 Unlock Premium (Testing)
+                        </Button>
                       </div>
                     )}
                   </div>
