@@ -238,7 +238,9 @@ export default function SpeakingModule() {
     }
     loadSongs()
     // Initialize first roleplay line
-    setTargetLine(roleScenes[0].lines[0])
+    if (roleScenes.length > 0) {
+      setTargetLine(roleScenes[0].lines[0])
+    }
   }, [])
 
   const startListening = () => {
@@ -388,6 +390,7 @@ export default function SpeakingModule() {
 
   // Roleplay helpers
   const startScene = (index: number) => {
+    if (roleScenes.length === 0) return
     setSceneIndex(index)
     setLineIndex(0)
     const first = roleScenes[index].lines[0]
@@ -395,6 +398,7 @@ export default function SpeakingModule() {
   }
 
   const advanceLine = () => {
+    if (roleScenes.length === 0) return
     const scene = roleScenes[sceneIndex]
     const next = lineIndex + 1
     if (next >= scene.lines.length) {
@@ -411,8 +415,10 @@ export default function SpeakingModule() {
       
       setTimeout(() => {
         setShowFeedback(false)
-        const nextScene = (sceneIndex + 1) % roleScenes.length
-        startScene(nextScene)
+        if (roleScenes.length > 0) {
+          const nextScene = (sceneIndex + 1) % roleScenes.length
+          startScene(nextScene)
+        }
       }, 1800)
       return
     }
