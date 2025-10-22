@@ -959,12 +959,17 @@ export default function SpeakingModule() {
                       } transition-all duration-300`}
                       whileHover={{ scale: 1.06 }}
                       whileTap={{ scale: 0.95 }}
-                      disabled={!targetLine || targetLine.speaker !== 'You'}
+                      disabled={!targetLine}
                     >
                       {isListening ? <MicOff className="w-12 h-12" /> : <Mic className="w-12 h-12" />}
                     </motion.button>
                     <div className="text-gray-600 mb-4">
-                      {targetLine && targetLine.speaker === 'You' ? 'Your turn: say the line' : 'Listening to buddy...'}
+                      {targetLine && targetLine.speaker === 'You' 
+                        ? 'Your turn: say the line' 
+                        : targetLine && targetLine.speaker !== 'You'
+                        ? 'Click mic to continue the conversation'
+                        : 'Listening to buddy...'
+                      }
                     </div>
 
                     {userSpeech && (
