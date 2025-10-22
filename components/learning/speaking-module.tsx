@@ -92,51 +92,61 @@ export default function SpeakingModule() {
   type RoleScene = { title: string; lines: RoleLine[] }
   const roleScenes: RoleScene[] = [
     {
-      title: '🎮 Interactive Game Simulator',
+      title: '🏪 Restaurant Ordering',
       lines: [
-        { speaker: 'AI Assistant', text: 'Welcome to the Interactive Learning Simulator! I am your AI companion.' },
-        { speaker: 'You', text: 'Hello! I am excited to learn with you.' },
-        { speaker: 'AI Assistant', text: 'Great! Let us start with a fun challenge. Choose your difficulty level: Easy, Medium, or Hard?' },
-        { speaker: 'You', text: 'I choose Medium difficulty.' },
-        { speaker: 'AI Assistant', text: 'Perfect! Now, let us practice pronunciation. Say this word clearly: "Adventure"' },
-        { speaker: 'You', text: 'Adventure!' },
-        { speaker: 'AI Assistant', text: 'Excellent! Your pronunciation is 95% accurate. Let us try a sentence: "I love learning new things."' },
-        { speaker: 'You', text: 'I love learning new things.' },
-        { speaker: 'AI Assistant', text: 'Outstanding! You earned 50 points! Ready for the next challenge?' },
-        { speaker: 'You', text: 'Yes, I am ready for the next challenge!' },
-        { speaker: 'AI Assistant', text: 'Amazing! Now let us practice conversation skills. Imagine you are ordering food at a restaurant.' },
-        { speaker: 'You', text: 'I would like to order a pizza, please.' },
-        { speaker: 'AI Assistant', text: 'Perfect! You are doing great. Let us try a job interview scenario next.' },
-        { speaker: 'You', text: 'I am ready for the job interview practice.' },
-        { speaker: 'AI Assistant', text: 'Tell me about yourself and your skills.' },
-        { speaker: 'You', text: 'I am a hardworking person who loves to learn new things.' },
-        { speaker: 'AI Assistant', text: 'Fantastic! You completed all challenges. Your total score is 150 points!' }
+        { speaker: 'Waiter', text: 'Good evening! Welcome to our restaurant. How many people are in your party?' },
+        { speaker: 'You', text: 'Good evening! We have a table for two, please.' },
+        { speaker: 'Waiter', text: 'Perfect! Right this way. Here are your menus. I will be back in a few minutes to take your order.' },
+        { speaker: 'You', text: 'Thank you. Could you tell us about today specials?' },
+        { speaker: 'Waiter', text: 'Of course! Today we have grilled salmon with seasonal vegetables, and our chef special pasta with truffle cream sauce.' },
+        { speaker: 'You', text: 'That sounds delicious! I think I will have the salmon. How is it prepared?' },
+        { speaker: 'Waiter', text: 'The salmon is grilled to perfection with herbs and served with roasted asparagus and baby potatoes.' },
+        { speaker: 'You', text: 'Perfect! I will take the salmon, please. And could I have a glass of white wine to go with it?' },
+        { speaker: 'Waiter', text: 'Excellent choice! I recommend our house Chardonnay. It pairs beautifully with the salmon.' },
+        { speaker: 'You', text: 'That sounds perfect. Thank you for the recommendation.' },
+        { speaker: 'Waiter', text: 'My pleasure! I will bring your wine shortly and your meal will be ready in about 20 minutes.' },
+        { speaker: 'You', text: 'Wonderful! We are looking forward to it. Thank you for the excellent service.' }
       ]
     },
     {
-      title: '🚀 Space Adventure Simulator',
+      title: '💼 Job Interview',
       lines: [
-        { speaker: 'Mission Control', text: 'Welcome, astronaut! You are about to embark on an exciting space mission.' },
-        { speaker: 'You', text: 'I am ready for the space adventure!' },
-        { speaker: 'Mission Control', text: 'Excellent! First, let us check your spacesuit. Say: "All systems are go!"' },
-        { speaker: 'You', text: 'All systems are go!' },
-        { speaker: 'Mission Control', text: 'Perfect! Now, prepare for launch. Countdown from 10 to 1.' },
-        { speaker: 'You', text: '10, 9, 8, 7, 6, 5, 4, 3, 2, 1, blast off!' },
-        { speaker: 'Mission Control', text: 'Amazing! You are now in space. What do you see out the window?' },
-        { speaker: 'You', text: 'I can see the beautiful Earth and many stars!' },
-        { speaker: 'Mission Control', text: 'Fantastic! You have successfully completed your space mission. Welcome back to Earth!' }
+        { speaker: 'Interviewer', text: 'Good morning! Thank you for coming in today. I am Sarah, the hiring manager. Please, have a seat.' },
+        { speaker: 'You', text: 'Good morning, Sarah! Thank you for having me. I am very excited about this opportunity.' },
+        { speaker: 'Interviewer', text: 'Great! Let us start with you telling me a bit about yourself and your background.' },
+        { speaker: 'You', text: 'I have five years of experience in marketing, with a focus on digital campaigns and social media strategy.' },
+        { speaker: 'Interviewer', text: 'That is impressive! Can you tell me about a challenging project you have worked on recently?' },
+        { speaker: 'You', text: 'Certainly! I led a campaign that increased our social media engagement by 300% in just three months.' },
+        { speaker: 'Interviewer', text: 'Wow, that is remarkable! How did you achieve such impressive results?' },
+        { speaker: 'You', text: 'We implemented a data-driven approach, analyzed our audience behavior, and created targeted content for each platform.' },
+        { speaker: 'Interviewer', text: 'Excellent! What do you think are the most important skills for this position?' },
+        { speaker: 'You', text: 'I believe creativity, analytical thinking, and strong communication skills are essential for marketing success.' },
+        { speaker: 'Interviewer', text: 'I agree completely. Do you have any questions about the role or our company?' },
+        { speaker: 'You', text: 'Yes, I would love to know more about the team structure and growth opportunities within the company.' },
+        { speaker: 'Interviewer', text: 'Great question! We have a collaborative team of 12, and we offer excellent professional development programs.' },
+        { speaker: 'You', text: 'That sounds like a perfect environment for growth. I am very interested in contributing to your team success.' },
+        { speaker: 'Interviewer', text: 'Wonderful! We will be in touch within the next week. Thank you for your time today.' }
       ]
     },
     {
-      title: '🏥 Medical Simulator',
+      title: '🏥 Doctor Visit',
       lines: [
-        { speaker: 'Dr. Smith', text: 'Welcome to the Medical Training Simulator! I am Dr. Smith, your instructor.' },
-        { speaker: 'You', text: 'Hello, Dr. Smith. I am ready to learn about medicine.' },
-        { speaker: 'Dr. Smith', text: 'Great! Let us start with basic medical terms. Say: "Stethoscope"' },
-        { speaker: 'You', text: 'Stethoscope.' },
-        { speaker: 'Dr. Smith', text: 'Excellent! Now, imagine you are checking a patient. What would you say?' },
-        { speaker: 'You', text: 'How are you feeling today? Can you describe your symptoms?' },
-        { speaker: 'Dr. Smith', text: 'Perfect! You are showing great medical communication skills. Keep practicing!' }
+        { speaker: 'Doctor', text: 'Good morning! I am Dr. Smith. What brings you in today?' },
+        { speaker: 'You', text: 'Good morning, Doctor. I have been experiencing headaches and fatigue for the past two weeks.' },
+        { speaker: 'Doctor', text: 'I am sorry to hear that. Can you describe the headaches? When do they typically occur?' },
+        { speaker: 'You', text: 'They usually start in the morning and last most of the day. They are quite intense and sometimes make me nauseous.' },
+        { speaker: 'Doctor', text: 'That sounds concerning. Have you noticed any changes in your sleep patterns or stress levels recently?' },
+        { speaker: 'You', text: 'Yes, I have been working longer hours and having trouble sleeping. I wake up feeling tired.' },
+        { speaker: 'Doctor', text: 'I see. Let me check your blood pressure and examine your eyes. Please look straight ahead.' },
+        { speaker: 'You', text: 'Of course. Is everything looking normal?' },
+        { speaker: 'Doctor', text: 'Your blood pressure is slightly elevated. I would like to run some blood tests to rule out any underlying conditions.' },
+        { speaker: 'You', text: 'That sounds like a good idea. What kind of tests will you be doing?' },
+        { speaker: 'Doctor', text: 'We will check your blood sugar, thyroid function, and complete blood count. I will also recommend a sleep study.' },
+        { speaker: 'You', text: 'A sleep study? Do you think I might have sleep apnea?' },
+        { speaker: 'Doctor', text: 'It is possible. Your symptoms could be related to sleep quality. In the meantime, try to maintain regular sleep hours.' },
+        { speaker: 'You', text: 'I will do my best. Should I avoid anything specific while we wait for the results?' },
+        { speaker: 'Doctor', text: 'Avoid caffeine after 2 PM, limit screen time before bed, and try relaxation techniques. I will call you with results in 3-5 days.' },
+        { speaker: 'You', text: 'Thank you, Doctor. I appreciate your thorough approach to my concerns.' }
       ]
     },
     {
