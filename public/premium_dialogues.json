@@ -1,0 +1,122 @@
+[
+  {
+    "id": "premium_1",
+    "title": "At the Restaurant - Full Service",
+    "difficulty": "Advanced",
+    "lines": 12,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Waiter", "text": "Good evening! Welcome to our restaurant. How many people are in your party?"},
+      {"speaker": "Customer", "text": "Good evening! We have a table for four, please."},
+      {"speaker": "Waiter", "text": "Perfect! Right this way. Here are your menus. I'll be back in a few minutes to take your order."},
+      {"speaker": "Customer", "text": "Thank you. Could you tell us about today's specials?"},
+      {"speaker": "Waiter", "text": "Of course! Today we have grilled salmon with seasonal vegetables, and our chef's special pasta with truffle cream sauce."},
+      {"speaker": "Customer", "text": "That sounds delicious! I think I'll have the salmon. How is it prepared?"},
+      {"speaker": "Waiter", "text": "The salmon is grilled to perfection with herbs and served with roasted asparagus and baby potatoes."},
+      {"speaker": "Customer", "text": "Perfect! I'll take the salmon, please. And could I have a glass of white wine to go with it?"},
+      {"speaker": "Waiter", "text": "Excellent choice! I recommend our house Chardonnay. It pairs beautifully with the salmon."},
+      {"speaker": "Customer", "text": "That sounds perfect. Thank you for the recommendation."},
+      {"speaker": "Waiter", "text": "My pleasure! I'll bring your wine shortly and your meal will be ready in about 20 minutes."},
+      {"speaker": "Customer", "text": "Wonderful! We're looking forward to it. Thank you for the excellent service."}
+    ]
+  },
+  {
+    "id": "premium_2", 
+    "title": "Job Interview - Complete Process",
+    "difficulty": "Advanced",
+    "lines": 15,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Interviewer", "text": "Good morning! Thank you for coming in today. I'm Sarah, the hiring manager. Please, have a seat."},
+      {"speaker": "Candidate", "text": "Good morning, Sarah! Thank you for having me. I'm very excited about this opportunity."},
+      {"speaker": "Interviewer", "text": "Great! Let's start with you telling me a bit about yourself and your background."},
+      {"speaker": "Candidate", "text": "I have five years of experience in marketing, with a focus on digital campaigns and social media strategy."},
+      {"speaker": "Interviewer", "text": "That's impressive! Can you tell me about a challenging project you've worked on recently?"},
+      {"speaker": "Candidate", "text": "Certainly! I led a campaign that increased our social media engagement by 300% in just three months."},
+      {"speaker": "Interviewer", "text": "Wow, that's remarkable! How did you achieve such impressive results?"},
+      {"speaker": "Candidate", "text": "We implemented a data-driven approach, analyzed our audience behavior, and created targeted content for each platform."},
+      {"speaker": "Interviewer", "text": "Excellent! What do you think are the most important skills for this position?"},
+      {"speaker": "Candidate", "text": "I believe creativity, analytical thinking, and strong communication skills are essential for marketing success."},
+      {"speaker": "Interviewer", "text": "I agree completely. Do you have any questions about the role or our company?"},
+      {"speaker": "Candidate", "text": "Yes, I'd love to know more about the team structure and growth opportunities within the company."},
+      {"speaker": "Interviewer", "text": "Great question! We have a collaborative team of 12, and we offer excellent professional development programs."},
+      {"speaker": "Candidate", "text": "That sounds like a perfect environment for growth. I'm very interested in contributing to your team's success."},
+      {"speaker": "Interviewer", "text": "Wonderful! We'll be in touch within the next week. Thank you for your time today."}
+    ]
+  },
+  {
+    "id": "premium_3",
+    "title": "Travel Planning - Complete Trip",
+    "difficulty": "Advanced", 
+    "lines": 18,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Travel Agent", "text": "Good afternoon! I'm here to help you plan your dream vacation. Where would you like to go?"},
+      {"speaker": "Customer", "text": "Hello! We're thinking about a two-week trip to Europe, visiting multiple countries."},
+      {"speaker": "Travel Agent", "text": "Excellent choice! Europe has so much to offer. Which countries are you most interested in?"},
+      {"speaker": "Customer", "text": "We'd love to see France, Italy, and Spain. We're particularly interested in art, history, and cuisine."},
+      {"speaker": "Travel Agent", "text": "Perfect! Those countries offer incredible cultural experiences. What's your budget range?"},
+      {"speaker": "Customer", "text": "We're looking at around $5,000 per person, including flights, hotels, and some guided tours."},
+      {"speaker": "Travel Agent", "text": "That's a good budget for a quality European experience. I recommend starting in Paris, then Rome, and ending in Barcelona."},
+      {"speaker": "Customer", "text": "That sounds like a wonderful itinerary! What would be the best time of year to travel?"},
+      {"speaker": "Travel Agent", "text": "Spring and fall offer the best weather and fewer crowds. I'd suggest April-May or September-October."},
+      {"speaker": "Customer", "text": "September sounds perfect! We love autumn weather. What about accommodations?"},
+      {"speaker": "Travel Agent", "text": "I can arrange boutique hotels in each city, centrally located near major attractions and public transportation."},
+      {"speaker": "Customer", "text": "That would be ideal! We want to experience the local culture and cuisine."},
+      {"speaker": "Travel Agent", "text": "Excellent! I'll include food tours, cooking classes, and recommendations for authentic local restaurants."},
+      {"speaker": "Customer", "text": "Perfect! We're also interested in some guided tours of historical sites and museums."},
+      {"speaker": "Travel Agent", "text": "I'll arrange private guides for the Louvre, Colosseum, and Sagrada Familia, plus skip-the-line tickets."},
+      {"speaker": "Customer", "text": "That sounds amazing! What about transportation between cities?"},
+      {"speaker": "Travel Agent", "text": "I recommend high-speed trains - comfortable, scenic, and environmentally friendly. Much better than flying!"},
+      {"speaker": "Customer", "text": "Wonderful! This sounds like the trip of a lifetime. When can we finalize the booking?"}
+    ]
+  },
+  {
+    "id": "premium_4",
+    "title": "Business Meeting - Project Discussion",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Manager", "text": "Good morning everyone! Thank you for joining today's meeting. Let's start with the quarterly review."},
+      {"speaker": "Team Lead", "text": "Good morning! I'm pleased to report that our Q3 results exceeded expectations by 15%."},
+      {"speaker": "Manager", "text": "That's fantastic news! What were the key factors driving this success?"},
+      {"speaker": "Team Lead", "text": "Our new marketing strategy and improved customer service protocols made a significant impact."},
+      {"speaker": "Manager", "text": "Excellent work! Now, let's discuss the upcoming product launch. Sarah, can you update us on the timeline?"},
+      {"speaker": "Sarah", "text": "We're on track for the December launch. All development milestones have been met ahead of schedule."},
+      {"speaker": "Manager", "text": "Outstanding! What about the marketing campaign? Are we ready to start promoting?"},
+      {"speaker": "Marketing", "text": "Yes! We've prepared a comprehensive campaign including social media, email marketing, and influencer partnerships."},
+      {"speaker": "Manager", "text": "Perfect! What's our budget allocation for the launch campaign?"},
+      {"speaker": "Marketing", "text": "We've allocated $50,000 for digital marketing and $25,000 for traditional advertising channels."},
+      {"speaker": "Manager", "text": "That sounds reasonable. What about potential challenges or risks we should consider?"},
+      {"speaker": "Team Lead", "text": "Our main concern is supply chain delays, but we have backup suppliers ready if needed."},
+      {"speaker": "Manager", "text": "Good thinking! Let's schedule weekly check-ins to monitor progress. Any other concerns?"},
+      {"speaker": "Sarah", "text": "I think we're well-prepared. The team is excited and ready to make this launch a huge success!"}
+    ]
+  },
+  {
+    "id": "premium_5",
+    "title": "Doctor Visit - Complete Consultation",
+    "difficulty": "Advanced",
+    "lines": 16,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Doctor", "text": "Good morning! I'm Dr. Smith. What brings you in today?"},
+      {"speaker": "Patient", "text": "Good morning, Doctor. I've been experiencing headaches and fatigue for the past two weeks."},
+      {"speaker": "Doctor", "text": "I'm sorry to hear that. Can you describe the headaches? When do they typically occur?"},
+      {"speaker": "Patient", "text": "They usually start in the morning and last most of the day. They're quite intense and sometimes make me nauseous."},
+      {"speaker": "Doctor", "text": "That sounds concerning. Have you noticed any changes in your sleep patterns or stress levels recently?"},
+      {"speaker": "Patient", "text": "Yes, I've been working longer hours and having trouble sleeping. I wake up feeling tired."},
+      {"speaker": "Doctor", "text": "I see. Let me check your blood pressure and examine your eyes. Please look straight ahead."},
+      {"speaker": "Patient", "text": "Of course. Is everything looking normal?"},
+      {"speaker": "Doctor", "text": "Your blood pressure is slightly elevated. I'd like to run some blood tests to rule out any underlying conditions."},
+      {"speaker": "Patient", "text": "That sounds like a good idea. What kind of tests will you be doing?"},
+      {"speaker": "Doctor", "text": "We'll check your blood sugar, thyroid function, and complete blood count. I'll also recommend a sleep study."},
+      {"speaker": "Patient", "text": "A sleep study? Do you think I might have sleep apnea?"},
+      {"speaker": "Doctor", "text": "It's possible. Your symptoms could be related to sleep quality. In the meantime, try to maintain regular sleep hours."},
+      {"speaker": "Patient", "text": "I'll do my best. Should I avoid anything specific while we wait for the results?"},
+      {"speaker": "Doctor", "text": "Avoid caffeine after 2 PM, limit screen time before bed, and try relaxation techniques. I'll call you with results in 3-5 days."},
+      {"speaker": "Patient", "text": "Thank you, Doctor. I appreciate your thorough approach to my concerns."}
+    ]
+  }
+]

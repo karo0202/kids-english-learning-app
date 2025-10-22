@@ -41,6 +41,11 @@ export default function SpeakingModule() {
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [lastResult, setLastResult] = useState<{ word: string; transcript: string; correct: boolean } | null>(null)
   const advancingRef = useRef<boolean>(false)
+  
+  // Premium content state
+  const [premiumDialogues, setPremiumDialogues] = useState<any[]>([])
+  const [isPremiumUser, setIsPremiumUser] = useState(false)
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
 
   // Sing & Speak (karaoke) state
   type Song = { id: string; title: string; lines: string[] }
@@ -121,6 +126,50 @@ export default function SpeakingModule() {
         { speaker: 'Buddy', text: 'Here you go. Enjoy!' },
         { speaker: 'You', text: 'Yum! This is a perfect meal.' }
       ]
+    },
+    {
+      title: 'Premium: Restaurant Full Service (15+ lines)',
+      lines: [
+        { speaker: 'Waiter', text: 'Good evening! Welcome to our restaurant. How many people are in your party?' },
+        { speaker: 'You', text: 'Good evening! We have a table for four, please.' },
+        { speaker: 'Waiter', text: 'Perfect! Right this way. Here are your menus. I will be back in a few minutes to take your order.' },
+        { speaker: 'You', text: 'Thank you. Could you tell us about today specials?' },
+        { speaker: 'Waiter', text: 'Of course! Today we have grilled salmon with seasonal vegetables, and our chef special pasta with truffle cream sauce.' },
+        { speaker: 'You', text: 'That sounds delicious! I think I will have the salmon. How is it prepared?' },
+        { speaker: 'Waiter', text: 'The salmon is grilled to perfection with herbs and served with roasted asparagus and baby potatoes.' },
+        { speaker: 'You', text: 'Perfect! I will take the salmon, please. And could I have a glass of white wine to go with it?' },
+        { speaker: 'Waiter', text: 'Excellent choice! I recommend our house Chardonnay. It pairs beautifully with the salmon.' },
+        { speaker: 'You', text: 'That sounds perfect. Thank you for the recommendation.' },
+        { speaker: 'Waiter', text: 'My pleasure! I will bring your wine shortly and your meal will be ready in about 20 minutes.' },
+        { speaker: 'You', text: 'Wonderful! We are looking forward to it. Thank you for the excellent service.' },
+        { speaker: 'Waiter', text: 'You are very welcome! Is there anything else I can get for you while you wait?' },
+        { speaker: 'You', text: 'Actually, could you tell us more about the wine selection? We are interested in learning.' },
+        { speaker: 'Waiter', text: 'Absolutely! We have an excellent collection of wines from around the world. Would you like a wine tasting?' },
+        { speaker: 'You', text: 'That would be wonderful! We would love to learn about different wines.' },
+        { speaker: 'Waiter', text: 'Perfect! I will arrange a small tasting for your table. This will be a great experience.' }
+      ],
+      premium: true
+    },
+    {
+      title: 'Premium: Job Interview (12+ lines)',
+      lines: [
+        { speaker: 'Interviewer', text: 'Good morning! Thank you for coming in today. I am Sarah, the hiring manager. Please, have a seat.' },
+        { speaker: 'You', text: 'Good morning, Sarah! Thank you for having me. I am very excited about this opportunity.' },
+        { speaker: 'Interviewer', text: 'Great! Let us start with you telling me a bit about yourself and your background.' },
+        { speaker: 'You', text: 'I have five years of experience in marketing, with a focus on digital campaigns and social media strategy.' },
+        { speaker: 'Interviewer', text: 'That is impressive! Can you tell me about a challenging project you have worked on recently?' },
+        { speaker: 'You', text: 'Certainly! I led a campaign that increased our social media engagement by 300% in just three months.' },
+        { speaker: 'Interviewer', text: 'Wow, that is remarkable! How did you achieve such impressive results?' },
+        { speaker: 'You', text: 'We implemented a data-driven approach, analyzed our audience behavior, and created targeted content for each platform.' },
+        { speaker: 'Interviewer', text: 'Excellent! What do you think are the most important skills for this position?' },
+        { speaker: 'You', text: 'I believe creativity, analytical thinking, and strong communication skills are essential for marketing success.' },
+        { speaker: 'Interviewer', text: 'I agree completely. Do you have any questions about the role or our company?' },
+        { speaker: 'You', text: 'Yes, I would love to know more about the team structure and growth opportunities within the company.' },
+        { speaker: 'Interviewer', text: 'Great question! We have a collaborative team of 12, and we offer excellent professional development programs.' },
+        { speaker: 'You', text: 'That sounds like a perfect environment for growth. I am very interested in contributing to your team success.' },
+        { speaker: 'Interviewer', text: 'Wonderful! We will be in touch within the next week. Thank you for your time today.' }
+      ],
+      premium: true
     },
     {
       title: 'Getting Ready for School',
@@ -821,9 +870,21 @@ export default function SpeakingModule() {
 
                   <div className="flex flex-wrap gap-2 justify-center mb-6">
                     {roleScenes.map((s, i) => (
-                      <Button key={i} variant={sceneIndex === i ? 'default' : 'outline'} onClick={() => startScene(i)}>
-                        {s.title}
-                      </Button>
+                      <div key={i} className="relative">
+                        <Button 
+                          variant={sceneIndex === i ? 'default' : 'outline'} 
+                          onClick={() => s.premium && !isPremiumUser ? setShowPremiumModal(true) : startScene(i)}
+                          className={s.premium && !isPremiumUser ? 'opacity-60' : ''}
+                        >
+                          {s.premium && <Star className="w-4 h-4 mr-2 text-yellow-500" />}
+                          {s.title}
+                        </Button>
+                        {s.premium && !isPremiumUser && (
+                          <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            PREMIUM
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
 
@@ -936,6 +997,56 @@ export default function SpeakingModule() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Premium Modal */}
+        {showPremiumModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl p-8 max-w-md mx-4"
+            >
+              <div className="text-center">
+                <Star className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Premium Content</h3>
+                <p className="text-gray-600 mb-6">
+                  Unlock advanced dialogues with 10+ lines for professional conversations!
+                </p>
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl">
+                    <h4 className="font-bold text-gray-800 mb-2">Premium Features:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Advanced restaurant dialogues (15+ lines)</li>
+                      <li>• Job interview scenarios (12+ lines)</li>
+                      <li>• Business meeting conversations</li>
+                      <li>• Travel planning discussions</li>
+                      <li>• Doctor visit consultations</li>
+                    </ul>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowPremiumModal(false)}
+                      className="flex-1"
+                    >
+                      Maybe Later
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        localStorage.setItem('isPremium', 'true')
+                        setIsPremiumUser(true)
+                        setShowPremiumModal(false)
+                      }}
+                      className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                    >
+                      Unlock Premium
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   )
