@@ -47,6 +47,17 @@ export default function SpeakingModule() {
   const [isPremiumUser, setIsPremiumUser] = useState(false)
   const [showPremiumModal, setShowPremiumModal] = useState(false)
 
+  // Check premium status on component mount
+  useEffect(() => {
+    const checkPremiumStatus = () => {
+      if (typeof window !== 'undefined') {
+        const isPremium = localStorage.getItem('isPremium') === 'true'
+        setIsPremiumUser(isPremium)
+      }
+    }
+    checkPremiumStatus()
+  }, [])
+
   // Sing & Speak (karaoke) state
   type Song = { id: string; title: string; lines: string[] }
   const [songs, setSongs] = useState<Song[]>([])
@@ -866,6 +877,12 @@ export default function SpeakingModule() {
                   <div className="text-center mb-6">
                     <h3 className="text-3xl font-bold text-gray-800 mb-2">Role Play Dialogues</h3>
                     <p className="text-gray-600">Practice speaking in short conversations.</p>
+                    {isPremiumUser && (
+                      <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2 rounded-full">
+                        <Star className="w-4 h-4 text-yellow-600" />
+                        <span className="text-sm font-semibold text-yellow-800">Premium Active</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-2 justify-center mb-6">
@@ -873,7 +890,13 @@ export default function SpeakingModule() {
                       <div key={i} className="relative">
                         <Button 
                           variant={sceneIndex === i ? 'default' : 'outline'} 
-                          onClick={() => s.premium && !isPremiumUser ? setShowPremiumModal(true) : startScene(i)}
+                          onClick={() => {
+                            if (s.premium && !isPremiumUser) {
+                              setShowPremiumModal(true)
+                            } else {
+                              startScene(i)
+                            }
+                          }}
                           className={s.premium && !isPremiumUser ? 'opacity-60' : ''}
                         >
                           {s.premium && <Star className="w-4 h-4 mr-2 text-yellow-500" />}
@@ -1033,9 +1056,13 @@ export default function SpeakingModule() {
                     </Button>
                     <Button 
                       onClick={() => {
-                        localStorage.setItem('isPremium', 'true')
-                        setIsPremiumUser(true)
-                        setShowPremiumModal(false)
+                        if (typeof window !== 'undefined') {
+                          localStorage.setItem('isPremium', 'true')
+                          setIsPremiumUser(true)
+                          setShowPremiumModal(false)
+                          // Show success message
+                          alert('🎉 Premium unlocked! You now have access to all advanced dialogues!')
+                        }
                       }}
                       className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
                     >
