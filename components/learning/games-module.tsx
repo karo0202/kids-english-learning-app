@@ -860,7 +860,13 @@ export default function GamesModule() {
                           onClick={() => {
                             setHuntSelection(sel => sel.some(p => p.r===r && p.c===c) ? sel.filter(p => !(p.r===r && p.c===c)) : [...sel, { r, c }])
                           }}
-                          className={`w-10 h-10 m-[2px] rounded-lg font-bold ${cell.found ? 'bg-green-200 text-green-900' : 'bg-white text-gray-800 border'} ${huntSelection.some(p => p.r===r && p.c===c) ? 'ring-2 ring-purple-400' : ''}`}
+                          className={`w-10 h-10 m-[2px] rounded-lg font-bold transition-all duration-200 ${
+                            cell.found 
+                              ? 'bg-green-200 text-green-900 border-2 border-green-400' 
+                              : huntSelection.some(p => p.r===r && p.c===c)
+                                ? 'bg-purple-200 text-purple-900 border-2 border-purple-400 ring-2 ring-purple-300'
+                                : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
+                          }`}
                         >
                           {cell.letter}
                         </button>
@@ -869,23 +875,55 @@ export default function GamesModule() {
                     <div className="mt-4 flex gap-3">
                       <Button variant="outline" onClick={() => setHuntSelection([])}>Clear Selection</Button>
                       <Button className="btn-primary-kid" onClick={() => {
-                        if (huntSelection.length < 2) { setHuntSelection([]); return }
-                        const rows = huntSelection.map(p=>p.r), cols = huntSelection.map(p=>p.c)
-                        const dr = Math.sign(rows[rows.length-1]-rows[0])
-                        const dc = Math.sign(cols[cols.length-1]-cols[0])
-                        for (let i=1;i<huntSelection.length;i++) {
-                          if (huntSelection[i].r !== huntSelection[0].r + dr*i || huntSelection[i].c !== huntSelection[0].c + dc*i) { setHuntSelection([]); return }
+                        if (huntSelection.length < 2) { 
+                          setHuntSelection([]); 
+                          return 
                         }
-                        const str = huntSelection.map(p => huntGrid[p.r][p.c].letter).join('')
+                        
+                        // Sort selection to ensure proper order
+                        const sortedSelection = [...huntSelection].sort((a, b) => {
+                          if (a.r !== b.r) return a.r - b.r
+                          return a.c - b.c
+                        })
+                        
+                        const rows = sortedSelection.map(p => p.r)
+                        const cols = sortedSelection.map(p => p.c)
+                        
+                        // Check if selection forms a straight line
+                        const isHorizontal = rows.every(r => r === rows[0])
+                        const isVertical = cols.every(c => c === cols[0])
+                        const isDiagonal = rows.every((r, i) => r === rows[0] + (i * (rows[1] - rows[0]))) && 
+                                         cols.every((c, i) => c === cols[0] + (i * (cols[1] - cols[0])))
+                        
+                        if (!isHorizontal && !isVertical && !isDiagonal) {
+                          setHuntSelection([])
+                          return
+                        }
+                        
+                        const str = sortedSelection.map(p => huntGrid[p.r][p.c].letter).join('')
                         const strRev = str.split('').reverse().join('')
                         const match = huntWords.find(w => w === str || w === strRev)
+                        
                         if (match && !foundWords.includes(match)) {
                           setFoundWords(prev => [...prev, match])
                           const newGrid = huntGrid.map(row => row.map(cell => ({...cell})))
-                          huntSelection.forEach(p => newGrid[p.r][p.c].found = true)
+                          sortedSelection.forEach(p => newGrid[p.r][p.c].found = true)
                           setHuntGrid(newGrid)
                           setScore(s => s + 10)
+                          
+                          // Show success feedback
+                          if (foundWords.length + 1 === huntWords.length) {
+                            // All words found!
+                            setScore(s => s + 50) // Bonus points
+                          }
+                        } else if (match && foundWords.includes(match)) {
+                          // Word already found
+                          console.log('Word already found!')
+                        } else {
+                          // Invalid word
+                          console.log('Invalid word selection!')
                         }
+                        
                         setHuntSelection([])
                       }}>Check Selection</Button>
                     </div>
@@ -897,8 +935,16 @@ export default function GamesModule() {
                         <div key={w} className={`px-3 py-2 rounded-lg text-center text-sm ${foundWords.includes(w) ? 'bg-green-100 text-green-800 line-through' : 'bg-gray-100 text-gray-700'}`}>{w}</div>
                       ))}
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 space-y-2">
                       <Button variant="outline" onClick={() => generateHunt(huntWords, huntSize)}>Regenerate</Button>
+                      <div className="text-sm text-gray-600">
+                        Found: {foundWords.length} / {huntWords.length} words
+                      </div>
+                      {foundWords.length === huntWords.length && (
+                        <div className="text-green-600 font-bold text-sm">
+                          🎉 Congratulations! You found all words!
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
