@@ -125,12 +125,51 @@ export default function WritingModule() {
   const getDefaultWordBuildingWords = (): WordBuildingWord[] => {
     const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
     return [
+    // Animals
     {
       word: 'CAT',
       letters: ['C', 'A', 'T', 'D', 'O', 'G'],
       hint: 'A furry pet that says "meow"',
       imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     },
+    {
+      word: 'DOG',
+      letters: ['D', 'O', 'G', 'C', 'A', 'T'],
+      hint: 'A loyal pet that says "woof"',
+      imageUrl: `https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'BIRD',
+      letters: ['B', 'I', 'R', 'D', 'F', 'L'],
+      hint: 'A flying animal with feathers',
+      imageUrl: `https://images.unsplash.com/photo-1444464666168-49d633b86797?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'FISH',
+      letters: ['F', 'I', 'S', 'H', 'W', 'A'],
+      hint: 'A swimming animal that lives in water',
+      imageUrl: `https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // Colors
+    {
+      word: 'RED',
+      letters: ['R', 'E', 'D', 'B', 'L', 'U'],
+      hint: 'The color of apples and roses',
+      imageUrl: `https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'BLUE',
+      letters: ['B', 'L', 'U', 'E', 'R', 'D'],
+      hint: 'The color of the sky and ocean',
+      imageUrl: `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'GREEN',
+      letters: ['G', 'R', 'E', 'E', 'N', 'B'],
+      hint: 'The color of grass and leaves',
+      imageUrl: `https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // Nature
     {
       word: 'SUN',
       letters: ['S', 'U', 'N', 'M', 'O', 'R'],
@@ -144,6 +183,32 @@ export default function WritingModule() {
       imageUrl: `https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     },
     {
+      word: 'MOON',
+      letters: ['M', 'O', 'O', 'N', 'S', 'U'],
+      hint: 'Bright light in the night sky',
+      imageUrl: `https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // Food
+    {
+      word: 'CAKE',
+      letters: ['C', 'A', 'K', 'E', 'B', 'A'],
+      hint: 'A sweet dessert for celebrations',
+      imageUrl: `https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'APPLE',
+      letters: ['A', 'P', 'P', 'L', 'E', 'R'],
+      hint: 'A round red or green fruit',
+      imageUrl: `https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // Objects
+    {
+      word: 'BALL',
+      letters: ['B', 'A', 'L', 'L', 'T', 'O'],
+      hint: 'Round toy for playing',
+      imageUrl: `https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
       word: 'HOUSE',
       letters: ['H', 'O', 'U', 'S', 'E', 'H'],
       hint: 'A place where people live',
@@ -154,12 +219,6 @@ export default function WritingModule() {
       letters: ['F', 'A', 'M', 'I', 'L', 'Y'],
       hint: 'People who live with you',
       imageUrl: `https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&h=300&fit=crop&crop=center${cacheBuster}`
-    },
-    {
-      word: 'BALL',
-      letters: ['B', 'A', 'L', 'L', 'T', 'O'],
-      hint: 'Round toy for playing',
-      imageUrl: `https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     }
   ]
   }
@@ -824,11 +883,11 @@ export default function WritingModule() {
                   </div>
 
                   <div className="mobile-canvas-container">
-                    <canvas
+                  <canvas
                     ref={canvasRef}
                     width={300}
                     height={300}
-                    className="border-4 border-gray-200 rounded-2xl mx-auto bg-white cursor-crosshair touch-none select-none"
+                    className="border-4 border-gray-300 rounded-2xl mx-auto bg-white cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50"
                     style={{ touchAction: 'none', userSelect: 'none' }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
@@ -861,6 +920,10 @@ export default function WritingModule() {
                       e.stopPropagation()
                       stopDrawing()
                     }}
+                    tabIndex={0}
+                    role="img"
+                    aria-label={`Drawing canvas for letter ${currentLetter?.letter}. Use mouse or touch to trace the letter.`}
+                    aria-describedby="canvas-instructions"
                   />
                   </div>
 
@@ -893,14 +956,14 @@ export default function WritingModule() {
                         className="px-4 py-2"
                       >
                         <RotateCcw className="w-4 h-4 mr-1" />
-                        Clear
-                      </Button>
+                      Clear
+                    </Button>
                       <Button 
                         onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}
                         className="px-4 py-2"
                       >
                         Next
-                      </Button>
+                    </Button>
                     </div>
                   </div>
 

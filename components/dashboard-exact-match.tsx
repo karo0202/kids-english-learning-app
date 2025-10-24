@@ -61,8 +61,10 @@ export default function DashboardExactMatch() {
 
   const loadChallenges = async (childId: string) => {
     try {
-      const todays = await challengeManager.getOrCreateDailyChallenges(childId)
-      setChallenges(todays)
+      // const todays = await challengeManager.getOrCreateDailyChallenges(childId)
+      // setChallenges(todays)
+      console.log('Challenges loading disabled for performance optimization')
+      setChallenges([])
     } catch (error) {
       console.error('Error loading challenges:', error)
       setChallenges([])

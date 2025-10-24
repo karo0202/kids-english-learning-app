@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
+import { getUserSession } from '@/lib/simple-auth'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -11,7 +12,8 @@ import {
   Mic, PenTool, Gamepad2, User, Trophy, Star, 
   Settings, LogOut, BookOpen, Target, Gift, Crown, Zap, Bell
 } from 'lucide-react'
-import { signOut } from 'next-auth/react'
+// import { signOut } from 'next-auth/react'
+import { clearUserSession } from '@/lib/simple-auth'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { progressManager } from '@/lib/progress'
@@ -29,7 +31,12 @@ interface Child {
 }
 
 export default function EnhancedDashboardNew() {
-  const { data: session } = useSession() || {}
+  const [session, setSession] = useState<any>(null)
+  
+  useEffect(() => {
+    const userSession = getUserSession()
+    setSession({ user: userSession })
+  }, [])
   const router = useRouter()
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
   const [children, setChildren] = useState<Child[]>([])
@@ -44,10 +51,10 @@ export default function EnhancedDashboardNew() {
   }, [])
 
   const initializeProgress = async () => {
-    if (session?.user?.id) {
+    if (session?.user?.email) {
       // Load user progress
-      const userProgress = progressManager.loadProgress(session.user.id) || 
-                          progressManager.initializeProgress(session.user.id)
+      const userProgress = progressManager.loadProgress(session.user.email) ||
+                           progressManager.initializeProgress(session.user.email)
       setProgress(userProgress)
     }
   }
@@ -199,7 +206,7 @@ export default function EnhancedDashboardNew() {
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-100" onClick={() => router.push('/parent-dashboard')}>
               <User className="w-5 h-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-100" onClick={() => signOut()}>
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-100" onClick={() => { clearUserSession(); router.push('/login'); }}>
               <LogOut className="w-5 h-5" />
             </Button>
           </div>

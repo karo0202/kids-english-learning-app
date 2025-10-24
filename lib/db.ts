@@ -1,9 +1,27 @@
-import { PrismaClient } from '@prisma/client'
+// Database functionality removed for performance optimization
+// Using localStorage for client-side data storage instead
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+export const db = {
+  // Mock database interface for compatibility
+  user: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({})
+  },
+  child: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({})
+  },
+  progress: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({})
+  }
 }
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma

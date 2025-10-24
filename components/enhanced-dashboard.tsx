@@ -17,7 +17,8 @@ import {
   Calendar,
   Crown
 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
+import { getUserSession } from '@/lib/simple-auth'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { progressManager } from '@/lib/progress'
@@ -32,7 +33,12 @@ import {
 } from '@/components/ui/enhanced'
 
 export default function EnhancedDashboard() {
-  const { data: session } = useSession()
+  const [session, setSession] = useState<any>(null)
+  
+  useEffect(() => {
+    const userSession = getUserSession()
+    setSession({ user: userSession })
+  }, [])
   const router = useRouter()
   
   const [progress, setProgress] = useState<any>(null)
@@ -46,15 +52,16 @@ export default function EnhancedDashboard() {
   const [achievements, setAchievements] = useState<any[]>([])
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (session?.user?.email) {
       // Load user progress
-      const userProgress = progressManager.loadProgress(session.user.id) || 
-                          progressManager.initializeProgress(session.user.id)
+      const userProgress = progressManager.loadProgress(session.user.email) ||
+                           progressManager.initializeProgress(session.user.email)
       setProgress(userProgress)
 
       // Load daily challenges
-      const todaysChallenges = challengeManager.getTodaysChallenges()
-      setChallenges(todaysChallenges)
+      // const todaysChallenges = challengeManager.getTodaysChallenges()
+      // setChallenges(todaysChallenges)
+      setChallenges([])
 
       // Load achievements
       loadAchievements(userProgress)

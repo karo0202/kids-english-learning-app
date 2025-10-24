@@ -12,6 +12,9 @@ import {
   Brain, BookOpen, Target, Search, Zap, Heart
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import OptimizedImage from '../common/optimized-image'
+import VirtualizedList from '../common/virtualized-list'
+import { useDebounce, usePerformanceMonitor } from '@/hooks/use-performance'
 
 interface GameCard {
   id: string
@@ -72,10 +75,20 @@ export default function GamesModule() {
   const [spellingCorrect, setSpellingCorrect] = useState<boolean | null>(null)
   const [spellingAttempts, setSpellingAttempts] = useState(0)
 
+  // Performance monitoring
+  const { renderCount } = usePerformanceMonitor('GamesModule')
+
   const defaultQuiz: QuizQuestion[] = [
     { question: 'What sound does a cat make?', options: ['Woof', 'Meow', 'Moo', 'Chirp'], correct: 1, explanation: "Cats say 'meow'!" },
     { question: 'What color is the sun?', options: ['Blue', 'Green', 'Yellow', 'Purple'], correct: 2, explanation: 'The sun is bright yellow!' },
-    { question: 'How many legs does a dog have?', options: ['Two', 'Three', 'Four', 'Five'], correct: 2, explanation: 'Dogs have four legs!' }
+    { question: 'How many legs does a dog have?', options: ['Two', 'Three', 'Four', 'Five'], correct: 2, explanation: 'Dogs have four legs!' },
+    { question: 'Which animal can fly?', options: ['Fish', 'Bird', 'Dog', 'Cat'], correct: 1, explanation: 'Birds have wings and can fly!' },
+    { question: 'What do we use to see?', options: ['Ears', 'Eyes', 'Nose', 'Mouth'], correct: 1, explanation: 'We use our eyes to see!' },
+    { question: 'What color is grass?', options: ['Red', 'Blue', 'Green', 'Yellow'], correct: 2, explanation: 'Grass is green!' },
+    { question: 'Which is bigger?', options: ['Mouse', 'Elephant', 'Ant', 'Bee'], correct: 1, explanation: 'Elephants are the biggest!' },
+    { question: 'What do we use to hear?', options: ['Eyes', 'Ears', 'Nose', 'Mouth'], correct: 1, explanation: 'We use our ears to hear!' },
+    { question: 'What falls from the sky when it rains?', options: ['Snow', 'Water', 'Leaves', 'Birds'], correct: 1, explanation: 'Water falls from the sky when it rains!' },
+    { question: 'Which animal lives in water?', options: ['Bird', 'Fish', 'Cat', 'Dog'], correct: 1, explanation: 'Fish live in water!' }
   ]
 
   const games = [
@@ -582,14 +595,23 @@ export default function GamesModule() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-4" role="grid" aria-label="Memory match game cards">
               {memoryCards.map((card, index) => (
                 <motion.div
                   key={card.id}
-                  className="aspect-square cursor-pointer"
+                  className="aspect-square cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50"
                   onClick={() => flipCard(index)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  role="gridcell"
+                  tabIndex={0}
+                  aria-label={`Card ${index + 1}: ${card.flipped || card.matched ? (card.image ? `Image of ${card.word}` : card.word) : 'Hidden card'}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      flipCard(index)
+                    }
+                  }}
                 >
                   <div className="relative w-full h-full">
                     <motion.div
@@ -600,15 +622,15 @@ export default function GamesModule() {
                     >
                       {/* Card Back */}
                       <div 
-                        className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center"
+                        className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center"
                         style={{ backfaceVisibility: 'hidden' }}
                       >
-                        <div className="text-white text-4xl">?</div>
+                        <div className="text-white text-4xl font-bold">?</div>
                       </div>
                       
                       {/* Card Front */}
                       <div 
-                        className="absolute inset-0 bg-white rounded-xl p-2 flex items-center justify-center border-4 border-gray-200"
+                        className="absolute inset-0 bg-white rounded-xl p-2 flex items-center justify-center border-4 border-gray-300"
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
                         {card.image ? (
@@ -618,7 +640,7 @@ export default function GamesModule() {
                             className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
-                          <div className="text-gray-800 text-lg font-bold text-center">
+                          <div className="text-gray-900 text-lg font-bold text-center">
                             {card.word}
                           </div>
                         )}
@@ -680,24 +702,29 @@ export default function GamesModule() {
                       {quizQuestions[currentQuestion].question}
                     </h4>
 
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-4" role="radiogroup" aria-label="Quiz answer options">
                       {quizQuestions[currentQuestion].options.map((option, index) => (
                         <motion.button
                           key={index}
                           onClick={() => !showQuizResult && selectAnswer(index)}
-                          className={`p-4 rounded-xl text-left font-semibold transition-all ${
+                          className={`p-4 rounded-xl text-left font-semibold transition-all focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 ${
                             showQuizResult
                               ? index === quizQuestions[currentQuestion].correct
-                                ? 'bg-green-100 border-2 border-green-400 text-green-800'
+                                ? 'bg-green-200 border-2 border-green-500 text-green-900'
                                 : index === selectedAnswer
-                                ? 'bg-red-100 border-2 border-red-400 text-red-800'
-                                : 'bg-gray-100 text-gray-600'
-                              : 'bg-blue-50 hover:bg-blue-100 border-2 border-transparent hover:border-blue-300 text-gray-800'
+                                ? 'bg-red-200 border-2 border-red-500 text-red-900'
+                                : 'bg-gray-200 text-gray-700'
+                              : 'bg-blue-100 hover:bg-blue-200 border-2 border-transparent hover:border-blue-400 text-gray-900'
                           }`}
                           whileHover={!showQuizResult ? { scale: 1.02 } : {}}
                           whileTap={!showQuizResult ? { scale: 0.98 } : {}}
                           disabled={showQuizResult}
+                          role="radio"
+                          aria-checked={selectedAnswer === index}
+                          aria-label={`Option ${index + 1}: ${option}`}
+                          tabIndex={0}
                         >
+                          <span className="font-bold mr-2">{String.fromCharCode(65 + index)}.</span>
                           {option}
                         </motion.button>
                       ))}

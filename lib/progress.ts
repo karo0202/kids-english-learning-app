@@ -128,7 +128,7 @@ export class ProgressManager {
   }
 
   // Add score and XP
-  addScore(points: number, xpGained: number = 0): void {
+  addScore(points: number, xpGained: number = 0): { leveledUp: boolean; newLevel: number } | void {
     if (!this.progress) return
 
     this.progress.totalScore += points
@@ -139,6 +139,7 @@ export class ProgressManager {
     if (this.progress.xp >= xpNeeded) {
       this.progress.level++
       this.progress.coins += 50 // Bonus coins for leveling up
+      this.saveProgress()
       return { leveledUp: true, newLevel: this.progress.level }
     }
 
@@ -172,8 +173,8 @@ export class ProgressManager {
   }
 
   // Check and unlock achievements
-  private checkAchievements(): void {
-    if (!this.progress) return
+  private checkAchievements(): string[] {
+    if (!this.progress) return []
 
     const achievements = this.progress.achievements
     const newAchievements: string[] = []

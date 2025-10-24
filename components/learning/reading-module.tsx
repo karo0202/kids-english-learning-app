@@ -11,6 +11,8 @@ import {
   Play, Pause, RotateCcw, Volume2, VolumeX, FileText
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import OptimizedImage from '../common/optimized-image'
+import { useImagePreload, useDebounce } from '@/hooks/use-performance'
 
 interface Book {
   id: string
@@ -62,19 +64,31 @@ export default function ReadingModule() {
           id: '1-1',
           pageNumber: 1,
           text: 'Once upon a time, there was a friendly cat named Whiskers.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'friendly', definition: 'kind and nice', example: 'The cat is friendly to everyone.' },
+            { word: 'cat', definition: 'a furry pet animal', example: 'My cat likes to play.' }
+          ]
         },
         {
           id: '1-2',
           pageNumber: 2,
           text: 'Whiskers loved to play with children and purr loudly when happy.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'play', definition: 'to have fun', example: 'Children love to play games.' },
+            { word: 'purr', definition: 'the sound a cat makes when happy', example: 'The cat purrs when I pet it.' }
+          ]
         },
         {
           id: '1-3',
           pageNumber: 3,
           text: 'Every day, Whiskers would visit the park to make new friends.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'visit', definition: 'to go to a place', example: 'I visit my grandmother every week.' },
+            { word: 'friends', definition: 'people you like to be with', example: 'My friends and I play together.' }
+          ]
         }
       ]
     },
@@ -91,19 +105,31 @@ export default function ReadingModule() {
           id: '2-1',
           pageNumber: 1,
           text: 'Emma and her friends boarded the magic school bus for an amazing adventure.',
-          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'boarded', definition: 'got on a vehicle', example: 'We boarded the train to go home.' },
+            { word: 'adventure', definition: 'an exciting journey', example: 'Going to the zoo was a big adventure.' }
+          ]
         },
         {
           id: '2-2',
           pageNumber: 2,
           text: 'They visited different countries and learned new words in each place.',
-          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'countries', definition: 'different places in the world', example: 'France and Italy are countries in Europe.' },
+            { word: 'learned', definition: 'gained new knowledge', example: 'I learned how to ride a bike.' }
+          ]
         },
         {
           id: '2-3',
           pageNumber: 3,
           text: 'The bus could fly, swim, and even travel through time!',
-          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'fly', definition: 'to move through the air', example: 'Birds can fly high in the sky.' },
+            { word: 'travel', definition: 'to go from one place to another', example: 'We travel by car to visit family.' }
+          ]
         }
       ]
     },
@@ -120,19 +146,113 @@ export default function ReadingModule() {
           id: '3-1',
           pageNumber: 1,
           text: 'Sophie discovered that learning English was like going on a great adventure.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'discovered', definition: 'found out something new', example: 'I discovered a new game to play.' },
+            { word: 'learning', definition: 'gaining knowledge and skills', example: 'Learning to read is very important.' }
+          ]
         },
         {
           id: '3-2',
           pageNumber: 2,
           text: 'Every new word was like finding a treasure, and every sentence was like solving a puzzle.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'treasure', definition: 'something very valuable', example: 'The pirate found a treasure chest.' },
+            { word: 'puzzle', definition: 'a game that tests your thinking', example: 'I love to solve jigsaw puzzles.' }
+          ]
         },
         {
           id: '3-3',
           pageNumber: 3,
           text: 'With practice and determination, Sophie became a master of the English language.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`
+          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'practice', definition: 'repeated exercise to improve', example: 'I practice piano every day.' },
+            { word: 'determination', definition: 'strong will to achieve something', example: 'With determination, you can do anything!' }
+          ]
+        }
+      ]
+    },
+    {
+      id: '4',
+      title: 'The Rainbow Garden',
+      author: 'Nature Stories',
+      coverImage: `https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=300${cacheBuster}`,
+      ageGroup: 'AGE_3_5',
+      difficulty: 1,
+      estimatedTime: 6,
+      pages: [
+        {
+          id: '4-1',
+          pageNumber: 1,
+          text: 'In a beautiful garden, flowers of every color bloomed under the warm sun.',
+          imageUrl: `https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'garden', definition: 'a place where plants grow', example: 'My grandmother has a beautiful garden.' },
+            { word: 'flowers', definition: 'colorful parts of plants', example: 'Roses and tulips are flowers.' }
+          ]
+        },
+        {
+          id: '4-2',
+          pageNumber: 2,
+          text: 'Bees buzzed happily from flower to flower, collecting sweet nectar.',
+          imageUrl: `https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'bees', definition: 'flying insects that make honey', example: 'Bees help flowers grow by carrying pollen.' },
+            { word: 'nectar', definition: 'sweet liquid in flowers', example: 'Bees drink nectar from flowers.' }
+          ]
+        },
+        {
+          id: '4-3',
+          pageNumber: 3,
+          text: 'The garden was a magical place where all creatures lived in harmony.',
+          imageUrl: `https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'magical', definition: 'having special powers', example: 'The fairy tale had a magical ending.' },
+            { word: 'harmony', definition: 'peaceful living together', example: 'All the animals lived in harmony.' }
+          ]
+        }
+      ]
+    },
+    {
+      id: '5',
+      title: 'The Brave Little Mouse',
+      author: 'Courage Tales',
+      coverImage: `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300${cacheBuster}`,
+      ageGroup: 'AGE_6_8',
+      difficulty: 2,
+      estimatedTime: 7,
+      pages: [
+        {
+          id: '5-1',
+          pageNumber: 1,
+          text: 'Mimi was a small mouse with a big heart and even bigger dreams.',
+          imageUrl: `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'brave', definition: 'showing courage', example: 'The brave firefighter saved the cat.' },
+            { word: 'dreams', definition: 'hopes and wishes for the future', example: 'My dream is to become a doctor.' }
+          ]
+        },
+        {
+          id: '5-2',
+          pageNumber: 2,
+          text: 'When her friends needed help, Mimi never hesitated to come to their aid.',
+          imageUrl: `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'hesitated', definition: 'paused before acting', example: 'She hesitated before jumping into the water.' },
+            { word: 'aid', definition: 'help and support', example: 'The doctor came to the aid of the injured person.' }
+          ]
+        },
+        {
+          id: '5-3',
+          pageNumber: 3,
+          text: 'Her courage inspired all the other animals to be brave and kind too.',
+          imageUrl: `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'courage', definition: 'bravery in facing danger', example: 'It takes courage to try new things.' },
+            { word: 'inspired', definition: 'motivated to do something', example: 'The teacher inspired me to study harder.' }
+          ]
         }
       ]
     }
@@ -319,28 +439,28 @@ export default function ReadingModule() {
                     )}
 
                     <div className="bg-white rounded-2xl p-6 shadow-lg space-y-6">
-                      <p className="text-lg text-gray-800 leading-relaxed">
+                      <p className="text-lg text-gray-900 leading-relaxed" role="main" aria-label="Story text">
                         {currentPageData.text}
                       </p>
 
                       {Array.isArray(currentPageData.vocabulary) && currentPageData.vocabulary.length > 0 && (
                         <div>
                           <h4 className="text-xl font-bold text-gray-900 mb-3">🧠 Vocabulary</h4>
-                          <div className="overflow-hidden rounded-xl border border-gray-200">
-                            <table className="w-full text-left">
-                              <thead className="bg-gray-50 text-gray-700 text-sm">
+                          <div className="overflow-hidden rounded-xl border-2 border-gray-300">
+                            <table className="w-full text-left" role="table" aria-label="Vocabulary words and definitions">
+                              <thead className="bg-gray-100 text-gray-900 text-sm">
                                 <tr>
-                                  <th className="px-4 py-3">Word</th>
-                                  <th className="px-4 py-3">Definition</th>
-                                  <th className="px-4 py-3">Example Sentence</th>
+                                  <th className="px-4 py-3 font-semibold">Word</th>
+                                  <th className="px-4 py-3 font-semibold">Definition</th>
+                                  <th className="px-4 py-3 font-semibold">Example Sentence</th>
                                 </tr>
                               </thead>
-                              <tbody className="divide-y divide-gray-100 text-gray-800">
+                              <tbody className="divide-y divide-gray-200 text-gray-900">
                                 {currentPageData.vocabulary.map((v, i) => (
-                                  <tr key={i} className="hover:bg-gray-50">
-                                    <td className="px-4 py-3 font-semibold">{v.word}</td>
+                                  <tr key={i} className="hover:bg-gray-50 focus:bg-gray-50" tabIndex={0}>
+                                    <td className="px-4 py-3 font-bold text-blue-900">{v.word}</td>
                                     <td className="px-4 py-3">{v.definition}</td>
-                                    <td className="px-4 py-3 text-gray-700">{v.example}</td>
+                                    <td className="px-4 py-3 text-gray-800">{v.example}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -391,30 +511,10 @@ export default function ReadingModule() {
 
                             <Button
                               className="btn-primary-kid"
-                              onClick={async () => {
-                                try {
-                                  const { jsPDF } = await import('jspdf')
-                                  const doc = new jsPDF()
-                                  const marginX = 14
-                                  const width = doc.internal.pageSize.getWidth() - marginX * 2
-                                  doc.setFontSize(16)
-                                  doc.text(`${selectedBook.title} - Practice Questions`, marginX, 20)
-                                  doc.setFontSize(12)
-                                  let y = 30
-                                  (currentPageData.questions || []).forEach((q, i) => {
-                                    const wrapped = doc.splitTextToSize(`${i + 1}. ${q}`, width)
-                                    if (y + wrapped.length * 7 > doc.internal.pageSize.getHeight() - 20) {
-                                      doc.addPage()
-                                      y = 20
-                                    }
-                                    doc.text(wrapped, marginX, y)
-                                    y += wrapped.length * 7 + 4
-                                  })
-                                  const filename = `${selectedBook.title.replace(/[^a-z0-9\- ]/gi, '').replace(/\s+/g, '_')}_questions.pdf`
-                                  doc.save(filename)
-                                } catch (e) {
-                                  console.error('Failed to generate PDF', e)
-                                }
+                              onClick={() => {
+                                // PDF generation temporarily disabled for performance optimization
+                                console.log('PDF generation disabled for performance optimization')
+                                alert('PDF generation is temporarily disabled for better performance')
                               }}
                             >
                               Download PDF

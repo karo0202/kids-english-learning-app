@@ -238,7 +238,7 @@ export default function ParentDashboard() {
                     </div>
                     <div className="text-left">
                       <h3 className="font-bold text-gray-800">{child.name}</h3>
-                      <p className="text-sm text-gray-600">{getAgeGroupName(child.ageGroup)}</p>
+                      <p className="text-sm text-gray-600">{getAgeGroupName(child.ageGroup || 'AGE_3_5')}</p>
                     </div>
                   </div>
                 </motion.button>

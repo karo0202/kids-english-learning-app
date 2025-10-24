@@ -6,8 +6,8 @@ export default function PortraitLock() {
   useEffect(() => {
     // Lock orientation to portrait
     const lockOrientation = () => {
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('portrait').catch(() => {
+      if (screen.orientation && 'lock' in screen.orientation) {
+        (screen.orientation as any).lock('portrait').catch(() => {
           // Fallback if orientation lock fails
           console.log('Orientation lock not supported')
         })

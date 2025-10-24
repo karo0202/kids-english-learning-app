@@ -218,7 +218,7 @@ export default function PDFBookManager() {
                     className="bg-white"
                   />
                 </div>
-                <Select value={category} onValueChange={(v) => setCategory(v)}>
+                <Select value={category} onValueChange={(v: string) => setCategory(v)}>
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
@@ -229,7 +229,7 @@ export default function PDFBookManager() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={age} onValueChange={(v) => setAge(v)}>
+                <Select value={age} onValueChange={(v: string) => setAge(v)}>
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Age" />
                   </SelectTrigger>
