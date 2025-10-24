@@ -25,37 +25,47 @@
   }
 }
 
-/* Force portrait mode - hide landscape */
+/* Landscape mode support */
 @media screen and (orientation: landscape) {
-  body {
-    transform: rotate(90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
+  /* Optimize layout for landscape mode */
+  .landscape-optimized {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+  }
+  
+  /* Adjust grid layouts for landscape */
+  .landscape-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  /* Make content more compact in landscape */
+  .landscape-compact {
+    padding: 0.5rem;
+    margin: 0.25rem;
+  }
+  
+  /* Optimize game grids for landscape */
+  .landscape-game-grid {
+    max-width: 70vw;
+    margin: 0 auto;
   }
 }
 
-/* Alternative: Show message in landscape */
+/* Small landscape screens optimization */
 @media screen and (orientation: landscape) and (max-height: 500px) {
-  body::before {
-    content: "Please rotate your device to portrait mode for the best experience";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    z-index: 9999;
-    text-align: center;
-    font-size: 18px;
-    width: 90%;
-    max-width: 400px;
+  .landscape-small {
+    font-size: 0.875rem;
+    padding: 0.25rem;
+  }
+  
+  .landscape-small .text-lg {
+    font-size: 1rem;
+  }
+  
+  .landscape-small .text-xl {
+    font-size: 1.125rem;
   }
 }
 

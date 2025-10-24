@@ -323,7 +323,7 @@ export default function ReadingModule() {
 
   if (completedBooks >= totalBooks) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 landscape-optimized">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -378,7 +378,7 @@ export default function ReadingModule() {
     const isLastPage = currentPage === selectedBook.pages.length - 1
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 landscape-optimized">
         {/* Reading Header */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4">

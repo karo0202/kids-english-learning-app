@@ -681,7 +681,7 @@ export default function SpeakingModule() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 landscape-optimized">
       {/* Skip Link */}
       <a 
         href="#main-content" 
