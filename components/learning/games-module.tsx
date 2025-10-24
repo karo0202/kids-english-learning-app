@@ -49,7 +49,7 @@ export default function GamesModule() {
   const [foundWords, setFoundWords] = useState<string[]>([])
   const [huntGrid, setHuntGrid] = useState<HuntCell[][]>([])
   const [huntSelection, setHuntSelection] = useState<{ r: number; c: number }[]>([])
-  const [huntSize, setHuntSize] = useState(10)
+  const [huntSize, setHuntSize] = useState(8)
 
   // Quiz Arena
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -853,15 +853,21 @@ export default function GamesModule() {
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2">
-                    <div className="overflow-hidden rounded-lg border-2 border-gray-200 p-2 bg-gray-50 max-w-full">
-                      <div className="inline-grid gap-1 mx-auto max-w-full" style={{ gridTemplateColumns: `repeat(${huntGrid.length}, minmax(2rem, 2.5rem))` }}>
+                    <div className="flex justify-center overflow-x-auto">
+                      <div className="grid gap-1 p-2 bg-gray-50 rounded-lg border-2 border-gray-200" 
+                           style={{ 
+                             gridTemplateColumns: `repeat(${huntGrid.length}, 2rem)`,
+                             gridTemplateRows: `repeat(${huntGrid.length}, 2rem)`,
+                             maxWidth: 'fit-content',
+                             minWidth: 'fit-content'
+                           }}>
                       {huntGrid.map((row, r) => row.map((cell, c) => (
                         <button
                           key={`${r}-${c}`}
                           onClick={() => {
                             setHuntSelection(sel => sel.some(p => p.r===r && p.c===c) ? sel.filter(p => !(p.r===r && p.c===c)) : [...sel, { r, c }])
                           }}
-                          className={`w-9 h-9 rounded-lg font-bold transition-all duration-200 ${
+                          className={`w-8 h-8 rounded text-sm font-bold transition-all duration-200 flex items-center justify-center ${
                             cell.found 
                               ? 'bg-green-200 text-green-900 border-2 border-green-400' 
                               : huntSelection.some(p => p.r===r && p.c===c)
