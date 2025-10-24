@@ -853,14 +853,15 @@ export default function GamesModule() {
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2">
-                    <div className="inline-grid" style={{ gridTemplateColumns: `repeat(${huntGrid.length}, 2.5rem)` }}>
+                    <div className="overflow-hidden rounded-lg border-2 border-gray-200 p-2 bg-gray-50 max-w-full">
+                      <div className="inline-grid gap-1 mx-auto max-w-full" style={{ gridTemplateColumns: `repeat(${huntGrid.length}, minmax(2rem, 2.5rem))` }}>
                       {huntGrid.map((row, r) => row.map((cell, c) => (
                         <button
                           key={`${r}-${c}`}
                           onClick={() => {
                             setHuntSelection(sel => sel.some(p => p.r===r && p.c===c) ? sel.filter(p => !(p.r===r && p.c===c)) : [...sel, { r, c }])
                           }}
-                          className={`w-10 h-10 m-[2px] rounded-lg font-bold transition-all duration-200 ${
+                          className={`w-9 h-9 rounded-lg font-bold transition-all duration-200 ${
                             cell.found 
                               ? 'bg-green-200 text-green-900 border-2 border-green-400' 
                               : huntSelection.some(p => p.r===r && p.c===c)
@@ -871,6 +872,7 @@ export default function GamesModule() {
                           {cell.letter}
                         </button>
                       )))}
+                      </div>
                     </div>
                     <div className="mt-4 flex gap-3">
                       <Button variant="outline" onClick={() => setHuntSelection([])}>Clear Selection</Button>
