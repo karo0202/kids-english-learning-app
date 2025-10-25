@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/lib/theme-context'
+import DataManagement from '@/components/data-management'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -272,6 +273,26 @@ export default function SettingsPage() {
                     ))}
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Data Management */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="bg-white/70 backdrop-blur-xl border border-blue-100 shadow-xl">
+              <CardHeader>
+                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-blue-500" />
+                  Data Management
+                </h2>
+                <p className="text-gray-600">Manage your learning data, backups, and storage</p>
+              </CardHeader>
+              <CardContent>
+                <DataManagement />
               </CardContent>
             </Card>
           </motion.div>

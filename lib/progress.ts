@@ -1,4 +1,5 @@
 // Progress persistence and user data management
+import { dataPersistence } from './data-persistence'
 export interface UserProgress {
   userId: string
   totalScore: number
@@ -87,11 +88,36 @@ export class ProgressManager {
     return null
   }
 
-  // Save progress to localStorage
+  // Save progress to localStorage and persistence layer
   saveProgress(): void {
     if (this.progress && typeof window !== 'undefined') {
       try {
         localStorage.setItem(`progress_${this.progress.userId}`, JSON.stringify(this.progress))
+        
+        // Also save to persistence layer
+        dataPersistence.saveProgress({
+          childId: this.progress.userId,
+          totalScore: this.progress.totalScore,
+          completedActivities: [], // Convert to array format
+          currentLevel: this.progress.level,
+          xp: this.progress.xp,
+          coins: this.progress.coins,
+          achievements: this.progress.achievements,
+          streaks: {
+            current: this.progress.currentStreak,
+            longest: this.progress.longestStreak,
+            lastActivity: this.progress.lastActivityDate
+          },
+          learningStats: {
+            speaking: 0,
+            reading: 0,
+            writing: 0,
+            games: 0
+          },
+          lastUpdated: new Date().toISOString()
+        }).catch(error => {
+          console.warn('Failed to save progress to persistence layer:', error)
+        })
       } catch (error) {
         console.error('Error saving progress:', error)
       }
