@@ -15,51 +15,59 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
-    // Load theme from localStorage
-    const savedTheme = localStorage.getItem('user_preferences')
-    if (savedTheme) {
-      try {
-        const prefs = JSON.parse(savedTheme)
-        if (prefs.theme) {
-          setTheme(prefs.theme)
+    // Load theme from localStorage (only on client side)
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('user_preferences')
+      if (savedTheme) {
+        try {
+          const prefs = JSON.parse(savedTheme)
+          if (prefs.theme) {
+            setTheme(prefs.theme)
+          }
+        } catch (error) {
+          console.error('Error loading theme:', error)
         }
-      } catch (error) {
-        console.error('Error loading theme:', error)
       }
     }
   }, [])
 
   useEffect(() => {
-    // Determine actual theme based on preference
-    if (theme === 'auto') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      setActualTheme(systemTheme)
-    } else {
-      setActualTheme(theme)
+    // Determine actual theme based on preference (only on client side)
+    if (typeof window !== 'undefined') {
+      if (theme === 'auto') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        setActualTheme(systemTheme)
+      } else {
+        setActualTheme(theme)
+      }
     }
   }, [theme])
 
   useEffect(() => {
-    // Apply theme to document
-    const root = document.documentElement
-    if (actualTheme === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
+    // Apply theme to document (only on client side)
+    if (typeof window !== 'undefined') {
+      const root = document.documentElement
+      if (actualTheme === 'dark') {
+        root.classList.add('dark')
+      } else {
+        root.classList.remove('dark')
+      }
     }
   }, [actualTheme])
 
   const handleSetTheme = (newTheme: 'light' | 'dark' | 'auto') => {
     setTheme(newTheme)
     
-    // Update localStorage
-    try {
-      const savedPrefs = localStorage.getItem('user_preferences')
-      const prefs = savedPrefs ? JSON.parse(savedPrefs) : {}
-      prefs.theme = newTheme
-      localStorage.setItem('user_preferences', JSON.stringify(prefs))
-    } catch (error) {
-      console.error('Error saving theme:', error)
+    // Update localStorage (only on client side)
+    if (typeof window !== 'undefined') {
+      try {
+        const savedPrefs = localStorage.getItem('user_preferences')
+        const prefs = savedPrefs ? JSON.parse(savedPrefs) : {}
+        prefs.theme = newTheme
+        localStorage.setItem('user_preferences', JSON.stringify(prefs))
+      } catch (error) {
+        console.error('Error saving theme:', error)
+      }
     }
   }
 

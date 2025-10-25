@@ -23,6 +23,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const prefs = localStorage.getItem('user_preferences');
+                if (prefs) {
+                  const parsed = JSON.parse(prefs);
+                  if (parsed.theme === 'dark' || (parsed.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <Providers>
           <ThemeProvider>
