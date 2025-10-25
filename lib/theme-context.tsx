@@ -47,15 +47,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Apply theme to document (only on client side)
     if (typeof window !== 'undefined') {
       const root = document.documentElement
+      console.log('Applying theme:', actualTheme)
       if (actualTheme === 'dark') {
         root.classList.add('dark')
+        console.log('Added dark class to document')
       } else {
         root.classList.remove('dark')
+        console.log('Removed dark class from document')
       }
     }
   }, [actualTheme])
 
   const handleSetTheme = (newTheme: 'light' | 'dark' | 'auto') => {
+    console.log('Setting theme to:', newTheme)
     setTheme(newTheme)
     
     // Update localStorage (only on client side)
@@ -65,6 +69,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         const prefs = savedPrefs ? JSON.parse(savedPrefs) : {}
         prefs.theme = newTheme
         localStorage.setItem('user_preferences', JSON.stringify(prefs))
+        console.log('Theme saved to localStorage:', prefs)
       } catch (error) {
         console.error('Error saving theme:', error)
       }
