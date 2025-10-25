@@ -20,55 +20,44 @@
   <path d="M 85 35 Q 100 25 115 35 Q 110 30 100 30 Q 90 30 85 35" fill="#92400e"/>
   
   <!-- Eyes -->
-  <circle cx="95" cy="42" r="3" fill="#1f2937"/>
-  <circle cx="105" cy="42" r="3" fill="#1f2937"/>
+  <circle cx="95" cy="42" r="2" fill="#1f2937"/>
+  <circle cx="105" cy="42" r="2" fill="#1f2937"/>
   
-  <!-- Eyebrows -->
-  <path d="M 90 38 Q 95 36 100 38" stroke="#92400e" stroke-width="2" fill="none"/>
-  <path d="M 100 38 Q 105 36 110 38" stroke="#92400e" stroke-width="2" fill="none"/>
+  <!-- Smile -->
+  <path d="M 90 50 Q 100 55 110 50" stroke="#1f2937" stroke-width="2" fill="none"/>
   
-  <!-- Cheeks -->
-  <circle cx="88" cy="48" r="2" fill="#fca5a5"/>
-  <circle cx="112" cy="48" r="2" fill="#fca5a5"/>
-  
-  <!-- Mouth -->
-  <path d="M 95 50 Q 100 55 105 50" stroke="#1f2937" stroke-width="2" fill="none"/>
-  
-  <!-- Tongue -->
-  <ellipse cx="100" cy="52" rx="3" ry="2" fill="#fca5a5"/>
-  
-  <!-- Body/Shirt -->
-  <rect x="88" y="63" width="24" height="20" fill="#3b82f6" rx="3"/>
+  <!-- Body (Blue Shirt) -->
+  <rect x="85" y="60" width="30" height="25" fill="#3b82f6" rx="3"/>
   
   <!-- Arms -->
-  <ellipse cx="82" cy="70" rx="6" ry="12" fill="#fbbf24"/>
-  <ellipse cx="118" cy="70" rx="6" ry="12" fill="#fbbf24"/>
+  <rect x="80" y="62" width="8" height="15" fill="#fbbf24" rx="4"/>
+  <rect x="112" y="62" width="8" height="15" fill="#fbbf24" rx="4"/>
   
-  <!-- Raised Hand -->
-  <circle cx="82" cy="58" r="4" fill="#fbbf24"/>
+  <!-- Hand (Waving) -->
+  <circle cx="84" cy="70" r="4" fill="#fbbf24"/>
   
   <!-- Floating Letters -->
-  <!-- Letter A -->
+  <!-- Letter A (Orange) -->
   <g transform="translate(130, 25)">
-    <path d="M 0 20 L 8 0 L 16 20 M 3 12 L 13 12" stroke="#ea580c" stroke-width="3" fill="none"/>
-    <rect x="-2" y="-2" width="20" height="24" fill="white" opacity="0.8" rx="2"/>
+    <path d="M 0 0 L 8 0 L 10 4 L 6 4 L 5 2 L 3 2 L 2 4 L -2 4 L 0 0 Z" fill="#f97316"/>
+    <path d="M 1 1 L 3 1 L 4 3 L 2 3 L 1 1 Z" fill="white"/>
   </g>
   
-  <!-- Letter B -->
-  <g transform="translate(150, 25)">
-    <path d="M 0 0 L 0 20 M 0 0 L 12 0 Q 16 0 16 4 Q 16 8 12 8 L 0 8 M 0 8 L 12 8 Q 16 8 16 12 Q 16 16 12 16 L 0 16" stroke="#2563eb" stroke-width="3" fill="none"/>
-    <rect x="-2" y="-2" width="20" height="24" fill="white" opacity="0.8" rx="2"/>
+  <!-- Letter B (Blue) -->
+  <g transform="translate(145, 25)">
+    <rect x="0" y="0" width="6" height="8" fill="#3b82f6" rx="1"/>
+    <rect x="1" y="1" width="4" height="2" fill="white" rx="0.5"/>
+    <rect x="1" y="4" width="4" height="2" fill="white" rx="0.5"/>
+    <rect x="1" y="7" width="4" height="1" fill="white" rx="0.5"/>
   </g>
   
-  <!-- Letter C -->
-  <g transform="translate(170, 25)">
-    <path d="M 16 4 Q 16 0 12 0 L 4 0 Q 0 0 0 4 L 0 16 Q 0 20 4 20 L 12 20 Q 16 20 16 16" stroke="#16a34a" stroke-width="3" fill="none"/>
-    <rect x="-2" y="-2" width="20" height="24" fill="white" opacity="0.8" rx="2"/>
+  <!-- Letter C (Green) -->
+  <g transform="translate(160, 25)">
+    <path d="M 6 0 L 2 0 Q 0 0 0 2 L 0 6 Q 0 8 2 8 L 6 8" fill="#10b981" stroke="#10b981" stroke-width="1"/>
+    <rect x="1" y="1" width="4" height="6" fill="white" rx="0.5"/>
   </g>
   
-  <!-- Text: KIDS -->
-  <text x="50" y="110" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ea580c" text-anchor="middle">KIDS</text>
-  
-  <!-- Text: ENGLISH -->
-  <text x="150" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1e40af" text-anchor="middle">ENGLISH</text>
+  <!-- Text: KIDS ENGLISH -->
+  <text x="100" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#f97316">KIDS</text>
+  <text x="100" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">ENGLISH</text>
 </svg>
