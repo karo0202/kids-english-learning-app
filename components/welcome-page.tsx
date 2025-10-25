@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
+import Logo from '@/components/logo'
 import { Star, BookOpen, Gamepad2, Mic, PenTool } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -44,12 +45,7 @@ export default function WelcomePage() {
 			{/* Top Nav */}
 			<div className="absolute inset-x-0 top-0 z-20">
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
-					<div className="flex items-center gap-3">
-						<div className="w-10 h-10 rounded-2xl bg-white/70 backdrop-blur border border-white/40 flex items-center justify-center shadow-sm">
-							<span className="text-xl">🎓</span>
-						</div>
-					<div className="font-bold text-lg text-slate-900">Kids English</div>
-					</div>
+					<Logo size="md" showText={true} />
 					<div className="hidden sm:flex items-center gap-2">
 					<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 border border-white/50 text-slate-700 hover:bg-white transition">About</a>
 					<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 border border-white/50 text-slate-700 hover:bg-white transition">Contact</a>

@@ -1,0 +1,65 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="64" height="64" fill="#fef7ed" rx="8"/>
+  
+  <!-- Book Base -->
+  <rect x="8" y="32" width="48" height="24" fill="#dc2626" rx="3"/>
+  <rect x="10" y="36" width="44" height="16" fill="white" rx="2"/>
+  
+  <!-- Book Pages -->
+  <rect x="12" y="40" width="40" height="8" fill="white"/>
+  <line x1="12" y1="42" x2="52" y2="42" stroke="#e5e7eb" stroke-width="0.5"/>
+  <line x1="12" y1="44" x2="52" y2="44" stroke="#e5e7eb" stroke-width="0.5"/>
+  <line x1="12" y1="46" x2="52" y2="46" stroke="#e5e7eb" stroke-width="0.5"/>
+  
+  <!-- Boy Character -->
+  <!-- Head -->
+  <circle cx="32" cy="20" r="8" fill="#fbbf24"/>
+  
+  <!-- Hair -->
+  <path d="M 26 16 Q 32 12 38 16 Q 36 14 32 14 Q 28 14 26 16" fill="#92400e"/>
+  
+  <!-- Eyes -->
+  <circle cx="29" cy="19" r="1.5" fill="#1f2937"/>
+  <circle cx="35" cy="19" r="1.5" fill="#1f2937"/>
+  
+  <!-- Eyebrows -->
+  <path d="M 27 17 Q 29 16 31 17" stroke="#92400e" stroke-width="1" fill="none"/>
+  <path d="M 33 17 Q 35 16 37 17" stroke="#92400e" stroke-width="1" fill="none"/>
+  
+  <!-- Cheeks -->
+  <circle cx="26" cy="22" r="1" fill="#fca5a5"/>
+  <circle cx="38" cy="22" r="1" fill="#fca5a5"/>
+  
+  <!-- Mouth -->
+  <path d="M 29 24 Q 32 26 35 24" stroke="#1f2937" stroke-width="1" fill="none"/>
+  
+  <!-- Tongue -->
+  <ellipse cx="32" cy="25" rx="1.5" ry="1" fill="#fca5a5"/>
+  
+  <!-- Body/Shirt -->
+  <rect x="28" y="28" width="8" height="8" fill="#3b82f6" rx="2"/>
+  
+  <!-- Arms -->
+  <ellipse cx="24" cy="32" rx="3" ry="6" fill="#fbbf24"/>
+  <ellipse cx="40" cy="32" rx="3" ry="6" fill="#fbbf24"/>
+  
+  <!-- Raised Hand -->
+  <circle cx="24" cy="26" r="2" fill="#fbbf24"/>
+  
+  <!-- Floating Letters -->
+  <!-- Letter A -->
+  <g transform="translate(48, 8)">
+    <path d="M 0 8 L 3 0 L 6 8 M 1 5 L 5 5" stroke="#ea580c" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- Letter B -->
+  <g transform="translate(54, 8)">
+    <path d="M 0 0 L 0 8 M 0 0 L 4 0 Q 6 0 6 2 Q 6 4 4 4 L 0 4 M 0 4 L 4 4 Q 6 4 6 6 Q 6 8 4 8 L 0 8" stroke="#2563eb" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- Letter C -->
+  <g transform="translate(60, 8)">
+    <path d="M 6 2 Q 6 0 4 0 L 2 0 Q 0 0 0 2 L 0 6 Q 0 8 2 8 L 4 8 Q 6 8 6 6" stroke="#16a34a" stroke-width="1.5" fill="none"/>
+  </g>
+</svg>

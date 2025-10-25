@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   keywords: ['kids', 'english', 'learning', 'education', 'games', 'speaking', 'writing'],
   authors: [{ name: 'Kids Learning Team' }],
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

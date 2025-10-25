@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
 import { ProgressRing } from '@/components/ui/progress-ring'
+import Logo from '@/components/logo'
 import { 
   Mic, PenTool, Gamepad2, User, Trophy, Star, 
   Settings, LogOut, BookOpen, Target, Gift, Crown, Zap, Bell
@@ -180,11 +181,7 @@ export default function EnhancedDashboardNew() {
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-lg animate-pulse-glow">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                  <span className="text-3xl">🎓</span>
-                </div>
-              </div>
+              <Logo size="lg" showText={false} />
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-md">
                 <span className="text-xs">✨</span>
               </div>
