@@ -19,10 +19,11 @@ export default function AboutPage() {
       title: "Speaking Practice",
       description: "AI-powered pronunciation training with instant feedback",
       details: [
-        "Interactive pronunciation exercises",
-        "Role-play dialogues with scenarios",
-        "Karaoke-style sing & speak activities",
-        "Speech recognition technology"
+        "Interactive pronunciation exercises with real-time feedback",
+        "Categorized vocabulary practice (Animals, Colors, Nature, Food)",
+        "Achievement system with streaks and perfect pronunciation tracking",
+        "AI personalization that adapts to your child's learning style",
+        "Speech recognition technology with visual feedback"
       ],
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-50"
@@ -45,10 +46,11 @@ export default function AboutPage() {
       title: "Reading Library",
       description: "Immersive stories and interactive books",
       details: [
-        "Choose your own adventure stories",
-        "PDF book reader with progress tracking",
+        "Interactive story reading with vocabulary highlights",
         "Multiple choice comprehension questions",
-        "Age-appropriate content selection"
+        "Age-appropriate content selection",
+        "Progress tracking and completion certificates",
+        "Engaging visual stories with audio narration"
       ],
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-purple-50"
@@ -58,11 +60,11 @@ export default function AboutPage() {
       title: "Educational Games",
       description: "Fun learning through interactive gameplay",
       details: [
-        "Memory match games",
-        "Story adventures with choices",
-        "Spelling bee competitions",
-        "Word hunt puzzles",
-        "Quiz arena challenges"
+        "Memory match games with visual cards",
+        "Word Hunt puzzle with grid-based word finding",
+        "Quiz arena with multiple choice questions",
+        "Interactive story adventures with choices",
+        "Achievement tracking and score systems"
       ],
       color: "from-orange-500 to-red-500",
       bgColor: "bg-orange-50"
@@ -71,14 +73,14 @@ export default function AboutPage() {
 
   const premiumFeatures = [
     {
-      icon: <Target className="w-6 h-6" />,
-      title: "Daily Challenges",
-      description: "Personalized daily goals that adapt to your child's progress"
-    },
-    {
       icon: <Trophy className="w-6 h-6" />,
       title: "Achievement System",
-      description: "Badges, rewards, and progress tracking to keep kids motivated"
+      description: "Badges, streaks, and progress tracking to keep kids motivated"
+    },
+    {
+      icon: <Sparkles className="w-6 h-6" />,
+      title: "AI Personalization",
+      description: "Adaptive learning that adjusts to your child's unique style and pace"
     },
     {
       icon: <Users className="w-6 h-6" />,
@@ -87,18 +89,18 @@ export default function AboutPage() {
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "Parent Controls",
-      description: "Time limits, content filters, and progress monitoring"
-    },
-    {
-      icon: <Sparkles className="w-6 h-6" />,
-      title: "Adaptive Learning",
-      description: "AI adjusts difficulty based on your child's performance"
+      title: "Parent Dashboard",
+      description: "Monitor progress, set preferences, and track learning analytics"
     },
     {
       icon: <Zap className="w-6 h-6" />,
       title: "Instant Feedback",
       description: "Real-time corrections and encouragement for better learning"
+    },
+    {
+      icon: <Star className="w-6 h-6" />,
+      title: "Landscape Mode",
+      description: "Full orientation support for tablets and landscape devices"
     }
   ]
 
@@ -110,7 +112,9 @@ export default function AboutPage() {
     "Voice recognition improvements for better pronunciation",
     "Offline mode for learning anywhere, anytime",
     "Parent-teacher communication tools",
-    "Customizable avatars and learning environments"
+    "Customizable avatars and learning environments",
+    "Enhanced dark mode with system theme detection",
+    "More interactive games and learning activities"
   ]
 
   return (
@@ -219,11 +223,77 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-        {/* Premium Features */}
+        {/* Recent Improvements */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Latest Improvements</h2>
+            <p className="text-xl text-gray-600">Recent enhancements to make learning even better</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Sparkles className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">AI Personalization</h3>
+                    <p className="text-sm text-white/90">Smart learning adaptation</p>
+                  </div>
+                </div>
+                <p className="text-white/90 text-sm">
+                  Advanced AI system that adapts to your child's learning style, pace, and preferences for optimal learning outcomes.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Trophy className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">Achievement System</h3>
+                    <p className="text-sm text-white/90">Motivating progress tracking</p>
+                  </div>
+                </div>
+                <p className="text-white/90 text-sm">
+                  Comprehensive achievement system with streaks, perfect pronunciation tracking, and motivational rewards.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Star className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">Landscape Support</h3>
+                    <p className="text-sm text-white/90">Full orientation support</p>
+                  </div>
+                </div>
+                <p className="text-white/90 text-sm">
+                  Complete landscape mode support for tablets and devices, with optimized layouts for all orientations.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* Premium Features */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
           className="mb-16"
         >
           <div className="text-center mb-12">
