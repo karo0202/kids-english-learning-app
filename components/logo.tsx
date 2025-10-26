@@ -27,7 +27,7 @@ export default function Logo({ size = 'md', showText = true, className = '' }: L
     <div className={`flex items-center gap-3 ${className}`}>
       <div className={`${sizeClasses[size]} flex-shrink-0`}>
         <Image
-          src="/logo.svg"
+          src="/logo.jpg"
           alt="Kids English Learning"
           width={size === 'sm' ? 32 : size === 'md' ? 48 : size === 'lg' ? 64 : 96}
           height={size === 'sm' ? 32 : size === 'md' ? 48 : size === 'lg' ? 64 : 96}

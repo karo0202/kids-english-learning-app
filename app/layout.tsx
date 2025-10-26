@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   authors: [{ name: 'Kids Learning Team' }],
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   icons: {
-    icon: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/favicon.jpg',
+    apple: '/favicon.jpg',
   },
 }
 
