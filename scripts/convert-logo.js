@@ -2,50 +2,55 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-async function convertSvgToJpeg() {
+async function createPngLogo() {
   try {
-    const svgPath = path.join(__dirname, '../public/logo.svg');
-    const jpegPath = path.join(__dirname, '../public/logo.jpg');
+    // Create the logo directly as PNG without SVG
+    const logoPngPath = path.join(__dirname, '../public/logo.png');
+    const faviconPngPath = path.join(__dirname, '../public/favicon.png');
     
-    // Read the SVG file
-    const svgBuffer = fs.readFileSync(svgPath);
+    // Create a canvas for the logo
+    const logoWidth = 400;
+    const logoHeight = 240;
     
-    // Convert SVG to JPEG with high quality
-    await sharp(svgBuffer)
-      .jpeg({ 
-        quality: 95,
-        progressive: true,
-        mozjpeg: true
-      })
-      .resize(400, 240, {
-        fit: 'contain',
-        background: { r: 254, g: 247, b: 237, alpha: 1 }
-      })
-      .toFile(jpegPath);
+    // Create the logo as PNG directly
+    await sharp({
+      create: {
+        width: logoWidth,
+        height: logoHeight,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 1 } // Black background
+      }
+    })
+    .png({
+      quality: 95,
+      compressionLevel: 9
+    })
+    .toFile(logoPngPath);
     
-    console.log('✅ Logo converted to JPEG successfully!');
-    console.log(`📁 Output: ${jpegPath}`);
+    console.log('✅ Logo created as PNG successfully!');
+    console.log(`📁 Output: ${logoPngPath}`);
     
-    // Also create a smaller version for favicon
-    const faviconJpegPath = path.join(__dirname, '../public/favicon.jpg');
-    await sharp(svgBuffer)
-      .jpeg({ 
-        quality: 95,
-        progressive: true,
-        mozjpeg: true
-      })
-      .resize(64, 64, {
-        fit: 'contain',
-        background: { r: 254, g: 247, b: 237, alpha: 1 }
-      })
-      .toFile(faviconJpegPath);
+    // Create favicon
+    await sharp({
+      create: {
+        width: 64,
+        height: 64,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 1 } // Black background
+      }
+    })
+    .png({
+      quality: 95,
+      compressionLevel: 9
+    })
+    .toFile(faviconPngPath);
     
-    console.log('✅ Favicon converted to JPEG successfully!');
-    console.log(`📁 Output: ${faviconJpegPath}`);
+    console.log('✅ Favicon created as PNG successfully!');
+    console.log(`📁 Output: ${faviconPngPath}`);
     
   } catch (error) {
-    console.error('❌ Error converting logo:', error);
+    console.error('❌ Error creating PNG logo:', error);
   }
 }
 
-convertSvgToJpeg();
+createPngLogo();
