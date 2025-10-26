@@ -2,62 +2,53 @@
   <!-- Background -->
   <rect width="200" height="120" fill="#fef7ed" rx="10"/>
   
-  <!-- Book Base -->
-  <rect x="20" y="60" width="160" height="40" fill="#dc2626" rx="5"/>
-  <rect x="25" y="65" width="150" height="30" fill="white" rx="3"/>
-  
-  <!-- Book Pages -->
-  <rect x="30" y="70" width="140" height="20" fill="white"/>
-  <line x1="30" y1="75" x2="170" y2="75" stroke="#e5e7eb" stroke-width="1"/>
-  <line x1="30" y1="80" x2="170" y2="80" stroke="#e5e7eb" stroke-width="1"/>
-  <line x1="30" y1="85" x2="170" y2="85" stroke="#e5e7eb" stroke-width="1"/>
-  
-  <!-- Boy Character -->
-  <!-- Head -->
-  <circle cx="100" cy="45" r="18" fill="#fbbf24"/>
-  
-  <!-- Hair -->
-  <path d="M 85 35 Q 100 25 115 35 Q 110 30 100 30 Q 90 30 85 35" fill="#92400e"/>
-  
-  <!-- Eyes -->
-  <circle cx="95" cy="42" r="2" fill="#1f2937"/>
-  <circle cx="105" cy="42" r="2" fill="#1f2937"/>
-  
-  <!-- Smile -->
-  <path d="M 90 50 Q 100 55 110 50" stroke="#1f2937" stroke-width="2" fill="none"/>
-  
-  <!-- Body (Blue Shirt) -->
-  <rect x="85" y="60" width="30" height="25" fill="#3b82f6" rx="3"/>
-  
-  <!-- Arms -->
-  <rect x="80" y="62" width="8" height="15" fill="#fbbf24" rx="4"/>
-  <rect x="112" y="62" width="8" height="15" fill="#fbbf24" rx="4"/>
-  
-  <!-- Hand (Waving) -->
-  <circle cx="84" cy="70" r="4" fill="#fbbf24"/>
-  
-  <!-- Floating Letters -->
-  <!-- Letter A (Orange) -->
-  <g transform="translate(130, 25)">
-    <path d="M 0 0 L 8 0 L 10 4 L 6 4 L 5 2 L 3 2 L 2 4 L -2 4 L 0 0 Z" fill="#f97316"/>
-    <path d="M 1 1 L 3 1 L 4 3 L 2 3 L 1 1 Z" fill="white"/>
+  <!-- Small Logo Icon (Left) -->
+  <g transform="translate(20, 30)">
+    <!-- White background rectangle -->
+    <rect x="0" y="0" width="40" height="30" fill="white" rx="3" stroke="#e5e7eb" stroke-width="1"/>
+    
+    <!-- Yellow character with blue torso -->
+    <rect x="15" y="8" width="10" height="12" fill="#3b82f6" rx="2"/>
+    <rect x="12" y="5" width="16" height="8" fill="#fbbf24" rx="2"/>
+    
+    <!-- Red rectangular outline around waist -->
+    <rect x="10" y="15" width="20" height="8" fill="none" stroke="#dc2626" stroke-width="2" rx="1"/>
+    
+    <!-- Small text below -->
+    <text x="20" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#1f2937">KIDS</text>
   </g>
   
-  <!-- Letter B (Blue) -->
-  <g transform="translate(145, 25)">
-    <rect x="0" y="0" width="6" height="8" fill="#3b82f6" rx="1"/>
-    <rect x="1" y="1" width="4" height="2" fill="white" rx="0.5"/>
-    <rect x="1" y="4" width="4" height="2" fill="white" rx="0.5"/>
-    <rect x="1" y="7" width="4" height="1" fill="white" rx="0.5"/>
+  <!-- Text Title (Right of icon) -->
+  <g transform="translate(70, 40)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#f97316">KIDS</text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e40af">ENGLISH</text>
   </g>
   
-  <!-- Letter C (Green) -->
-  <g transform="translate(160, 25)">
-    <path d="M 6 0 L 2 0 Q 0 0 0 2 L 0 6 Q 0 8 2 8 L 6 8" fill="#10b981" stroke="#10b981" stroke-width="1"/>
-    <rect x="1" y="1" width="4" height="6" fill="white" rx="0.5"/>
+  <!-- Purple Circular Mascot (Center) -->
+  <g transform="translate(100, 60)">
+    <!-- Shadow -->
+    <circle cx="2" cy="2" r="25" fill="#8b5cf6" opacity="0.3"/>
+    <!-- Main mascot -->
+    <circle cx="0" cy="0" r="25" fill="#8b5cf6"/>
+    <!-- Eyes -->
+    <circle cx="-8" cy="-5" r="3" fill="#1f2937"/>
+    <circle cx="8" cy="-5" r="3" fill="#1f2937"/>
+    <!-- Eye pupils -->
+    <circle cx="-8" cy="-5" r="1" fill="white"/>
+    <circle cx="8" cy="-5" r="1" fill="white"/>
+    <!-- Orange triangular beak -->
+    <path d="M -3 2 L 3 2 L 0 8 Z" fill="#f97316"/>
+    <!-- Wing/arm -->
+    <ellipse cx="-15" cy="0" rx="8" ry="12" fill="#7c3aed"/>
   </g>
   
-  <!-- Text: KIDS ENGLISH -->
-  <text x="100" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#f97316">KIDS</text>
-  <text x="100" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">ENGLISH</text>
+  <!-- Floating Star (Above and left of mascot) -->
+  <g transform="translate(80, 35)">
+    <path d="M 0 -8 L 2 -2 L 8 -2 L 3 1 L 5 7 L 0 4 L -5 7 L -3 1 L -8 -2 L -2 -2 Z" fill="#fbbf24"/>
+  </g>
+  
+  <!-- Floating Heart (Above and right of mascot) -->
+  <g transform="translate(120, 35)">
+    <path d="M 0 2 C 0 -2 -4 -2 -4 1 C -4 -2 -8 -2 -8 1 C -8 4 -4 8 0 12 C 4 8 8 4 8 1 C 8 -2 4 -2 4 1 C 4 -2 0 -2 0 2 Z" fill="#ec4899"/>
+  </g>
 </svg>
