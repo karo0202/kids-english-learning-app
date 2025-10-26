@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
+import { audioManager as enhancedAudioManager } from '@/lib/audio-manager'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
 import { personalizationManager } from '@/lib/personalization'
@@ -476,12 +477,12 @@ export default function SpeakingModule() {
       setScore(prev => prev + 10)
       
       // Play success sound and update progress
-      audioManager.playSuccess()
+      enhancedAudioManager.playSuccess()
       progressManager.addScore(10, 5)
       challengeManager.updateChallengeProgress('speaking', 1)
     } else {
       // Play error sound
-      audioManager.playError()
+      enhancedAudioManager.playError()
     }
 
     // Check for achievements
@@ -573,11 +574,8 @@ export default function SpeakingModule() {
   }
 
   const speakWord = () => {
-    if (currentWord && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(currentWord.word)
-      utterance.rate = 0.8
-      utterance.pitch = 1.1
-      window.speechSynthesis.speak(utterance)
+    if (currentWord) {
+      enhancedAudioManager.speak(currentWord.word, { rate: 0.8, pitch: 1.1 })
     }
   }
 

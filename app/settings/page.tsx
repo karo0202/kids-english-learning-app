@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { BarChart3 } from 'lucide-react'
 import { Mascot } from '@/components/ui/mascot'
 import { 
   ArrowLeft, Settings, Volume2, VolumeX, Music, 

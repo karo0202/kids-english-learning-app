@@ -6,12 +6,14 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
-import { Star, BookOpen, Gamepad2, Mic, PenTool } from 'lucide-react'
+import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import AudioSettings from '@/components/audio-settings'
 
 export default function WelcomePage() {
   const router = useRouter()
   const [bgSrc, setBgSrc] = useState('https://images.unsplash.com/photo-1604882737218-2c5622a3b3c5?q=80&w=1600&auto=format&fit=crop')
+  const [showAudioSettings, setShowAudioSettings] = useState(false)
 
   const features = [
     {
@@ -237,8 +239,14 @@ export default function WelcomePage() {
 			<div className="container mx-auto px-4 pb-8">
 				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 backdrop-blur border border-white/50 p-4 text-center text-sm text-gray-600">
 					Built with ❤️ for kids. New: Reading Library, PDF books, and daily challenges.
-				</div>
-			</div>
+        </div>
+      </div>
+      
+      {/* Audio Settings Modal */}
+      <AudioSettings 
+        isOpen={showAudioSettings} 
+        onClose={() => setShowAudioSettings(false)} 
+      />
     </div>
   )
 }
