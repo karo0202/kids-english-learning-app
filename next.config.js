@@ -8,8 +8,28 @@ const nextConfig = {
     return [
       // Rewrite trailing slash URLs to non-trailing slash
       {
-        source: '/:path*/',
-        destination: '/:path*',
+        source: '/dashboard/',
+        destination: '/dashboard',
+      },
+      {
+        source: '/login/',
+        destination: '/login',
+      },
+      {
+        source: '/register/',
+        destination: '/register',
+      },
+      {
+        source: '/learning/',
+        destination: '/learning',
+      },
+      {
+        source: '/settings/',
+        destination: '/settings',
+      },
+      {
+        source: '/about/',
+        destination: '/about',
       },
     ]
   },
