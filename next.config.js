@@ -3,6 +3,26 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
+  trailingSlash: false,
+  async redirects() {
+    return [
+      {
+        source: '/login/',
+        destination: '/login',
+        permanent: true,
+      },
+      {
+        source: '/register/',
+        destination: '/register',
+        permanent: true,
+      },
+      {
+        source: '/dashboard/',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {
