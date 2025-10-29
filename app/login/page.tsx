@@ -3,8 +3,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getAuthClient, signInWithGoogleRedirect, handleGoogleRedirect } from '@/lib/firebase'
+import { getAuthClient, signInWithGoogle, handleGoogleRedirect } from '@/lib/firebase'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
+import { setUserSession } from '@/lib/simple-auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,7 +33,14 @@ export default function LoginPage() {
     const handleRedirect = async () => {
       try {
         const result = await handleGoogleRedirect()
-        if (result) {
+        if (result?.user) {
+          // Save user session
+          setUserSession({
+            id: result.user.uid,
+            email: result.user.email || '',
+            name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
+            accountType: 'parent'
+          })
           router.push('/dashboard')
         }
       } catch (err: any) {
@@ -51,7 +59,18 @@ export default function LoginPage() {
     try {
       const c = getAuthClient()
       if (!c) throw new Error('Auth not available on server')
-      await signInWithEmailAndPassword(c.auth, formData.email, formData.password)
+      const result = await signInWithEmailAndPassword(c.auth, formData.email, formData.password)
+      
+      // Save user session
+      if (result.user) {
+        setUserSession({
+          id: result.user.uid,
+          email: result.user.email || '',
+          name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
+          accountType: 'parent'
+        })
+      }
+      
       router.push('/dashboard')
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password. Please try again.')
@@ -63,8 +82,18 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      await signInWithGoogleRedirect()
-      // Note: redirect will happen, so we don't need to navigate here
+      const result = await signInWithGoogle()
+      if (result?.user) {
+        // Popup succeeded - save user session
+        setUserSession({
+          id: result.user.uid,
+          email: result.user.email || '',
+          name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
+          accountType: 'parent'
+        })
+        router.push('/dashboard')
+      }
+      // If result is null, redirect is happening
     } catch (err: any) {
       setError(err?.message || 'Google sign-in failed.')
       setLoading(false)
