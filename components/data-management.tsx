@@ -138,9 +138,9 @@ export default function DataManagement() {
   return (
     <div className="space-y-6">
       {/* Data Statistics */}
-      <Card>
+      <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
             <Database className="w-5 h-5" />
             Data Statistics
           </CardTitle>
@@ -149,28 +149,28 @@ export default function DataManagement() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{stats.totalChildren}</div>
-              <div className="text-sm text-gray-600">Children</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Children</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{stats.totalSessions}</div>
-              <div className="text-sm text-gray-600">Sessions</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Sessions</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{stats.totalProgress}</div>
-              <div className="text-sm text-gray-600">Progress Records</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Progress Records</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">{formatBytes(stats.storageUsed)}</div>
-              <div className="text-sm text-gray-600">Storage Used</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Storage Used</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Backup & Restore */}
-      <Card>
+      <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
             <Shield className="w-5 h-5" />
             Data Backup & Restore
           </CardTitle>
@@ -197,10 +197,10 @@ export default function DataManagement() {
             </Button>
           </div>
           
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 rounded-lg">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Last Backup:</span>
+              <span className="text-sm text-gray-600 dark:text-white/70">Last Backup:</span>
             </div>
             <Badge variant="secondary">
               {formatDate(stats.lastBackup)}
@@ -210,9 +210,9 @@ export default function DataManagement() {
       </Card>
 
       {/* Auto-Save Settings */}
-      <Card>
+      <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
             <Activity className="w-5 h-5" />
             Auto-Save Settings
           </CardTitle>
@@ -220,8 +220,8 @@ export default function DataManagement() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium">Automatic Data Saving</div>
-              <div className="text-sm text-gray-600">Your data is automatically saved every 5 minutes</div>
+              <div className="font-medium text-gray-800 dark:text-white">Automatic Data Saving</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Your data is automatically saved every 5 minutes</div>
             </div>
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
               <CheckCircle className="w-3 h-3 mr-1" />
@@ -242,9 +242,9 @@ export default function DataManagement() {
       </Card>
 
       {/* Cloud Backup */}
-      <Card>
+      <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
             <Cloud className="w-5 h-5" />
             Cloud Backup
           </CardTitle>
@@ -252,8 +252,8 @@ export default function DataManagement() {
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium">Background Sync</div>
-              <div className="text-sm text-gray-600">Sync your data in the background</div>
+              <div className="font-medium text-gray-800 dark:text-white">Background Sync</div>
+              <div className="text-sm text-gray-600 dark:text-white/70">Sync your data in the background</div>
             </div>
             <Button
               onClick={() => dataBackup.enableCloudBackup()}

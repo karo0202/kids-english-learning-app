@@ -83,11 +83,11 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f5f3ff] via-[#eef2ff] to-[#e0f2fe]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#f5f3ff] via-[#eef2ff] to-[#e0f2fe] dark:from-slate-900 dark:via-purple-900 dark:to-violet-900" />
       <div className="absolute inset-0 opacity-[0.35] pointer-events-none" style={{backgroundImage:'radial-gradient(circle at 10% 10%, rgba(99,102,241,0.08) 0 12%, transparent 12%), radial-gradient(circle at 90% 20%, rgba(236,72,153,0.08) 0 12%, transparent 12%), radial-gradient(circle at 30% 80%, rgba(16,185,129,0.08) 0 12%, transparent 12%)'}} />
       <div className="relative">
       {/* Header */}
-      <div className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-50">
+      <div className="bg-white/70 backdrop-blur-md border-b border-white/60 dark:bg-white/5 dark:border-white/10 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -103,8 +103,8 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <Mascot emotion="happy" size="medium" />
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
-                  <p className="text-gray-600">Customize your learning experience! ⚙️</p>
+                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Settings</h1>
+                  <p className="text-gray-600 dark:text-white/70">Customize your learning experience! ⚙️</p>
                 </div>
               </div>
             </div>
@@ -119,16 +119,16 @@ export default function SettingsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl">
+            <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Volume2 className="w-6 h-6 text-blue-500" />
                   Audio Settings
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Sound Effects */}
-                <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-slate-50">
+                <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
                   <div className="flex items-center gap-3">
                     {preferences.soundEnabled ? (
                       <Volume2 className="w-6 h-6 text-green-500" />
@@ -136,8 +136,8 @@ export default function SettingsPage() {
                       <VolumeX className="w-6 h-6 text-gray-400" />
                     )}
                     <div>
-                      <h3 className="font-bold text-gray-800">Sound Effects</h3>
-                      <p className="text-sm text-gray-600">Play sounds for interactions and feedback</p>
+                      <h3 className="font-bold text-gray-800 dark:text-white">Sound Effects</h3>
+                      <p className="text-sm text-gray-600 dark:text-white/70">Play sounds for interactions and feedback</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -159,7 +159,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Background Music */}
-                <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-slate-50">
+                <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
                   <div className="flex items-center gap-3">
                     {preferences.musicEnabled ? (
                       <Music className="w-6 h-6 text-purple-500" />
@@ -167,8 +167,8 @@ export default function SettingsPage() {
                       <Music className="w-6 h-6 text-gray-400" />
                     )}
                     <div>
-                      <h3 className="font-bold text-gray-800">Background Music</h3>
-                      <p className="text-sm text-gray-600">Play gentle music while learning</p>
+                      <h3 className="font-bold text-gray-800 dark:text-white">Background Music</h3>
+                      <p className="text-sm text-gray-600 dark:text-white/70">Play gentle music while learning</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -198,18 +198,18 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl">
+            <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Zap className="w-6 h-6 text-yellow-500" />
                   Learning Settings
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Difficulty Level */}
-                <div className="p-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-slate-50">
-                  <h3 className="font-bold text-gray-800 mb-3">Difficulty Level</h3>
-                  <p className="text-sm text-gray-600 mb-4">Choose how challenging the activities should be</p>
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">Difficulty Level</h3>
+                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">Choose how challenging the activities should be</p>
                   <div className="flex gap-3">
                     {[
                       { value: 'easy', label: 'Easy', color: 'green', description: 'Perfect for beginners' },
@@ -240,18 +240,18 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl">
+            <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Palette className="w-6 h-6 text-pink-500" />
                   Appearance
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Theme Selection */}
-                <div className="p-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-slate-50">
-                  <h3 className="font-bold text-gray-800 mb-3">Theme</h3>
-                  <p className="text-sm text-gray-600 mb-4">Choose your preferred color scheme</p>
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">Theme</h3>
+                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">Choose your preferred color scheme</p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {[
                       { value: 'light', label: 'Light', icon: Sun, description: 'Bright and cheerful' },
@@ -284,13 +284,13 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-white/70 backdrop-blur-xl border border-blue-100 shadow-xl">
+            <Card className="bg-white/70 backdrop-blur-xl border border-blue-100 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Settings className="w-6 h-6 text-blue-500" />
                   Data Management
                 </h2>
-                <p className="text-gray-600">Manage your learning data, backups, and storage</p>
+                <p className="text-gray-600 dark:text-white/70">Manage your learning data, backups, and storage</p>
               </CardHeader>
               <CardContent>
                 <DataManagement />
@@ -304,17 +304,17 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-white/70 backdrop-blur-xl border border-red-100 shadow-xl">
+            <Card className="bg-white/70 backdrop-blur-xl border border-red-100 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Settings className="w-6 h-6 text-red-500" />
                   Reset Settings
                 </h2>
               </CardHeader>
               <CardContent>
-                <div className="p-4 rounded-2xl border border-red-100 bg-gradient-to-br from-white to-red-50">
-                  <h3 className="font-bold text-gray-800 mb-2">Reset to Defaults</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                <div className="p-4 rounded-2xl border border-red-100 dark:border-white/10 bg-gradient-to-br from-white to-red-50 dark:from-white/5 dark:to-white/5">
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-2">Reset to Defaults</h3>
+                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">
                     This will reset all your settings to their default values
                   </p>
                   <Button
