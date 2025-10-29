@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getUserSession } from '@/lib/simple-auth'
+import { getUserSession, clearUserSession } from '@/lib/simple-auth'
+import { getChildren, addChild, deleteChild, Child } from '@/lib/children'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { 
   Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2
 } from 'lucide-react'
@@ -13,8 +15,11 @@ import {
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
-  const [children, setChildren] = useState<any[]>([])
+  const [children, setChildren] = useState<Child[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAddingChild, setIsAddingChild] = useState(false)
+  const [newChildName, setNewChildName] = useState('')
+  const [newChildAge, setNewChildAge] = useState<number | ''>('')
 
   useEffect(() => {
     // Only run on client side
@@ -28,9 +33,9 @@ export default function DashboardPage() {
       console.log('User session found:', currentUser)
       setUser(currentUser)
       
-      // Load children from localStorage
-      const storedChildren = JSON.parse(localStorage.getItem('children') || '[]')
-      setChildren(storedChildren)
+      // Load children for this specific user
+      const userChildren = getChildren(currentUser.id)
+      setChildren(userChildren)
       setLoading(false)
     } else {
       setLoading(false)
@@ -38,16 +43,27 @@ export default function DashboardPage() {
   }, [router])
 
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('children')
+    // Use the centralized logout function that preserves children data
+    clearUserSession()
     router.push('/')
   }
 
+  const handleAddChild = () => {
+    if (user && newChildName && newChildAge) {
+      const newChild = addChild(user.id, newChildName, newChildAge as number)
+      setChildren(prev => [...prev, newChild])
+      setNewChildName('')
+      setNewChildAge('')
+      setIsAddingChild(false)
+    }
+  }
+
   const handleDeleteChild = (childId: string) => {
-    if (confirm('Are you sure you want to delete this child profile?')) {
-      const updatedChildren = children.filter(child => child.id !== childId)
-      localStorage.setItem('children', JSON.stringify(updatedChildren))
-      setChildren(updatedChildren)
+    if (user && confirm('Are you sure you want to delete this child profile?')) {
+      const success = deleteChild(user.id, childId)
+      if (success) {
+        setChildren(prev => prev.filter(child => child.id !== childId))
+      }
     }
   }
 
@@ -116,7 +132,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-gray-800">Your Children</h2>
             <Button 
-              onClick={() => router.push('/add-child')}
+              onClick={() => setIsAddingChild(true)}
               className="bg-purple-600 hover:bg-purple-700 text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -124,7 +140,51 @@ export default function DashboardPage() {
             </Button>
           </div>
 
-          {children.length === 0 ? (
+          {isAddingChild && (
+            <Card className="mb-6 p-6">
+              <CardContent>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Add New Child</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    placeholder="Child's Name"
+                    value={newChildName}
+                    onChange={(e) => setNewChildName(e.target.value)}
+                    className="text-lg"
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Child's Age"
+                    value={newChildAge}
+                    onChange={(e) => setNewChildAge(parseInt(e.target.value) || '')}
+                    className="text-lg"
+                    min="3"
+                    max="12"
+                  />
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Button 
+                    onClick={handleAddChild}
+                    disabled={!newChildName || !newChildAge}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Add Child
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingChild(false)
+                      setNewChildName('')
+                      setNewChildAge('')
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {children.length === 0 && !isAddingChild ? (
             <Card className="text-center py-12">
               <CardContent>
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
@@ -133,14 +193,14 @@ export default function DashboardPage() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">No children added yet</h3>
                 <p className="text-gray-600 mb-6">Add your first child to start their learning journey!</p>
                 <Button 
-                  onClick={() => router.push('/add-child')}
+                  onClick={() => setIsAddingChild(true)}
                   className="bg-purple-600 hover:bg-purple-700 text-white"
                 >
                   Add Your First Child
                 </Button>
               </CardContent>
             </Card>
-          ) : (
+          ) : children.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {children.map((child) => (
                 <Card key={child.id} className="hover:shadow-lg transition-shadow relative">
@@ -172,7 +232,7 @@ export default function DashboardPage() {
                 </Card>
               ))}
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Learning Modules */}

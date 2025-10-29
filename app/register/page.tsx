@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { getAuthClient, signInWithGoogle, handleGoogleRedirect } from '@/lib/firebase'
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { setUserSession } from '@/lib/simple-auth'
+import { addChild, setCurrentChild } from '@/lib/children'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -70,28 +71,15 @@ export default function RegisterPage() {
         })
       }
       
-        // Save child information to localStorage
-      if (typeof window !== 'undefined') {
-        const parentId = cred.user?.uid || `user-${Date.now()}`
-        const childData = {
-          id: `child-${Date.now()}`,
-          name: formData.childName,
-          age: parseInt(formData.childAge),
-          parentId,
-          createdAt: new Date().toISOString()
-        }
-        
-        // Get existing children or create new array
-        const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
-        existingChildren.push(childData)
-        localStorage.setItem('children', JSON.stringify(existingChildren))
-        
-        // Set current child
-        localStorage.setItem('currentChild', JSON.stringify(childData))
+        // Save child information using the children management system
+      if (typeof window !== 'undefined' && cred.user) {
+        const parentId = cred.user.uid
+        const newChild = addChild(parentId, formData.childName, parseInt(formData.childAge))
+        setCurrentChild(newChild)
         
         // Initialize progress for the child
         const progress = {
-          [childData.id]: {
+          [newChild.id]: {
             completedLessons: [],
             completedChallenges: [],
             currentLevel: 1,

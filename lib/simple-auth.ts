@@ -50,10 +50,10 @@ export function getUserSession(): User | null {
 
 export function clearUserSession() {
   if (typeof window !== 'undefined') {
+    // Only clear user session, preserve children data
     localStorage.removeItem('user')
-    localStorage.removeItem('children')
     localStorage.removeItem('currentChild')
-    localStorage.removeItem('progress')
+    // Don't clear children and progress - they should persist across sessions
   }
 }
 
