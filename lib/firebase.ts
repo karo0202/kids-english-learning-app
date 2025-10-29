@@ -70,6 +70,9 @@ export const signInWithGoogle = async () => {
     const { auth, googleProvider } = client
     
     console.log('Starting Google sign-in redirect...')
+    console.log('Current URL:', window.location.href)
+    console.log('Auth domain:', auth.app.options.authDomain)
+    
     // Use redirect method to avoid COOP and popup blocking issues
     await signInWithRedirect(auth, googleProvider)
     return null // Redirect will happen

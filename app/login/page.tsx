@@ -33,8 +33,10 @@ export default function LoginPage() {
     // Handle Google redirect result
     const handleRedirect = async () => {
       try {
+        console.log('Checking for Google redirect result...')
         const result = await handleGoogleRedirect()
         if (result?.user) {
+          console.log('Google sign-in successful:', result.user.email)
           // Save user session
           setUserSession({
             id: result.user.uid,
@@ -43,8 +45,11 @@ export default function LoginPage() {
             accountType: 'parent'
           })
           router.push('/dashboard')
+        } else {
+          console.log('No Google redirect result found')
         }
       } catch (err: any) {
+        console.error('Google redirect error:', err)
         setError(err?.message || 'Google sign-in failed.')
       }
     }
