@@ -81,7 +81,7 @@ const nextConfig = {
               "img-src 'self' data: https: blob:",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://accounts.google.com",
-              "frame-src 'self' https://accounts.google.com",
+                  "frame-src 'self' https://accounts.google.com https://kids-english-learning-2b5cd.firebaseapp.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",

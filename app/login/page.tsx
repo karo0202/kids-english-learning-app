@@ -82,18 +82,8 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      const result = await signInWithGoogle()
-      if (result?.user) {
-        // Popup succeeded - save user session
-        setUserSession({
-          id: result.user.uid,
-          email: result.user.email || '',
-          name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
-          accountType: 'parent'
-        })
-        router.push('/dashboard')
-      }
-      // If result is null, redirect is happening
+      await signInWithGoogle()
+      // Redirect will happen, so we don't need to navigate here
     } catch (err: any) {
       setError(err?.message || 'Google sign-in failed.')
       setLoading(false)

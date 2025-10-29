@@ -29,7 +29,7 @@ export function getAuthClient() {
   return { auth, googleProvider, appleProvider }
 }
 
-// Google Sign In - Try popup first, fallback to redirect
+// Google Sign In - Use redirect method to avoid COOP issues
 export const signInWithGoogle = async () => {
   try {
     const client = getAuthClient()
@@ -37,19 +37,9 @@ export const signInWithGoogle = async () => {
     
     const { auth, googleProvider } = client
     
-    // Try popup first (better UX)
-    try {
-      const result = await signInWithPopup(auth, googleProvider)
-      return result
-    } catch (popupError: any) {
-      // If popup is blocked or fails, use redirect
-      if (popupError.code === 'auth/popup-closed-by-user' || popupError.code === 'auth/popup-blocked') {
-        console.log('Popup blocked, using redirect...')
-        await signInWithRedirect(auth, googleProvider)
-        return null // Redirect will happen
-      }
-      throw popupError
-    }
+    // Use redirect method to avoid COOP and popup blocking issues
+    await signInWithRedirect(auth, googleProvider)
+    return null // Redirect will happen
   } catch (error) {
     console.error('Google sign-in error:', error)
     throw error
@@ -64,6 +54,11 @@ export const handleGoogleRedirect = async () => {
     
     const { auth } = client
     const result = await getRedirectResult(auth)
+    
+    if (result) {
+      console.log('Google redirect successful:', result.user?.email)
+    }
+    
     return result
   } catch (error) {
     console.error('Google redirect error:', error)
