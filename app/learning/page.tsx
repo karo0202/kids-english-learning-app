@@ -104,7 +104,7 @@ export default function LearningPage() {
         {/* Child Selector */}
         {children.length > 1 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Select Child</h2>
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Select Child</h2>
             <div className="flex gap-4 overflow-x-auto pb-2">
               {children.map((child) => (
                 <Button
@@ -122,7 +122,7 @@ export default function LearningPage() {
 
         {/* Learning Modules */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Choose Your Learning Adventure!</h2>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Choose Your Learning Adventure!</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <motion.div
               whileHover={{ scale: 1.05 }}

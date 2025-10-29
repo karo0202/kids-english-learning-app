@@ -159,13 +159,13 @@ export default function AboutPage() {
           transition={{ delay: 0.2 }}
           className="text-center mb-16"
         >
-          <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl">
+          <Card className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border-white/60 dark:border-white/10 shadow-xl">
             <CardContent className="p-12">
               <div className="flex items-center justify-center mb-6">
                 <Heart className="w-12 h-12 text-pink-500" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Mission</h2>
-              <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Our Mission</h2>
+              <p className="text-lg text-gray-600 dark:text-white/70 max-w-4xl mx-auto leading-relaxed">
                 We believe every child deserves access to high-quality English education that adapts to their 
                 unique learning style. Our platform combines cutting-edge AI technology with proven educational 
                 methods to create personalized learning experiences that inspire confidence and foster a love 
@@ -183,8 +183,8 @@ export default function AboutPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Core Learning Modules</h2>
-            <p className="text-xl text-gray-600">Comprehensive English learning through interactive experiences</p>
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">Core Learning Modules</h2>
+            <p className="text-xl text-gray-600 dark:text-white/70">Comprehensive English learning through interactive experiences</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -297,8 +297,8 @@ export default function AboutPage() {
           className="mb-16"
         >
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Premium Features</h2>
-            <p className="text-xl text-gray-600">Advanced tools for enhanced learning experience</p>
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">Premium Features</h2>
+            <p className="text-xl text-gray-600 dark:text-white/70">Advanced tools for enhanced learning experience</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -309,15 +309,15 @@ export default function AboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 + index * 0.1 }}
               >
-                <Card className="h-full bg-white/70 backdrop-blur-xl border-white/60 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <Card className="h-full bg-white/70 dark:bg-white/5 backdrop-blur-xl border-white/60 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg flex-shrink-0">
                         {feature.icon}
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">{feature.title}</h3>
-                        <p className="text-gray-600 text-sm">{feature.description}</p>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{feature.title}</h3>
+                        <p className="text-gray-600 dark:text-white/70 text-sm">{feature.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -369,13 +369,13 @@ export default function AboutPage() {
           transition={{ delay: 1.0 }}
           className="text-center"
         >
-          <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl">
+          <Card className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border-white/60 dark:border-white/10 shadow-xl">
             <CardContent className="p-12">
               <div className="flex items-center justify-center mb-6">
                 <Star className="w-12 h-12 text-yellow-500" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Ready to Start Learning?</h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Ready to Start Learning?</h2>
+              <p className="text-lg text-gray-600 dark:text-white/70 mb-8 max-w-2xl mx-auto">
                 Join thousands of families who are already using Kids English Learning to help their children 
                 master English in a fun, engaging way.
               </p>

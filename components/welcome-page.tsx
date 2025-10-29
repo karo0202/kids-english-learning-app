@@ -43,14 +43,14 @@ export default function WelcomePage() {
   ]
 
   return (
-		<div className="min-h-screen relative bg-gradient-to-br from-rose-50 via-violet-50 to-sky-50">
+		<div className="min-h-screen relative bg-gradient-to-br from-rose-50 via-violet-50 to-sky-50 dark:from-slate-900 dark:via-purple-900 dark:to-violet-900">
 			{/* Top Nav */}
 			<div className="absolute inset-x-0 top-0 z-20">
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
 					<Logo size="md" showText={true} />
 					<div className="hidden sm:flex items-center gap-2">
-					<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 border border-white/50 text-slate-700 hover:bg-white transition">About</a>
-					<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 border border-white/50 text-slate-700 hover:bg-white transition">Contact</a>
+					<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
+					<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
 					</div>
 				</div>
 			</div>
@@ -64,7 +64,7 @@ export default function WelcomePage() {
           aria-hidden
         />
         {/* Soft vignette for readability without obscuring image */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/30 to-white/70" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/30 to-white/70 dark:from-slate-900/70 dark:via-slate-900/30 dark:to-slate-900/70" />
       </div>
 			{/* Header */}
 			<div className="container mx-auto px-4 py-8">
@@ -95,7 +95,7 @@ export default function WelcomePage() {
           </motion.h1>
           
 					<motion.p 
-						className="text-xl md:text-2xl text-slate-700 mb-6"
+						className="text-xl md:text-2xl text-slate-700 dark:text-white/90 mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
@@ -109,8 +109,8 @@ export default function WelcomePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-						<div className="rounded-3xl bg-white/80 backdrop-blur border border-white/60 p-6 shadow-sm">
-							<p className="text-slate-700">
+						<div className="rounded-3xl bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 p-6 shadow-sm">
+							<p className="text-slate-700 dark:text-white/90">
 								Join millions of kids learning English through fun games, interactive activities,
 								and magical adventures!
 							</p>
@@ -141,7 +141,7 @@ export default function WelcomePage() {
 						<Button 
 							size="lg"
 							variant="outline"
-							className="group relative overflow-hidden text-xl px-8 py-6 bg-white/80 backdrop-blur border border-white/60 text-slate-800 hover:bg-white hover:scale-105 transition-all duration-300 rounded-2xl"
+							className="group relative overflow-hidden text-xl px-8 py-6 bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 text-slate-800 dark:text-white hover:bg-white dark:hover:bg-white/20 hover:scale-105 transition-all duration-300 rounded-2xl"
 							onClick={() => router.push('/login')}
 						>
 							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -163,7 +163,7 @@ export default function WelcomePage() {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="p-6 text-center rounded-3xl border border-slate-200/60 bg-white/80 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="p-6 text-center rounded-3xl border border-slate-200/60 dark:border-white/20 bg-white/80 dark:bg-white/10 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5 + (index * 0.1) }}
@@ -172,8 +172,8 @@ export default function WelcomePage() {
 						<div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-600 dark:text-white/70">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -185,7 +185,7 @@ export default function WelcomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          <h2 className="text-4xl font-bold text-white mb-8 drop-shadow-lg">Perfect for Every Age!</h2>
+          <h2 className="text-4xl font-bold text-white dark:text-white mb-8 drop-shadow-lg">Perfect for Every Age!</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
@@ -219,9 +219,9 @@ export default function WelcomePage() {
                 <div className={`w-20 h-20 bg-gradient-to-r ${group.gradient} rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg text-2xl font-bold`}>
                   {group.age.split(' ')[1]}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{group.age}</h3>
-                <h4 className="text-lg font-semibold text-gray-600 mb-4">{group.title}</h4>
-                <ul className="text-gray-600 space-y-1">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{group.age}</h3>
+                <h4 className="text-lg font-semibold text-gray-600 dark:text-white/80 mb-4">{group.title}</h4>
+                <ul className="text-gray-600 dark:text-white/70 space-y-1">
                   {group.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center justify-center gap-2">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
@@ -237,7 +237,7 @@ export default function WelcomePage() {
 
 			{/* Footer */}
 			<div className="container mx-auto px-4 pb-8">
-				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 backdrop-blur border border-white/50 p-4 text-center text-sm text-gray-600">
+				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 dark:bg-white/10 backdrop-blur border border-white/50 dark:border-white/20 p-4 text-center text-sm text-gray-600 dark:text-white/70">
 					Built with ❤️ for kids. New: Reading Library, PDF books, and daily challenges.
         </div>
       </div>

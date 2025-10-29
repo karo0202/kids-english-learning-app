@@ -32,7 +32,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400 dark:from-slate-900 dark:via-purple-900 dark:to-violet-900">
         <div className="text-white text-2xl font-bold">Loading Learning Adventure...</div>
       </div>
     )
