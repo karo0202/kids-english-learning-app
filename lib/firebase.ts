@@ -59,7 +59,7 @@ export function getAuthClient() {
   return { auth, googleProvider, appleProvider }
 }
 
-// Google Sign In - Use redirect method to avoid COOP issues
+// Google Sign In - Use popup method (more reliable)
 export const signInWithGoogle = async () => {
   try {
     const client = getAuthClient()
@@ -69,19 +69,33 @@ export const signInWithGoogle = async () => {
     
     const { auth, googleProvider } = client
     
-    console.log('Starting Google sign-in redirect...')
+    console.log('Starting Google sign-in with popup...')
     console.log('Current URL:', window.location.href)
     console.log('Auth domain:', auth.app.options.authDomain)
     
-    // Set the redirect URL to the current page
-    const redirectUrl = window.location.origin + '/login'
-    console.log('Redirect URL will be:', redirectUrl)
-    
-    // Use redirect method to avoid COOP and popup blocking issues
-    await signInWithRedirect(auth, googleProvider)
-    return null // Redirect will happen
+    // Use popup method - more reliable than redirect
+    const result = await signInWithPopup(auth, googleProvider)
+    console.log('Google sign-in successful:', result.user?.email)
+    return result
   } catch (error: any) {
     console.error('Google sign-in error:', error)
+    
+    // If popup is blocked, try redirect as fallback
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+      console.log('Popup blocked, trying redirect method...')
+      try {
+        const client = getAuthClient()
+        if (!client) throw error
+        
+        const { auth, googleProvider } = client
+        await signInWithRedirect(auth, googleProvider)
+        return null // Redirect will happen
+      } catch (redirectError: any) {
+        console.error('Redirect fallback failed:', redirectError)
+        throw error // Throw original popup error
+      }
+    }
+    
     throw new Error(error?.message || 'Failed to start Google sign-in. Please check your Firebase configuration.')
   }
 }

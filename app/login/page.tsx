@@ -89,9 +89,20 @@ export default function LoginPage() {
     setError('')
     try {
       console.log('Attempting Google sign-in...')
-      await signInWithGoogle()
-      // Redirect will happen, so we don't need to navigate here
-      console.log('Google sign-in redirect initiated')
+      const result = await signInWithGoogle()
+      if (result?.user) {
+        // Popup succeeded - save user session
+        console.log('Google sign-in successful, saving session...')
+        setUserSession({
+          id: result.user.uid,
+          email: result.user.email || '',
+          name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
+          accountType: 'parent'
+        })
+        console.log('User session saved, redirecting to dashboard...')
+        router.push('/dashboard')
+      }
+      // If result is null, redirect is happening
     } catch (err: any) {
       console.error('Google sign-in error details:', err)
       const errorMessage = err?.message || 'Google sign-in failed.'
@@ -101,6 +112,8 @@ export default function LoginPage() {
         setError('Firebase configuration error. Please contact support or check your browser console.')
       } else if (errorMessage.includes('unauthorized-domain')) {
         setError('This domain is not authorized. Please contact support.')
+      } else if (errorMessage.includes('popup-blocked')) {
+        setError('Popup was blocked. Please allow popups for this site and try again.')
       } else {
         setError(errorMessage)
       }
