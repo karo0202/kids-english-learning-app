@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { validateCredentials, setUserSession } from '@/lib/simple-auth'
+import { getAuthClient } from '@/lib/firebase'
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,13 +34,41 @@ export default function LoginPage() {
     setLoading(true)
     setError('') // Clear previous errors
 
-    const user = validateCredentials(formData.email, formData.password)
-    
-    if (user) {
-      setUserSession(user)
+    try {
+      const c = getAuthClient()
+      if (!c) throw new Error('Auth not available on server')
+      await signInWithEmailAndPassword(c.auth, formData.email, formData.password)
       router.push('/dashboard')
-    } else {
-      setError('Invalid email or password. Please try again.')
+    } catch (err: any) {
+      setError(err?.message || 'Invalid email or password. Please try again.')
+    }
+    setLoading(false)
+  }
+
+  const signInGoogle = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const c = getAuthClient()
+      if (!c) throw new Error('Auth not available on server')
+      await signInWithPopup(c.auth, c.googleProvider)
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err?.message || 'Google sign-in failed.')
+    }
+    setLoading(false)
+  }
+
+  const signInApple = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const c = getAuthClient()
+      if (!c) throw new Error('Auth not available on server')
+      await signInWithPopup(c.auth, c.appleProvider)
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err?.message || 'Apple sign-in failed.')
     }
     setLoading(false)
   }
@@ -122,13 +151,14 @@ export default function LoginPage() {
               </motion.div>
             </form>
 
-            {/* Demo Account Info */}
-            <div className="bg-white/10 backdrop-blur border border-white/20 p-4 rounded-2xl">
-              <p className="text-sm text-white/90 text-center">
-                <strong>Try the Demo:</strong><br/>
-                Email: john@doe.com<br/>
-                Password: johndoe123
-              </p>
+            {/* Social Logins */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button onClick={signInGoogle} className="bg-white text-gray-900 hover:bg-gray-100 rounded-xl">
+                <span className="mr-2">🔴</span> Sign in with Google
+              </Button>
+              <Button onClick={signInApple} className="bg-black text-white hover:bg-black/90 rounded-xl">
+                <span className="mr-2"></span> Sign in with Apple
+              </Button>
             </div>
 
             <div className="text-center pt-4">

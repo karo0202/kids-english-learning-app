@@ -4,7 +4,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { setUserSession } from '@/lib/simple-auth'
+import { getAuthClient } from '@/lib/firebase'
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,24 +29,21 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      // Create user session directly (demo mode)
-      const user = {
-        id: `user-${Date.now()}`,
-        email: formData.email,
-        name: formData.parentName,
-        accountType: 'parent'
+      const c = getAuthClient()
+      if (!c) throw new Error('Auth not available on server')
+      const cred = await createUserWithEmailAndPassword(c.auth, formData.email, formData.password)
+      if (cred.user && formData.parentName) {
+        await updateProfile(cred.user, { displayName: formData.parentName })
       }
-
-      // Store user session
-      setUserSession(user)
       
-      // Save child information to localStorage
+        // Save child information to localStorage
       if (typeof window !== 'undefined') {
+        const parentId = cred.user?.uid || `user-${Date.now()}`
         const childData = {
           id: `child-${Date.now()}`,
           name: formData.childName,
           age: parseInt(formData.childAge),
-          parentId: user.id,
+          parentId,
           createdAt: new Date().toISOString()
         }
         
@@ -74,6 +72,30 @@ export default function RegisterPage() {
       router.push('/dashboard')
     } catch (error) {
       console.error('Registration error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signUpGoogle = async () => {
+    setLoading(true)
+    try {
+      const c = getAuthClient()
+      if (!c) return
+      await signInWithPopup(c.auth, c.googleProvider)
+      router.push('/dashboard')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signUpApple = async () => {
+    setLoading(true)
+    try {
+      const c = getAuthClient()
+      if (!c) return
+      await signInWithPopup(c.auth, c.appleProvider)
+      router.push('/dashboard')
     } finally {
       setLoading(false)
     }
@@ -197,6 +219,16 @@ export default function RegisterPage() {
                 </Button>
               </motion.div>
             </form>
+
+            {/* Social Sign Up */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <Button onClick={signUpGoogle} className="bg-white text-gray-900 hover:bg-gray-100 rounded-xl">
+                <span className="mr-2">🔴</span> Continue with Google
+              </Button>
+              <Button onClick={signUpApple} className="bg-black text-white hover:bg-black/90 rounded-xl">
+                <span className="mr-2"></span> Continue with Apple
+              </Button>
+            </div>
 
             <div className="text-center pt-4">
               <p className="text-gray-600">
