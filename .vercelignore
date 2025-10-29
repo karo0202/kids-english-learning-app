@@ -1,0 +1,8 @@
+# Ignore files that shouldn't be deployed
+node_modules
+.next
+.git
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

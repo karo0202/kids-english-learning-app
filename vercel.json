@@ -1,34 +1,31 @@
 {
-  "redirects": [
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/dashboard/",
+      "destination": "/dashboard"
+    },
     {
       "source": "/login/",
-      "destination": "/login",
-      "permanent": true
+      "destination": "/login"
     },
     {
       "source": "/register/",
-      "destination": "/register",
-      "permanent": true
-    },
-    {
-      "source": "/dashboard/",
-      "destination": "/dashboard",
-      "permanent": true
+      "destination": "/register"
     },
     {
       "source": "/learning/",
-      "destination": "/learning",
-      "permanent": true
+      "destination": "/learning"
     },
     {
       "source": "/settings/",
-      "destination": "/settings",
-      "permanent": true
+      "destination": "/settings"
     },
     {
       "source": "/about/",
-      "destination": "/about",
-      "permanent": true
+      "destination": "/about"
     }
   ]
 }
