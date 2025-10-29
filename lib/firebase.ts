@@ -73,6 +73,10 @@ export const signInWithGoogle = async () => {
     console.log('Current URL:', window.location.href)
     console.log('Auth domain:', auth.app.options.authDomain)
     
+    // Set the redirect URL to the current page
+    const redirectUrl = window.location.origin + '/login'
+    console.log('Redirect URL will be:', redirectUrl)
+    
     // Use redirect method to avoid COOP and popup blocking issues
     await signInWithRedirect(auth, googleProvider)
     return null // Redirect will happen
@@ -92,13 +96,15 @@ export const handleGoogleRedirect = async () => {
     }
     
     const { auth } = client
+    console.log('Checking for redirect result...')
     const result = await getRedirectResult(auth)
     
     if (result) {
       console.log('Google redirect successful:', result.user?.email)
+      console.log('User UID:', result.user?.uid)
       return result
     } else {
-      console.log('No redirect result found')
+      console.log('No redirect result found - this is normal on page load')
       return null
     }
   } catch (error: any) {
