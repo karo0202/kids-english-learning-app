@@ -150,8 +150,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="parentName" className="sr-only">Parent's Full Name</label>
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
+                    id="parentName"
+                    name="parentName"
                     type="text"
                     placeholder="Parent's Full Name"
                     value={formData.parentName}
@@ -162,8 +165,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="email" className="sr-only">Email Address</label>
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
+                    id="email"
+                    name="email"
                     type="email"
                     placeholder="Email Address"
                     value={formData.email}
@@ -174,8 +180,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="password" className="sr-only">Create Password</label>
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
+                    id="password"
+                    name="password"
                     type="password"
                     placeholder="Create Password"
                     value={formData.password}
@@ -195,8 +204,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="childName" className="sr-only">Child's Name</label>
                   <Baby className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
+                    id="childName"
+                    name="childName"
                     type="text"
                     placeholder="Child's Name"
                     value={formData.childName}
@@ -207,7 +219,10 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="childAge" className="sr-only">Child's Age</label>
                   <select
+                    id="childAge"
+                    name="childAge"
                     value={formData.childAge}
                     onChange={(e) => setFormData({...formData, childAge: e.target.value})}
                     className="w-full pl-3 py-3 text-lg rounded-xl border-2 focus:border-pink-400 bg-white"

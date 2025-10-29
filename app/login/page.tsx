@@ -126,8 +126,11 @@ export default function LoginPage() {
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="relative">
+                <label htmlFor="email" className="sr-only">Email Address</label>
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                 <Input
+                  id="email"
+                  name="email"
                   type="email"
                   placeholder="Email Address"
                   value={formData.email}
@@ -138,8 +141,11 @@ export default function LoginPage() {
               </div>
 
               <div className="relative">
+                <label htmlFor="password" className="sr-only">Password</label>
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                 <Input
+                  id="password"
+                  name="password"
                   type="password"
                   placeholder="Password"
                   value={formData.password}
