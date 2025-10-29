@@ -9,6 +9,24 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
+// Validate Firebase config
+function validateFirebaseConfig() {
+  if (typeof window === 'undefined') return false
+  
+  const missing = []
+  if (!firebaseConfig.apiKey) missing.push('NEXT_PUBLIC_FIREBASE_API_KEY')
+  if (!firebaseConfig.authDomain) missing.push('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN')
+  if (!firebaseConfig.projectId) missing.push('NEXT_PUBLIC_FIREBASE_PROJECT_ID')
+  if (!firebaseConfig.appId) missing.push('NEXT_PUBLIC_FIREBASE_APP_ID')
+  
+  if (missing.length > 0) {
+    console.error('Firebase config missing:', missing.join(', '))
+    return false
+  }
+  
+  return true
+}
+
 let app: any = null
 let auth: any = null
 let googleProvider: any = null
@@ -16,15 +34,27 @@ let appleProvider: any = null
 
 export function getAuthClient() {
   if (typeof window === 'undefined') return null
+  
+  if (!validateFirebaseConfig()) {
+    console.error('Firebase configuration is incomplete. Please check your environment variables.')
+    return null
+  }
+  
   if (!app) {
-    app = getApps().length ? getApps()[0]! : initializeApp(firebaseConfig)
-    auth = getAuth(app)
-    setPersistence(auth, browserLocalPersistence)
-    googleProvider = new GoogleAuthProvider()
-    googleProvider.setCustomParameters({
-      prompt: 'select_account'
-    })
-    appleProvider = new OAuthProvider('apple.com')
+    try {
+      app = getApps().length ? getApps()[0]! : initializeApp(firebaseConfig)
+      auth = getAuth(app)
+      setPersistence(auth, browserLocalPersistence)
+      googleProvider = new GoogleAuthProvider()
+      googleProvider.setCustomParameters({
+        prompt: 'select_account'
+      })
+      appleProvider = new OAuthProvider('apple.com')
+      console.log('Firebase initialized successfully')
+    } catch (error) {
+      console.error('Firebase initialization error:', error)
+      return null
+    }
   }
   return { auth, googleProvider, appleProvider }
 }
@@ -33,16 +63,19 @@ export function getAuthClient() {
 export const signInWithGoogle = async () => {
   try {
     const client = getAuthClient()
-    if (!client) throw new Error('Auth not initialized')
+    if (!client) {
+      throw new Error('Firebase not initialized. Please check your environment variables.')
+    }
     
     const { auth, googleProvider } = client
     
+    console.log('Starting Google sign-in redirect...')
     // Use redirect method to avoid COOP and popup blocking issues
     await signInWithRedirect(auth, googleProvider)
     return null // Redirect will happen
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google sign-in error:', error)
-    throw error
+    throw new Error(error?.message || 'Failed to start Google sign-in. Please check your Firebase configuration.')
   }
 }
 
@@ -50,19 +83,27 @@ export const signInWithGoogle = async () => {
 export const handleGoogleRedirect = async () => {
   try {
     const client = getAuthClient()
-    if (!client) return null
+    if (!client) {
+      console.warn('Auth client not available')
+      return null
+    }
     
     const { auth } = client
     const result = await getRedirectResult(auth)
     
     if (result) {
       console.log('Google redirect successful:', result.user?.email)
+      return result
+    } else {
+      console.log('No redirect result found')
+      return null
     }
-    
-    return result
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google redirect error:', error)
-    return null
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      throw new Error('An account already exists with this email. Please sign in with email/password.')
+    }
+    throw error
   }
 }
 

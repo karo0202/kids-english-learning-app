@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
+import { FirebaseDiagnostics } from '@/components/firebase-diagnostics'
 import { Mail, Lock, ArrowLeft } from 'lucide-react'
 
 export default function LoginPage() {
@@ -82,10 +83,22 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
+      console.log('Attempting Google sign-in...')
       await signInWithGoogle()
       // Redirect will happen, so we don't need to navigate here
+      console.log('Google sign-in redirect initiated')
     } catch (err: any) {
-      setError(err?.message || 'Google sign-in failed.')
+      console.error('Google sign-in error details:', err)
+      const errorMessage = err?.message || 'Google sign-in failed.'
+      
+      // Check for specific error types
+      if (errorMessage.includes('not initialized') || errorMessage.includes('environment variables')) {
+        setError('Firebase configuration error. Please contact support or check your browser console.')
+      } else if (errorMessage.includes('unauthorized-domain')) {
+        setError('This domain is not authorized. Please contact support.')
+      } else {
+        setError(errorMessage)
+      }
       setLoading(false)
     }
   }
@@ -194,9 +207,16 @@ export default function LoginPage() {
                 <span className="mr-2">🔴</span> Sign in with Google
               </Button>
               <Button onClick={signInApple} className="bg-black text-white hover:bg-black/90 rounded-xl">
-                <span className="mr-2"></span> Sign in with Apple
+                <span className="mr-2">🍎</span> Sign in with Apple
               </Button>
             </div>
+
+            {/* Debug mode - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-4">
+                <FirebaseDiagnostics />
+              </div>
+            )}
 
             <div className="text-center pt-4">
               <p className="text-white/80">
