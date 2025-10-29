@@ -2,9 +2,9 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getAuthClient } from '@/lib/firebase'
+import { getAuthClient, signInWithGoogleRedirect, handleGoogleRedirect } from '@/lib/firebase'
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,22 @@ import { User, Mail, Lock, Baby, Heart } from 'lucide-react'
 export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    // Handle Google redirect result
+    const handleRedirect = async () => {
+      try {
+        const result = await handleGoogleRedirect()
+        if (result) {
+          router.push('/dashboard')
+        }
+      } catch (err: any) {
+        console.error('Google redirect error:', err)
+      }
+    }
+
+    handleRedirect()
+  }, [router])
   const [formData, setFormData] = useState({
     parentName: '',
     email: '',
@@ -80,11 +96,10 @@ export default function RegisterPage() {
   const signUpGoogle = async () => {
     setLoading(true)
     try {
-      const c = getAuthClient()
-      if (!c) return
-      await signInWithPopup(c.auth, c.googleProvider)
-      router.push('/dashboard')
-    } finally {
+      await signInWithGoogleRedirect()
+      // Note: redirect will happen, so we don't need to navigate here
+    } catch (err: any) {
+      console.error('Google sign-up error:', err)
       setLoading(false)
     }
   }

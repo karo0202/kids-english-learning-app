@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getAuthClient } from '@/lib/firebase'
+import { getAuthClient, signInWithGoogleRedirect, handleGoogleRedirect } from '@/lib/firebase'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -27,7 +27,21 @@ export default function LoginPage() {
     if (errorParam) {
       setError('Authentication failed. Please try again.')
     }
-  }, [searchParams])
+
+    // Handle Google redirect result
+    const handleRedirect = async () => {
+      try {
+        const result = await handleGoogleRedirect()
+        if (result) {
+          router.push('/dashboard')
+        }
+      } catch (err: any) {
+        setError(err?.message || 'Google sign-in failed.')
+      }
+    }
+
+    handleRedirect()
+  }, [searchParams, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,14 +63,12 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      const c = getAuthClient()
-      if (!c) throw new Error('Auth not available on server')
-      await signInWithPopup(c.auth, c.googleProvider)
-      router.push('/dashboard')
+      await signInWithGoogleRedirect()
+      // Note: redirect will happen, so we don't need to navigate here
     } catch (err: any) {
       setError(err?.message || 'Google sign-in failed.')
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const signInApple = async () => {
