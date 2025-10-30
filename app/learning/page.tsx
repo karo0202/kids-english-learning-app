@@ -69,21 +69,21 @@ export default function LearningPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50 dark:bg-white/5 dark:border-white/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 onClick={() => router.push('/dashboard')}
-                className="text-gray-600 hover:text-gray-800"
+                className="text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-white/80"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Learning Center</h1>
-                <p className="text-gray-600">Welcome, {selectedChild?.name || 'Student'}!</p>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Learning Center</h1>
+                <p className="text-gray-600 dark:text-white/70">Welcome, {selectedChild?.name || 'Student'}!</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -129,16 +129,16 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:bg-slate-800 dark:border-white/10"
                 onClick={() => router.push('/learning/reading')}
               >
                 <CardContent className="p-6 text-center">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-500 flex items-center justify-center">
                     <BookOpen className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">📚 Reading</h3>
-                  <p className="text-gray-600 mb-4">Stories, vocabulary, and comprehension</p>
-                  <div className="text-sm text-blue-600 font-medium">Start Reading →</div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">📚 Reading</h3>
+                  <p className="text-gray-600 dark:text-white/80 mb-4">Stories, vocabulary, and comprehension</p>
+                  <div className="text-sm text-blue-600 dark:text-blue-300 font-medium">Start Reading →</div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -148,16 +148,16 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-green-100 border-green-200"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-green-100 border-green-200 dark:bg-slate-800 dark:border-white/10"
                 onClick={() => router.push('/learning/writing')}
               >
                 <CardContent className="p-6 text-center">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center">
                     <PenTool className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">✏️ Writing</h3>
-                  <p className="text-gray-600 mb-4">Letter tracing and spelling practice</p>
-                  <div className="text-sm text-green-600 font-medium">Start Writing →</div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">✏️ Writing</h3>
+                  <p className="text-gray-600 dark:text-white/80 mb-4">Letter tracing and spelling practice</p>
+                  <div className="text-sm text-green-600 dark:text-green-300 font-medium">Start Writing →</div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -167,16 +167,16 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 dark:bg-slate-800 dark:border-white/10"
                 onClick={() => router.push('/learning/speaking')}
               >
                 <CardContent className="p-6 text-center">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-500 flex items-center justify-center">
                     <Mic className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">🎤 Speaking</h3>
-                  <p className="text-gray-600 mb-4">Pronunciation and conversation</p>
-                  <div className="text-sm text-purple-600 font-medium">Start Speaking →</div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">🎤 Speaking</h3>
+                  <p className="text-gray-600 dark:text-white/80 mb-4">Pronunciation and conversation</p>
+                  <div className="text-sm text-purple-600 dark:text-purple-300 font-medium">Start Speaking →</div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -186,16 +186,16 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 dark:bg-slate-800 dark:border-white/10"
                 onClick={() => router.push('/learning/games')}
               >
                 <CardContent className="p-6 text-center">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-pink-500 flex items-center justify-center">
                     <Gamepad2 className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">🎮 Games</h3>
-                  <p className="text-gray-600 mb-4">Fun interactive learning games</p>
-                  <div className="text-sm text-pink-600 font-medium">Start Playing →</div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">🎮 Games</h3>
+                  <p className="text-gray-600 dark:text-white/80 mb-4">Fun interactive learning games</p>
+                  <div className="text-sm text-pink-600 dark:text-pink-300 font-medium">Start Playing →</div>
                 </CardContent>
               </Card>
             </motion.div>
