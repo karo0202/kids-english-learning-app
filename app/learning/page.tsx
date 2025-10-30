@@ -17,6 +17,23 @@ export default function LearningPage() {
   const [selectedChild, setSelectedChild] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+  // Ensure dark mode CSS class is present when user selected dark theme
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const prefsStr = localStorage.getItem('user_preferences')
+        if (prefsStr) {
+          const prefs = JSON.parse(prefsStr)
+          if (prefs?.theme === 'dark') {
+            document.documentElement.classList.add('dark')
+          } else if (prefs?.theme === 'light') {
+            document.documentElement.classList.remove('dark')
+          }
+        }
+      } catch {}
+    }
+  }, [])
+
   useEffect(() => {
     const currentUser = getUserSession()
     if (!currentUser) {
