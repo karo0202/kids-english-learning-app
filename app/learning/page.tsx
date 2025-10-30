@@ -38,7 +38,7 @@ export default function LearningPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
       </div>
     )
@@ -46,7 +46,7 @@ export default function LearningPage() {
 
   if (children.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center">
         <Card className="max-w-md mx-4">
           <CardContent className="p-8 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
@@ -67,7 +67,7 @@ export default function LearningPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50 dark:bg-white/5 dark:border-white/10">
         <div className="container mx-auto px-4 py-4">
@@ -129,7 +129,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:bg-slate-800 dark:border-white/10"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/reading')}
               >
                 <CardContent className="p-6 text-center">
@@ -148,7 +148,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-green-100 border-green-200 dark:bg-slate-800 dark:border-white/10"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-green-100 border-green-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/writing')}
               >
                 <CardContent className="p-6 text-center">
@@ -167,7 +167,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 dark:bg-slate-800 dark:border-white/10"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/speaking')}
               >
                 <CardContent className="p-6 text-center">
@@ -186,7 +186,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 dark:bg-slate-800 dark:border-white/10"
+                className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/games')}
               >
                 <CardContent className="p-6 text-center">
