@@ -87,7 +87,7 @@ export default function LearningPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50 dark:bg-white/5 dark:border-white/10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
@@ -96,21 +96,21 @@ export default function LearningPage() {
                 className="text-gray-600 hover:text-gray-800 dark:text-white dark:hover:text-white/80"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                <span className="hidden xs:inline">Back to Dashboard</span>
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Learning Center</h1>
-                <p className="text-gray-600 dark:text-white/70">Welcome, {selectedChild?.name || 'Student'}!</p>
+                <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">Learning Center</h1>
+                <p className="text-sm md:text-base text-gray-600 dark:text-white/70">Welcome, {selectedChild?.name || 'Student'}!</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full">
+              <div className="flex items-center gap-1 bg-yellow-100 px-2 md:px-3 py-1 rounded-full scale-95 md:scale-100">
                 <Star className="w-4 h-4 text-yellow-600" />
-                <span className="text-sm font-medium text-yellow-800">100 XP</span>
+                <span className="text-xs md:text-sm font-medium text-yellow-800">100 XP</span>
               </div>
-              <div className="flex items-center gap-1 bg-blue-100 px-3 py-1 rounded-full">
+              <div className="flex items-center gap-1 bg-blue-100 px-2 md:px-3 py-1 rounded-full scale-95 md:scale-100">
                 <Trophy className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">Level 1</span>
+                <span className="text-xs md:text-sm font-medium text-blue-800">Level 1</span>
               </div>
             </div>
           </div>
@@ -121,14 +121,14 @@ export default function LearningPage() {
         {/* Child Selector */}
         {children.length > 1 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Select Child</h2>
-            <div className="flex gap-4 overflow-x-auto pb-2">
+            <h2 className="text-base md:text-lg font-semibold text-gray-800 dark:text-white mb-3">Select Child</h2>
+            <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
               {children.map((child) => (
                 <Button
                   key={child.id}
                   variant={selectedChild?.id === child.id ? "default" : "outline"}
                   onClick={() => setSelectedChild(child)}
-                  className="whitespace-nowrap"
+                  className="whitespace-nowrap text-sm md:text-base"
                 >
                   {child.name} ({child.age} years old)
                 </Button>
@@ -138,9 +138,9 @@ export default function LearningPage() {
         )}
 
         {/* Learning Modules */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Choose Your Learning Adventure!</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-4 md:mb-6">Choose Your Learning Adventure!</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -149,12 +149,12 @@ export default function LearningPage() {
                 className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/reading')}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-500 flex items-center justify-center">
-                    <BookOpen className="w-10 h-10 text-white" />
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-full bg-blue-500 flex items-center justify-center">
+                    <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">📚 Reading</h3>
-                  <p className="text-gray-600 dark:text-white/80 mb-4">Stories, vocabulary, and comprehension</p>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">📚 Reading</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Stories, vocabulary, and comprehension</p>
                   <div className="text-sm text-blue-600 dark:text-blue-300 font-medium">Start Reading →</div>
                 </CardContent>
               </Card>
@@ -168,12 +168,12 @@ export default function LearningPage() {
                 className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-green-100 border-green-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/writing')}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center">
-                    <PenTool className="w-10 h-10 text-white" />
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-full bg-green-500 flex items-center justify-center">
+                    <PenTool className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">✏️ Writing</h3>
-                  <p className="text-gray-600 dark:text-white/80 mb-4">Letter tracing and spelling practice</p>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">✏️ Writing</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Letter tracing and spelling practice</p>
                   <div className="text-sm text-green-600 dark:text-green-300 font-medium">Start Writing →</div>
                 </CardContent>
               </Card>
@@ -187,12 +187,12 @@ export default function LearningPage() {
                 className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/speaking')}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-500 flex items-center justify-center">
-                    <Mic className="w-10 h-10 text-white" />
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-full bg-purple-500 flex items-center justify-center">
+                    <Mic className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">🎤 Speaking</h3>
-                  <p className="text-gray-600 dark:text-white/80 mb-4">Pronunciation and conversation</p>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">🎤 Speaking</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Pronunciation and conversation</p>
                   <div className="text-sm text-purple-600 dark:text-purple-300 font-medium">Start Speaking →</div>
                 </CardContent>
               </Card>
@@ -206,12 +206,12 @@ export default function LearningPage() {
                 className="cursor-pointer hover:shadow-lg transition-all bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 dark:bg-slate-800 dark:bg-none dark:from-transparent dark:to-transparent dark:border-white/10"
                 onClick={() => router.push('/learning/games')}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-pink-500 flex items-center justify-center">
-                    <Gamepad2 className="w-10 h-10 text-white" />
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-full bg-pink-500 flex items-center justify-center">
+                    <Gamepad2 className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">🎮 Games</h3>
-                  <p className="text-gray-600 dark:text-white/80 mb-4">Fun interactive learning games</p>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2">🎮 Games</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Fun interactive learning games</p>
                   <div className="text-sm text-pink-600 dark:text-pink-300 font-medium">Start Playing →</div>
                 </CardContent>
               </Card>
@@ -220,9 +220,9 @@ export default function LearningPage() {
         </div>
 
         {/* Progress Section */}
-        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-purple-100 dark:border-white/10">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Today's Progress</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-purple-100 dark:border-white/10">
+          <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-3 md:mb-4">Today's Progress</h3>
+          <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-4 text-xs md:text-base">
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">0</div>
               <div className="text-sm text-gray-600 dark:text-white/70">Lessons Completed</div>
