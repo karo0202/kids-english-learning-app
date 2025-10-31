@@ -4,7 +4,7 @@
   {"id":"3","word":"cat","pronunciation":"/kæt/","definition":"A small furry pet","imageUrl":"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400","difficulty":1},
   {"id":"4","word":"dog","pronunciation":"/dɒɡ/","definition":"A friendly animal that barks","imageUrl":"https://images.unsplash.com/photo-1552053831-71594a27632d?w=400","difficulty":1},
   {"id":"5","word":"elephant","pronunciation":"/ˈɛl.ɪ.fənt/","definition":"A large animal with a trunk","imageUrl":"https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400","difficulty":2},
-  {"id":"6","word":"frog","pronunciation":"/frɒɡ/","definition":"A small green animal that jumps","imageUrl":"https://images.unsplash.com/photo-1503596476-1c12a8ba09a9?w=400","difficulty":1},
+  {"id":"6","word":"frog","pronunciation":"/frɒɡ/","definition":"A small green animal that jumps","imageUrl":"https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=400&h=400&fit=crop&crop=center","difficulty":1},
   {"id":"7","word":"giraffe","pronunciation":"/dʒəˈrɑːf/","definition":"A very tall animal with a long neck","imageUrl":"https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=400","difficulty":2},
   {"id":"8","word":"house","pronunciation":"/haʊs/","definition":"A place where people live","imageUrl":"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400","difficulty":1},
   {"id":"9","word":"island","pronunciation":"/ˈaɪ.lənd/","definition":"Land with water all around","imageUrl":"https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400","difficulty":2},
