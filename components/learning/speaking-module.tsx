@@ -173,7 +173,7 @@ export default function SpeakingModule() {
         word: 'red',
         pronunciation: '/red/',
         definition: 'The color of apples and roses',
-        imageUrl: `https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -181,7 +181,7 @@ export default function SpeakingModule() {
         word: 'blue',
         pronunciation: '/bluː/',
         definition: 'The color of the sky and ocean',
-        imageUrl: `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -189,7 +189,7 @@ export default function SpeakingModule() {
         word: 'green',
         pronunciation: '/ɡriːn/',
         definition: 'The color of grass and leaves',
-        imageUrl: `https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1448387473223-5c37445527e7?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -197,7 +197,7 @@ export default function SpeakingModule() {
         word: 'yellow',
         pronunciation: '/ˈjel.oʊ/',
         definition: 'The color of the sun and bananas',
-        imageUrl: `https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1497864149936-299970c53d55?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       // Nature
@@ -206,7 +206,7 @@ export default function SpeakingModule() {
         word: 'tree',
         pronunciation: '/triː/',
         definition: 'A tall plant with branches and leaves',
-        imageUrl: `https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -222,7 +222,7 @@ export default function SpeakingModule() {
         word: 'sun',
         pronunciation: '/sʌn/',
         definition: 'The bright star that gives us light',
-        imageUrl: `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -255,7 +255,7 @@ export default function SpeakingModule() {
         word: 'banana',
         pronunciation: '/bəˈnɑː.nə/',
         definition: 'A long curved yellow fruit',
-        imageUrl: `https://images.unsplash.com/photo-1571772805064-207c8435df79?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
