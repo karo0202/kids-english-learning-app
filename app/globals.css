@@ -142,7 +142,7 @@
   }
 }
 
-/* Custom animations for kids */
+/* Premium Custom animations */
 @keyframes bounce-gentle {
   0%, 100% {
     transform: translateY(0);
@@ -176,6 +176,48 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.8), 0 0 60px rgba(236, 72, 153, 0.5);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .bounce-gentle {
   animation: bounce-gentle 2s ease-in-out infinite;
 }
@@ -188,42 +230,109 @@
   animation: pulse-color 3s ease-in-out infinite;
 }
 
-/* Kid-friendly button styles */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Premium Kid-friendly button styles */
 .btn-kid {
-  @apply px-6 py-4 rounded-2xl font-bold text-lg shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95;
+  @apply px-6 py-4 rounded-2xl font-bold text-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 relative overflow-hidden;
+}
+
+.btn-kid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-kid:hover::before {
+  left: 100%;
 }
 
 .btn-primary-kid {
-  @apply btn-kid bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white;
+  @apply btn-kid bg-gradient-to-r from-purple-500 via-pink-500 to-violet-500 hover:from-purple-600 hover:via-pink-600 hover:to-violet-600 text-white;
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
 .btn-secondary-kid {
-  @apply btn-kid bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500 text-white;
+  @apply btn-kid bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-600 hover:from-blue-600 hover:via-cyan-500 hover:to-blue-700 text-white;
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
 .btn-success-kid {
-  @apply btn-kid bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white;
+  @apply btn-kid bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 hover:from-green-500 hover:via-emerald-500 hover:to-green-600 text-white;
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
 .btn-warning-kid {
-  @apply btn-kid bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white;
+  @apply btn-kid bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 hover:from-yellow-500 hover:via-orange-500 hover:to-yellow-600 text-white;
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
-/* Card styles for kids */
+/* Premium Card styles with glassmorphism */
 .card-kid {
-  @apply bg-white rounded-3xl shadow-lg border-4 border-transparent hover:border-purple-300 transform transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  @apply rounded-3xl shadow-xl border border-white/20 transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-md;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-kid {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .card-speaking {
-  @apply card-kid border-blue-200 hover:border-blue-400;
+  @apply card-kid;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.card-speaking:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.3), 0 4px 16px 0 rgba(59, 130, 246, 0.2);
 }
 
 .card-writing {
-  @apply card-kid border-green-200 hover:border-green-400;
+  @apply card-kid;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.card-writing:hover {
+  border-color: rgba(34, 197, 94, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(34, 197, 94, 0.3), 0 4px 16px 0 rgba(34, 197, 94, 0.2);
 }
 
 .card-games {
-  @apply card-kid border-purple-200 hover:border-purple-400;
+  @apply card-kid;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.card-games:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(168, 85, 247, 0.3), 0 4px 16px 0 rgba(168, 85, 247, 0.2);
 }
 
 /* Progress bars */
