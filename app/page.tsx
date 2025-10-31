@@ -1,23 +1,16 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getUserSession, hasStoredData } from '@/lib/simple-auth'
 import WelcomePage from '@/components/welcome-page'
 
 export default function HomePage() {
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Only run on client side
     if (typeof window !== 'undefined') {
-      // Check if user has stored data (either logged in or has children data)
-      if (hasStoredData()) {
-        router.push('/dashboard')
-      } else {
-        setLoading(false)
-      }
+      // Show welcome page immediately - let users navigate themselves
+      setLoading(false)
     } else {
       setLoading(false)
     }
@@ -25,10 +18,10 @@ export default function HomePage() {
     // Fallback timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       setLoading(false)
-    }, 3000)
+    }, 1000)
 
     return () => clearTimeout(timeout)
-  }, [router])
+  }, [])
 
   if (loading) {
     return (
