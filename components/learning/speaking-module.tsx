@@ -1044,8 +1044,8 @@ export default function SpeakingModule() {
                       <div className="text-lg font-bold text-orange-900">{streak}</div>
                       <div className="text-xs text-gray-800 font-semibold">Streak</div>
                     </div>
-                    <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-xl p-4 border-2 border-green-400" role="region" aria-label="Achievement badges">
-                      <Award className="w-6 h-6 text-green-800 mx-auto mb-1" aria-hidden="true" />
+                    <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-xl p-3 md:p-4 border-2 border-green-400" role="region" aria-label="Achievement badges">
+                      <Award className="w-5 h-5 md:w-6 md:h-6 text-green-800 mx-auto mb-1" aria-hidden="true" />
                       <div className="text-lg font-bold text-green-900">{achievements.length}</div>
                       <div className="text-xs text-gray-800 font-semibold">Badges</div>
                     </div>
