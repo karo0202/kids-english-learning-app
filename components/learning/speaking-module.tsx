@@ -690,38 +690,40 @@ export default function SpeakingModule() {
       
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push('/dashboard')}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-              <div className="flex items-center gap-3">
-                <Mascot emotion="excited" size="medium" />
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-800">Speaking Practice</h1>
-                  <p className="text-gray-600">Practice pronunciation with AI buddy! 🎤</p>
+        <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+            <div className="flex items-center justify-between gap-2 md:gap-4 flex-1 min-w-0">
+              <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/dashboard')}
+                  className="flex-shrink-0"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1 md:mr-2" />
+                  <span className="hidden xs:inline">Back</span>
+                </Button>
+                <div className="hidden sm:block flex-shrink-0">
+                  <Mascot emotion="excited" size="medium" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg md:text-2xl font-bold text-gray-800 truncate">Speaking Practice</h1>
+                  <p className="text-xs md:text-base text-gray-600 truncate">Practice pronunciation with AI buddy! 🎤</p>
                 </div>
               </div>
               
               {/* Personalization Toggle */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowPersonalization(!showPersonalization)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    showPersonalization 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                      : 'bg-gray-100 text-gray-600 border border-gray-200'
-                  }`}
-                >
-                  🧠 AI Personalization
-                </button>
-              </div>
+              <button
+                onClick={() => setShowPersonalization(!showPersonalization)}
+                className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  showPersonalization 
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                    : 'bg-gray-100 text-gray-600 border border-gray-200'
+                }`}
+              >
+                <span className="hidden sm:inline">🧠 AI Personalization</span>
+                <span className="sm:hidden">🧠 AI</span>
+              </button>
             </div>
 
             <ProgressRing 
@@ -827,20 +829,20 @@ export default function SpeakingModule() {
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-4 py-8" id="main-content" role="main">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8" id="main-content" role="main">
         {/* Activity Selector */}
         <motion.div 
-          className="mb-8"
+          className="mb-4 md:mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex flex-wrap gap-4 justify-center" role="tablist" aria-label="Activity selection">
+          <div className="flex flex-wrap gap-2 md:gap-4 justify-center" role="tablist" aria-label="Activity selection">
             {activities.map((activity) => (
               <Button
                 key={activity.id}
                 variant={activityType === activity.id ? "default" : "outline"}
                 onClick={() => setActivityType(activity.id as any)}
-                className={`${activityType === activity.id ? 'btn-primary-kid' : ''} px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50`}
+                className={`${activityType === activity.id ? 'btn-primary-kid' : ''} px-3 md:px-6 py-2 md:py-3 text-sm md:text-base focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50`}
                 role="tab"
                 aria-selected={activityType === activity.id}
                 aria-controls={`${activity.id}-panel`}
@@ -848,14 +850,14 @@ export default function SpeakingModule() {
                 aria-label={`Select ${activity.name} activity`}
               >
                 <span aria-hidden="true">{activity.icon}</span>
-                <span className="ml-2">{activity.name}</span>
+                <span className="ml-1 md:ml-2">{activity.name}</span>
               </Button>
             ))}
           </div>
         </motion.div>
 
         {activityType === 'pronunciation' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 max-w-6xl mx-auto">
           {/* Word Display */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -863,12 +865,12 @@ export default function SpeakingModule() {
             transition={{ delay: 0.2 }}
           >
             <Card className="card-speaking h-full">
-              <CardContent className="p-8 text-center">
+              <CardContent className="p-4 md:p-8 text-center overflow-y-auto max-h-[calc(100vh-300px)]">
                 {currentWord && (
                   <>
                     {/* Word Image */}
                     {currentWord.imageUrl && (
-                      <div className="w-48 h-48 mx-auto mb-6 rounded-2xl overflow-hidden shadow-lg">
+                      <div className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 md:mb-6 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
                         <OptimizedImage 
                           src={currentWord.imageUrl} 
                           alt={currentWord.word}
@@ -884,7 +886,7 @@ export default function SpeakingModule() {
 
                     {/* Word */}
                     <motion.h2 
-                      className="text-5xl font-bold text-gray-900 mb-2"
+                      className="text-3xl md:text-5xl font-bold text-gray-900 mb-2"
                       key={currentWord.id}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -895,18 +897,18 @@ export default function SpeakingModule() {
                     </motion.h2>
 
                     {/* Pronunciation */}
-                    <p className="text-2xl text-gray-700 mb-4" aria-label={`Pronunciation: ${currentWord.pronunciation}`}>
+                    <p className="text-lg md:text-2xl text-gray-700 mb-3 md:mb-4" aria-label={`Pronunciation: ${currentWord.pronunciation}`}>
                       {currentWord.pronunciation}
                     </p>
 
                     {/* Definition */}
-                    <p className="text-lg text-gray-800 mb-6" aria-label={`Definition: ${currentWord.definition}`}>
+                    <p className="text-sm md:text-lg text-gray-800 mb-4 md:mb-6" aria-label={`Definition: ${currentWord.definition}`}>
                       {currentWord.definition}
                     </p>
 
                     {/* Previous result banner (shows after advancing) */}
                     {lastResult && (
-                      <div className={`mb-4 rounded-lg p-3 text-sm ${lastResult.correct ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>
+                      <div className={`mb-3 md:mb-4 rounded-lg p-2 md:p-3 text-xs md:text-sm ${lastResult.correct ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>
                         Previous word "{lastResult.word}": {lastResult.correct ? 'Correct' : 'Try again next time'}{lastResult.transcript ? ` — You said: "${lastResult.transcript}"` : ''}
                       </div>
                     )}
@@ -914,10 +916,10 @@ export default function SpeakingModule() {
                     {/* Listen Button */}
                     <Button
                       onClick={speakWord}
-                      className="btn-secondary-kid mb-4"
+                      className="btn-secondary-kid mb-2 md:mb-4 text-sm md:text-base"
                       size="lg"
                     >
-                      <Volume2 className="w-6 h-6 mr-2" />
+                      <Volume2 className="w-4 h-4 md:w-6 md:h-6 mr-2" />
                       Listen to Word
                     </Button>
                   </>
@@ -933,17 +935,17 @@ export default function SpeakingModule() {
             transition={{ delay: 0.4 }}
           >
             <Card className="card-speaking h-full">
-              <CardContent className="p-8">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Turn to Speak!</h3>
+              <CardContent className="p-4 md:p-8">
+                <div className="text-center mb-4 md:mb-8">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3 md:mb-4">Your Turn to Speak!</h3>
                   {currentWord && (
-                    <div className="text-gray-600 mb-2">Say the word: <strong>{currentWord.word}</strong></div>
+                    <div className="text-sm md:text-base text-gray-600 mb-2">Say the word: <strong>{currentWord.word}</strong></div>
                   )}
                   
                   {/* Microphone Button */}
                   <motion.button
                     onClick={isListening ? stopListening : startListening}
-                    className={`w-32 h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 ${
+                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-4 md:mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 ${
                       isListening 
                         ? 'bg-gradient-to-br from-red-500 to-red-700 animate-pulse' 
                         : 'bg-gradient-to-br from-blue-500 to-blue-700 hover:scale-110'
@@ -955,13 +957,13 @@ export default function SpeakingModule() {
                     tabIndex={0}
                   >
                     {isListening ? (
-                      <MicOff className="w-16 h-16" />
+                      <MicOff className="w-12 h-12 md:w-16 md:h-16" />
                     ) : (
-                      <Mic className="w-16 h-16" />
+                      <Mic className="w-12 h-12 md:w-16 md:h-16" />
                     )}
                   </motion.button>
 
-                  <p className="text-lg text-gray-600 mb-4">
+                  <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-4">
                     {isListening ? 'Listening... Speak now!' : 'Click to start speaking'}
                   </p>
 
@@ -970,9 +972,9 @@ export default function SpeakingModule() {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-gray-100 rounded-xl p-4 mb-4"
+                      className="bg-gray-100 rounded-xl p-3 md:p-4 mb-3 md:mb-4"
                     >
-                      <p className="text-gray-700">You said: <strong>"{userSpeech}"</strong></p>
+                      <p className="text-sm md:text-base text-gray-700">You said: <strong>"{userSpeech}"</strong></p>
                     </motion.div>
                   )}
 
@@ -983,7 +985,7 @@ export default function SpeakingModule() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        className={`p-6 rounded-xl ${
+                        className={`p-4 md:p-6 rounded-xl ${
                           isCorrect 
                             ? 'bg-green-200 border-2 border-green-500' 
                             : 'bg-yellow-200 border-2 border-yellow-500'
@@ -992,19 +994,19 @@ export default function SpeakingModule() {
                         aria-live="polite"
                         aria-label={isCorrect ? 'Correct pronunciation' : 'Incorrect pronunciation'}
                       >
-                        <div className="flex items-center justify-center gap-3 mb-2">
+                        <div className="flex items-center justify-center gap-2 md:gap-3 mb-2">
                           {isCorrect ? (
-                            <CheckCircle className="w-8 h-8 text-green-800" aria-hidden="true" />
+                            <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-800" aria-hidden="true" />
                           ) : (
-                            <RefreshCw className="w-8 h-8 text-yellow-800" aria-hidden="true" />
+                            <RefreshCw className="w-6 h-6 md:w-8 md:h-8 text-yellow-800" aria-hidden="true" />
                           )}
-                          <h4 className={`text-xl font-bold ${
+                          <h4 className={`text-base md:text-xl font-bold ${
                             isCorrect ? 'text-green-900' : 'text-yellow-900'
                           }`}>
                             {isCorrect ? 'Excellent!' : 'Good try!'}
                           </h4>
                         </div>
-                        <p className={`${
+                        <p className={`text-sm md:text-base ${
                           isCorrect ? 'text-green-800' : 'text-yellow-800'
                         }`}>
                           {isCorrect 
@@ -1017,28 +1019,28 @@ export default function SpeakingModule() {
                   </AnimatePresence>
 
                   {/* Manual advance fallback */}
-                  <div className="mt-4">
-                    <Button variant="outline" onClick={nextWord}>Next word</Button>
+                  <div className="mt-3 md:mt-4">
+                    <Button variant="outline" onClick={nextWord} className="text-sm md:text-base">Next word</Button>
                   </div>
 
                   {/* Enhanced Progress Stats */}
-                  <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl p-4 border-2 border-blue-400" role="region" aria-label="Score information">
-                      <Star className="w-8 h-8 text-blue-800 mx-auto mb-2" aria-hidden="true" />
-                      <div className="text-2xl font-bold text-blue-900">{score}</div>
-                      <div className="text-sm text-gray-800 font-semibold">Points</div>
+                  <div className="mt-4 md:mt-8 grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl p-3 md:p-4 border-2 border-blue-400" role="region" aria-label="Score information">
+                      <Star className="w-6 h-6 md:w-8 md:h-8 text-blue-800 mx-auto mb-1 md:mb-2" aria-hidden="true" />
+                      <div className="text-xl md:text-2xl font-bold text-blue-900">{score}</div>
+                      <div className="text-xs md:text-sm text-gray-800 font-semibold">Points</div>
                     </div>
-                    <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl p-4 border-2 border-purple-400" role="region" aria-label="Correct words information">
-                      <Trophy className="w-8 h-8 text-purple-800 mx-auto mb-2" aria-hidden="true" />
-                      <div className="text-2xl font-bold text-purple-900">{correctWords}</div>
-                      <div className="text-sm text-gray-800 font-semibold">Correct</div>
+                    <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl p-3 md:p-4 border-2 border-purple-400" role="region" aria-label="Correct words information">
+                      <Trophy className="w-6 h-6 md:w-8 md:h-8 text-purple-800 mx-auto mb-1 md:mb-2" aria-hidden="true" />
+                      <div className="text-xl md:text-2xl font-bold text-purple-900">{correctWords}</div>
+                      <div className="text-xs md:text-sm text-gray-800 font-semibold">Correct</div>
                     </div>
                   </div>
 
                   {/* Streak and Achievements */}
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl p-4 border-2 border-orange-400" role="region" aria-label="Current streak">
-                      <Zap className="w-6 h-6 text-orange-800 mx-auto mb-1" aria-hidden="true" />
+                  <div className="mt-4 grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl p-3 md:p-4 border-2 border-orange-400" role="region" aria-label="Current streak">
+                      <Zap className="w-5 h-5 md:w-6 md:h-6 text-orange-800 mx-auto mb-1" aria-hidden="true" />
                       <div className="text-lg font-bold text-orange-900">{streak}</div>
                       <div className="text-xs text-gray-800 font-semibold">Streak</div>
                     </div>
