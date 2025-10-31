@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'next/navigation'
 import OptimizedImage from '../common/optimized-image'
 import { useImagePreload, useDebounce } from '@/hooks/use-performance'
+import { jsPDF } from 'jspdf'
 
 interface Book {
   id: string
@@ -515,9 +516,85 @@ export default function ReadingModule() {
                             <Button
                               className="btn-primary-kid"
                               onClick={() => {
-                                // PDF generation temporarily disabled for performance optimization
-                                console.log('PDF generation disabled for performance optimization')
-                                alert('PDF generation is temporarily disabled for better performance')
+                                try {
+                                  const doc = new jsPDF()
+                                  const pageWidth = doc.internal.pageSize.getWidth()
+                                  const pageHeight = doc.internal.pageSize.getHeight()
+                                  const margin = 20
+                                  const maxWidth = pageWidth - 2 * margin
+                                  let yPosition = margin
+
+                                  // Title
+                                  doc.setFontSize(20)
+                                  doc.setFont('helvetica', 'bold')
+                                  const title = `${selectedBook.title} - Practice Questions`
+                                  doc.text(title, margin, yPosition)
+                                  yPosition += 15
+
+                                  // Author
+                                  doc.setFontSize(12)
+                                  doc.setFont('helvetica', 'normal')
+                                  doc.text(`by ${selectedBook.author}`, margin, yPosition)
+                                  yPosition += 15
+
+                                  // Line separator
+                                  doc.setDrawColor(200, 200, 200)
+                                  doc.line(margin, yPosition, pageWidth - margin, yPosition)
+                                  yPosition += 15
+
+                                  // Questions
+                                  doc.setFontSize(14)
+                                  doc.setFont('helvetica', 'bold')
+                                  doc.text('Practice Questions:', margin, yPosition)
+                                  yPosition += 10
+
+                                  doc.setFontSize(12)
+                                  doc.setFont('helvetica', 'normal')
+
+                                  if (currentPageData.questions && Array.isArray(currentPageData.questions)) {
+                                    currentPageData.questions.forEach((question, index) => {
+                                      // Check if we need a new page
+                                      if (yPosition > pageHeight - 30) {
+                                        doc.addPage()
+                                        yPosition = margin
+                                      }
+
+                                      const questionText = `${index + 1}. ${question}`
+                                      const lines = doc.splitTextToSize(questionText, maxWidth)
+                                      
+                                      lines.forEach((line: string) => {
+                                        if (yPosition > pageHeight - 30) {
+                                          doc.addPage()
+                                          yPosition = margin
+                                        }
+                                        doc.text(line, margin + 5, yPosition)
+                                        yPosition += 7
+                                      })
+                                      
+                                      yPosition += 3 // Extra space between questions
+                                    })
+                                  }
+
+                                  // Footer
+                                  const totalPages = doc.getNumberOfPages()
+                                  for (let i = 1; i <= totalPages; i++) {
+                                    doc.setPage(i)
+                                    doc.setFontSize(10)
+                                    doc.setFont('helvetica', 'italic')
+                                    doc.text(
+                                      `Page ${i} of ${totalPages}`,
+                                      pageWidth - margin - 30,
+                                      pageHeight - 10
+                                    )
+                                  }
+
+                                  // Save the PDF
+                                  const fileName = `${selectedBook.title.replace(/[^a-z0-9\- ]/gi, '').replace(/\s+/g, '_')}_questions.pdf`
+                                  doc.save(fileName)
+                                } catch (error) {
+                                  console.error('Failed to generate PDF:', error)
+                                  alert('Failed to generate PDF. Please try again.')
+                                }
                               }}
                             >
                               Download PDF
