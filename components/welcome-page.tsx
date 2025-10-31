@@ -126,14 +126,14 @@ export default function WelcomePage() {
           >
 						<Button 
 							size="lg"
-							className="group relative overflow-hidden text-xl px-8 py-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-2xl shadow-lg hover:from-violet-700 hover:to-indigo-700 transition"
+							className="btn-primary-kid group relative overflow-hidden text-xl px-8 py-6 rounded-2xl shadow-2xl hover:shadow-purple-500/50"
 							onClick={() => router.push('/register')}
 						>
 							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
 								<span className="absolute -inset-8 rounded-full blur-2xl bg-violet-500/30 animate-pulse" />
 							</span>
 							<span className="relative z-10 flex items-center gap-2">
-								<Star className="w-6 h-6" />
+								<Star className="w-6 h-6 animate-float" />
 								Start Learning Now!
 							</span>
 						</Button>
@@ -141,7 +141,7 @@ export default function WelcomePage() {
 						<Button 
 							size="lg"
 							variant="outline"
-							className="group relative overflow-hidden text-xl px-8 py-6 bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 text-slate-800 dark:text-white hover:bg-white dark:hover:bg-white/20 hover:scale-105 transition-all duration-300 rounded-2xl"
+							className="group relative overflow-hidden text-xl px-8 py-6 bg-white/90 dark:bg-white/10 backdrop-blur-md border-2 border-white/60 dark:border-white/20 text-slate-800 dark:text-white hover:bg-white dark:hover:bg-white/20 hover:scale-105 hover:shadow-xl transition-all duration-300 rounded-2xl"
 							onClick={() => router.push('/login')}
 						>
 							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -163,17 +163,22 @@ export default function WelcomePage() {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="p-6 text-center rounded-3xl border border-slate-200/60 dark:border-white/20 bg-white/80 dark:bg-white/10 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="card-kid p-6 text-center group relative overflow-hidden"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5 + (index * 0.1) }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -5 }}
             >
-						<div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color.replace('from-', 'from-').replace('to-', 'to-')} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+              <motion.div 
+                className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg relative z-10`}
+                whileHover={{ rotate: 5, scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
                 {feature.icon}
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-white/70">{feature.description}</p>
+              </motion.div>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 relative z-10">{feature.title}</h3>
+              <p className="text-gray-600 dark:text-white/70 relative z-10">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
