@@ -291,7 +291,14 @@ export default function DashboardClient() {
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 mb-2">{module.title}</h3>
                         <p className="text-gray-600 text-sm">{module.description}</p>
-                        <Button className="btn-primary-kid mt-4 w-full">
+                        <Button 
+                          className="btn-primary-kid mt-4 w-full"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            audioManager.playClick()
+                            router.push(module.href)
+                          }}
+                        >
                           Start Learning!
                         </Button>
                       </CardContent>
