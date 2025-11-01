@@ -784,36 +784,39 @@ export default function WritingModule() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 landscape-optimized">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-green-100 dark:border-slate-700 sticky top-0 z-50">
+        <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => router.push('/dashboard')}
+                className="flex-shrink-0 px-2 md:px-3 text-xs md:text-sm dark:border-slate-600 dark:text-white"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
+                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                <span className="hidden xs:inline">Back</span>
               </Button>
-              <div className="flex items-center gap-3">
-                <Mascot emotion="happy" size="medium" />
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-800">Writing & Spelling</h1>
-                  <p className="text-gray-600">Trace letters and build words! ✏️</p>
+              <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                <div className="hidden sm:block flex-shrink-0">
+                  <Mascot emotion="happy" size="medium" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 dark:text-white truncate">Writing & Spelling</h1>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 hidden sm:block">Trace letters and build words! ✏️</p>
                 </div>
               </div>
             </div>
 
             <ProgressRing 
               progress={progress}
-              size={80}
+              size={60}
               color="#10B981"
-              className="hidden md:block"
+              className="hidden sm:block flex-shrink-0"
             >
               <div className="text-center">
-                <div className="text-lg font-bold text-green-600">{completedActivities}</div>
-                <div className="text-xs text-gray-500">/{totalActivities}</div>
+                <div className="text-base md:text-lg font-bold text-green-600 dark:text-green-400">{completedActivities}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">/{totalActivities}</div>
               </div>
             </ProgressRing>
           </div>
@@ -844,14 +847,15 @@ export default function WritingModule() {
 
         {/* Letter Tracing Activity */}
         {activityType === 'tracing' && currentLetter && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
+              className="flex-shrink-0"
             >
-              <Card className="card-writing h-full">
-                <CardHeader>
-                  <h3 className="text-2xl font-bold text-center text-gray-800">
+              <Card className="card-writing h-full dark:bg-slate-800 dark:border-slate-700">
+                <CardHeader className="p-4 md:p-6">
+                  <h3 className="text-xl md:text-2xl font-bold text-center text-gray-800 dark:text-white">
                     Trace the Letter: {currentLetter.letter}
                   </h3>
                   <div className="text-center mt-2">
@@ -869,26 +873,26 @@ export default function WritingModule() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
+                <CardContent className="p-4 md:p-6">
+                  <div className="text-center mb-4 md:mb-6">
                     <div 
-                      className="text-8xl font-bold mx-auto mb-4 inline-block px-6 py-4 rounded-2xl bg-gray-50 border-4 border-dashed border-gray-300"
+                      className="text-6xl md:text-8xl font-bold mx-auto mb-3 md:mb-4 inline-block px-4 md:px-6 py-3 md:py-4 rounded-2xl bg-gray-50 dark:bg-slate-700 border-4 border-dashed border-gray-300 dark:border-slate-600"
                       style={{ color: currentLetter.color }}
                     >
                       {currentLetter.letter}
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-2">
                       {getStrokeDescription(currentLetter.letter)}
                     </p>
                   </div>
 
-                  <div className="mobile-canvas-container">
+                  <div className="mobile-canvas-container flex justify-center">
                   <canvas
                     ref={canvasRef}
                     width={300}
                     height={300}
-                    className="border-4 border-gray-300 rounded-2xl mx-auto bg-white cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50"
-                    style={{ touchAction: 'none', userSelect: 'none' }}
+                    className="border-4 border-gray-300 dark:border-slate-600 rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full max-w-[300px] md:max-w-[400px] aspect-square"
+                    style={{ touchAction: 'none', userSelect: 'none', maxWidth: 'min(100%, 400px)' }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}
@@ -928,39 +932,39 @@ export default function WritingModule() {
                   </div>
 
                   {/* Mobile-optimized button layout */}
-                  <div className="mt-6 space-y-4">
+                  <div className="mt-4 md:mt-6 space-y-3 md:space-y-4">
                     {/* Primary action row */}
                     <div className="flex justify-center">
                       <Button 
                         onClick={checkCurrentStroke} 
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-3 text-lg font-semibold shadow-lg"
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold shadow-lg"
                         size="lg"
                       >
-                        <CheckCircle className="w-5 h-5 mr-2" />
+                        <CheckCircle className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                         Check Stroke
                       </Button>
                     </div>
                     
                     {/* Secondary actions row */}
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-center gap-2 md:gap-3">
                       <Button 
                         onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} 
                         variant="outline"
-                        className="px-4 py-2"
+                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:border-slate-600 dark:text-white"
                       >
                         Previous
                       </Button>
                       <Button 
                         onClick={clearCanvas} 
                         variant="outline"
-                        className="px-4 py-2"
+                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:border-slate-600 dark:text-white"
                       >
-                        <RotateCcw className="w-4 h-4 mr-1" />
+                        <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                       Clear
                     </Button>
                       <Button 
                         onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}
-                        className="px-4 py-2"
+                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:bg-blue-600 dark:text-white"
                       >
                         Next
                     </Button>
@@ -968,8 +972,8 @@ export default function WritingModule() {
                   </div>
 
                   {/* Progress indicator */}
-                  <div className="mt-6 text-center">
-                    <div className="text-lg font-semibold text-gray-700 mb-3">
+                  <div className="mt-4 md:mt-6 text-center">
+                    <div className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2 md:mb-3">
                       Step {Math.min(strokesCompleted + 1, requiredStrokes)} of {requiredStrokes}
                     </div>
                     <div className="flex justify-center gap-2">
@@ -994,39 +998,40 @@ export default function WritingModule() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
+              className="hidden md:block"
             >
-              <Card className="card-writing h-full">
-                <CardContent className="p-8">
-                  <h4 className="text-xl font-bold text-gray-800 mb-6 text-center">How to Trace</h4>
+              <Card className="card-writing h-full dark:bg-slate-800 dark:border-slate-700">
+                <CardContent className="p-4 md:p-6 lg:p-8">
+                  <h4 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-4 md:mb-6 text-center">How to Trace</h4>
                   
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
-                      <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                      <p className="text-gray-700">Draw each stroke of the letter</p>
+                  <div className="space-y-3 md:space-y-4">
+                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
+                      <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">1</div>
+                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Draw each stroke of the letter</p>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl">
-                      <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
-                      <p className="text-gray-700">Click "Check Stroke" when done with each stroke</p>
+                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
+                      <div className="w-6 h-6 md:w-8 md:h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">2</div>
+                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Click "Check Stroke" when done with each stroke</p>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-xl">
-                      <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
-                      <p className="text-gray-700">Complete all {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''} to finish</p>
+                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
+                      <div className="w-6 h-6 md:w-8 md:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">3</div>
+                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Complete all {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''} to finish</p>
                     </div>
                   </div>
 
                   {/* Score Display */}
-                  <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="bg-yellow-50 rounded-xl p-4 text-center">
-                      <Star className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-yellow-600">{score}</div>
-                      <div className="text-sm text-gray-600">Points</div>
+                  <div className="mt-6 md:mt-8 grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-3 md:p-4 text-center">
+                      <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                      <div className="text-xl md:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{score}</div>
+                      <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Points</div>
                     </div>
-                    <div className="bg-blue-50 rounded-xl p-4 text-center">
-                      <Trophy className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-blue-600">{completedActivities}</div>
-                      <div className="text-sm text-gray-600">Done</div>
+                    <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 md:p-4 text-center">
+                      <Trophy className="w-6 h-6 md:w-8 md:h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                      <div className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{completedActivities}</div>
+                      <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Done</div>
                     </div>
                   </div>
                 </CardContent>
