@@ -380,18 +380,59 @@ export default function SpeakingModule() {
   }, [])
 
   const startListening = () => {
-    if (recognitionRef.current) {
+    try {
+      if (!recognitionRef.current) {
+        // Try to reinitialize if not available
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+          recognitionRef.current = new SpeechRecognition()
+          recognitionRef.current.continuous = false
+          recognitionRef.current.interimResults = false
+          recognitionRef.current.lang = 'en-US'
+
+          recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+            const transcript = event.results[0][0].transcript.toLowerCase().trim()
+            setUserSpeech(transcript)
+            checkPronunciation(transcript)
+          }
+
+          recognitionRef.current.onend = () => {
+            setIsListening(false)
+          }
+
+          recognitionRef.current.onerror = (event: any) => {
+            console.error('Speech recognition error:', event.error)
+            setIsListening(false)
+            alert('Speech recognition is not available. Please check your microphone permissions or use a supported browser (Chrome, Edge).')
+          }
+        } else {
+          alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.')
+          return
+        }
+      }
+      
       setIsListening(true)
       setUserSpeech('')
       recognitionRef.current.start()
+      audioManager.playClick()
+    } catch (error) {
+      console.error('Error starting speech recognition:', error)
+      setIsListening(false)
+      alert('Unable to start speech recognition. Please check your microphone permissions.')
     }
   }
 
   const stopListening = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop()
+    try {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+      setIsListening(false)
+      audioManager.playClick()
+    } catch (error) {
+      console.error('Error stopping speech recognition:', error)
+      setIsListening(false)
     }
-    setIsListening(false)
   }
 
   const checkAchievements = (correct: boolean) => {
@@ -563,14 +604,47 @@ export default function SpeakingModule() {
   }
 
   const nextWord = () => {
-    if (totalWords === 0) return
-    const list = words.length > 0 ? words : getSampleWords()
-    const nextIndex = (wordIndex + 1) % list.length
-    setWordIndex(nextIndex)
-    setCurrentWord(list[nextIndex])
-    setUserSpeech('')
-    setIsCorrect(false)
-    setShowFeedback(false)
+    try {
+      // Stop listening if active
+      if (isListening) {
+        stopListening()
+      }
+      
+      if (totalWords === 0) {
+        // Initialize words if not loaded
+        const sampleWords = getSampleWords()
+        setWords(sampleWords)
+        setTotalWords(sampleWords.length)
+        setWordIndex(0)
+        setCurrentWord(sampleWords[0])
+        setUserSpeech('')
+        setIsCorrect(false)
+        setShowFeedback(false)
+        audioManager.playClick()
+        return
+      }
+      
+      const list = words.length > 0 ? words : getSampleWords()
+      if (list.length === 0) {
+        const sampleWords = getSampleWords()
+        setWords(sampleWords)
+        setTotalWords(sampleWords.length)
+        setCurrentWord(sampleWords[0])
+      } else {
+        const nextIndex = (wordIndex + 1) % list.length
+        setWordIndex(nextIndex)
+        setCurrentWord(list[nextIndex])
+      }
+      
+      setUserSpeech('')
+      setIsCorrect(false)
+      setShowFeedback(false)
+      setLastResult(null)
+      audioManager.playClick()
+      advancingRef.current = false
+    } catch (error) {
+      console.error('Error advancing to next word:', error)
+    }
   }
 
   const speakWord = () => {
@@ -944,8 +1018,16 @@ export default function SpeakingModule() {
                   
                   {/* Microphone Button */}
                   <motion.button
-                    onClick={isListening ? stopListening : startListening}
-                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-4 md:mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 ${
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      if (isListening) {
+                        stopListening()
+                      } else {
+                        startListening()
+                      }
+                    }}
+                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-4 md:mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 cursor-pointer ${
                       isListening 
                         ? 'bg-gradient-to-br from-red-500 to-red-700 animate-pulse' 
                         : 'bg-gradient-to-br from-blue-500 to-blue-700 hover:scale-110'
@@ -955,6 +1037,7 @@ export default function SpeakingModule() {
                     aria-label={isListening ? 'Stop listening' : 'Start listening'}
                     aria-describedby="mic-instructions"
                     tabIndex={0}
+                    type="button"
                   >
                     {isListening ? (
                       <MicOff className="w-12 h-12 md:w-16 md:h-16" />
@@ -1020,7 +1103,17 @@ export default function SpeakingModule() {
 
                   {/* Manual advance fallback */}
                   <div className="mt-3 md:mt-4">
-                    <Button variant="outline" onClick={nextWord} className="text-sm md:text-base">Next word</Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        nextWord()
+                      }}
+                      className="text-sm md:text-base"
+                    >
+                      Next word
+                    </Button>
                   </div>
 
                   {/* Enhanced Progress Stats */}
