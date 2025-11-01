@@ -57,6 +57,66 @@ export default function WritingModule() {
     drawLetterGuide()
   }, [currentLetter, strokesCompleted, requiredStrokes])
 
+  // Resize canvas based on container size
+  useEffect(() => {
+    const resizeCanvas = () => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+
+      const container = canvas.parentElement
+      if (!container) return
+
+      // Get container dimensions
+      const containerWidth = container.clientWidth
+      const containerHeight = container.clientHeight
+      
+      // Calculate size (use smaller dimension to maintain square aspect)
+      const size = Math.min(containerWidth, containerHeight, 400)
+      
+      // Set canvas display size (CSS)
+      canvas.style.width = `${size}px`
+      canvas.style.height = `${size}px`
+      
+      // Set canvas internal resolution (for crisp rendering)
+      const scale = window.devicePixelRatio || 1
+      canvas.width = size * scale
+      canvas.height = size * scale
+      
+      // Scale context to handle device pixel ratio
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.scale(scale, scale)
+      }
+      
+      // Redraw guide after resize
+      drawLetterGuide()
+    }
+
+    // Initial resize
+    resizeCanvas()
+
+    // Resize on window resize
+    window.addEventListener('resize', resizeCanvas)
+    window.addEventListener('orientationchange', resizeCanvas)
+
+    // Use ResizeObserver for container size changes
+    const container = canvasRef.current?.parentElement
+    let resizeObserver: ResizeObserver | null = null
+    
+    if (container && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(resizeCanvas)
+      resizeObserver.observe(container)
+    }
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('orientationchange', resizeCanvas)
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+    }
+  }, [currentLetter])
+
   // Sentence Puzzles state
   const defaultSentenceBank = [
     'THE CAT IS BIG',
@@ -847,19 +907,19 @@ export default function WritingModule() {
 
         {/* Letter Tracing Activity */}
         {activityType === 'tracing' && currentLetter && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex-shrink-0"
+              className="flex flex-col min-h-0"
             >
-              <Card className="card-writing h-full dark:bg-slate-800 dark:border-slate-700">
-                <CardHeader className="p-4 md:p-6">
-                  <h3 className="text-xl md:text-2xl font-bold text-center text-gray-800 dark:text-white">
+              <Card className="card-writing h-full flex flex-col dark:bg-slate-800 dark:border-slate-700">
+                <CardHeader className="p-3 md:p-4 lg:p-6 flex-shrink-0">
+                  <h3 className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-center text-gray-800 dark:text-white break-words leading-tight">
                     Trace the Letter: {currentLetter.letter}
                   </h3>
                   <div className="text-center mt-2">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+                    <div className="inline-flex items-center gap-2 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium"
                          style={{ 
                            backgroundColor: getLetterDifficulty(currentLetter.letter) === 'easy' ? '#DCFCE7' : 
                                           getLetterDifficulty(currentLetter.letter) === 'medium' ? '#FEF3C7' : '#FEE2E2',
@@ -873,10 +933,10 @@ export default function WritingModule() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4 md:p-6">
-                  <div className="text-center mb-4 md:mb-6">
+                <CardContent className="p-3 md:p-4 lg:p-6 flex-1 flex flex-col min-h-0 overflow-y-auto">
+                  <div className="text-center mb-3 md:mb-4 flex-shrink-0">
                     <div 
-                      className="text-6xl md:text-8xl font-bold mx-auto mb-3 md:mb-4 inline-block px-4 md:px-6 py-3 md:py-4 rounded-2xl bg-gray-50 dark:bg-slate-700 border-4 border-dashed border-gray-300 dark:border-slate-600"
+                      className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mx-auto mb-2 md:mb-3 inline-block px-3 md:px-4 lg:px-6 py-2 md:py-3 lg:py-4 rounded-xl md:rounded-2xl bg-gray-50 dark:bg-slate-700 border-4 border-dashed border-gray-300 dark:border-slate-600"
                       style={{ color: currentLetter.color }}
                     >
                       {currentLetter.letter}
@@ -886,13 +946,13 @@ export default function WritingModule() {
                     </p>
                   </div>
 
-                  <div className="mobile-canvas-container flex justify-center">
+                  <div className="mobile-canvas-container flex-1 flex items-center justify-center min-h-0 my-2 md:my-4">
                   <canvas
                     ref={canvasRef}
                     width={300}
                     height={300}
-                    className="border-4 border-gray-300 dark:border-slate-600 rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full max-w-[300px] md:max-w-[400px] aspect-square"
-                    style={{ touchAction: 'none', userSelect: 'none', maxWidth: 'min(100%, 400px)' }}
+                    className="border-4 border-gray-300 dark:border-slate-600 rounded-xl md:rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full h-full max-w-full max-h-full aspect-square"
+                    style={{ touchAction: 'none', userSelect: 'none' }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}
@@ -932,39 +992,39 @@ export default function WritingModule() {
                   </div>
 
                   {/* Mobile-optimized button layout */}
-                  <div className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+                  <div className="mt-2 md:mt-3 space-y-2 md:space-y-3 flex-shrink-0">
                     {/* Primary action row */}
                     <div className="flex justify-center">
                       <Button 
                         onClick={checkCurrentStroke} 
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold shadow-lg"
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-3 text-sm md:text-base lg:text-lg font-semibold shadow-lg"
                         size="lg"
                       >
-                        <CheckCircle className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                        <CheckCircle className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 md:mr-2" />
                         Check Stroke
                       </Button>
                     </div>
                     
                     {/* Secondary actions row */}
-                    <div className="flex justify-center gap-2 md:gap-3">
+                    <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3">
                       <Button 
                         onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} 
                         variant="outline"
-                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:border-slate-600 dark:text-white"
+                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
                       >
                         Previous
                       </Button>
                       <Button 
                         onClick={clearCanvas} 
                         variant="outline"
-                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:border-slate-600 dark:text-white"
+                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
                       >
                         <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                       Clear
                     </Button>
                       <Button 
                         onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}
-                        className="px-3 md:px-4 py-2 text-sm md:text-base dark:bg-blue-600 dark:text-white"
+                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:bg-blue-600 dark:text-white"
                       >
                         Next
                     </Button>
@@ -972,20 +1032,20 @@ export default function WritingModule() {
                   </div>
 
                   {/* Progress indicator */}
-                  <div className="mt-4 md:mt-6 text-center">
-                    <div className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2 md:mb-3">
+                  <div className="mt-2 md:mt-3 text-center flex-shrink-0">
+                    <div className="text-xs md:text-sm lg:text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 mb-1.5 md:mb-2 lg:mb-3">
                       Step {Math.min(strokesCompleted + 1, requiredStrokes)} of {requiredStrokes}
                     </div>
-                    <div className="flex justify-center gap-2">
+                    <div className="flex justify-center gap-1.5 md:gap-2">
                       {Array.from({ length: requiredStrokes }, (_, i) => (
                         <div
                           key={i}
-                          className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                          className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
                             i < strokesCompleted 
                               ? 'bg-green-500 shadow-lg' 
                               : i === strokesCompleted 
                                 ? 'bg-blue-500 shadow-lg animate-pulse' 
-                                : 'bg-gray-300'
+                                : 'bg-gray-300 dark:bg-gray-600'
                           }`}
                         />
                       ))}
@@ -998,39 +1058,39 @@ export default function WritingModule() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="hidden md:block"
+              className="hidden md:flex flex-col min-h-0"
             >
-              <Card className="card-writing h-full dark:bg-slate-800 dark:border-slate-700">
-                <CardContent className="p-4 md:p-6 lg:p-8">
-                  <h4 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-4 md:mb-6 text-center">How to Trace</h4>
+              <Card className="card-writing h-full flex flex-col dark:bg-slate-800 dark:border-slate-700">
+                <CardContent className="p-3 md:p-4 lg:p-6 xl:p-8 flex flex-col h-full overflow-y-auto">
+                  <h4 className="text-base md:text-lg lg:text-xl font-bold text-gray-800 dark:text-white mb-3 md:mb-4 lg:mb-6 text-center flex-shrink-0">How to Trace</h4>
                   
-                  <div className="space-y-3 md:space-y-4">
-                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                      <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">1</div>
-                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Draw each stroke of the letter</p>
+                  <div className="space-y-2 md:space-y-3 lg:space-y-4 flex-1">
+                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg md:rounded-xl">
+                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">1</div>
+                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Draw each stroke of the letter</p>
                     </div>
                     
-                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
-                      <div className="w-6 h-6 md:w-8 md:h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">2</div>
-                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Click "Check Stroke" when done with each stroke</p>
+                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-green-50 dark:bg-green-900/30 rounded-lg md:rounded-xl">
+                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">2</div>
+                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Click "Check Stroke" when done with each stroke</p>
                     </div>
                     
-                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
-                      <div className="w-6 h-6 md:w-8 md:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0">3</div>
-                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-200">Complete all {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''} to finish</p>
+                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg md:rounded-xl">
+                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">3</div>
+                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Complete all {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''} to finish</p>
                     </div>
                   </div>
 
                   {/* Score Display */}
-                  <div className="mt-6 md:mt-8 grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-3 md:p-4 text-center">
-                      <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
-                      <div className="text-xl md:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{score}</div>
+                  <div className="mt-4 md:mt-6 lg:mt-8 grid grid-cols-2 gap-2 md:gap-3 lg:gap-4 flex-shrink-0">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 text-center">
+                      <Star className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-1 md:mb-2" />
+                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{score}</div>
                       <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Points</div>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 md:p-4 text-center">
-                      <Trophy className="w-6 h-6 md:w-8 md:h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                      <div className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{completedActivities}</div>
+                    <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 text-center">
+                      <Trophy className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 text-blue-600 dark:text-blue-400 mx-auto mb-1 md:mb-2" />
+                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-blue-600 dark:text-blue-400">{completedActivities}</div>
                       <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Done</div>
                     </div>
                   </div>
