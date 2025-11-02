@@ -550,6 +550,8 @@ export default function SpeakingModule() {
   }, [streak, achievements, score, perfectWords, bestStreak])
 
   // Memoize achievement map to avoid recreating on every render
+  type AchievementKey = 'streak_3' | 'streak_5' | 'streak_10' | 'perfect_5' | 'perfect_10' | 'score_50' | 'score_100'
+  
   const achievementMap = useMemo(() => ({
     'streak_3': { title: 'Hot Streak! 🔥', description: '3 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-orange-500' },
     'streak_5': { title: 'On Fire! 🔥🔥', description: '5 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-red-500' },
@@ -558,7 +560,7 @@ export default function SpeakingModule() {
     'perfect_10': { title: 'Pronunciation Master! 👑', description: '10 perfect pronunciations!', icon: <Crown className="w-6 h-6" />, color: 'text-purple-500' },
     'score_50': { title: 'Rising Star! ⭐', description: 'Earned 50 points!', icon: <Star className="w-6 h-6" />, color: 'text-blue-500' },
     'score_100': { title: 'Super Star! 🌟', description: 'Earned 100 points!', icon: <Sparkles className="w-6 h-6" />, color: 'text-yellow-500' }
-  }), [])
+  } as Record<string, { title: string; description: string; icon: React.ReactNode; color: string }>), [])
 
   const getAchievementInfo = useCallback((achievement: string) => {
     return achievementMap[achievement] || { title: 'Achievement!', description: 'Great job!', icon: <Award className="w-6 h-6" />, color: 'text-green-500' }
