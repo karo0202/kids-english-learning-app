@@ -380,6 +380,7 @@ export default function SpeakingModule() {
   }, [])
 
   const startListening = () => {
+    console.log('startListening called')
     try {
       if (!recognitionRef.current) {
         // Try to reinitialize if not available
@@ -415,6 +416,7 @@ export default function SpeakingModule() {
       setUserSpeech('')
       recognitionRef.current.start()
       audioManager.playClick()
+      console.log('Speech recognition started')
     } catch (error) {
       console.error('Error starting speech recognition:', error)
       setIsListening(false)
@@ -423,12 +425,14 @@ export default function SpeakingModule() {
   }
 
   const stopListening = () => {
+    console.log('stopListening called')
     try {
       if (recognitionRef.current) {
         recognitionRef.current.stop()
       }
       setIsListening(false)
       audioManager.playClick()
+      console.log('Speech recognition stopped')
     } catch (error) {
       console.error('Error stopping speech recognition:', error)
       setIsListening(false)
@@ -604,6 +608,7 @@ export default function SpeakingModule() {
   }
 
   const nextWord = () => {
+    console.log('nextWord called', { wordIndex, totalWords, wordsLength: words.length })
     try {
       // Stop listening if active
       if (isListening) {
@@ -613,6 +618,7 @@ export default function SpeakingModule() {
       if (totalWords === 0) {
         // Initialize words if not loaded
         const sampleWords = getSampleWords()
+        console.log('Initializing words:', sampleWords.length)
         setWords(sampleWords)
         setTotalWords(sampleWords.length)
         setWordIndex(0)
@@ -625,6 +631,7 @@ export default function SpeakingModule() {
       }
       
       const list = words.length > 0 ? words : getSampleWords()
+      console.log('Current list:', list.length, 'items')
       if (list.length === 0) {
         const sampleWords = getSampleWords()
         setWords(sampleWords)
@@ -632,6 +639,7 @@ export default function SpeakingModule() {
         setCurrentWord(sampleWords[0])
       } else {
         const nextIndex = (wordIndex + 1) % list.length
+        console.log('Moving to next index:', nextIndex, 'word:', list[nextIndex]?.word)
         setWordIndex(nextIndex)
         setCurrentWord(list[nextIndex])
       }
@@ -642,6 +650,7 @@ export default function SpeakingModule() {
       setLastResult(null)
       audioManager.playClick()
       advancingRef.current = false
+      console.log('Next word completed')
     } catch (error) {
       console.error('Error advancing to next word:', error)
     }
@@ -1007,9 +1016,10 @@ export default function SpeakingModule() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
+            style={{ position: 'relative', zIndex: 1 }}
           >
-            <Card className="card-speaking h-full">
-              <CardContent className="p-4 md:p-8">
+            <Card className="card-speaking h-full" style={{ position: 'relative' }}>
+              <CardContent className="p-4 md:p-8" style={{ position: 'relative' }}>
                 <div className="text-center mb-4 md:mb-8">
                   <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3 md:mb-4">Your Turn to Speak!</h3>
                   {currentWord && (
@@ -1017,8 +1027,9 @@ export default function SpeakingModule() {
                   )}
                   
                   {/* Microphone Button */}
-                  <motion.button
+                  <button
                     onClick={(e) => {
+                      console.log('Microphone button clicked', { isListening })
                       e.preventDefault()
                       e.stopPropagation()
                       if (isListening) {
@@ -1027,24 +1038,31 @@ export default function SpeakingModule() {
                         startListening()
                       }
                     }}
-                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-4 md:mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 cursor-pointer ${
+                    onMouseDown={(e) => {
+                      console.log('Microphone button mouse down')
+                      e.stopPropagation()
+                    }}
+                    onTouchStart={(e) => {
+                      console.log('Microphone button touch start')
+                      e.stopPropagation()
+                    }}
+                    className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center text-white shadow-2xl mx-auto mb-4 md:mb-6 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 cursor-pointer relative z-50 pointer-events-auto ${
                       isListening 
                         ? 'bg-gradient-to-br from-red-500 to-red-700 animate-pulse' 
-                        : 'bg-gradient-to-br from-blue-500 to-blue-700 hover:scale-110'
+                        : 'bg-gradient-to-br from-blue-500 to-blue-700 hover:scale-110 active:scale-95'
                     } transition-all duration-300`}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
                     aria-label={isListening ? 'Stop listening' : 'Start listening'}
                     aria-describedby="mic-instructions"
                     tabIndex={0}
                     type="button"
+                    disabled={false}
                   >
                     {isListening ? (
-                      <MicOff className="w-12 h-12 md:w-16 md:h-16" />
+                      <MicOff className="w-12 h-12 md:w-16 md:h-16 pointer-events-none" />
                     ) : (
-                      <Mic className="w-12 h-12 md:w-16 md:h-16" />
+                      <Mic className="w-12 h-12 md:w-16 md:h-16 pointer-events-none" />
                     )}
-                  </motion.button>
+                  </button>
 
                   <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-4">
                     {isListening ? 'Listening... Speak now!' : 'Click to start speaking'}
@@ -1102,15 +1120,26 @@ export default function SpeakingModule() {
                   </AnimatePresence>
 
                   {/* Manual advance fallback */}
-                  <div className="mt-3 md:mt-4">
+                  <div className="mt-3 md:mt-4 relative z-50 pointer-events-auto">
                     <Button 
                       variant="outline" 
                       onClick={(e) => {
+                        console.log('Next word button clicked')
                         e.preventDefault()
                         e.stopPropagation()
                         nextWord()
                       }}
-                      className="text-sm md:text-base"
+                      onMouseDown={(e) => {
+                        console.log('Next word button mouse down')
+                        e.stopPropagation()
+                      }}
+                      onTouchStart={(e) => {
+                        console.log('Next word button touch start')
+                        e.stopPropagation()
+                      }}
+                      className="text-sm md:text-base relative z-50 pointer-events-auto"
+                      type="button"
+                      disabled={false}
                     >
                       Next word
                     </Button>
