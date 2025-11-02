@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -64,7 +64,8 @@ export default function SpeakingModule() {
   const [showPersonalization, setShowPersonalization] = useState(false)
 
   // Preload images for better performance - preload current, next, and previous images
-  const getImagesToPreload = () => {
+  // Memoize to avoid recalculating on every render
+  const imagesToPreload = useMemo(() => {
     if (words.length === 0) return []
     const images: string[] = []
     
@@ -93,9 +94,8 @@ export default function SpeakingModule() {
     }
     
     return images.filter((url, index, self) => self.indexOf(url) === index) // Remove duplicates
-  }
+  }, [words, currentWord?.imageUrl, wordIndex])
   
-  const imagesToPreload = getImagesToPreload()
   const { isLoaded: isImageLoaded } = useImagePreload(imagesToPreload)
 
   // Initialize personalization system
@@ -432,7 +432,7 @@ export default function SpeakingModule() {
     loadSongs()
   }, [])
 
-  const startListening = () => {
+  const startListening = useCallback(() => {
     console.log('startListening called')
     try {
       if (!recognitionRef.current) {
@@ -447,6 +447,7 @@ export default function SpeakingModule() {
           recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
             const transcript = event.results[0][0].transcript.toLowerCase().trim()
             setUserSpeech(transcript)
+            // Use the latest checkPronunciation via closure
             checkPronunciation(transcript)
           }
 
@@ -475,9 +476,9 @@ export default function SpeakingModule() {
       setIsListening(false)
       alert('Unable to start speech recognition. Please check your microphone permissions.')
     }
-  }
+  }, [checkPronunciation])
 
-  const stopListening = () => {
+  const stopListening = useCallback(() => {
     console.log('stopListening called')
     try {
       if (recognitionRef.current) {
@@ -490,9 +491,9 @@ export default function SpeakingModule() {
       console.error('Error stopping speech recognition:', error)
       setIsListening(false)
     }
-  }
+  }, [])
 
-  const checkAchievements = (correct: boolean) => {
+  const checkAchievements = useCallback((correct: boolean) => {
     const newAchievements: string[] = []
     
     if (correct) {
@@ -543,22 +544,24 @@ export default function SpeakingModule() {
         setShowAchievement(false)
       }, 3000)
     }
-  }
+  }, [streak, achievements, score, perfectWords, bestStreak])
 
-  const getAchievementInfo = (achievement: string) => {
-    const achievementMap: { [key: string]: { title: string; description: string; icon: React.ReactNode; color: string } } = {
-      'streak_3': { title: 'Hot Streak! 🔥', description: '3 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-orange-500' },
-      'streak_5': { title: 'On Fire! 🔥🔥', description: '5 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-red-500' },
-      'streak_10': { title: 'Unstoppable! 🚀', description: '10 correct words in a row!', icon: <Crown className="w-6 h-6" />, color: 'text-purple-500' },
-      'perfect_5': { title: 'Perfect Practice! ⭐', description: '5 perfect pronunciations!', icon: <Star className="w-6 h-6" />, color: 'text-yellow-500' },
-      'perfect_10': { title: 'Pronunciation Master! 👑', description: '10 perfect pronunciations!', icon: <Crown className="w-6 h-6" />, color: 'text-purple-500' },
-      'score_50': { title: 'Rising Star! ⭐', description: 'Earned 50 points!', icon: <Star className="w-6 h-6" />, color: 'text-blue-500' },
-      'score_100': { title: 'Super Star! 🌟', description: 'Earned 100 points!', icon: <Sparkles className="w-6 h-6" />, color: 'text-yellow-500' }
-    }
+  // Memoize achievement map to avoid recreating on every render
+  const achievementMap = useMemo(() => ({
+    'streak_3': { title: 'Hot Streak! 🔥', description: '3 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-orange-500' },
+    'streak_5': { title: 'On Fire! 🔥🔥', description: '5 correct words in a row!', icon: <Zap className="w-6 h-6" />, color: 'text-red-500' },
+    'streak_10': { title: 'Unstoppable! 🚀', description: '10 correct words in a row!', icon: <Crown className="w-6 h-6" />, color: 'text-purple-500' },
+    'perfect_5': { title: 'Perfect Practice! ⭐', description: '5 perfect pronunciations!', icon: <Star className="w-6 h-6" />, color: 'text-yellow-500' },
+    'perfect_10': { title: 'Pronunciation Master! 👑', description: '10 perfect pronunciations!', icon: <Crown className="w-6 h-6" />, color: 'text-purple-500' },
+    'score_50': { title: 'Rising Star! ⭐', description: 'Earned 50 points!', icon: <Star className="w-6 h-6" />, color: 'text-blue-500' },
+    'score_100': { title: 'Super Star! 🌟', description: 'Earned 100 points!', icon: <Sparkles className="w-6 h-6" />, color: 'text-yellow-500' }
+  }), [])
+
+  const getAchievementInfo = useCallback((achievement: string) => {
     return achievementMap[achievement] || { title: 'Achievement!', description: 'Great job!', icon: <Award className="w-6 h-6" />, color: 'text-green-500' }
-  }
+  }, [achievementMap])
 
-  const checkPronunciation = (transcript: string) => {
+  const checkPronunciation = useCallback((transcript: string) => {
     if (!currentWord) return
 
     const targetWord = currentWord.word.toLowerCase()
@@ -624,7 +627,7 @@ export default function SpeakingModule() {
         advancingRef.current = false
       }, 1500)
     }
-  }
+  }, [currentWord, stopListening, checkAchievements, childId, nextWord])
 
   const calculateSimilarity = (a: string, b: string) => {
     const longer = a.length > b.length ? a : b
@@ -675,7 +678,7 @@ export default function SpeakingModule() {
     }
   }
 
-  const nextWord = () => {
+  const nextWord = useCallback(() => {
     console.log('nextWord called', { wordIndex, totalWords, wordsLength: words.length })
     try {
       // Stop listening if active
@@ -726,7 +729,7 @@ export default function SpeakingModule() {
     } catch (error) {
       console.error('Error advancing to next word:', error)
     }
-  }
+  }, [wordIndex, totalWords, words, isListening, stopListening])
 
   const speakWord = () => {
     if (currentWord) {
