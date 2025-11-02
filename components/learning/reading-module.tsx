@@ -53,47 +53,6 @@ export default function ReadingModule() {
     const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
     return [
     {
-      id: '1',
-      title: 'The Friendly Cat',
-      author: 'Story Time',
-      coverImage: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300${cacheBuster}`,
-      ageGroup: 'AGE_3_5',
-      difficulty: 1,
-      estimatedTime: 5,
-      pages: [
-        {
-          id: '1-1',
-          pageNumber: 1,
-          text: 'Once upon a time, there was a friendly cat named Whiskers.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'friendly', definition: 'kind and nice', example: 'The cat is friendly to everyone.' },
-            { word: 'cat', definition: 'a furry pet animal', example: 'My cat likes to play.' }
-          ]
-        },
-        {
-          id: '1-2',
-          pageNumber: 2,
-          text: 'Whiskers loved to play with children and purr loudly when happy.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'play', definition: 'to have fun', example: 'Children love to play games.' },
-            { word: 'purr', definition: 'the sound a cat makes when happy', example: 'The cat purrs when I pet it.' }
-          ]
-        },
-        {
-          id: '1-3',
-          pageNumber: 3,
-          text: 'Every day, Whiskers would visit the park to make new friends.',
-          imageUrl: `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'visit', definition: 'to go to a place', example: 'I visit my grandmother every week.' },
-            { word: 'friends', definition: 'people you like to be with', example: 'My friends and I play together.' }
-          ]
-        }
-      ]
-    },
-    {
       id: '2',
       title: 'The Magic School Bus',
       author: 'Adventure Stories',
@@ -130,47 +89,6 @@ export default function ReadingModule() {
           vocabulary: [
             { word: 'fly', definition: 'to move through the air', example: 'Birds can fly high in the sky.' },
             { word: 'travel', definition: 'to go from one place to another', example: 'We travel by car to visit family.' }
-          ]
-        }
-      ]
-    },
-    {
-      id: '3',
-      title: 'The Adventure of Learning',
-      author: 'Educational Tales',
-      coverImage: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300${cacheBuster}`,
-      ageGroup: 'AGE_9_12',
-      difficulty: 3,
-      estimatedTime: 12,
-      pages: [
-        {
-          id: '3-1',
-          pageNumber: 1,
-          text: 'Sophie discovered that learning English was like going on a great adventure.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'discovered', definition: 'found out something new', example: 'I discovered a new game to play.' },
-            { word: 'learning', definition: 'gaining knowledge and skills', example: 'Learning to read is very important.' }
-          ]
-        },
-        {
-          id: '3-2',
-          pageNumber: 2,
-          text: 'Every new word was like finding a treasure, and every sentence was like solving a puzzle.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'treasure', definition: 'something very valuable', example: 'The pirate found a treasure chest.' },
-            { word: 'puzzle', definition: 'a game that tests your thinking', example: 'I love to solve jigsaw puzzles.' }
-          ]
-        },
-        {
-          id: '3-3',
-          pageNumber: 3,
-          text: 'With practice and determination, Sophie became a master of the English language.',
-          imageUrl: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400${cacheBuster}`,
-          vocabulary: [
-            { word: 'practice', definition: 'repeated exercise to improve', example: 'I practice piano every day.' },
-            { word: 'determination', definition: 'strong will to achieve something', example: 'With determination, you can do anything!' }
           ]
         }
       ]
