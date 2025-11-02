@@ -95,7 +95,7 @@ export default function OptimizedImage({
 
       {/* Actual image */}
       {isInView && !hasError && (
-        <motion.img
+        <img
           src={src}
           alt={alt}
           width={width}
@@ -107,6 +107,11 @@ export default function OptimizedImage({
           onError={handleError}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+          style={{ 
+            imageRendering: 'auto',
+            contentVisibility: 'auto'
+          }}
         />
       )}
     </div>

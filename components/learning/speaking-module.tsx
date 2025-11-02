@@ -63,9 +63,34 @@ export default function SpeakingModule() {
   const [personalizedWords, setPersonalizedWords] = useState<Word[]>([])
   const [showPersonalization, setShowPersonalization] = useState(false)
 
-  // Preload images for better performance
-  const imageUrls = words.map(word => word.imageUrl).filter((url): url is string => !!url)
-  const { isLoaded: isImageLoaded } = useImagePreload(imageUrls)
+  // Preload images for better performance - preload current, next, and previous images
+  const getImagesToPreload = () => {
+    if (words.length === 0) return []
+    const images: string[] = []
+    
+    // Current image
+    if (currentWord?.imageUrl) {
+      images.push(currentWord.imageUrl)
+    }
+    
+    // Next 3 images (look ahead)
+    for (let i = 1; i <= 3; i++) {
+      const nextIndex = (wordIndex + i) % words.length
+      if (words[nextIndex]?.imageUrl) {
+        images.push(words[nextIndex].imageUrl)
+      }
+    }
+    
+    // Previous image (in case user goes back)
+    if (wordIndex > 0 && words[wordIndex - 1]?.imageUrl) {
+      images.push(words[wordIndex - 1].imageUrl)
+    }
+    
+    return images.filter((url, index, self) => self.indexOf(url) === index) // Remove duplicates
+  }
+  
+  const imagesToPreload = getImagesToPreload()
+  const { isLoaded: isImageLoaded } = useImagePreload(imagesToPreload)
 
   // Initialize personalization system
   const initializePersonalization = async () => {
@@ -335,6 +360,17 @@ export default function SpeakingModule() {
             setTotalWords(normalized.length)
             setWordIndex(0)
             setCurrentWord(normalized[0])
+            
+            // Preload first few images immediately after words load
+            setTimeout(() => {
+              normalized.slice(0, 3).forEach((word, idx) => {
+                if (word.imageUrl) {
+                  const img = new Image()
+                  img.src = word.imageUrl
+                  console.log('Preloading image', idx, word.imageUrl)
+                }
+              })
+            }, 100)
             return
           }
         }
@@ -347,6 +383,17 @@ export default function SpeakingModule() {
       setTotalWords(fallbackWords.length)
       setWordIndex(0)
       setCurrentWord(fallbackWords[0])
+      
+      // Preload first few images immediately after words load
+      setTimeout(() => {
+        fallbackWords.slice(0, 3).forEach((word, idx) => {
+          if (word.imageUrl) {
+            const img = new Image()
+            img.src = word.imageUrl
+            console.log('Preloading fallback image', idx, word.imageUrl)
+          }
+        })
+      }, 100)
     }
     loadWords()
     initializePersonalization()
@@ -607,6 +654,21 @@ export default function SpeakingModule() {
     return matrix[str2.length][str1.length]
   }
 
+  // Preload next image ahead of time
+  const preloadNextImage = (index: number) => {
+    const list = words.length > 0 ? words : getSampleWords()
+    if (list.length === 0) return
+    
+    const nextIndex = (index + 1) % list.length
+    const nextWord = list[nextIndex]
+    
+    if (nextWord?.imageUrl) {
+      const img = new Image()
+      img.src = nextWord.imageUrl
+      console.log('Preloading next image:', nextWord.imageUrl)
+    }
+  }
+
   const nextWord = () => {
     console.log('nextWord called', { wordIndex, totalWords, wordsLength: words.length })
     try {
@@ -626,6 +688,8 @@ export default function SpeakingModule() {
         setUserSpeech('')
         setIsCorrect(false)
         setShowFeedback(false)
+        // Preload next image
+        setTimeout(() => preloadNextImage(0), 100)
         audioManager.playClick()
         return
       }
@@ -642,6 +706,8 @@ export default function SpeakingModule() {
         console.log('Moving to next index:', nextIndex, 'word:', list[nextIndex]?.word)
         setWordIndex(nextIndex)
         setCurrentWord(list[nextIndex])
+        // Preload the image after this one
+        setTimeout(() => preloadNextImage(nextIndex), 100)
       }
       
       setUserSpeech('')
@@ -953,7 +1019,7 @@ export default function SpeakingModule() {
                   <>
                     {/* Word Image */}
                     {currentWord.imageUrl && (
-                      <div className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 md:mb-6 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
+                      <div className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 md:mb-6 rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-gray-100">
                         <OptimizedImage 
                           src={currentWord.imageUrl} 
                           alt={currentWord.word}
@@ -961,7 +1027,11 @@ export default function SpeakingModule() {
                           height={192}
                           className="w-full h-full object-cover"
                           priority={true}
-                          onLoad={() => console.log('Image loaded successfully:', currentWord.imageUrl)}
+                          onLoad={() => {
+                            console.log('Image loaded successfully:', currentWord.imageUrl)
+                            // Preload next image immediately after current loads
+                            setTimeout(() => preloadNextImage(wordIndex), 50)
+                          }}
                           onError={() => console.error('Image failed to load:', currentWord.imageUrl)}
                         />
                       </div>
