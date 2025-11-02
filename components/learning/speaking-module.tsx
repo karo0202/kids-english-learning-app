@@ -76,14 +76,20 @@ export default function SpeakingModule() {
     // Next 3 images (look ahead)
     for (let i = 1; i <= 3; i++) {
       const nextIndex = (wordIndex + i) % words.length
-      if (words[nextIndex]?.imageUrl) {
-        images.push(words[nextIndex].imageUrl)
+      const word = words[nextIndex]
+      const imageUrl = word?.imageUrl
+      if (imageUrl && typeof imageUrl === 'string') {
+        images.push(imageUrl)
       }
     }
     
     // Previous image (in case user goes back)
-    if (wordIndex > 0 && words[wordIndex - 1]?.imageUrl) {
-      images.push(words[wordIndex - 1].imageUrl)
+    if (wordIndex > 0) {
+      const prevWord = words[wordIndex - 1]
+      const prevImageUrl = prevWord?.imageUrl
+      if (prevImageUrl && typeof prevImageUrl === 'string') {
+        images.push(prevImageUrl)
+      }
     }
     
     return images.filter((url, index, self) => self.indexOf(url) === index) // Remove duplicates
