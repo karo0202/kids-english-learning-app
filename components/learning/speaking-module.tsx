@@ -48,6 +48,7 @@ export default function SpeakingModule() {
   const [lastResult, setLastResult] = useState<{ word: string; transcript: string; correct: boolean } | null>(null)
   const advancingRef = useRef<boolean>(false)
   const checkPronunciationRef = useRef<((transcript: string) => void) | null>(null)
+  const nextWordRef = useRef<(() => void) | null>(null)
   
   // Achievement system
   const [achievements, setAchievements] = useState<string[]>([])
@@ -628,16 +629,22 @@ export default function SpeakingModule() {
       advancingRef.current = true
       setTimeout(() => {
         setShowFeedback(false)
-        nextWord()
+        if (nextWordRef.current) {
+          nextWordRef.current()
+        }
         advancingRef.current = false
       }, 1500)
     }
-  }, [currentWord, stopListening, checkAchievements, childId, nextWord])
+  }, [currentWord, stopListening, checkAchievements, childId])
 
-  // Update ref whenever checkPronunciation changes
+  // Update refs whenever callbacks change
   useEffect(() => {
     checkPronunciationRef.current = checkPronunciation
   }, [checkPronunciation])
+
+  useEffect(() => {
+    nextWordRef.current = nextWord
+  }, [nextWord])
 
   const calculateSimilarity = (a: string, b: string) => {
     const longer = a.length > b.length ? a : b
