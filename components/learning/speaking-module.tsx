@@ -64,6 +64,8 @@ export default function SpeakingModule() {
   const [adaptiveSettings, setAdaptiveSettings] = useState<any>(null)
   const [personalizedWords, setPersonalizedWords] = useState<Word[]>([])
   const [showPersonalization, setShowPersonalization] = useState(false)
+  const [recommendations, setRecommendations] = useState<any[]>([])
+  const [difficultyInsights, setDifficultyInsights] = useState<any>(null)
 
   // Preload images for better performance - preload current, next, and previous images
   // Memoize to avoid recalculating on every render
@@ -100,8 +102,8 @@ export default function SpeakingModule() {
   
   const { isLoaded: isImageLoaded } = useImagePreload(imagesToPreload)
 
-  // Initialize personalization system
-  const initializePersonalization = async () => {
+  // Initialize and refresh personalization system
+  const refreshPersonalization = useCallback(() => {
     try {
       // Get or create learning profile
       let profile = personalizationManager.getProfile(childId)
@@ -120,6 +122,14 @@ export default function SpeakingModule() {
       const settings = adaptiveDifficultyManager.getSettings(childId)
       setAdaptiveSettings(settings)
 
+      // Get recommendations
+      const recs = personalizationManager.getRecommendations(childId)
+      setRecommendations(recs)
+
+      // Get difficulty insights
+      const insights = adaptiveDifficultyManager.getDifficultyInsights(childId)
+      setDifficultyInsights(insights)
+
       // Get personalized content
       const adaptiveContent = personalizationManager.getAdaptiveContent(childId, 'speaking')
       if (adaptiveContent.length > 0) {
@@ -135,9 +145,14 @@ export default function SpeakingModule() {
         setPersonalizedWords(personalized)
       }
     } catch (error) {
-      console.error('Error initializing personalization:', error)
+      console.error('Error refreshing personalization:', error)
     }
-  }
+  }, [childId])
+
+  // Initialize personalization on mount
+  const initializePersonalization = useCallback(() => {
+    refreshPersonalization()
+  }, [refreshPersonalization])
   
 
   // Sing & Speak (karaoke) state
@@ -548,7 +563,7 @@ export default function SpeakingModule() {
         setShowAchievement(false)
       }, 3000)
     }
-  }, [streak, achievements, score, perfectWords, bestStreak])
+  }, [streak, achievements, score, perfectWords, bestStreak, refreshPersonalization])
 
   // Memoize achievement map to avoid recreating on every render
   type AchievementKey = 'streak_3' | 'streak_5' | 'streak_10' | 'perfect_5' | 'perfect_10' | 'score_50' | 'score_100'
@@ -620,6 +635,9 @@ export default function SpeakingModule() {
         attempts: 1,
         hintsUsed: 0
       })
+
+      // Refresh personalization data after update
+      setTimeout(() => refreshPersonalization(), 100)
     }
 
     // Store result to show on next word
@@ -926,14 +944,14 @@ export default function SpeakingModule() {
             className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-200"
           >
             <div className="container mx-auto px-4 py-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Learning Profile */}
                 {learningProfile && (
                   <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-200">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center text-sm">
                       🧠 Learning Profile
                     </h3>
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-xs">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Style:</span>
                         <span className="font-medium capitalize">{learningProfile.learningStyle}</span>
@@ -946,6 +964,18 @@ export default function SpeakingModule() {
                         <span className="text-gray-600">Pace:</span>
                         <span className="font-medium capitalize">{learningProfile.preferredPace}</span>
                       </div>
+                      {learningProfile.strengths && learningProfile.strengths.length > 0 && (
+                        <div className="pt-2 border-t border-gray-200">
+                          <div className="text-gray-600 mb-1">Strengths:</div>
+                          <div className="flex flex-wrap gap-1">
+                            {learningProfile.strengths.slice(0, 2).map((s: string, i: number) => (
+                              <span key={i} className="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded">
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -953,26 +983,50 @@ export default function SpeakingModule() {
                 {/* Adaptive Settings */}
                 {adaptiveSettings && (
                   <div className="bg-white rounded-lg p-4 shadow-sm border border-green-200">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center text-sm">
                       🎯 Adaptive Settings
                     </h3>
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-xs">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Difficulty:</span>
-                        <span className="font-medium">Level {adaptiveSettings.currentDifficulty}</span>
+                        <span className="font-medium">Level {adaptiveSettings.currentDifficulty}/5</span>
                       </div>
-                      {adaptiveSettings.timeLimit > 0 && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Time Limit:</span>
-                          <span className="font-medium">{adaptiveSettings.timeLimit}s</span>
+                      {difficultyInsights && (
+                        <div className="pt-2 border-t border-gray-200">
+                          <div className="text-gray-600 mb-1">Progress:</div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${(difficultyInsights.progression || 0) * 100}%` }}
+                            ></div>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {difficultyInsights.nextMilestone}
+                          </div>
                         </div>
                       )}
-                      {adaptiveSettings.maxHints > 0 && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Hints:</span>
-                          <span className="font-medium">{adaptiveSettings.maxHints}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommendations */}
+                {recommendations.length > 0 && (
+                  <div className="bg-white rounded-lg p-4 shadow-sm border border-yellow-200">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center text-sm">
+                      💡 Recommendations
+                    </h3>
+                    <div className="space-y-2 text-xs">
+                      {recommendations.slice(0, 2).map((rec, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <span className={`text-xs ${rec.priority === 'high' ? 'text-red-500' : rec.priority === 'medium' ? 'text-yellow-500' : 'text-gray-500'}`}>
+                            {rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '⚪'}
+                          </span>
+                          <div>
+                            <div className="font-medium text-gray-800">{rec.action}</div>
+                            <div className="text-gray-600 text-xs">{rec.reason}</div>
+                          </div>
                         </div>
-                      )}
+                      ))}
                     </div>
                   </div>
                 )}
@@ -980,21 +1034,31 @@ export default function SpeakingModule() {
                 {/* Personalized Content */}
                 {personalizedWords.length > 0 && (
                   <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-200">
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                      ✨ Personalized Content
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center text-sm">
+                      ✨ Personalized Words
                     </h3>
-                    <div className="text-sm text-gray-600">
-                      <p className="mb-2">AI-selected words based on your learning style:</p>
+                    <div className="text-xs text-gray-600">
+                      <p className="mb-2">AI-selected for your style:</p>
                       <div className="flex flex-wrap gap-1">
-                        {personalizedWords.slice(0, 3).map((word, index) => (
+                        {personalizedWords.slice(0, 4).map((word, index) => (
                           <span key={index} className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
                             {word.word}
                           </span>
                         ))}
-                        {personalizedWords.length > 3 && (
-                          <span className="text-xs text-gray-500">+{personalizedWords.length - 3} more</span>
+                        {personalizedWords.length > 4 && (
+                          <span className="text-xs text-gray-500">+{personalizedWords.length - 4}</span>
                         )}
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Fallback if no personalization data */}
+                {!learningProfile && !adaptiveSettings && (
+                  <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 md:col-span-2 lg:col-span-4">
+                    <div className="text-center text-sm text-gray-600">
+                      <div className="mb-2">🧠 AI Personalization is active!</div>
+                      <div className="text-xs">Complete a few exercises to see your personalized learning insights.</div>
                     </div>
                   </div>
                 )}
