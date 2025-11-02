@@ -47,6 +47,7 @@ export default function SpeakingModule() {
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [lastResult, setLastResult] = useState<{ word: string; transcript: string; correct: boolean } | null>(null)
   const advancingRef = useRef<boolean>(false)
+  const checkPronunciationRef = useRef<((transcript: string) => void) | null>(null)
   
   // Achievement system
   const [achievements, setAchievements] = useState<string[]>([])
@@ -447,8 +448,10 @@ export default function SpeakingModule() {
           recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
             const transcript = event.results[0][0].transcript.toLowerCase().trim()
             setUserSpeech(transcript)
-            // Use the latest checkPronunciation via closure
-            checkPronunciation(transcript)
+            // Use the latest checkPronunciation via ref
+            if (checkPronunciationRef.current) {
+              checkPronunciationRef.current(transcript)
+            }
           }
 
           recognitionRef.current.onend = () => {
@@ -476,7 +479,7 @@ export default function SpeakingModule() {
       setIsListening(false)
       alert('Unable to start speech recognition. Please check your microphone permissions.')
     }
-  }, [checkPronunciation])
+  }, [])
 
   const stopListening = useCallback(() => {
     console.log('stopListening called')
@@ -628,6 +631,11 @@ export default function SpeakingModule() {
       }, 1500)
     }
   }, [currentWord, stopListening, checkAchievements, childId, nextWord])
+
+  // Update ref whenever checkPronunciation changes
+  useEffect(() => {
+    checkPronunciationRef.current = checkPronunciation
+  }, [checkPronunciation])
 
   const calculateSimilarity = (a: string, b: string) => {
     const longer = a.length > b.length ? a : b
