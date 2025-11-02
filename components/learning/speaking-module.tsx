@@ -637,15 +637,6 @@ export default function SpeakingModule() {
     }
   }, [currentWord, stopListening, checkAchievements, childId])
 
-  // Update refs whenever callbacks change
-  useEffect(() => {
-    checkPronunciationRef.current = checkPronunciation
-  }, [checkPronunciation])
-
-  useEffect(() => {
-    nextWordRef.current = nextWord
-  }, [nextWord])
-
   const calculateSimilarity = (a: string, b: string) => {
     const longer = a.length > b.length ? a : b
     const shorter = a.length > b.length ? b : a
@@ -747,6 +738,15 @@ export default function SpeakingModule() {
       console.error('Error advancing to next word:', error)
     }
   }, [wordIndex, totalWords, words, isListening, stopListening])
+
+  // Update refs whenever callbacks change (must be after function declarations)
+  useEffect(() => {
+    checkPronunciationRef.current = checkPronunciation
+  }, [checkPronunciation])
+
+  useEffect(() => {
+    nextWordRef.current = nextWord
+  }, [nextWord])
 
   const speakWord = () => {
     if (currentWord) {
