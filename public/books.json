@@ -3,7 +3,7 @@
     "id": "4",
     "title": "Lila and the Magic Seed",
     "author": "Sunny Village Stories",
-    "coverImage": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=300", 
+    "coverImage": "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=300&h=400&fit=crop&crop=center", 
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 7,
@@ -12,49 +12,49 @@
         "id": "4-1",
         "pageNumber": 1,
         "text": "Once upon a time, in a sunny village, there lived a curious girl named Lila. She asked questions about everything—clouds, rain, flowers, even the tiny ants!",
-        "imageUrl": "https://images.unsplash.com/photo-1524594154908-edd057d1b9cc?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1524594154908-edd057d1b9cc?w=400&h=400&fit=crop&crop=faces"
       },
       {
         "id": "4-2",
         "pageNumber": 2,
         "text": "One day, Grandma gave Lila a tiny brown seed. 'This is a magic seed,' she said. 'It will grow only if you care for it every day.'",
-        "imageUrl": "https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=400&h=400&fit=crop&crop=center"
       },
       {
         "id": "4-3",
         "pageNumber": 3,
         "text": "Lila planted the seed in her garden, watered it gently, and whispered, 'Grow strong and tall, little seed.' The next morning—nothing happened.",
-        "imageUrl": "https://images.unsplash.com/photo-1492496913980-501348b61469?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1492496913980-501348b61469?w=400&h=400&fit=crop&crop=center"
       },
       {
         "id": "4-4",
         "pageNumber": 4,
         "text": "Tomo the turtle walked by. 'Good things take time,' he said. Lila kept caring for the seed—watering, pulling weeds, and making sure it had sunshine.",
-        "imageUrl": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=400&fit=crop&crop=center"
       },
       {
         "id": "4-5",
         "pageNumber": 5,
         "text": "Days turned into weeks. Then one morning a tiny green sprout popped out of the ground! 'It's growing!' Lila cheered.",
-        "imageUrl": "https://images.unsplash.com/photo-1465406325905-6c78c278f0d5?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1465406325905-6c78c278f0d5?w=400&h=400&fit=crop&crop=center"
       },
       {
         "id": "4-6",
         "pageNumber": 6,
         "text": "The sprout grew taller and taller until it became a big, bright sunflower. Bees and butterflies came to visit, and Lila smiled proudly.",
-        "imageUrl": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&h=400&fit=crop&crop=center"
       },
       {
         "id": "4-7",
         "pageNumber": 7,
         "text": "'I did it!' said Lila. Grandma hugged her. 'Yes, my dear. You grew a beautiful flower—and you also grew your patience.'",
-        "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400"
+        "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400&h=400&fit=crop&crop=faces"
       },
       {
         "id": "4-8",
         "pageNumber": 8,
         "text": "Moral: Good things take time. Be patient, keep caring, and never give up!",
-        "imageUrl": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=400",
+        "imageUrl": "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&h=400&fit=crop&crop=center",
         "vocabulary": [
           { "word": "Curious", "definition": "Wanting to learn or know more", "example": "Lila was curious about how the seed would grow." },
           { "word": "Seed", "definition": "The small part of a plant that can grow into a new plant", "example": "She planted the seed in the garden." },
