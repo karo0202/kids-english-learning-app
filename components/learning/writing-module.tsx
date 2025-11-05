@@ -1144,17 +1144,37 @@ export default function WritingModule() {
                   <div className="mobile-canvas-container flex-1 flex items-center justify-center min-h-0 my-2 md:my-4">
                   <canvas
                     ref={canvasRef}
-                    width={300}
-                    height={300}
+                    width={400}
+                    height={400}
                     className="border-4 border-gray-300 dark:border-slate-600 rounded-xl md:rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full h-full max-w-full max-h-full aspect-square"
-                    style={{ touchAction: 'none', userSelect: 'none' }}
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
+                    style={{ 
+                      touchAction: 'none', 
+                      userSelect: 'none',
+                      pointerEvents: 'auto',
+                      position: 'relative',
+                      zIndex: 10
+                    }}
+                    onMouseDown={(e) => {
+                      console.log('Mouse down on canvas')
+                      startDrawing(e)
+                    }}
+                    onMouseMove={(e) => {
+                      if (isDrawing) {
+                        draw(e)
+                      }
+                    }}
+                    onMouseUp={(e) => {
+                      console.log('Mouse up on canvas')
+                      stopDrawing()
+                    }}
+                    onMouseLeave={(e) => {
+                      console.log('Mouse leave canvas')
+                      stopDrawing()
+                    }}
                     onTouchStart={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
+                      console.log('Touch start on canvas')
                       if (e.touches && e.touches.length > 0) {
                         startDrawing(e)
                       }
@@ -1162,13 +1182,14 @@ export default function WritingModule() {
                     onTouchMove={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      if (e.touches && e.touches.length > 0) {
+                      if (e.touches && e.touches.length > 0 && isDrawing) {
                         draw(e)
                       }
                     }}
                     onTouchEnd={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
+                      console.log('Touch end on canvas')
                       stopDrawing()
                     }}
                     tabIndex={0}
