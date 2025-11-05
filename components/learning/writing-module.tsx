@@ -596,13 +596,13 @@ export default function WritingModule() {
               .map((s: string) => s.toUpperCase().replace(/\s+/g, ' ').trim())
             setSentences(normalized)
           } else {
-            setSentences(defaultSentenceBank)
+            setSentences(DEFAULT_SENTENCE_BANK)
           }
         } else {
-          setSentences(defaultSentenceBank)
+          setSentences(DEFAULT_SENTENCE_BANK)
         }
       } catch {
-        setSentences(defaultSentenceBank)
+        setSentences(DEFAULT_SENTENCE_BANK)
       }
     }
 
