@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
 import { Baby, Heart, ArrowLeft } from 'lucide-react'
+import { addChild } from '@/lib/children'
+import { getUserSession } from '@/lib/simple-auth'
+import { getAgeGroupConfigByAge, AgeGroup } from '@/lib/age-utils'
 
 export default function AddChildPage() {
   const router = useRouter()
@@ -24,24 +27,32 @@ export default function AddChildPage() {
     console.log('Form submitted with data:', formData)
 
     try {
-      // Store child information in localStorage
-      const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
-      const newChild = {
-        id: `child-${Date.now()}`,
-        name: formData.childName,
-        age: formData.childAge,
-        createdAt: new Date().toISOString()
+      const user = getUserSession()
+      if (!user) {
+        console.error('No user session found')
+        router.push('/login')
+        return
       }
+
+      const age = parseInt(formData.childAge)
+      if (isNaN(age) || age < 3 || age > 12) {
+        alert('Please enter a valid age between 3 and 12')
+        setLoading(false)
+        return
+      }
+
+      // Automatically determine age group and add child
+      const newChild = addChild(user.id, formData.childName, age)
       
-      existingChildren.push(newChild)
-      localStorage.setItem('children', JSON.stringify(existingChildren))
-      
-      console.log('Child added, redirecting to dashboard...')
+      // Get age group info for feedback
+      const ageGroupConfig = getAgeGroupConfigByAge(age)
+      console.log(`Child added to ${ageGroupConfig.name} (${ageGroupConfig.group})`)
       
       // Redirect to dashboard
       router.push('/dashboard')
     } catch (error) {
       console.error('Error adding child:', error)
+      alert('Failed to add child. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -95,15 +106,41 @@ export default function AddChildPage() {
                 <div className="relative">
                   <select
                     value={formData.childAge}
-                    onChange={(e) => setFormData({...formData, childAge: e.target.value})}
+                    onChange={(e) => {
+                      const age = parseInt(e.target.value)
+                      setFormData({...formData, childAge: e.target.value})
+                      
+                      // Show age group preview
+                      if (!isNaN(age) && age >= 3 && age <= 12) {
+                        const ageGroupConfig = getAgeGroupConfigByAge(age)
+                        console.log(`Age group: ${ageGroupConfig.name}`)
+                      }
+                    }}
                     className="w-full pl-3 py-3 text-lg rounded-xl border-2 focus:border-pink-400 bg-white"
                     required
                   >
                     <option value="">Select Child's Age</option>
-                    {[3,4,5,6,7,8,9,10,11,12].map(age => (
-                      <option key={age} value={age}>{age} years old</option>
-                    ))}
+                    {[3,4,5,6,7,8,9,10,11,12].map(age => {
+                      const ageGroupConfig = getAgeGroupConfigByAge(age)
+                      return (
+                        <option key={age} value={age}>
+                          {age} years old ({ageGroupConfig.name})
+                        </option>
+                      )
+                    })}
                   </select>
+                  {formData.childAge && (
+                    <p className="text-sm text-gray-600 mt-2">
+                      {(() => {
+                        const age = parseInt(formData.childAge)
+                        if (!isNaN(age) && age >= 3 && age <= 12) {
+                          const config = getAgeGroupConfigByAge(age)
+                          return `✨ Your child will join ${config.name}!`
+                        }
+                        return ''
+                      })()}
+                    </p>
+                  )}
                 </div>
               </div>
 

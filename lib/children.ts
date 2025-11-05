@@ -1,8 +1,11 @@
 // Children management system
+import { AgeGroup, getAgeGroup } from './age-utils'
+
 export interface Child {
   id: string
   name: string
   age: number
+  ageGroup: AgeGroup // Automatically determined from age
   parentId: string
   createdAt: string
   avatar?: string
@@ -24,10 +27,14 @@ export function getChildren(parentId: string): Child[] {
 }
 
 export function addChild(parentId: string, name: string, age: number): Child {
+  // Automatically determine age group from age
+  const ageGroup = getAgeGroup(age)
+  
   const newChild: Child = {
     id: `child-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     name,
     age,
+    ageGroup, // Automatically assigned based on age
     parentId,
     createdAt: new Date().toISOString(),
     avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}`

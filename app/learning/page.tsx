@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy
 } from 'lucide-react'
+import { getCurrentChild } from '@/lib/children'
+import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
+import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -44,10 +47,33 @@ export default function LearningPage() {
     
     // Load children from localStorage
     const storedChildren = JSON.parse(localStorage.getItem('children') || '[]')
-    setChildren(storedChildren)
     
-    if (storedChildren.length > 0) {
-      setSelectedChild(storedChildren[0])
+    // Ensure all children have ageGroup (migration for existing data)
+    const migratedChildren = storedChildren.map((child: any) => {
+      if (!child.ageGroup) {
+        // Import dynamically to avoid circular dependency
+        const { getAgeGroup } = require('@/lib/age-utils')
+        child.ageGroup = getAgeGroup(child.age)
+      }
+      return child
+    })
+    
+    // Update localStorage with migrated data
+    if (migratedChildren.length > 0 && migratedChildren.some((c: any) => !storedChildren.find((sc: any) => sc.id === c.id && sc.ageGroup === c.ageGroup))) {
+      localStorage.setItem('children', JSON.stringify(migratedChildren))
+    }
+    
+    setChildren(migratedChildren)
+    
+    // Try to get current child first, otherwise use first child
+    const currentChild = getCurrentChild()
+    if (currentChild) {
+      setSelectedChild(currentChild)
+    } else if (migratedChildren.length > 0) {
+      setSelectedChild(migratedChildren[0])
+      // Set as current child
+      const { setCurrentChild } = require('@/lib/children')
+      setCurrentChild(migratedChildren[0])
     }
     
     setLoading(false)
@@ -111,8 +137,20 @@ export default function LearningPage() {
                 <span className="hidden xs:inline">Back to Dashboard</span>
               </Button>
               <div>
-                <h1 className="text-xl md:text-2xl font-bold text-fun-gradient">Learning Center ✨</h1>
-                <p className="text-sm md:text-base text-gray-600 dark:text-white/70">Welcome, {selectedChild?.name || 'Student'}! ✨</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <h1 className="text-xl md:text-2xl font-bold text-fun-gradient">Learning Center ✨</h1>
+                  {selectedChild?.ageGroup && (
+                    <AgeGroupBadge ageGroup={selectedChild.ageGroup as AgeGroup} />
+                  )}
+                </div>
+                <p className="text-sm md:text-base text-gray-600 dark:text-white/70">
+                  Welcome, {selectedChild?.name || 'Student'}! ✨
+                  {selectedChild?.ageGroup && (
+                    <span className="ml-2">
+                      ({getAgeGroupConfig(selectedChild.ageGroup as AgeGroup).name})
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -135,7 +173,10 @@ export default function LearningPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <AgeAdaptiveContainer 
+        ageGroup={selectedChild?.ageGroup as AgeGroup || AgeGroup.AGE_6_8}
+        className="container mx-auto px-4 py-8 relative z-10"
+      >
         {/* Child Selector */}
         {children.length > 1 && (
           <motion.div 
@@ -144,7 +185,7 @@ export default function LearningPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <h2 className="text-base md:text-lg font-semibold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-3">Select Child</h2>
-            <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
+                <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
               {children.map((child) => (
                 <motion.div
                   key={child.id}
@@ -153,14 +194,23 @@ export default function LearningPage() {
                 >
                   <Button
                     variant={selectedChild?.id === child.id ? "default" : "outline"}
-                    onClick={() => setSelectedChild(child)}
+                    onClick={() => {
+                      setSelectedChild(child)
+                      const { setCurrentChild } = require('@/lib/children')
+                      setCurrentChild(child)
+                    }}
                     className={`whitespace-nowrap text-sm md:text-base rounded-xl ${
                       selectedChild?.id === child.id 
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' 
                         : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
                     }`}
                   >
-                    {child.name} ({child.age} years old)
+                    <div className="flex items-center gap-2">
+                      <span>{child.name} ({child.age} years old)</span>
+                      {child.ageGroup && (
+                        <AgeGroupBadge ageGroup={child.ageGroup as AgeGroup} className="text-xs" />
+                      )}
+                    </div>
                   </Button>
                 </motion.div>
               ))}
@@ -346,7 +396,7 @@ export default function LearningPage() {
             </motion.div>
           </div>
         </motion.div>
-      </div>
+      </AgeAdaptiveContainer>
     </div>
   )
 }

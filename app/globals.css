@@ -456,6 +456,53 @@
   .hover-pulse-color:hover {
     animation: pulse-color 1.5s ease-in-out infinite;
   }
+
+  /* Age-based UI complexity classes */
+  .age-simple {
+    /* Extra large buttons, minimal text for ages 3-5 */
+  }
+
+  .age-simple button,
+  .age-simple .btn-primary-kid,
+  .age-simple .btn-kid {
+    @apply text-2xl px-8 py-6;
+  }
+
+  .age-simple .card-kid {
+    @apply text-lg;
+  }
+
+  .age-simple h1, .age-simple h2, .age-simple h3 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  .age-moderate {
+    /* Medium elements, balanced for ages 6-8 */
+  }
+
+  .age-moderate button,
+  .age-moderate .btn-primary-kid,
+  .age-moderate .btn-kid {
+    @apply text-xl px-6 py-4;
+  }
+
+  .age-moderate h1, .age-moderate h2, .age-moderate h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  .age-advanced {
+    /* Sophisticated, detailed for ages 9-12 */
+  }
+
+  .age-advanced button,
+  .age-advanced .btn-primary-kid,
+  .age-advanced .btn-kid {
+    @apply text-lg px-5 py-3;
+  }
+
+  .age-advanced h1, .age-advanced h2, .age-advanced h3 {
+    @apply text-xl md:text-2xl;
+  }
 }
 
 /* Premium Kid-friendly button styles with creative effects */
