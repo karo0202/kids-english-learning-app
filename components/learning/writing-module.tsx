@@ -565,7 +565,7 @@ export default function WritingModule() {
         setIsInitialized(true)
       }
     }
-  }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide, currentLetter, letterIndex])
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide]) // Removed currentLetter and letterIndex to prevent re-initialization when letter changes
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
