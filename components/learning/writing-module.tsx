@@ -371,6 +371,7 @@ export default function WritingModule() {
     }
 
     console.log('Activity type changed to:', activityType)
+    setIsInitialized(false) // Reset initialization when switching activities
     
     if (activityType === 'wordbuilder') {
       loadWords().then(() => {
