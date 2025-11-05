@@ -48,9 +48,18 @@ export default function WritingModule() {
   const [strokeLength, setStrokeLength] = useState(0)
   const [strokesCompleted, setStrokesCompleted] = useState(0)
   const [requiredStrokes, setRequiredStrokes] = useState(1)
+  const [isInitialized, setIsInitialized] = useState(false)
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const drawStartTimeRef = useRef<number | null>(null)
   const visitedCellsRef = useRef<Set<string>>(new Set())
+
+  // Component mount check
+  useEffect(() => {
+    console.log('WritingModule component mounted')
+    return () => {
+      console.log('WritingModule component unmounting')
+    }
+  }, [])
 
   // Redraw the guide whenever letter or stroke step changes
   useEffect(() => {
@@ -399,6 +408,10 @@ export default function WritingModule() {
     try {
       if (activityType === 'tracing') {
         console.log('Setting up tracing, letters available:', tracingLetters.length)
+        if (tracingLetters.length === 0) {
+          console.error('No tracing letters available!')
+          return
+        }
         setLetterIndex(0)
         const firstLetter = tracingLetters[0]
         console.log('First letter:', firstLetter)
@@ -407,6 +420,7 @@ export default function WritingModule() {
         console.log('Required strokes:', strokes)
         setRequiredStrokes(strokes)
         setStrokesCompleted(0)
+        setIsInitialized(true)
         // Clear canvas and redraw guide after state updates
         setTimeout(() => {
           if (canvasRef.current) {
@@ -427,6 +441,7 @@ export default function WritingModule() {
           console.log('Shuffled letters:', shuffled)
           setBuilderLetters(shuffled)
           setBuiltWord([])
+          setIsInitialized(true)
         } else {
           console.warn('No words available for word builder')
         }
@@ -442,6 +457,7 @@ export default function WritingModule() {
           const scrambled = shuffleArray(s.split(' '))
           console.log('Scrambled words:', scrambled)
           setScrambledWords(scrambled)
+          setIsInitialized(true)
         } else {
           console.warn('No sentences available')
         }
@@ -454,6 +470,7 @@ export default function WritingModule() {
           setPromptIndex(0)
           setCurrentPrompt(prompt)
           setStoryText('')
+          setIsInitialized(true)
         } else {
           console.warn('No prompts available')
         }
@@ -465,6 +482,7 @@ export default function WritingModule() {
         setCurrentLetter(tracingLetters[0])
         setRequiredStrokes(2)
         setStrokesCompleted(0)
+        setIsInitialized(true)
       }
     }
   }
