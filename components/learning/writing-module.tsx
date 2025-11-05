@@ -1310,14 +1310,15 @@ export default function WritingModule() {
               </motion.div>
             </div>
           ) : (
-          <div className="max-w-4xl mx-auto text-center p-8">
-            <Card className="card-writing">
-              <CardContent className="p-8">
-                <p className="text-gray-600">Loading creative writing...</p>
-                <p className="text-sm text-gray-500 mt-2">Current prompt: {currentPrompt?.title || 'None'}</p>
-              </CardContent>
-            </Card>
-          </div>
+            <div className="max-w-4xl mx-auto text-center p-8">
+              <Card className="card-writing">
+                <CardContent className="p-8">
+                  <p className="text-gray-600">Loading creative writing...</p>
+                  <p className="text-sm text-gray-500 mt-2">Current prompt: {currentPrompt?.title || 'None'}</p>
+                </CardContent>
+              </Card>
+            </div>
+          )
         ) : null}
 
         {/* Word Builder Activity */}
