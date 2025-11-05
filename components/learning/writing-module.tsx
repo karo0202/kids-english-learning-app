@@ -551,7 +551,7 @@ export default function WritingModule() {
         setIsInitialized(true)
       }
     }
-  }, [activityType, wordBank, sentences, prompts, tracingLetters, defaultSentenceBank, defaultPrompts, drawLetterGuide])
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, defaultSentenceBank, defaultPrompts, drawLetterGuide, getRequiredStrokes, shuffleArray, getDefaultWordBuildingWords])
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
