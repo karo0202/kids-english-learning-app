@@ -729,14 +729,11 @@ export default function WritingModule() {
     // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
     
-    // Get canvas internal size vs display size for proper scaling
+    // IMPORTANT: Since the context is already scaled by devicePixelRatio in resizeCanvas,
+    // we need to use the display size (not internal size) for coordinate calculations
+    // The context scaling handles the high-DPI rendering automatically
     const displayWidth = rect.width
     const displayHeight = rect.height
-    const internalWidth = canvas.width
-    const internalHeight = canvas.height
-    
-    const scaleX = internalWidth / displayWidth
-    const scaleY = internalHeight / displayHeight
     
     // Get mouse/touch coordinates - use clientX/clientY for viewport-relative coordinates
     let clientX = 0
@@ -747,10 +744,10 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event - prefer clientX/clientY if available, otherwise use pageX/pageY
+      // Touch event - use clientX/clientY directly (most reliable)
       const touch = e.touches[0]
-      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
-      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
+      clientX = touch.clientX
+      clientY = touch.clientY
       console.log('Using touch coordinates:', { 
         clientX, 
         clientY, 
@@ -758,13 +755,16 @@ export default function WritingModule() {
         touchClientY: touch.clientY,
         touchPageX: touch.pageX,
         touchPageY: touch.pageY,
-        touchCount: e.touches.length 
+        rectLeft: rect.left,
+        rectTop: rect.top,
+        displayWidth,
+        displayHeight
       })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
       // Touch end event
       const touch = e.changedTouches[0]
-      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
-      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
+      clientX = touch.clientX
+      clientY = touch.clientY
       console.log('Using changedTouches coordinates:', { 
         clientX, 
         clientY,
@@ -782,9 +782,10 @@ export default function WritingModule() {
       return
     }
 
-    // Calculate canvas coordinates - both clientX and rect.left are viewport-relative
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
+    // Calculate canvas coordinates directly in display coordinates
+    // Since context is already scaled, we don't need to multiply by devicePixelRatio
+    const x = clientX - rect.left
+    const y = clientY - rect.top
     
     console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
     
@@ -824,14 +825,11 @@ export default function WritingModule() {
     // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
     
-    // Get canvas internal size vs display size for proper scaling
+    // IMPORTANT: Since the context is already scaled by devicePixelRatio in resizeCanvas,
+    // we need to use the display size (not internal size) for coordinate calculations
+    // The context scaling handles the high-DPI rendering automatically
     const displayWidth = rect.width
     const displayHeight = rect.height
-    const internalWidth = canvas.width
-    const internalHeight = canvas.height
-    
-    const scaleX = internalWidth / displayWidth
-    const scaleY = internalHeight / displayHeight
     
     // Get mouse/touch coordinates - use clientX/clientY for viewport-relative coordinates
     let clientX = 0
@@ -842,30 +840,15 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event - prefer clientX/clientY if available, otherwise use pageX/pageY
+      // Touch event - use clientX/clientY directly (most reliable)
       const touch = e.touches[0]
-      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
-      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
-      console.log('Draw using touch coordinates:', { 
-        clientX, 
-        clientY, 
-        touchClientX: touch.clientX,
-        touchClientY: touch.clientY,
-        touchPageX: touch.pageX,
-        touchPageY: touch.pageY,
-        touchCount: e.touches.length 
-      })
+      clientX = touch.clientX
+      clientY = touch.clientY
     } else if (e.changedTouches && e.changedTouches.length > 0) {
-      // Touch event (when touch moves) - prefer clientX/clientY
+      // Touch event (when touch moves) - use clientX/clientY directly
       const touch = e.changedTouches[0]
-      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
-      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
-      console.log('Draw using changedTouches coordinates:', { 
-        clientX, 
-        clientY,
-        touchClientX: touch.clientX,
-        touchClientY: touch.clientY 
-      })
+      clientX = touch.clientX
+      clientY = touch.clientY
     } else {
       console.warn('No valid coordinates in draw', { 
         hasClientX: e?.clientX !== undefined, 
@@ -876,9 +859,10 @@ export default function WritingModule() {
       return // No valid coordinates
     }
 
-    // Calculate canvas coordinates - both clientX and rect.left are viewport-relative
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
+    // Calculate canvas coordinates directly in display coordinates
+    // Since context is already scaled, we don't need to multiply by devicePixelRatio
+    const x = clientX - rect.left
+    const y = clientY - rect.top
 
     const ctx = canvas.getContext('2d')
     if (ctx && lastPointRef.current) {
