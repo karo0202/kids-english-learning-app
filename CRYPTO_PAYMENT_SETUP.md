@@ -10,7 +10,7 @@ Your app now supports cryptocurrency payments for premium subscriptions. Users c
 Create a `.env.local` file in the `app` directory (if it doesn't exist) and add your wallet addresses:
 
 ```env
-NEXT_PUBLIC_BTC_WALLET=your_bitcoin_wallet_address_here
+NEXT_PUBLIC_BTC_WALLET=bc1pmrfhve3caywuskqwpymc8a0vj3vj5vwn6c9dpfcucy9n5tn788dq994r6t
 NEXT_PUBLIC_ETH_WALLET=your_ethereum_wallet_address_here
 NEXT_PUBLIC_USDT_WALLET=your_usdt_wallet_address_here
 NEXT_PUBLIC_USDC_WALLET=your_usdc_wallet_address_here
