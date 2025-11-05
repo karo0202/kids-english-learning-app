@@ -1417,16 +1417,17 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        ) : activityType === 'wordbuilder' ? (
-          <div className="max-w-4xl mx-auto text-center p-8">
-            <Card className="card-writing">
-              <CardContent className="p-8">
-                <p className="text-gray-600">Loading word builder...</p>
-                <p className="text-sm text-gray-500 mt-2">Current word: {currentWord?.word || 'None'}</p>
-                <p className="text-sm text-gray-500">Letters available: {builderLetters.length}</p>
-              </CardContent>
-            </Card>
-          </div>
+          ) : (
+            <div className="max-w-4xl mx-auto text-center p-8">
+              <Card className="card-writing">
+                <CardContent className="p-8">
+                  <p className="text-gray-600">Loading word builder...</p>
+                  <p className="text-sm text-gray-500 mt-2">Current word: {currentWord?.word || 'None'}</p>
+                  <p className="text-sm text-gray-500">Letters available: {builderLetters.length}</p>
+                </CardContent>
+              </Card>
+            </div>
+          )
         ) : null}
 
         {/* Sentence Puzzles Activity */}
@@ -1528,16 +1529,17 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        ) : activityType === 'sentences' ? (
-          <div className="max-w-4xl mx-auto text-center p-8">
-            <Card className="card-writing">
-              <CardContent className="p-8">
-                <p className="text-gray-600">Loading sentence puzzles...</p>
-                <p className="text-sm text-gray-500 mt-2">Current sentence: {currentSentence || 'None'}</p>
-                <p className="text-sm text-gray-500">Words available: {scrambledWords.length}</p>
-              </CardContent>
-            </Card>
-          </div>
+          ) : (
+            <div className="max-w-4xl mx-auto text-center p-8">
+              <Card className="card-writing">
+                <CardContent className="p-8">
+                  <p className="text-gray-600">Loading sentence puzzles...</p>
+                  <p className="text-sm text-gray-500 mt-2">Current sentence: {currentSentence || 'None'}</p>
+                  <p className="text-sm text-gray-500">Words available: {scrambledWords.length}</p>
+                </CardContent>
+              </Card>
+            </div>
+          )
         ) : null}
 
         {/* Feedback Modal */}
