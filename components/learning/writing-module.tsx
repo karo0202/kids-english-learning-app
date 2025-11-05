@@ -1125,7 +1125,7 @@ export default function WritingModule() {
                   </div>
 
                   {/* Mobile-optimized button layout */}
-                  <div className="mt-2 md:mt-3 space-y-2 md:space-y-3 flex-shrink-0">
+                  <div className="mt-2 md:mt-3 space-y-2 md:space-y-3 flex-shrink-0" style={{ position: 'relative', zIndex: 20 }}>
                     {/* Primary action row */}
                     <div className="flex justify-center">
                       <Button 
@@ -1135,10 +1135,19 @@ export default function WritingModule() {
                           e.stopPropagation()
                           console.log('Check stroke clicked')
                           checkCurrentStroke()
-                        }} 
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Check stroke mouse down')
+                        }}
+                        onMouseUp={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
                         className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-3 text-sm md:text-base lg:text-lg font-semibold shadow-lg"
                         size="lg"
-                        style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
                       >
                         <CheckCircle className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 md:mr-2" />
                         Check Stroke

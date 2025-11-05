@@ -112,6 +112,17 @@
   }
 }
 
+/* Ensure all buttons are clickable */
+button, 
+[role="button"],
+.Button,
+.btn-kid {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative;
+  z-index: 10;
+}
+
 /* Mobile touch fixes */
 @media (max-width: 768px) {
   body {
@@ -131,6 +142,28 @@
     height: 100vh;
     height: 100dvh; /* Dynamic viewport height for mobile */
     overflow: hidden;
+  }
+}
+
+/* Desktop/mouse fixes - ensure buttons work with mouse */
+@media (min-width: 769px) {
+  button,
+  [role="button"],
+  .Button,
+  .btn-kid {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  
+  canvas {
+    cursor: crosshair !important;
+    pointer-events: auto !important;
+  }
+  
+  textarea,
+  input {
+    pointer-events: auto !important;
+    cursor: text !important;
   }
 }
 
