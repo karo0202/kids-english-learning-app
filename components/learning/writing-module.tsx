@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -61,13 +61,155 @@ export default function WritingModule() {
     }
   }, [])
 
+  // Define drawLetterGuide with useCallback first
+  const drawLetterGuide = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas || !currentLetter || activityType !== 'tracing') return
+
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      // Ensure canvas has proper dimensions
+      if (canvas.width === 0 || canvas.height === 0) {
+        const container = canvas.parentElement
+        if (container) {
+          const size = Math.min(container.clientWidth, container.clientHeight, 400)
+          const scale = window.devicePixelRatio || 1
+          canvas.width = size * scale
+          canvas.height = size * scale
+          ctx.scale(scale, scale)
+        }
+      }
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      // grid background for orientation
+      ctx.strokeStyle = '#F1F5F9'
+      ctx.lineWidth = 1
+      for (let i = 1; i < 3; i++) {
+        const p = (canvas.width / 3) * i
+        ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, canvas.height); ctx.stroke()
+        ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(canvas.width, p); ctx.stroke()
+      }
+
+      // Stroke plans per letter (correct stroke directions)
+      type Segment = { from: [number, number]; to: [number, number] }
+      const planFor = (letter: string): Segment[][] => {
+        const A: Segment[] = [
+          { from: [90, 240], to: [150, 60] },
+          { from: [150, 60], to: [210, 240] },
+          { from: [120, 160], to: [180, 160] },
+        ]
+        const M: Segment[] = [
+          { from: [80, 240], to: [80, 60] },
+          { from: [80, 60], to: [150, 160] },
+          { from: [150, 160], to: [220, 60] },
+          { from: [220, 60], to: [220, 240] },
+        ]
+        const N: Segment[] = [
+          { from: [90, 240], to: [90, 60] },
+          { from: [90, 60], to: [210, 240] },
+          { from: [210, 240], to: [210, 60] },
+        ]
+        const W: Segment[] = [
+          { from: [80, 60], to: [110, 240] },
+          { from: [110, 240], to: [150, 120] },
+          { from: [150, 120], to: [190, 240] },
+          { from: [190, 240], to: [220, 60] },
+        ]
+        const K: Segment[] = [
+          { from: [90, 240], to: [90, 60] },
+          { from: [90, 150], to: [210, 60] },
+          { from: [90, 150], to: [210, 240] },
+        ]
+        const R: Segment[] = [
+          { from: [90, 240], to: [90, 60] },
+          { from: [90, 60], to: [200, 120] },
+          { from: [200, 120], to: [120, 240] },
+        ]
+        const B: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [180, 120] },
+          { from: [100, 150], to: [180, 210] },
+        ]
+        const D: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [200, 150] },
+        ]
+        const E: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [200, 60] },
+          { from: [100, 150], to: [180, 150] },
+          { from: [100, 240], to: [200, 240] },
+        ]
+        const F: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [200, 60] },
+          { from: [100, 150], to: [180, 150] },
+        ]
+        const H: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 150], to: [200, 150] },
+          { from: [200, 240], to: [200, 60] },
+        ]
+        const P: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [180, 120] },
+        ]
+        const Q: Segment[] = [
+          { from: [150, 120], to: [150, 180] },
+          { from: [180, 210], to: [200, 240] },
+        ]
+        const X: Segment[] = [
+          { from: [100, 60], to: [200, 240] },
+          { from: [100, 240], to: [200, 60] },
+        ]
+        const Y: Segment[] = [
+          { from: [100, 60], to: [150, 150] },
+          { from: [200, 60], to: [150, 150] },
+          { from: [150, 150], to: [150, 240] },
+        ]
+        const Z: Segment[] = [
+          { from: [100, 60], to: [200, 60] },
+          { from: [200, 60], to: [100, 240] },
+          { from: [100, 240], to: [200, 240] },
+        ]
+
+        const threeMap: Record<string, Segment[]> = { A, M, N, W, K, R }
+        const twoMap: Record<string, Segment[]> = { B, D, E, F, H, P, Q, X, Y, Z }
+        
+        if (threeMap[letter]) return [threeMap[letter].slice(0, 1), threeMap[letter].slice(1, 2), threeMap[letter].slice(2, 3)]
+        if (twoMap[letter]) return [twoMap[letter].slice(0, 1), twoMap[letter].slice(1, 2)]
+
+        const defaultTwo: Segment[] = [
+          { from: [100, 240], to: [100, 60] },
+          { from: [100, 60], to: [200, 150] },
+        ]
+        return [defaultTwo.slice(0, 1), defaultTwo.slice(1, 2)]
+      }
+
+      const segmentsByStep = planFor(currentLetter.letter)
+
+      segmentsByStep.forEach((segments, idx) => {
+        const isCurrent = idx === strokesCompleted
+        const color = isCurrent ? '#22C55E' : '#CBD5E1'
+        segments.forEach(seg => {
+          ctx.beginPath()
+          ctx.fillStyle = color
+          ctx.arc(seg.from[0], seg.from[1], isCurrent ? 7 : 5, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.fillStyle = isCurrent ? '#065F46' : '#94A3B8'
+          ctx.font = 'bold 12px sans-serif'
+          ctx.fillText(String(idx + 1), seg.from[0] - 3, seg.from[1] + 4)
+        })
+      })
+    }
+  }, [currentLetter, strokesCompleted, activityType])
+
   // Redraw the guide whenever letter or stroke step changes
   useEffect(() => {
-    // Only draw if canvas and letter are ready
     if (canvasRef.current && currentLetter && activityType === 'tracing') {
       drawLetterGuide()
     }
-  }, [currentLetter, strokesCompleted, requiredStrokes, activityType])
+  }, [drawLetterGuide, currentLetter, strokesCompleted, requiredStrokes, activityType])
 
   // Resize canvas based on container size
   useEffect(() => {
@@ -101,7 +243,9 @@ export default function WritingModule() {
       }
       
       // Redraw guide after resize
-      drawLetterGuide()
+      if (currentLetter && activityType === 'tracing') {
+        drawLetterGuide()
+      }
     }
 
     // Initial resize
@@ -667,171 +811,9 @@ export default function WritingModule() {
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      drawLetterGuide()
-    }
-  }
-
-  const drawLetterGuide = () => {
-    const canvas = canvasRef.current
-    if (!canvas || !currentLetter || activityType !== 'tracing') return
-
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      // Ensure canvas has proper dimensions
-      if (canvas.width === 0 || canvas.height === 0) {
-        const container = canvas.parentElement
-        if (container) {
-          const size = Math.min(container.clientWidth, container.clientHeight, 400)
-          const scale = window.devicePixelRatio || 1
-          canvas.width = size * scale
-          canvas.height = size * scale
-          ctx.scale(scale, scale)
-        }
+      if (currentLetter && activityType === 'tracing') {
+        drawLetterGuide()
       }
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      // grid background for orientation
-      ctx.strokeStyle = '#F1F5F9'
-      ctx.lineWidth = 1
-      for (let i = 1; i < 3; i++) {
-        const p = (canvas.width / 3) * i
-        ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, canvas.height); ctx.stroke()
-        ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(canvas.width, p); ctx.stroke()
-      }
-      // (Arrows removed intentionally; show only start dots with step numbers)
-
-      // Stroke plans per letter (correct stroke directions)
-      type Segment = { from: [number, number]; to: [number, number] }
-      const planFor = (letter: string): Segment[][] => {
-        // Letter A: left diagonal, right diagonal, crossbar
-        const A: Segment[] = [
-          { from: [90, 240], to: [150, 60] }, // left diagonal up
-          { from: [150, 60], to: [210, 240] }, // right diagonal down
-          { from: [120, 160], to: [180, 160] }, // crossbar left to right
-        ]
-        // Letter M: left vertical, diagonal down, diagonal up, right vertical
-        const M: Segment[] = [
-          { from: [80, 240], to: [80, 60] }, // left vertical up
-          { from: [80, 60], to: [150, 160] }, // diagonal down to middle
-          { from: [150, 160], to: [220, 60] }, // diagonal up to top right
-          { from: [220, 60], to: [220, 240] }, // right vertical down
-        ]
-        // Letter N: left vertical, diagonal, right vertical
-        const N: Segment[] = [
-          { from: [90, 240], to: [90, 60] }, // left vertical up
-          { from: [90, 60], to: [210, 240] }, // diagonal down to bottom right
-          { from: [210, 240], to: [210, 60] }, // right vertical up
-        ]
-        // Letter W: left diagonal, up diagonal, down diagonal, right diagonal
-        const W: Segment[] = [
-          { from: [80, 60], to: [110, 240] }, // left diagonal down
-          { from: [110, 240], to: [150, 120] }, // up diagonal
-          { from: [150, 120], to: [190, 240] }, // down diagonal
-          { from: [190, 240], to: [220, 60] }, // right diagonal up
-        ]
-        // Letter K: vertical, upper diagonal, lower diagonal
-        const K: Segment[] = [
-          { from: [90, 240], to: [90, 60] }, // vertical up
-          { from: [90, 150], to: [210, 60] }, // upper diagonal up-right
-          { from: [90, 150], to: [210, 240] }, // lower diagonal down-right
-        ]
-        // Letter R: vertical, curve, diagonal
-        const R: Segment[] = [
-          { from: [90, 240], to: [90, 60] }, // vertical up
-          { from: [90, 60], to: [200, 120] }, // curve to right
-          { from: [200, 120], to: [120, 240] }, // diagonal down-left
-        ]
-        // Letter B: vertical, upper curve, lower curve
-        const B: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [180, 120] }, // upper curve
-          { from: [100, 150], to: [180, 210] }, // lower curve
-        ]
-        // Letter D: vertical, curve
-        const D: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [200, 150] }, // curve to right
-        ]
-        // Letter E: vertical, top horizontal, middle horizontal, bottom horizontal
-        const E: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [200, 60] }, // top horizontal
-          { from: [100, 150], to: [180, 150] }, // middle horizontal
-          { from: [100, 240], to: [200, 240] }, // bottom horizontal
-        ]
-        // Letter F: vertical, top horizontal, middle horizontal
-        const F: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [200, 60] }, // top horizontal
-          { from: [100, 150], to: [180, 150] }, // middle horizontal
-        ]
-        // Letter H: left vertical, horizontal, right vertical
-        const H: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // left vertical up
-          { from: [100, 150], to: [200, 150] }, // horizontal
-          { from: [200, 240], to: [200, 60] }, // right vertical up
-        ]
-        // Letter P: vertical, curve
-        const P: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [180, 120] }, // curve to right
-        ]
-        // Letter Q: circle, tail
-        const Q: Segment[] = [
-          { from: [150, 120], to: [150, 180] }, // circle start
-          { from: [180, 210], to: [200, 240] }, // tail diagonal
-        ]
-        // Letter X: diagonal down, diagonal up
-        const X: Segment[] = [
-          { from: [100, 60], to: [200, 240] }, // diagonal down-right
-          { from: [100, 240], to: [200, 60] }, // diagonal up-right
-        ]
-        // Letter Y: V-shape, vertical
-        const Y: Segment[] = [
-          { from: [100, 60], to: [150, 150] }, // left diagonal down
-          { from: [200, 60], to: [150, 150] }, // right diagonal down
-          { from: [150, 150], to: [150, 240] }, // vertical down
-        ]
-        // Letter Z: top horizontal, diagonal, bottom horizontal
-        const Z: Segment[] = [
-          { from: [100, 60], to: [200, 60] }, // top horizontal
-          { from: [200, 60], to: [100, 240] }, // diagonal down-left
-          { from: [100, 240], to: [200, 240] }, // bottom horizontal
-        ]
-
-        const threeMap: Record<string, Segment[]> = { A, M, N, W, K, R }
-        const twoMap: Record<string, Segment[]> = { B, D, E, F, H, P, Q, X, Y, Z }
-        
-        if (threeMap[letter]) return [threeMap[letter].slice(0, 1), threeMap[letter].slice(1, 2), threeMap[letter].slice(2, 3)]
-        if (twoMap[letter]) return [twoMap[letter].slice(0, 1), twoMap[letter].slice(1, 2)]
-
-        // Default fallback for other letters
-        const defaultTwo: Segment[] = [
-          { from: [100, 240], to: [100, 60] }, // vertical up
-          { from: [100, 60], to: [200, 150] }, // curve to right
-        ]
-        return [defaultTwo.slice(0, 1), defaultTwo.slice(1, 2)]
-      }
-
-      const segmentsByStep = planFor(currentLetter.letter)
-
-      // Draw all steps as light hints; highlight current step
-      segmentsByStep.forEach((segments, idx) => {
-        const isCurrent = idx === strokesCompleted
-        const color = isCurrent ? '#22C55E' : '#CBD5E1'
-        segments.forEach(seg => {
-          // start dot
-          ctx.beginPath()
-          ctx.fillStyle = color
-          ctx.arc(seg.from[0], seg.from[1], isCurrent ? 7 : 5, 0, Math.PI * 2)
-          ctx.fill()
-          // number
-          ctx.fillStyle = isCurrent ? '#065F46' : '#94A3B8'
-          ctx.font = 'bold 12px sans-serif'
-          ctx.fillText(String(idx + 1), seg.from[0] - 3, seg.from[1] + 4)
-          // (Arrow path removed)
-        })
-      })
     }
   }
 
