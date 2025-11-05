@@ -476,14 +476,25 @@ export default function WritingModule() {
           console.error('No tracing letters available!')
           return
         }
-        setLetterIndex(0)
-        const firstLetter = tracingLetters[0]
-        console.log('First letter:', firstLetter)
-        setCurrentLetter(firstLetter)
-        const strokes = getRequiredStrokes(firstLetter.letter)
-        console.log('Required strokes:', strokes)
-        setRequiredStrokes(strokes)
-        setStrokesCompleted(0)
+        
+        // Only reset to first letter if we don't already have a current letter
+        // This allows Next/Previous buttons to work without being overridden
+        if (!currentLetter) {
+          setLetterIndex(0)
+          const firstLetter = tracingLetters[0]
+          console.log('No current letter, setting first letter:', firstLetter)
+          setCurrentLetter(firstLetter)
+          const strokes = getRequiredStrokes(firstLetter.letter)
+          console.log('Required strokes:', strokes)
+          setRequiredStrokes(strokes)
+          setStrokesCompleted(0)
+        } else {
+          // We already have a letter (from Next/Previous button), just ensure canvas is ready
+          console.log('Current letter already set:', currentLetter.letter, 'index:', letterIndex)
+          const strokes = getRequiredStrokes(currentLetter.letter)
+          setRequiredStrokes(strokes)
+        }
+        
         setIsInitialized(true)
         setTimeout(() => {
           if (canvasRef.current) {
@@ -554,7 +565,7 @@ export default function WritingModule() {
         setIsInitialized(true)
       }
     }
-  }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide])
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide, currentLetter, letterIndex])
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
