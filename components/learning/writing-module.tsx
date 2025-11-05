@@ -273,6 +273,120 @@ export default function WritingModule() {
     }
   }, [currentLetter, drawLetterGuide, activityType])
 
+  // Helper functions (defined before use)
+  const getRequiredStrokes = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.strokes : 2
+  }
+
+  const getStrokeDescription = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.description : 'Multiple strokes'
+  }
+
+  const getLetterDifficulty = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.difficulty : 'medium'
+  }
+
+  const shuffleArray = (array: string[]) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
+  const initializeActivity = useCallback(() => {
+    console.log('Initializing activity:', activityType)
+    try {
+      if (activityType === 'tracing') {
+        console.log('Setting up tracing, letters available:', tracingLetters.length)
+        if (tracingLetters.length === 0) {
+          console.error('No tracing letters available!')
+          return
+        }
+        setLetterIndex(0)
+        const firstLetter = tracingLetters[0]
+        console.log('First letter:', firstLetter)
+        setCurrentLetter(firstLetter)
+        const strokes = getRequiredStrokes(firstLetter.letter)
+        console.log('Required strokes:', strokes)
+        setRequiredStrokes(strokes)
+        setStrokesCompleted(0)
+        setIsInitialized(true)
+        setTimeout(() => {
+          if (canvasRef.current) {
+            console.log('Clearing canvas')
+            const canvas = canvasRef.current
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+              ctx.clearRect(0, 0, canvas.width, canvas.height)
+              if (currentLetter && activityType === 'tracing') {
+                drawLetterGuide()
+              }
+            }
+          } else {
+            console.warn('Canvas ref not available')
+          }
+        }, 300)
+      } else if (activityType === 'wordbuilder') {
+        const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
+        console.log('Word builder source:', source?.length, 'words')
+        if (source && source.length > 0) {
+          const word = source[0]
+          console.log('Setting current word:', word.word)
+          setCurrentWord(word)
+          const shuffled = shuffleArray([...word.letters])
+          console.log('Shuffled letters:', shuffled)
+          setBuilderLetters(shuffled)
+          setBuiltWord([])
+          setIsInitialized(true)
+        } else {
+          console.warn('No words available for word builder')
+        }
+      } else if (activityType === 'sentences') {
+        const source = sentences && sentences.length ? sentences : defaultSentenceBank
+        console.log('Sentences source:', source?.length, 'sentences')
+        if (source && source.length > 0) {
+          const s = source[0]
+          console.log('Setting current sentence:', s)
+          setSentenceIndex(0)
+          setCurrentSentence(s)
+          setChosenWords([])
+          const scrambled = shuffleArray(s.split(' '))
+          console.log('Scrambled words:', scrambled)
+          setScrambledWords(scrambled)
+          setIsInitialized(true)
+        } else {
+          console.warn('No sentences available')
+        }
+      } else if (activityType === 'creative') {
+        const source = prompts && prompts.length ? prompts : defaultPrompts
+        console.log('Creative prompts source:', source?.length, 'prompts')
+        if (source && source.length > 0) {
+          const prompt = source[0]
+          console.log('Setting current prompt:', prompt.title)
+          setPromptIndex(0)
+          setCurrentPrompt(prompt)
+          setStoryText('')
+          setIsInitialized(true)
+        } else {
+          console.warn('No prompts available')
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing activity:', error)
+      if (activityType === 'tracing' && tracingLetters.length > 0) {
+        setCurrentLetter(tracingLetters[0])
+        setRequiredStrokes(2)
+        setStrokesCompleted(0)
+        setIsInitialized(true)
+      }
+    }
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, getRequiredStrokes, shuffleArray, defaultSentenceBank, defaultPrompts, getDefaultWordBuildingWords, drawLetterGuide])
+
   // Sentence Puzzles state
   const defaultSentenceBank = [
     'THE CAT IS BIG',
@@ -548,6 +662,241 @@ export default function WritingModule() {
     }
   }, [activityType, initializeActivity])
 
+  // Canvas drawing functions
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    e.preventDefault?.()
+    e.stopPropagation?.()
+    
+    setIsDrawing(true)
+    setStrokeLength(0)
+    drawStartTimeRef.current = Date.now()
+    visitedCellsRef.current = new Set()
+    const canvas = canvasRef.current
+    if (!canvas || !currentLetter) return
+
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
+    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
+    lastPointRef.current = { x, y }
+
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.strokeStyle = currentLetter.color || '#3B82F6'
+      ctx.lineWidth = 8
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+    }
+  }
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    if (!isDrawing || !currentLetter) return
+    
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    e.preventDefault?.()
+    e.stopPropagation?.()
+
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
+    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
+
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      const last = lastPointRef.current
+      if (last) {
+        const dx = x - last.x
+        const dy = y - last.y
+        setStrokeLength(prev => prev + Math.sqrt(dx * dx + dy * dy))
+      }
+      lastPointRef.current = { x, y }
+
+      const CELL_COLS = 3
+      const CELL_ROWS = 3
+      const displayWidth = rect.width
+      const displayHeight = rect.height
+      const cellX = Math.min(CELL_COLS - 1, Math.max(0, Math.floor(((clientX - rect.left) / displayWidth) * CELL_COLS)))
+      const cellY = Math.min(CELL_ROWS - 1, Math.max(0, Math.floor(((clientY - rect.top) / displayHeight) * CELL_ROWS)))
+      visitedCellsRef.current.add(`${cellX},${cellY}`)
+    }
+  }
+
+  const stopDrawing = () => {
+    if (isDrawing) {
+      setIsDrawing(false)
+    }
+  }
+
+  const checkCurrentStroke = () => {
+    if (!currentLetter) return
+    
+    const MIN_STROKE_LENGTH = 200
+    const MIN_DRAW_DURATION_MS = 500
+    const MIN_VISITED_CELLS = 3
+
+    const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
+    const visitedCells = visitedCellsRef.current.size
+    const didTraceEnough = strokeLength >= MIN_STROKE_LENGTH && durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
+
+    if (didTraceEnough) {
+      const nextCount = strokesCompleted + 1
+      setStrokesCompleted(nextCount)
+      setIsCorrect(true)
+      setShowFeedback(true)
+      
+      try {
+        audioManager.playSuccess()
+      } catch (error) {
+        console.error('Error playing success sound:', error)
+      }
+        
+      if (nextCount >= requiredStrokes) {
+        setTimeout(() => {
+          setShowFeedback(false)
+          setScore(prev => prev + 10)
+          setCompletedActivities(prev => prev + 1)
+          progressManager.addScore(10, 5)
+          challengeManager.updateChallengeProgress('writing', 1)
+          setStrokesCompleted(0)
+          nextActivity()
+        }, 1500)
+      } else {
+        setTimeout(() => {
+          setShowFeedback(false)
+          clearCanvas()
+        }, 800)
+      }
+    } else {
+      setIsCorrect(false)
+      setShowFeedback(true)
+      try {
+        audioManager.playError()
+      } catch (error) {
+        console.error('Error playing error sound:', error)
+      }
+      setTimeout(() => {
+        setShowFeedback(false)
+        clearCanvas()
+      }, 1500)
+    }
+  }
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (currentLetter && activityType === 'tracing') {
+        drawLetterGuide()
+      }
+    }
+  }
+
+  const addLetterToWord = (letter: string) => {
+    if (!currentWord) return
+    
+    const newBuiltWord = [...builtWord, letter]
+    setBuiltWord(newBuiltWord)
+    setBuilderLetters(prev => prev.filter((l, i) => i !== prev.indexOf(letter)))
+
+    if (newBuiltWord.length === currentWord.word.length) {
+      const isCorrectWord = newBuiltWord.join('') === currentWord.word
+      setIsCorrect(isCorrectWord)
+      setShowFeedback(true)
+      
+      if (isCorrectWord) {
+        setScore(prev => prev + 15)
+        setCompletedActivities(prev => prev + 1)
+        
+        try {
+          audioManager.playSuccess()
+          progressManager.addScore(15, 8)
+          challengeManager.updateChallengeProgress('writing', 1)
+        } catch (error) {
+          console.error('Error updating progress:', error)
+        }
+      } else {
+        try {
+          audioManager.playError()
+        } catch (error) {
+          console.error('Error playing sound:', error)
+        }
+      }
+
+      setTimeout(() => {
+        setShowFeedback(false)
+        if (isCorrectWord) {
+          nextActivity()
+        } else {
+          resetWordBuilder()
+        }
+      }, 2000)
+    }
+  }
+
+  const removeLetterFromWord = (index: number) => {
+    if (index < 0 || index >= builtWord.length) return
+    const removedLetter = builtWord[index]
+    setBuiltWord(prev => prev.filter((_, i) => i !== index))
+    setBuilderLetters(prev => [...prev, removedLetter])
+  }
+
+  const resetWordBuilder = () => {
+    if (currentWord) {
+      setBuilderLetters(shuffleArray([...currentWord.letters]))
+      setBuiltWord([])
+    }
+  }
+
+  const nextActivity = () => {
+    if (activityType === 'tracing') {
+      const nextIndex = (letterIndex + 1) % tracingLetters.length
+      setLetterIndex(nextIndex)
+      setCurrentLetter(tracingLetters[nextIndex])
+      setRequiredStrokes(getRequiredStrokes(tracingLetters[nextIndex].letter))
+      setStrokesCompleted(0)
+      setTimeout(() => {
+        clearCanvas()
+      }, 100)
+    } else if (activityType === 'wordbuilder') {
+      const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
+      const currentIdx = Math.max(0, source.findIndex(w => w.word === currentWord?.word))
+      const nextIndex = (currentIdx + 1) % source.length
+      const nextWord = source[nextIndex]
+      setCurrentWord(nextWord)
+      setBuilderLetters(shuffleArray([...nextWord.letters]))
+      setBuiltWord([])
+    } else if (activityType === 'sentences') {
+      const source = sentences && sentences.length ? sentences : defaultSentenceBank
+      const next = (sentenceIndex + 1) % source.length
+      setSentenceIndex(next)
+      const s = source[next]
+      setCurrentSentence(s)
+      setChosenWords([])
+      setScrambledWords(shuffleArray(s.split(' ')))
+    } else if (activityType === 'creative') {
+      const source = prompts && prompts.length ? prompts : defaultPrompts
+      const next = (promptIndex + 1) % source.length
+      setPromptIndex(next)
+      setCurrentPrompt(source[next])
+      setStoryText('')
+    }
+  }
+
   const activities = [
     { id: 'tracing', name: 'Letter Tracing', icon: <PenTool className="w-5 h-5" /> },
     { id: 'wordbuilder', name: 'Word Builder', icon: <Target className="w-5 h-5" /> },
@@ -555,8 +904,61 @@ export default function WritingModule() {
     { id: 'creative', name: 'Creative Writing', icon: <Lightbulb className="w-5 h-5" /> }
   ]
 
-  // Canvas drawing functions
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+  const progress = (completedActivities / totalActivities) * 100
+
+  if (completedActivities >= totalActivities) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4 landscape-optimized">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <Card className="card-kid max-w-md">
+            <CardContent className="p-8">
+              <Mascot emotion="celebrating" size="large" className="mb-6" />
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">Amazing Writing! 🖊️</h2>
+              <p className="text-gray-600 mb-6">You completed all writing activities!</p>
+              
+              <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-center gap-4">
+                  <div className="text-center">
+                    <Trophy className="w-8 h-8 text-green-600 mx-auto mb-1" />
+                    <div className="text-2xl font-bold text-green-600">{score}</div>
+                    <div className="text-sm text-gray-600">Points</div>
+                  </div>
+                  <div className="text-center">
+                    <Star className="w-8 h-8 text-purple-600 mx-auto mb-1" />
+                    <div className="text-2xl font-bold text-purple-600">{completedActivities}</div>
+                    <div className="text-sm text-gray-600">Activities</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  className="btn-success-kid"
+                  onClick={() => window.location.reload()}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Practice More
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => router.push('/dashboard')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    )
+  }
+
+  return (
     e.preventDefault?.()
     e.stopPropagation?.()
     
