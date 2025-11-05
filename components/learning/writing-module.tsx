@@ -54,8 +54,11 @@ export default function WritingModule() {
 
   // Redraw the guide whenever letter or stroke step changes
   useEffect(() => {
-    drawLetterGuide()
-  }, [currentLetter, strokesCompleted, requiredStrokes])
+    // Only draw if canvas and letter are ready
+    if (canvasRef.current && currentLetter && activityType === 'tracing') {
+      drawLetterGuide()
+    }
+  }, [currentLetter, strokesCompleted, requiredStrokes, activityType])
 
   // Resize canvas based on container size
   useEffect(() => {
@@ -359,40 +362,70 @@ export default function WritingModule() {
     }
 
     if (activityType === 'wordbuilder') {
-      loadWords().then(() => initializeActivity())
+      loadWords().then(() => {
+        setTimeout(() => initializeActivity(), 100)
+      })
     } else if (activityType === 'sentences') {
-      loadSentences().then(() => initializeActivity())
+      loadSentences().then(() => {
+        setTimeout(() => initializeActivity(), 100)
+      })
     } else if (activityType === 'creative') {
-      loadPrompts().then(() => initializeActivity())
+      loadPrompts().then(() => {
+        setTimeout(() => initializeActivity(), 100)
+      })
     } else {
-    initializeActivity()
+      // Tracing activity - initialize immediately
+      setTimeout(() => initializeActivity(), 100)
     }
   }, [activityType])
 
   const initializeActivity = () => {
-    if (activityType === 'tracing') {
-      setLetterIndex(0)
-      setCurrentLetter(tracingLetters[0])
-      setRequiredStrokes(getRequiredStrokes(tracingLetters[0].letter))
-      setStrokesCompleted(0)
-    } else if (activityType === 'wordbuilder') {
-      const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
-      const word = source[0]
-      setCurrentWord(word)
-      setBuilderLetters(shuffleArray([...word.letters]))
-      setBuiltWord([])
-    } else if (activityType === 'sentences') {
-      const source = sentences && sentences.length ? sentences : defaultSentenceBank
-      const s = source[0]
-      setSentenceIndex(0)
-      setCurrentSentence(s)
-      setChosenWords([])
-      setScrambledWords(shuffleArray(s.split(' ')))
-    } else if (activityType === 'creative') {
-      const source = prompts && prompts.length ? prompts : defaultPrompts
-      setPromptIndex(0)
-      setCurrentPrompt(source[0])
-      setStoryText('')
+    try {
+      if (activityType === 'tracing') {
+        setLetterIndex(0)
+        const firstLetter = tracingLetters[0]
+        setCurrentLetter(firstLetter)
+        setRequiredStrokes(getRequiredStrokes(firstLetter.letter))
+        setStrokesCompleted(0)
+        // Clear canvas and redraw guide after state updates
+        setTimeout(() => {
+          if (canvasRef.current) {
+            clearCanvas()
+          }
+        }, 200)
+      } else if (activityType === 'wordbuilder') {
+        const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
+        if (source && source.length > 0) {
+          const word = source[0]
+          setCurrentWord(word)
+          setBuilderLetters(shuffleArray([...word.letters]))
+          setBuiltWord([])
+        }
+      } else if (activityType === 'sentences') {
+        const source = sentences && sentences.length ? sentences : defaultSentenceBank
+        if (source && source.length > 0) {
+          const s = source[0]
+          setSentenceIndex(0)
+          setCurrentSentence(s)
+          setChosenWords([])
+          setScrambledWords(shuffleArray(s.split(' ')))
+        }
+      } else if (activityType === 'creative') {
+        const source = prompts && prompts.length ? prompts : defaultPrompts
+        if (source && source.length > 0) {
+          setPromptIndex(0)
+          setCurrentPrompt(source[0])
+          setStoryText('')
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing activity:', error)
+      // Fallback initialization
+      if (activityType === 'tracing' && tracingLetters.length > 0) {
+        setCurrentLetter(tracingLetters[0])
+        setRequiredStrokes(2)
+        setStrokesCompleted(0)
+      }
     }
   }
 
@@ -553,10 +586,22 @@ export default function WritingModule() {
 
   const drawLetterGuide = () => {
     const canvas = canvasRef.current
-    if (!canvas || !currentLetter) return
+    if (!canvas || !currentLetter || activityType !== 'tracing') return
 
     const ctx = canvas.getContext('2d')
     if (ctx) {
+      // Ensure canvas has proper dimensions
+      if (canvas.width === 0 || canvas.height === 0) {
+        const container = canvas.parentElement
+        if (container) {
+          const size = Math.min(container.clientWidth, container.clientHeight, 400)
+          const scale = window.devicePixelRatio || 1
+          canvas.width = size * scale
+          canvas.height = size * scale
+          ctx.scale(scale, scale)
+        }
+      }
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       // grid background for orientation
       ctx.strokeStyle = '#F1F5F9'
