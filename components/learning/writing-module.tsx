@@ -1431,12 +1431,21 @@ export default function WritingModule() {
                       {builderLetters.map((letter, index) => (
                         <motion.button
                           key={`${letter}-${index}`}
+                          type="button"
                           className="w-14 h-14 bg-gradient-to-br from-blue-400 to-purple-500 text-white rounded-xl font-bold text-xl shadow-lg hover:shadow-xl"
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                             console.log('Letter clicked:', letter)
                             addLetterToWord(letter)
+                          }}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onTouchStart={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
                           }}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -1450,9 +1459,15 @@ export default function WritingModule() {
 
                     {/* Reset Button */}
                     <Button
-                      onClick={resetWordBuilder}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        resetWordBuilder();
+                      }}
                       variant="outline"
                       className="mt-6"
+                      style={{ pointerEvents: 'auto', zIndex: 10 }}
                     >
                       <Shuffle className="w-4 h-4 mr-2" />
                       Shuffle Letters
