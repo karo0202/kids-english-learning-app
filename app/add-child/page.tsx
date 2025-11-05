@@ -91,19 +91,21 @@ export default function AddChildPage() {
                   Your Child
                 </div>
 
-                <div className="relative">
-                  <Baby className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="relative z-10">
+                  <Baby className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-20" />
                   <Input
                     type="text"
                     placeholder="Child's Name"
                     value={formData.childName}
                     onChange={(e) => setFormData({...formData, childName: e.target.value})}
-                    className="pl-10 py-3 text-lg rounded-xl border-2 focus:border-pink-400"
+                    className="pl-10 py-3 text-lg rounded-xl border-2 focus:border-pink-400 w-full"
                     required
+                    style={{ pointerEvents: 'auto', zIndex: 10 }}
+                    autoFocus
                   />
                 </div>
 
-                <div className="relative">
+                <div className="relative z-10">
                   <select
                     value={formData.childAge}
                     onChange={(e) => {
@@ -118,6 +120,7 @@ export default function AddChildPage() {
                     }}
                     className="w-full pl-3 py-3 text-lg rounded-xl border-2 focus:border-pink-400 bg-white"
                     required
+                    style={{ pointerEvents: 'auto', zIndex: 10 }}
                   >
                     <option value="">Select Child's Age</option>
                     {[3,4,5,6,7,8,9,10,11,12].map(age => {
