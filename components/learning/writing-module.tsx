@@ -1492,7 +1492,7 @@ export default function WritingModule() {
               <Card className="card-writing">
                 <CardContent className="p-8">
                   <p className="text-gray-600">Loading word builder...</p>
-                  <p className="text-sm text-gray-500 mt-2">Current word: {currentWord?.word || 'None'}</p>
+                  <p className="text-sm text-gray-500 mt-2">Initializing word...</p>
                   <p className="text-sm text-gray-500">Letters available: {builderLetters.length}</p>
                 </CardContent>
               </Card>
