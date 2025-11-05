@@ -271,7 +271,7 @@ export default function WritingModule() {
         resizeObserver.disconnect()
       }
     }
-  }, [currentLetter])
+  }, [currentLetter, drawLetterGuide, activityType])
 
   // Sentence Puzzles state
   const defaultSentenceBank = [
@@ -546,116 +546,7 @@ export default function WritingModule() {
       console.log('Initializing tracing activity')
       setTimeout(() => initializeActivity(), 100)
     }
-  }, [activityType])
-
-  const initializeActivity = () => {
-    console.log('Initializing activity:', activityType)
-    try {
-      if (activityType === 'tracing') {
-        console.log('Setting up tracing, letters available:', tracingLetters.length)
-        if (tracingLetters.length === 0) {
-          console.error('No tracing letters available!')
-          return
-        }
-        setLetterIndex(0)
-        const firstLetter = tracingLetters[0]
-        console.log('First letter:', firstLetter)
-        setCurrentLetter(firstLetter)
-        const strokes = getRequiredStrokes(firstLetter.letter)
-        console.log('Required strokes:', strokes)
-        setRequiredStrokes(strokes)
-        setStrokesCompleted(0)
-        setIsInitialized(true)
-        // Clear canvas and redraw guide after state updates
-        setTimeout(() => {
-          if (canvasRef.current) {
-            console.log('Clearing canvas')
-            clearCanvas()
-          } else {
-            console.warn('Canvas ref not available')
-          }
-        }, 300)
-      } else if (activityType === 'wordbuilder') {
-        const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
-        console.log('Word builder source:', source?.length, 'words')
-        if (source && source.length > 0) {
-          const word = source[0]
-          console.log('Setting current word:', word.word)
-          setCurrentWord(word)
-          const shuffled = shuffleArray([...word.letters])
-          console.log('Shuffled letters:', shuffled)
-          setBuilderLetters(shuffled)
-          setBuiltWord([])
-          setIsInitialized(true)
-        } else {
-          console.warn('No words available for word builder')
-        }
-      } else if (activityType === 'sentences') {
-        const source = sentences && sentences.length ? sentences : defaultSentenceBank
-        console.log('Sentences source:', source?.length, 'sentences')
-        if (source && source.length > 0) {
-          const s = source[0]
-          console.log('Setting current sentence:', s)
-          setSentenceIndex(0)
-          setCurrentSentence(s)
-          setChosenWords([])
-          const scrambled = shuffleArray(s.split(' '))
-          console.log('Scrambled words:', scrambled)
-          setScrambledWords(scrambled)
-          setIsInitialized(true)
-        } else {
-          console.warn('No sentences available')
-        }
-      } else if (activityType === 'creative') {
-        const source = prompts && prompts.length ? prompts : defaultPrompts
-        console.log('Creative prompts source:', source?.length, 'prompts')
-        if (source && source.length > 0) {
-          const prompt = source[0]
-          console.log('Setting current prompt:', prompt.title)
-          setPromptIndex(0)
-          setCurrentPrompt(prompt)
-          setStoryText('')
-          setIsInitialized(true)
-        } else {
-          console.warn('No prompts available')
-        }
-      }
-    } catch (error) {
-      console.error('Error initializing activity:', error)
-      // Fallback initialization
-      if (activityType === 'tracing' && tracingLetters.length > 0) {
-        setCurrentLetter(tracingLetters[0])
-        setRequiredStrokes(2)
-        setStrokesCompleted(0)
-        setIsInitialized(true)
-      }
-    }
-  }
-
-  const getRequiredStrokes = (letter: string) => {
-    // Use the stroke patterns defined above
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.strokes : 2 // default to 2 strokes if pattern not found
-  }
-
-  const getStrokeDescription = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.description : 'Multiple strokes'
-  }
-
-  const getLetterDifficulty = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.difficulty : 'medium'
-  }
-
-  const shuffleArray = (array: string[]) => {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
-  }
+  }, [activityType, initializeActivity])
 
   const activities = [
     { id: 'tracing', name: 'Letter Tracing', icon: <PenTool className="w-5 h-5" /> },
