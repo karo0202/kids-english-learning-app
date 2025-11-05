@@ -729,11 +729,7 @@ export default function WritingModule() {
     // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
     
-    // Account for scroll position on mobile
-    const scrollX = window.pageXOffset || window.scrollX || 0
-    const scrollY = window.pageYOffset || window.scrollY || 0
-    
-    // Get canvas internal size vs display size
+    // Get canvas internal size vs display size for proper scaling
     const displayWidth = rect.width
     const displayHeight = rect.height
     const internalWidth = canvas.width
@@ -742,7 +738,7 @@ export default function WritingModule() {
     const scaleX = internalWidth / displayWidth
     const scaleY = internalHeight / displayHeight
     
-    // Get mouse/touch coordinates
+    // Get mouse/touch coordinates - use clientX/clientY for viewport-relative coordinates
     let clientX = 0
     let clientY = 0
     
@@ -751,29 +747,29 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event - use pageX/pageY for more accurate coordinates on mobile
+      // Touch event - prefer clientX/clientY if available, otherwise use pageX/pageY
       const touch = e.touches[0]
-      clientX = touch.pageX - scrollX
-      clientY = touch.pageY - scrollY
+      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
+      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
       console.log('Using touch coordinates:', { 
         clientX, 
         clientY, 
-        pageX: touch.pageX, 
-        pageY: touch.pageY,
-        scrollX, 
-        scrollY,
+        touchClientX: touch.clientX,
+        touchClientY: touch.clientY,
+        touchPageX: touch.pageX,
+        touchPageY: touch.pageY,
         touchCount: e.touches.length 
       })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
-      // Touch end event - use pageX/pageY
+      // Touch end event
       const touch = e.changedTouches[0]
-      clientX = touch.pageX - scrollX
-      clientY = touch.pageY - scrollY
+      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
+      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
       console.log('Using changedTouches coordinates:', { 
         clientX, 
-        clientY, 
-        pageX: touch.pageX, 
-        pageY: touch.pageY 
+        clientY,
+        touchClientX: touch.clientX,
+        touchClientY: touch.clientY 
       })
     } else {
       console.warn('No valid coordinates found in startDrawing', { 
@@ -786,10 +782,9 @@ export default function WritingModule() {
       return
     }
 
-    // Calculate canvas coordinates - account for canvas position and scaling
-    // Use rect.left/top which already accounts for scroll
-    const x = (clientX - (rect.left + scrollX)) * scaleX
-    const y = (clientY - (rect.top + scrollY)) * scaleY
+    // Calculate canvas coordinates - both clientX and rect.left are viewport-relative
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
     
     console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
     
@@ -829,11 +824,7 @@ export default function WritingModule() {
     // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
     
-    // Account for scroll position on mobile
-    const scrollX = window.pageXOffset || window.scrollX || 0
-    const scrollY = window.pageYOffset || window.scrollY || 0
-    
-    // Get canvas internal size vs display size
+    // Get canvas internal size vs display size for proper scaling
     const displayWidth = rect.width
     const displayHeight = rect.height
     const internalWidth = canvas.width
@@ -842,7 +833,7 @@ export default function WritingModule() {
     const scaleX = internalWidth / displayWidth
     const scaleY = internalHeight / displayHeight
     
-    // Get mouse/touch coordinates
+    // Get mouse/touch coordinates - use clientX/clientY for viewport-relative coordinates
     let clientX = 0
     let clientY = 0
     
@@ -851,29 +842,29 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event - use pageX/pageY for more accurate coordinates on mobile
+      // Touch event - prefer clientX/clientY if available, otherwise use pageX/pageY
       const touch = e.touches[0]
-      clientX = touch.pageX - scrollX
-      clientY = touch.pageY - scrollY
+      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
+      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
       console.log('Draw using touch coordinates:', { 
         clientX, 
         clientY, 
-        pageX: touch.pageX, 
-        pageY: touch.pageY,
-        scrollX, 
-        scrollY,
+        touchClientX: touch.clientX,
+        touchClientY: touch.clientY,
+        touchPageX: touch.pageX,
+        touchPageY: touch.pageY,
         touchCount: e.touches.length 
       })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
-      // Touch event (when touch moves) - use pageX/pageY
+      // Touch event (when touch moves) - prefer clientX/clientY
       const touch = e.changedTouches[0]
-      clientX = touch.pageX - scrollX
-      clientY = touch.pageY - scrollY
+      clientX = touch.clientX !== undefined ? touch.clientX : (touch.pageX - (window.pageXOffset || window.scrollX || 0))
+      clientY = touch.clientY !== undefined ? touch.clientY : (touch.pageY - (window.pageYOffset || window.scrollY || 0))
       console.log('Draw using changedTouches coordinates:', { 
         clientX, 
-        clientY, 
-        pageX: touch.pageX, 
-        pageY: touch.pageY 
+        clientY,
+        touchClientX: touch.clientX,
+        touchClientY: touch.clientY 
       })
     } else {
       console.warn('No valid coordinates in draw', { 
@@ -885,10 +876,9 @@ export default function WritingModule() {
       return // No valid coordinates
     }
 
-    // Calculate canvas coordinates - account for canvas position and scaling
-    // Use rect.left/top which already accounts for scroll, but we need to be consistent
-    const x = (clientX - (rect.left + scrollX)) * scaleX
-    const y = (clientY - (rect.top + scrollY)) * scaleY
+    // Calculate canvas coordinates - both clientX and rect.left are viewport-relative
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
 
     const ctx = canvas.getContext('2d')
     if (ctx && lastPointRef.current) {
