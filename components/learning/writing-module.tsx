@@ -667,21 +667,26 @@ export default function WritingModule() {
 
   // Canvas drawing functions
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
-    e.preventDefault?.()
-    e.stopPropagation?.()
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault()
+    }
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation()
+    }
     
+    if (!currentLetter) return
     setIsDrawing(true)
     setStrokeLength(0)
     drawStartTimeRef.current = Date.now()
     visitedCellsRef.current = new Set()
     const canvas = canvasRef.current
-    if (!canvas || !currentLetter) return
+    if (!canvas) return
 
     const rect = canvas.getBoundingClientRect()
     const scaleX = canvas.width / rect.width
     const scaleY = canvas.height / rect.height
-    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
-    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const clientX = (e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX)) || 0
+    const clientY = (e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY)) || 0
     const x = (clientX - rect.left) * scaleX
     const y = (clientY - rect.top) * scaleY
     lastPointRef.current = { x, y }
@@ -703,14 +708,18 @@ export default function WritingModule() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    e.preventDefault?.()
-    e.stopPropagation?.()
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault()
+    }
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation()
+    }
 
     const rect = canvas.getBoundingClientRect()
     const scaleX = canvas.width / rect.width
     const scaleY = canvas.height / rect.height
-    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
-    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const clientX = (e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX)) || 0
+    const clientY = (e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY)) || 0
     const x = (clientX - rect.left) * scaleX
     const y = (clientY - rect.top) * scaleY
 
@@ -1139,23 +1148,47 @@ export default function WritingModule() {
                     {/* Secondary actions row */}
                     <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3">
                       <Button 
-                        onClick={() => { const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; setLetterIndex(prev); setCurrentLetter(tracingLetters[prev]); clearCanvas(); }} 
+                        type="button"
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          e.stopPropagation(); 
+                          const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; 
+                          setLetterIndex(prev); 
+                          setCurrentLetter(tracingLetters[prev]); 
+                          clearCanvas(); 
+                        }} 
                         variant="outline"
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         Previous
                       </Button>
                       <Button 
-                        onClick={clearCanvas} 
+                        type="button"
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          e.stopPropagation(); 
+                          clearCanvas(); 
+                        }} 
                         variant="outline"
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                       Clear
                     </Button>
                       <Button 
-                        onClick={() => { const next = (letterIndex + 1) % tracingLetters.length; setLetterIndex(next); setCurrentLetter(tracingLetters[next]); clearCanvas(); }}
+                        type="button"
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          e.stopPropagation(); 
+                          const next = (letterIndex + 1) % tracingLetters.length; 
+                          setLetterIndex(next); 
+                          setCurrentLetter(tracingLetters[next]); 
+                          clearCanvas(); 
+                        }}
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:bg-blue-600 dark:text-white"
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         Next
                     </Button>
@@ -1263,8 +1296,11 @@ export default function WritingModule() {
                     <textarea
                       value={storyText}
                       onChange={(e) => setStoryText(e.target.value)}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      onKeyUp={(e) => e.stopPropagation()}
                       className="w-full min-h-[220px] p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-green-300"
                       placeholder="Start your story here..."
+                      style={{ pointerEvents: 'auto', zIndex: 10 }}
                     />
 
                     <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
@@ -1273,8 +1309,14 @@ export default function WritingModule() {
                       </div>
                       <div className="flex gap-3">
                         <Button
+                          type="button"
                           variant="outline"
-                          onClick={() => setStoryText('')}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setStoryText('');
+                          }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
                         >
                           Clear
                         </Button>
@@ -1305,7 +1347,18 @@ export default function WritingModule() {
                         >
                           Submit
                         </Button>
-                        <Button variant="outline" onClick={nextActivity}>Next Prompt</Button>
+                        <Button 
+                          type="button"
+                          variant="outline" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            nextActivity();
+                          }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        >
+                          Next Prompt
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -1355,10 +1408,18 @@ export default function WritingModule() {
                       {Array.from({ length: currentWord.word.length }).map((_, index) => (
                         <motion.button
                           key={index}
+                          type="button"
                           className="w-16 h-16 border-4 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-2xl font-bold bg-white hover:bg-gray-50"
-                          onClick={() => builtWord[index] && removeLetterFromWord(index)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (builtWord[index]) {
+                              removeLetterFromWord(index);
+                            }
+                          }}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
                         >
                           {builtWord[index] || ''}
                         </motion.button>
