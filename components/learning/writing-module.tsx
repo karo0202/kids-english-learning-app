@@ -621,13 +621,13 @@ export default function WritingModule() {
               }))
             setPrompts(normalized)
           } else {
-            setPrompts(defaultPrompts)
+            setPrompts(DEFAULT_PROMPTS)
           }
         } else {
-          setPrompts(defaultPrompts)
+          setPrompts(DEFAULT_PROMPTS)
         }
       } catch {
-        setPrompts(defaultPrompts)
+        setPrompts(DEFAULT_PROMPTS)
       }
     }
 
