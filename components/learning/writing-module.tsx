@@ -852,12 +852,20 @@ export default function WritingModule() {
         setCompletedActivities(prev => prev + 1)
         
         // Play success sound and update progress
-        audioManager.playSuccess()
-        progressManager.addScore(15, 8)
-        challengeManager.updateChallengeProgress('writing', 1)
+        try {
+          audioManager.playSuccess()
+          progressManager.addScore(15, 8)
+          challengeManager.updateChallengeProgress('writing', 1)
+        } catch (error) {
+          console.error('Error updating progress:', error)
+        }
       } else {
         // Play error sound
-        audioManager.playError()
+        try {
+          audioManager.playError()
+        } catch (error) {
+          console.error('Error playing sound:', error)
+        }
       }
 
       setTimeout(() => {
@@ -1046,8 +1054,9 @@ export default function WritingModule() {
         </motion.div>
 
         {/* Letter Tracing Activity */}
-        {activityType === 'tracing' && currentLetter && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
+        {activityType === 'tracing' ? (
+          currentLetter ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -1237,7 +1246,17 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        )}
+          ) : (
+            <div className="max-w-4xl mx-auto text-center p-8">
+              <Card className="card-writing">
+                <CardContent className="p-8">
+                  <p className="text-gray-600">Loading letter tracing...</p>
+                  <p className="text-sm text-gray-500 mt-2">Initializing canvas...</p>
+                </CardContent>
+              </Card>
+            </div>
+          )
+        ) : null}
 
         {/* Creative Writing Activity */}
         {activityType === 'creative' && currentPrompt && (
