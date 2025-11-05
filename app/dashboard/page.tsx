@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [isAddingChild, setIsAddingChild] = useState(false)
   const [newChildName, setNewChildName] = useState('')
   const [newChildAge, setNewChildAge] = useState<number | ''>('')
+  const [subscription, setSubscription] = useState<any>(null)
 
   useEffect(() => {
     // Only run on client side
