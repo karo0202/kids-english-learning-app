@@ -491,9 +491,11 @@ export default function WritingModule() {
           setStrokesCompleted(0)
         } else {
           // We already have a letter (from Next/Previous button), just ensure canvas is ready
-          console.log('Current letter already set:', currentLetter.letter, 'index:', letterIndex)
+          console.log('Current letter already set:', currentLetter.letter, 'index:', letterIndex, '- NOT resetting')
           const strokes = getRequiredStrokes(currentLetter.letter)
           setRequiredStrokes(strokes)
+          // Don't reset letterIndex or currentLetter - they're already correct
+          return // Exit early to prevent any reset
         }
         
         setIsInitialized(true)
@@ -644,15 +646,18 @@ export default function WritingModule() {
     }
 
     // Only run initialization logic when activity type actually changes
-    const activityTypeChanged = previousActivityTypeRef.current !== activityType
-    previousActivityTypeRef.current = activityType
+    const previousType = previousActivityTypeRef.current
     
-    if (!activityTypeChanged) {
-      console.log('Activity type unchanged, skipping re-initialization')
+    // Check if this is the first run (previousType is null) or if activity type actually changed
+    if (previousType !== null && previousType === activityType) {
+      console.log('Activity type unchanged (', activityType, '), skipping re-initialization')
       return // Don't re-initialize if we're just changing letters within the same activity
     }
     
-    console.log('Activity type changed to:', activityType, 'from', previousActivityTypeRef.current)
+    // Update the ref for next time
+    previousActivityTypeRef.current = activityType
+    
+    console.log('Activity type changed to:', activityType, previousType !== null ? `from ${previousType}` : '(initial setup)')
     setIsInitialized(false) // Reset initialization when switching activities
     
     if (activityType === 'wordbuilder') {
