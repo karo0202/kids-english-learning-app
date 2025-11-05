@@ -444,17 +444,17 @@ export default function WritingModule() {
 
   // Helper functions (defined before use)
   const getRequiredStrokes = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
+    const pattern = LETTER_STROKE_PATTERNS[letter]
     return pattern ? pattern.strokes : 2
   }
 
   const getStrokeDescription = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
+    const pattern = LETTER_STROKE_PATTERNS[letter]
     return pattern ? pattern.description : 'Multiple strokes'
   }
 
   const getLetterDifficulty = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
+    const pattern = LETTER_STROKE_PATTERNS[letter]
     return pattern ? pattern.difficulty : 'medium'
   }
 
