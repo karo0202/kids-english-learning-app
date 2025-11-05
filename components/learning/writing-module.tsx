@@ -642,15 +642,17 @@ export default function WritingModule() {
       }
     }
 
-    console.log('Activity type changed to:', activityType)
-    // Only reset initialization when actually switching to a different activity type
-    // Don't reset if we're just changing letters within the same activity
-    if (activityType === 'tracing' && currentLetter) {
-      console.log('Tracing activity with existing letter, keeping initialization')
-      // Keep current letter, just ensure canvas is ready
-    } else {
-      setIsInitialized(false) // Reset initialization when switching activities
+    // Only run initialization logic when activity type actually changes
+    const activityTypeChanged = previousActivityTypeRef.current !== activityType
+    previousActivityTypeRef.current = activityType
+    
+    if (!activityTypeChanged) {
+      console.log('Activity type unchanged, skipping re-initialization')
+      return // Don't re-initialize if we're just changing letters within the same activity
     }
+    
+    console.log('Activity type changed to:', activityType, 'from', previousActivityTypeRef.current)
+    setIsInitialized(false) // Reset initialization when switching activities
     
     if (activityType === 'wordbuilder') {
       loadWords().then(() => {
@@ -688,7 +690,7 @@ export default function WritingModule() {
         setIsInitialized(true)
       }
     }
-  }, [activityType, initializeActivity, currentLetter])
+  }, [activityType, initializeActivity]) // Removed currentLetter from dependencies to prevent re-initialization when letter changes
 
   // Canvas drawing functions - use useCallback to prevent recreation
   const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
