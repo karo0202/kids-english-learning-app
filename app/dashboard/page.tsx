@@ -134,8 +134,27 @@ export default function DashboardPage() {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400">Kids English Learning</h1>
                 <p className="text-gray-600 dark:text-white/70">Welcome back, {user?.name || 'Parent'}! ✨</p>
               </div>
+              {subscription?.isPremium && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-white text-sm font-semibold shadow-lg"
+                >
+                  <Crown className="w-4 h-4" />
+                  <span>Premium</span>
+                </motion.div>
+              )}
             </div>
             <div className="flex items-center gap-2">
+              {!subscription?.isPremium && (
+                <Button 
+                  onClick={() => router.push('/payment')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 font-semibold px-4"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Upgrade
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -158,6 +177,41 @@ export default function DashboardPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
+        {/* Premium Upgrade Banner */}
+        {!subscription?.isPremium && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <Card className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white border-0 shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Sparkles className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold mb-1">Unlock Premium Features</h3>
+                      <p className="text-white/90">
+                        Get unlimited access, AI personalization, offline mode, and more!
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => router.push('/payment')}
+                    className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-6 py-2"
+                    size="lg"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Upgrade Now
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Children Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
