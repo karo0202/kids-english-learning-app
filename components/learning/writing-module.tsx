@@ -1338,10 +1338,11 @@ export default function WritingModule() {
                             console.log('Submit creative writing clicked')
                             const wordsCount = storyText.trim() ? storyText.trim().split(/\s+/).length : 0
                             const MIN_WORDS = 20
-                            const usesPromptWord = (currentPrompt.words || []).some(w =>
+                            const prompt = currentPrompt
+                            const usesPromptWord = (prompt?.words || []).some(w =>
                               new RegExp(`\\b${w}\\b`, 'i').test(storyText)
                             )
-                            const ok = wordsCount >= MIN_WORDS && (!currentPrompt.words || usesPromptWord)
+                            const ok = wordsCount >= MIN_WORDS && (!prompt?.words || usesPromptWord)
                             setIsCorrect(ok)
                             setShowFeedback(true)
                             if (ok) {
@@ -1379,7 +1380,7 @@ export default function WritingModule() {
               <Card className="card-writing">
                 <CardContent className="p-8">
                   <p className="text-gray-600">Loading creative writing...</p>
-                  <p className="text-sm text-gray-500 mt-2">Current prompt: {currentPrompt?.title || 'None'}</p>
+                  <p className="text-sm text-gray-500 mt-2">Initializing prompt...</p>
                 </CardContent>
               </Card>
             </div>
