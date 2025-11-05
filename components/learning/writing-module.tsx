@@ -1315,7 +1315,44 @@ export default function WritingModule() {
                         onTouchStart={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
-                          console.log('Previous button touch start')
+                          console.log('Previous button touch start - mobile')
+                          
+                          // On mobile, also trigger the onClick logic directly
+                          setLetterIndex((currentIndex) => {
+                            const prevIndex = (currentIndex - 1 + tracingLetters.length) % tracingLetters.length
+                            console.log('Mobile: Moving to previous letter:', prevIndex, 'from', currentIndex, 'letter:', tracingLetters[prevIndex]?.letter)
+                            
+                            // Update all related state
+                            const prevLetter = tracingLetters[prevIndex]
+                            if (prevLetter) {
+                              setCurrentLetter(prevLetter)
+                              setStrokesCompleted(0)
+                              setRequiredStrokes(getRequiredStrokes(prevLetter.letter))
+                              
+                              // Clear canvas and redraw guide after a short delay
+                              setTimeout(() => {
+                                clearCanvas()
+                                // Force redraw of guide
+                                if (canvasRef.current && prevLetter) {
+                                  const canvas = canvasRef.current
+                                  const ctx = canvas.getContext('2d')
+                                  if (ctx) {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                                    setTimeout(() => {
+                                      drawLetterGuide()
+                                    }, 50)
+                                  }
+                                }
+                              }, 100)
+                            }
+                            
+                            return prevIndex
+                          })
+                        }}
+                        onTouchEnd={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Previous button touch end')
                         }}
                         variant="outline"
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
@@ -1397,7 +1434,46 @@ export default function WritingModule() {
                         onTouchStart={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
-                          console.log('Next button touch start')
+                          console.log('Next button touch start - mobile')
+                          
+                          // On mobile, also trigger the onClick logic directly
+                          // Use functional update to ensure we have the latest state
+                          setLetterIndex((currentIndex) => {
+                            const nextIndex = (currentIndex + 1) % tracingLetters.length
+                            console.log('Mobile: Moving to next letter:', nextIndex, 'from', currentIndex, 'letter:', tracingLetters[nextIndex]?.letter)
+                            
+                            // Update all related state
+                            const nextLetter = tracingLetters[nextIndex]
+                            if (nextLetter) {
+                              // Update state synchronously to prevent race conditions
+                              setCurrentLetter(nextLetter)
+                              setStrokesCompleted(0)
+                              setRequiredStrokes(getRequiredStrokes(nextLetter.letter))
+                              
+                              // Clear canvas and redraw guide after a short delay
+                              setTimeout(() => {
+                                clearCanvas()
+                                // Force redraw of guide
+                                if (canvasRef.current && nextLetter) {
+                                  const canvas = canvasRef.current
+                                  const ctx = canvas.getContext('2d')
+                                  if (ctx) {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                                    setTimeout(() => {
+                                      drawLetterGuide()
+                                    }, 50)
+                                  }
+                                }
+                              }, 150)
+                            }
+                            
+                            return nextIndex
+                          })
+                        }}
+                        onTouchEnd={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Next button touch end')
                         }}
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:bg-blue-600 dark:text-white"
                         style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}

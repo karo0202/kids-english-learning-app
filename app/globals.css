@@ -130,6 +130,19 @@ button,
     -webkit-overflow-scrolling: touch;
   }
   
+  /* Ensure buttons work on mobile with proper touch handling */
+  button,
+  [role="button"],
+  .Button,
+  .btn-kid {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
   /* Prevent screen jumping on mobile */
   .mobile-canvas-container {
     position: relative;
