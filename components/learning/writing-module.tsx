@@ -726,10 +726,21 @@ export default function WritingModule() {
     drawStartTimeRef.current = Date.now()
     visitedCellsRef.current = new Set()
 
-    // Get canvas position and size
+    // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
+    
+    // Account for scroll position on mobile
+    const scrollX = window.pageXOffset || window.scrollX || 0
+    const scrollY = window.pageYOffset || window.scrollY || 0
+    
+    // Get canvas internal size vs display size
+    const displayWidth = rect.width
+    const displayHeight = rect.height
+    const internalWidth = canvas.width
+    const internalHeight = canvas.height
+    
+    const scaleX = internalWidth / displayWidth
+    const scaleY = internalHeight / displayHeight
     
     // Get mouse/touch coordinates
     let clientX = 0
@@ -740,15 +751,30 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event
-      clientX = e.touches[0].clientX
-      clientY = e.touches[0].clientY
-      console.log('Using touch coordinates:', { clientX, clientY, touchCount: e.touches.length })
+      // Touch event - use pageX/pageY for more accurate coordinates on mobile
+      const touch = e.touches[0]
+      clientX = touch.pageX - scrollX
+      clientY = touch.pageY - scrollY
+      console.log('Using touch coordinates:', { 
+        clientX, 
+        clientY, 
+        pageX: touch.pageX, 
+        pageY: touch.pageY,
+        scrollX, 
+        scrollY,
+        touchCount: e.touches.length 
+      })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
-      // Touch end event
-      clientX = e.changedTouches[0].clientX
-      clientY = e.changedTouches[0].clientY
-      console.log('Using changedTouches coordinates:', { clientX, clientY })
+      // Touch end event - use pageX/pageY
+      const touch = e.changedTouches[0]
+      clientX = touch.pageX - scrollX
+      clientY = touch.pageY - scrollY
+      console.log('Using changedTouches coordinates:', { 
+        clientX, 
+        clientY, 
+        pageX: touch.pageX, 
+        pageY: touch.pageY 
+      })
     } else {
       console.warn('No valid coordinates found in startDrawing', { 
         hasClientX: e?.clientX !== undefined, 
@@ -760,9 +786,10 @@ export default function WritingModule() {
       return
     }
 
-    // Calculate canvas coordinates
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
+    // Calculate canvas coordinates - account for canvas position and scaling
+    // Use rect.left/top which already accounts for scroll
+    const x = (clientX - (rect.left + scrollX)) * scaleX
+    const y = (clientY - (rect.top + scrollY)) * scaleY
     
     console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
     
@@ -799,10 +826,21 @@ export default function WritingModule() {
       e.stopPropagation()
     }
 
-    // Get canvas position and size
+    // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
+    
+    // Account for scroll position on mobile
+    const scrollX = window.pageXOffset || window.scrollX || 0
+    const scrollY = window.pageYOffset || window.scrollY || 0
+    
+    // Get canvas internal size vs display size
+    const displayWidth = rect.width
+    const displayHeight = rect.height
+    const internalWidth = canvas.width
+    const internalHeight = canvas.height
+    
+    const scaleX = internalWidth / displayWidth
+    const scaleY = internalHeight / displayHeight
     
     // Get mouse/touch coordinates
     let clientX = 0
@@ -813,15 +851,30 @@ export default function WritingModule() {
       clientX = e.clientX
       clientY = e.clientY
     } else if (e.touches && e.touches.length > 0) {
-      // Touch event
-      clientX = e.touches[0].clientX
-      clientY = e.touches[0].clientY
-      console.log('Draw using touch coordinates:', { clientX, clientY, touchCount: e.touches.length })
+      // Touch event - use pageX/pageY for more accurate coordinates on mobile
+      const touch = e.touches[0]
+      clientX = touch.pageX - scrollX
+      clientY = touch.pageY - scrollY
+      console.log('Draw using touch coordinates:', { 
+        clientX, 
+        clientY, 
+        pageX: touch.pageX, 
+        pageY: touch.pageY,
+        scrollX, 
+        scrollY,
+        touchCount: e.touches.length 
+      })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
-      // Touch event (when touch moves) - some mobile browsers use changedTouches
-      clientX = e.changedTouches[0].clientX
-      clientY = e.changedTouches[0].clientY
-      console.log('Draw using changedTouches coordinates:', { clientX, clientY })
+      // Touch event (when touch moves) - use pageX/pageY
+      const touch = e.changedTouches[0]
+      clientX = touch.pageX - scrollX
+      clientY = touch.pageY - scrollY
+      console.log('Draw using changedTouches coordinates:', { 
+        clientX, 
+        clientY, 
+        pageX: touch.pageX, 
+        pageY: touch.pageY 
+      })
     } else {
       console.warn('No valid coordinates in draw', { 
         hasClientX: e?.clientX !== undefined, 
@@ -832,9 +885,10 @@ export default function WritingModule() {
       return // No valid coordinates
     }
 
-    // Calculate canvas coordinates
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
+    // Calculate canvas coordinates - account for canvas position and scaling
+    // Use rect.left/top which already accounts for scroll, but we need to be consistent
+    const x = (clientX - (rect.left + scrollX)) * scaleX
+    const y = (clientY - (rect.top + scrollY)) * scaleY
 
     const ctx = canvas.getContext('2d')
     if (ctx && lastPointRef.current) {
