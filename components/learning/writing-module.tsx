@@ -100,6 +100,7 @@ export default function WritingModule() {
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const drawStartTimeRef = useRef<number | null>(null)
   const visitedCellsRef = useRef<Set<string>>(new Set())
+  const previousActivityTypeRef = useRef<'tracing' | 'wordbuilder' | 'sentences' | 'creative' | null>(null)
 
   // Component mount check
   useEffect(() => {
