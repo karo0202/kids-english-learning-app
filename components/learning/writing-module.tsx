@@ -1509,16 +1509,28 @@ export default function WritingModule() {
                       {Array.from({ length: currentSentence.split(' ').length }).map((_, i) => (
                         <motion.button
                           key={i}
+                          type="button"
                           className="px-4 h-12 border-4 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-lg font-bold bg-white hover:bg-gray-50"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
                             if (chosenWords[i]) {
                               const word = chosenWords[i]
                               setChosenWords(prev => prev.filter((_, idx) => idx !== i))
                               setScrambledWords(prev => [...prev, word])
                             }
                           }}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onTouchStart={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
                         >
                           {chosenWords[i] || ''}
                         </motion.button>
@@ -1530,6 +1542,7 @@ export default function WritingModule() {
                       {scrambledWords.map((w, idx) => (
                         <motion.button
                           key={`${w}-${idx}`}
+                          type="button"
                           className="px-4 h-12 bg-gradient-to-br from-purple-400 to-pink-500 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl"
                           onClick={(e) => {
                             e.preventDefault()
@@ -1537,6 +1550,14 @@ export default function WritingModule() {
                             console.log('Word clicked:', w)
                             setChosenWords(prev => [...prev, w])
                             setScrambledWords(prev => prev.filter((_, i) => i !== idx))
+                          }}
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onTouchStart={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
                           }}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
