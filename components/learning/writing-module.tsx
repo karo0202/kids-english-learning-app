@@ -273,120 +273,6 @@ export default function WritingModule() {
     }
   }, [currentLetter, drawLetterGuide, activityType])
 
-  // Helper functions (defined before use)
-  const getRequiredStrokes = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.strokes : 2
-  }
-
-  const getStrokeDescription = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.description : 'Multiple strokes'
-  }
-
-  const getLetterDifficulty = (letter: string) => {
-    const pattern = letterStrokePatterns[letter]
-    return pattern ? pattern.difficulty : 'medium'
-  }
-
-  const shuffleArray = (array: string[]) => {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
-  }
-
-  const initializeActivity = useCallback(() => {
-    console.log('Initializing activity:', activityType)
-    try {
-      if (activityType === 'tracing') {
-        console.log('Setting up tracing, letters available:', tracingLetters.length)
-        if (tracingLetters.length === 0) {
-          console.error('No tracing letters available!')
-          return
-        }
-        setLetterIndex(0)
-        const firstLetter = tracingLetters[0]
-        console.log('First letter:', firstLetter)
-        setCurrentLetter(firstLetter)
-        const strokes = getRequiredStrokes(firstLetter.letter)
-        console.log('Required strokes:', strokes)
-        setRequiredStrokes(strokes)
-        setStrokesCompleted(0)
-        setIsInitialized(true)
-        setTimeout(() => {
-          if (canvasRef.current) {
-            console.log('Clearing canvas')
-            const canvas = canvasRef.current
-            const ctx = canvas.getContext('2d')
-            if (ctx) {
-              ctx.clearRect(0, 0, canvas.width, canvas.height)
-              if (currentLetter && activityType === 'tracing') {
-                drawLetterGuide()
-              }
-            }
-          } else {
-            console.warn('Canvas ref not available')
-          }
-        }, 300)
-      } else if (activityType === 'wordbuilder') {
-        const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
-        console.log('Word builder source:', source?.length, 'words')
-        if (source && source.length > 0) {
-          const word = source[0]
-          console.log('Setting current word:', word.word)
-          setCurrentWord(word)
-          const shuffled = shuffleArray([...word.letters])
-          console.log('Shuffled letters:', shuffled)
-          setBuilderLetters(shuffled)
-          setBuiltWord([])
-          setIsInitialized(true)
-        } else {
-          console.warn('No words available for word builder')
-        }
-      } else if (activityType === 'sentences') {
-        const source = sentences && sentences.length ? sentences : defaultSentenceBank
-        console.log('Sentences source:', source?.length, 'sentences')
-        if (source && source.length > 0) {
-          const s = source[0]
-          console.log('Setting current sentence:', s)
-          setSentenceIndex(0)
-          setCurrentSentence(s)
-          setChosenWords([])
-          const scrambled = shuffleArray(s.split(' '))
-          console.log('Scrambled words:', scrambled)
-          setScrambledWords(scrambled)
-          setIsInitialized(true)
-        } else {
-          console.warn('No sentences available')
-        }
-      } else if (activityType === 'creative') {
-        const source = prompts && prompts.length ? prompts : defaultPrompts
-        console.log('Creative prompts source:', source?.length, 'prompts')
-        if (source && source.length > 0) {
-          const prompt = source[0]
-          console.log('Setting current prompt:', prompt.title)
-          setPromptIndex(0)
-          setCurrentPrompt(prompt)
-          setStoryText('')
-          setIsInitialized(true)
-        } else {
-          console.warn('No prompts available')
-        }
-      }
-    } catch (error) {
-      console.error('Error initializing activity:', error)
-      if (activityType === 'tracing' && tracingLetters.length > 0) {
-        setCurrentLetter(tracingLetters[0])
-        setRequiredStrokes(2)
-        setStrokesCompleted(0)
-        setIsInitialized(true)
-      }
-    }
-  }, [activityType, wordBank, sentences, prompts, tracingLetters, getRequiredStrokes, shuffleArray, defaultSentenceBank, defaultPrompts, getDefaultWordBuildingWords, drawLetterGuide])
-
   // Sentence Puzzles state
   const defaultSentenceBank = [
     'THE CAT IS BIG',
@@ -552,6 +438,120 @@ export default function WritingModule() {
     }
   ]
   }
+
+  // Helper functions (defined before use)
+  const getRequiredStrokes = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.strokes : 2
+  }
+
+  const getStrokeDescription = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.description : 'Multiple strokes'
+  }
+
+  const getLetterDifficulty = (letter: string) => {
+    const pattern = letterStrokePatterns[letter]
+    return pattern ? pattern.difficulty : 'medium'
+  }
+
+  const shuffleArray = (array: string[]) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
+  const initializeActivity = useCallback(() => {
+    console.log('Initializing activity:', activityType)
+    try {
+      if (activityType === 'tracing') {
+        console.log('Setting up tracing, letters available:', tracingLetters.length)
+        if (tracingLetters.length === 0) {
+          console.error('No tracing letters available!')
+          return
+        }
+        setLetterIndex(0)
+        const firstLetter = tracingLetters[0]
+        console.log('First letter:', firstLetter)
+        setCurrentLetter(firstLetter)
+        const strokes = getRequiredStrokes(firstLetter.letter)
+        console.log('Required strokes:', strokes)
+        setRequiredStrokes(strokes)
+        setStrokesCompleted(0)
+        setIsInitialized(true)
+        setTimeout(() => {
+          if (canvasRef.current) {
+            console.log('Clearing canvas')
+            const canvas = canvasRef.current
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+              ctx.clearRect(0, 0, canvas.width, canvas.height)
+              if (currentLetter && activityType === 'tracing') {
+                drawLetterGuide()
+              }
+            }
+          } else {
+            console.warn('Canvas ref not available')
+          }
+        }, 300)
+      } else if (activityType === 'wordbuilder') {
+        const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
+        console.log('Word builder source:', source?.length, 'words')
+        if (source && source.length > 0) {
+          const word = source[0]
+          console.log('Setting current word:', word.word)
+          setCurrentWord(word)
+          const shuffled = shuffleArray([...word.letters])
+          console.log('Shuffled letters:', shuffled)
+          setBuilderLetters(shuffled)
+          setBuiltWord([])
+          setIsInitialized(true)
+        } else {
+          console.warn('No words available for word builder')
+        }
+      } else if (activityType === 'sentences') {
+        const source = sentences && sentences.length ? sentences : defaultSentenceBank
+        console.log('Sentences source:', source?.length, 'sentences')
+        if (source && source.length > 0) {
+          const s = source[0]
+          console.log('Setting current sentence:', s)
+          setSentenceIndex(0)
+          setCurrentSentence(s)
+          setChosenWords([])
+          const scrambled = shuffleArray(s.split(' '))
+          console.log('Scrambled words:', scrambled)
+          setScrambledWords(scrambled)
+          setIsInitialized(true)
+        } else {
+          console.warn('No sentences available')
+        }
+      } else if (activityType === 'creative') {
+        const source = prompts && prompts.length ? prompts : defaultPrompts
+        console.log('Creative prompts source:', source?.length, 'prompts')
+        if (source && source.length > 0) {
+          const prompt = source[0]
+          console.log('Setting current prompt:', prompt.title)
+          setPromptIndex(0)
+          setCurrentPrompt(prompt)
+          setStoryText('')
+          setIsInitialized(true)
+        } else {
+          console.warn('No prompts available')
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing activity:', error)
+      if (activityType === 'tracing' && tracingLetters.length > 0) {
+        setCurrentLetter(tracingLetters[0])
+        setRequiredStrokes(2)
+        setStrokesCompleted(0)
+        setIsInitialized(true)
+      }
+    }
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, defaultSentenceBank, defaultPrompts, drawLetterGuide])
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
