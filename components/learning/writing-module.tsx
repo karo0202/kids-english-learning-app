@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -27,6 +27,54 @@ interface WordBuildingWord {
   letters: string[]
   hint: string
   imageUrl?: string
+}
+
+// Static constants moved outside component to avoid recreation on every render
+const TRACING_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6', '#F97316', '#EC4899']
+
+const DEFAULT_SENTENCE_BANK = [
+  'THE CAT IS BIG',
+  'I LIKE RED APPLES',
+  'THE SUN IS BRIGHT',
+  'BIRDS FLY IN SKY',
+  'PLEASE CLOSE THE DOOR',
+  'FISH SWIM IN WATER'
+]
+
+interface WritingPrompt { title: string; prompt: string; words?: string[] }
+const DEFAULT_PROMPTS: WritingPrompt[] = [
+  { title: 'A Day at the Park', prompt: 'Write a short story about a fun day at the park with your friends.', words: ['play', 'tree', 'slide', 'sunny'] },
+  { title: 'My Magic Pet', prompt: 'Imagine you have a magic pet. What can it do? What adventures do you have together?', words: ['magic', 'friend', 'fly', 'secret'] },
+  { title: 'Rainy Day', prompt: 'It is raining outside. Describe what you do at home and how you feel.', words: ['rain', 'window', 'warm', 'music'] }
+]
+
+const LETTER_STROKE_PATTERNS: { [key: string]: { strokes: number; description: string; difficulty: 'easy' | 'medium' | 'hard' } } = {
+  'A': { strokes: 2, description: 'Triangle shape, horizontal crossbar', difficulty: 'medium' },
+  'B': { strokes: 2, description: 'Vertical line, two semicircles', difficulty: 'hard' },
+  'C': { strokes: 1, description: 'Curved line (open circle)', difficulty: 'easy' },
+  'D': { strokes: 2, description: 'Vertical line, semicircle', difficulty: 'medium' },
+  'E': { strokes: 3, description: 'Vertical line, top horizontal, middle horizontal, bottom horizontal', difficulty: 'medium' },
+  'F': { strokes: 2, description: 'Vertical line, top horizontal, middle horizontal', difficulty: 'medium' },
+  'G': { strokes: 2, description: 'Curved line, horizontal line', difficulty: 'hard' },
+  'H': { strokes: 2, description: 'Left vertical, right vertical, horizontal crossbar', difficulty: 'medium' },
+  'I': { strokes: 2, description: 'Top dot, vertical line, bottom dot', difficulty: 'easy' },
+  'J': { strokes: 2, description: 'Curved line, horizontal line', difficulty: 'medium' },
+  'K': { strokes: 2, description: 'Vertical line, two diagonal lines', difficulty: 'hard' },
+  'L': { strokes: 2, description: 'Vertical line, horizontal line', difficulty: 'easy' },
+  'M': { strokes: 3, description: 'Left vertical, diagonal down, diagonal up, right vertical', difficulty: 'hard' },
+  'N': { strokes: 2, description: 'Left vertical, diagonal line, right vertical', difficulty: 'medium' },
+  'O': { strokes: 1, description: 'Curved line (circle)', difficulty: 'easy' },
+  'P': { strokes: 2, description: 'Vertical line, semicircle', difficulty: 'medium' },
+  'Q': { strokes: 2, description: 'Circle, diagonal line', difficulty: 'hard' },
+  'R': { strokes: 2, description: 'Vertical line, semicircle with diagonal', difficulty: 'hard' },
+  'S': { strokes: 1, description: 'Curved line (S-shape)', difficulty: 'medium' },
+  'T': { strokes: 2, description: 'Horizontal line, vertical line', difficulty: 'easy' },
+  'U': { strokes: 2, description: 'Two vertical lines, curved bottom', difficulty: 'medium' },
+  'V': { strokes: 2, description: 'Left diagonal, right diagonal', difficulty: 'easy' },
+  'W': { strokes: 3, description: 'Left diagonal, right diagonal, left diagonal, right diagonal', difficulty: 'hard' },
+  'X': { strokes: 2, description: 'Left diagonal, right diagonal', difficulty: 'easy' },
+  'Y': { strokes: 2, description: 'Two diagonal lines, vertical line', difficulty: 'medium' },
+  'Z': { strokes: 2, description: 'Top horizontal, diagonal line, bottom horizontal', difficulty: 'medium' }
 }
 
 export default function WritingModule() {
@@ -274,14 +322,6 @@ export default function WritingModule() {
   }, [currentLetter, drawLetterGuide, activityType])
 
   // Sentence Puzzles state
-  const defaultSentenceBank = [
-    'THE CAT IS BIG',
-    'I LIKE RED APPLES',
-    'THE SUN IS BRIGHT',
-    'BIRDS FLY IN SKY',
-    'PLEASE CLOSE THE DOOR',
-    'FISH SWIM IN WATER'
-  ]
   const [sentences, setSentences] = useState<string[] | null>(null)
   const [sentenceIndex, setSentenceIndex] = useState(0)
   const [currentSentence, setCurrentSentence] = useState<string | null>(null)
@@ -289,54 +329,17 @@ export default function WritingModule() {
   const [chosenWords, setChosenWords] = useState<string[]>([])
 
   // Creative Writing state
-  interface WritingPrompt { title: string; prompt: string; words?: string[] }
-  const defaultPrompts: WritingPrompt[] = [
-    { title: 'A Day at the Park', prompt: 'Write a short story about a fun day at the park with your friends.', words: ['play', 'tree', 'slide', 'sunny'] },
-    { title: 'My Magic Pet', prompt: 'Imagine you have a magic pet. What can it do? What adventures do you have together?', words: ['magic', 'friend', 'fly', 'secret'] },
-    { title: 'Rainy Day', prompt: 'It is raining outside. Describe what you do at home and how you feel.', words: ['rain', 'window', 'warm', 'music'] }
-  ]
   const [prompts, setPrompts] = useState<WritingPrompt[] | null>(null)
   const [promptIndex, setPromptIndex] = useState(0)
   const [currentPrompt, setCurrentPrompt] = useState<WritingPrompt | null>(null)
   const [storyText, setStoryText] = useState('')
 
-  const TRACING_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6', '#F97316', '#EC4899']
-  
-  // Stroke patterns for each letter - defines how many strokes and their characteristics
-  const letterStrokePatterns: { [key: string]: { strokes: number; description: string; difficulty: 'easy' | 'medium' | 'hard' } } = {
-    'A': { strokes: 2, description: 'Triangle shape, horizontal crossbar', difficulty: 'medium' },
-    'B': { strokes: 2, description: 'Vertical line, two semicircles', difficulty: 'hard' },
-    'C': { strokes: 1, description: 'Curved line (open circle)', difficulty: 'easy' },
-    'D': { strokes: 2, description: 'Vertical line, semicircle', difficulty: 'medium' },
-    'E': { strokes: 3, description: 'Vertical line, top horizontal, middle horizontal, bottom horizontal', difficulty: 'medium' },
-    'F': { strokes: 2, description: 'Vertical line, top horizontal, middle horizontal', difficulty: 'medium' },
-    'G': { strokes: 2, description: 'Curved line, horizontal line', difficulty: 'hard' },
-    'H': { strokes: 2, description: 'Left vertical, right vertical, horizontal crossbar', difficulty: 'medium' },
-    'I': { strokes: 2, description: 'Top dot, vertical line, bottom dot', difficulty: 'easy' },
-    'J': { strokes: 2, description: 'Curved line, horizontal line', difficulty: 'medium' },
-    'K': { strokes: 2, description: 'Vertical line, two diagonal lines', difficulty: 'hard' },
-    'L': { strokes: 2, description: 'Vertical line, horizontal line', difficulty: 'easy' },
-    'M': { strokes: 3, description: 'Left vertical, diagonal down, diagonal up, right vertical', difficulty: 'hard' },
-    'N': { strokes: 2, description: 'Left vertical, diagonal line, right vertical', difficulty: 'medium' },
-    'O': { strokes: 1, description: 'Curved line (circle)', difficulty: 'easy' },
-    'P': { strokes: 2, description: 'Vertical line, semicircle', difficulty: 'medium' },
-    'Q': { strokes: 2, description: 'Circle, diagonal line', difficulty: 'hard' },
-    'R': { strokes: 2, description: 'Vertical line, semicircle with diagonal', difficulty: 'hard' },
-    'S': { strokes: 1, description: 'Curved line (S-shape)', difficulty: 'medium' },
-    'T': { strokes: 2, description: 'Horizontal line, vertical line', difficulty: 'easy' },
-    'U': { strokes: 2, description: 'Two vertical lines, curved bottom', difficulty: 'medium' },
-    'V': { strokes: 2, description: 'Left diagonal, right diagonal', difficulty: 'easy' },
-    'W': { strokes: 3, description: 'Left diagonal, right diagonal, left diagonal, right diagonal', difficulty: 'hard' },
-    'X': { strokes: 2, description: 'Left diagonal, right diagonal', difficulty: 'easy' },
-    'Y': { strokes: 2, description: 'Two diagonal lines, vertical line', difficulty: 'medium' },
-    'Z': { strokes: 2, description: 'Top horizontal, diagonal line, bottom horizontal', difficulty: 'medium' }
-  }
-
-  const tracingLetters: TracingLetter[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter, idx) => ({
+  // Memoize tracingLetters to avoid recreation on every render
+  const tracingLetters = useMemo(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter, idx) => ({
     letter,
     paths: [],
     color: TRACING_COLORS[idx % TRACING_COLORS.length]
-  }))
+  })), [])
 
   const getDefaultWordBuildingWords = (): WordBuildingWord[] => {
     const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
@@ -513,7 +516,7 @@ export default function WritingModule() {
           console.warn('No words available for word builder')
         }
       } else if (activityType === 'sentences') {
-        const source = sentences && sentences.length ? sentences : defaultSentenceBank
+        const source = sentences && sentences.length ? sentences : DEFAULT_SENTENCE_BANK
         console.log('Sentences source:', source?.length, 'sentences')
         if (source && source.length > 0) {
           const s = source[0]
@@ -529,7 +532,7 @@ export default function WritingModule() {
           console.warn('No sentences available')
         }
       } else if (activityType === 'creative') {
-        const source = prompts && prompts.length ? prompts : defaultPrompts
+        const source = prompts && prompts.length ? prompts : DEFAULT_PROMPTS
         console.log('Creative prompts source:', source?.length, 'prompts')
         if (source && source.length > 0) {
           const prompt = source[0]
@@ -551,7 +554,7 @@ export default function WritingModule() {
         setIsInitialized(true)
       }
     }
-  }, [activityType, wordBank, sentences, prompts, tracingLetters, defaultSentenceBank, defaultPrompts, drawLetterGuide])
+  }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide])
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
@@ -881,7 +884,7 @@ export default function WritingModule() {
       setBuilderLetters(shuffleArray([...nextWord.letters]))
       setBuiltWord([])
     } else if (activityType === 'sentences') {
-      const source = sentences && sentences.length ? sentences : defaultSentenceBank
+      const source = sentences && sentences.length ? sentences : DEFAULT_SENTENCE_BANK
       const next = (sentenceIndex + 1) % source.length
       setSentenceIndex(next)
       const s = source[next]
@@ -889,7 +892,7 @@ export default function WritingModule() {
       setChosenWords([])
       setScrambledWords(shuffleArray(s.split(' ')))
     } else if (activityType === 'creative') {
-      const source = prompts && prompts.length ? prompts : defaultPrompts
+      const source = prompts && prompts.length ? prompts : DEFAULT_PROMPTS
       const next = (promptIndex + 1) % source.length
       setPromptIndex(next)
       setCurrentPrompt(source[next])
