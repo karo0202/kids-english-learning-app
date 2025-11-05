@@ -665,8 +665,20 @@ export default function WritingModule() {
     }
   }, [activityType, initializeActivity])
 
-  // Canvas drawing functions
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+  // Canvas drawing functions - use useCallback to prevent recreation
+  const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    if (!currentLetter) {
+      console.log('No current letter')
+      return
+    }
+    
+    const canvas = canvasRef.current
+    if (!canvas) {
+      console.log('No canvas ref')
+      return
+    }
+
+    // Prevent default behavior
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault()
     }
@@ -674,21 +686,43 @@ export default function WritingModule() {
       e.stopPropagation()
     }
     
-    if (!currentLetter) return
     setIsDrawing(true)
     setStrokeLength(0)
     drawStartTimeRef.current = Date.now()
     visitedCellsRef.current = new Set()
-    const canvas = canvasRef.current
-    if (!canvas) return
 
+    // Get canvas position and size
     const rect = canvas.getBoundingClientRect()
     const scaleX = canvas.width / rect.width
     const scaleY = canvas.height / rect.height
-    const clientX = (e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX)) || 0
-    const clientY = (e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY)) || 0
+    
+    // Get mouse/touch coordinates
+    let clientX = 0
+    let clientY = 0
+    
+    if (e.clientX !== undefined && e.clientY !== undefined) {
+      // Mouse event
+      clientX = e.clientX
+      clientY = e.clientY
+    } else if (e.touches && e.touches.length > 0) {
+      // Touch event
+      clientX = e.touches[0].clientX
+      clientY = e.touches[0].clientY
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      // Touch end event
+      clientX = e.changedTouches[0].clientX
+      clientY = e.changedTouches[0].clientY
+    } else {
+      console.log('No valid coordinates found', e)
+      return
+    }
+
+    // Calculate canvas coordinates
     const x = (clientX - rect.left) * scaleX
     const y = (clientY - rect.top) * scaleY
+    
+    console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
+    
     lastPointRef.current = { x, y }
 
     const ctx = canvas.getContext('2d')
@@ -700,14 +734,15 @@ export default function WritingModule() {
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
     }
-  }
+  }, [currentLetter])
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+  const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
     if (!isDrawing || !currentLetter) return
     
     const canvas = canvasRef.current
     if (!canvas) return
 
+    // Prevent default behavior
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault()
     }
@@ -715,26 +750,44 @@ export default function WritingModule() {
       e.stopPropagation()
     }
 
+    // Get canvas position and size
     const rect = canvas.getBoundingClientRect()
     const scaleX = canvas.width / rect.width
     const scaleY = canvas.height / rect.height
-    const clientX = (e.clientX !== undefined ? e.clientX : (e.touches?.[0]?.clientX)) || 0
-    const clientY = (e.clientY !== undefined ? e.clientY : (e.touches?.[0]?.clientY)) || 0
+    
+    // Get mouse/touch coordinates
+    let clientX = 0
+    let clientY = 0
+    
+    if (e.clientX !== undefined && e.clientY !== undefined) {
+      // Mouse event
+      clientX = e.clientX
+      clientY = e.clientY
+    } else if (e.touches && e.touches.length > 0) {
+      // Touch event
+      clientX = e.touches[0].clientX
+      clientY = e.touches[0].clientY
+    } else {
+      return // No valid coordinates
+    }
+
+    // Calculate canvas coordinates
     const x = (clientX - rect.left) * scaleX
     const y = (clientY - rect.top) * scaleY
 
     const ctx = canvas.getContext('2d')
-    if (ctx) {
+    if (ctx && lastPointRef.current) {
       ctx.lineTo(x, y)
       ctx.stroke()
+      
       const last = lastPointRef.current
-      if (last) {
-        const dx = x - last.x
-        const dy = y - last.y
-        setStrokeLength(prev => prev + Math.sqrt(dx * dx + dy * dy))
-      }
+      const dx = x - last.x
+      const dy = y - last.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      setStrokeLength(prev => prev + distance)
       lastPointRef.current = { x, y }
 
+      // Track visited cells for stroke validation
       const CELL_COLS = 3
       const CELL_ROWS = 3
       const displayWidth = rect.width
@@ -743,13 +796,14 @@ export default function WritingModule() {
       const cellY = Math.min(CELL_ROWS - 1, Math.max(0, Math.floor(((clientY - rect.top) / displayHeight) * CELL_ROWS)))
       visitedCellsRef.current.add(`${cellX},${cellY}`)
     }
-  }
+  }, [isDrawing, currentLetter])
 
-  const stopDrawing = () => {
+  const stopDrawing = useCallback(() => {
     if (isDrawing) {
+      console.log('Stop drawing')
       setIsDrawing(false)
     }
-  }
+  }, [isDrawing])
 
   const checkCurrentStroke = () => {
     if (!currentLetter) return
