@@ -1259,76 +1259,77 @@ export default function WritingModule() {
         ) : null}
 
         {/* Creative Writing Activity */}
-        {activityType === 'creative' && currentPrompt && (
-          <div className="max-w-4xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="card-writing">
-                <CardContent className="p-8">
-                  <div className="text-center mb-6">
-                    <h3 className="text-3xl font-bold text-gray-800 mb-2">{currentPrompt.title}</h3>
-                    <p className="text-gray-700 mb-4">{currentPrompt.prompt}</p>
-                    {currentPrompt.words && currentPrompt.words.length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-2 mb-4">
-                        {currentPrompt.words.map((w, i) => (
-                          <span key={i} className="px-3 py-1 rounded-full text-sm bg-blue-50 text-blue-700 border border-blue-200">{w}</span>
-                        ))}
+        {activityType === 'creative' ? (
+          currentPrompt ? (
+            <div className="max-w-4xl mx-auto">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                <Card className="card-writing">
+                  <CardContent className="p-8">
+                    <div className="text-center mb-6">
+                      <h3 className="text-3xl font-bold text-gray-800 mb-2">{currentPrompt.title}</h3>
+                      <p className="text-gray-700 mb-4">{currentPrompt.prompt}</p>
+                      {currentPrompt.words && currentPrompt.words.length > 0 && (
+                        <div className="flex flex-wrap justify-center gap-2 mb-4">
+                          {currentPrompt.words.map((w, i) => (
+                            <span key={i} className="px-3 py-1 rounded-full text-sm bg-blue-50 text-blue-700 border border-blue-200">{w}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <textarea
+                      value={storyText}
+                      onChange={(e) => setStoryText(e.target.value)}
+                      className="w-full min-h-[220px] p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-green-300"
+                      placeholder="Start your story here..."
+                    />
+
+                    <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+                      <div>
+                        Words: {storyText.trim() ? storyText.trim().split(/\s+/).length : 0}
                       </div>
-                    )}
-                  </div>
-
-                  <textarea
-                    value={storyText}
-                    onChange={(e) => setStoryText(e.target.value)}
-                    className="w-full min-h-[220px] p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-green-300"
-                    placeholder="Start your story here..."
-                  />
-
-                  <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
-                    <div>
-                      Words: {storyText.trim() ? storyText.trim().split(/\s+/).length : 0}
+                      <div className="flex gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => setStoryText('')}
+                        >
+                          Clear
+                        </Button>
+                        <Button
+                          type="button"
+                          className="btn-primary-kid"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            console.log('Submit creative writing clicked')
+                            const wordsCount = storyText.trim() ? storyText.trim().split(/\s+/).length : 0
+                            const MIN_WORDS = 20
+                            const usesPromptWord = (currentPrompt.words || []).some(w =>
+                              new RegExp(`\\b${w}\\b`, 'i').test(storyText)
+                            )
+                            const ok = wordsCount >= MIN_WORDS && (!currentPrompt.words || usesPromptWord)
+                            setIsCorrect(ok)
+                            setShowFeedback(true)
+                            if (ok) {
+                              setScore(prev => prev + 20)
+                              setCompletedActivities(prev => prev + 1)
+                              setTimeout(() => { setShowFeedback(false); nextActivity() }, 2000)
+                            } else {
+                              setTimeout(() => setShowFeedback(false), 1800)
+                            }
+                          }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        >
+                          Submit
+                        </Button>
+                        <Button variant="outline" onClick={nextActivity}>Next Prompt</Button>
+                      </div>
                     </div>
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => setStoryText('')}
-                      >
-                        Clear
-                      </Button>
-                      <Button
-                        type="button"
-                        className="btn-primary-kid"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Submit creative writing clicked')
-                          const wordsCount = storyText.trim() ? storyText.trim().split(/\s+/).length : 0
-                          const MIN_WORDS = 20
-                          const usesPromptWord = (currentPrompt.words || []).some(w =>
-                            new RegExp(`\\b${w}\\b`, 'i').test(storyText)
-                          )
-                          const ok = wordsCount >= MIN_WORDS && (!currentPrompt.words || usesPromptWord)
-                          setIsCorrect(ok)
-                          setShowFeedback(true)
-                          if (ok) {
-                            setScore(prev => prev + 20)
-                            setCompletedActivities(prev => prev + 1)
-                            setTimeout(() => { setShowFeedback(false); nextActivity() }, 2000)
-                          } else {
-                            setTimeout(() => setShowFeedback(false), 1800)
-                          }
-                        }}
-                        style={{ pointerEvents: 'auto', zIndex: 10 }}
-                      >
-                        Submit
-                      </Button>
-                      <Button variant="outline" onClick={nextActivity}>Next Prompt</Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        ) : activityType === 'creative' ? (
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          ) : (
           <div className="max-w-4xl mx-auto text-center p-8">
             <Card className="card-writing">
               <CardContent className="p-8">
@@ -1340,8 +1341,9 @@ export default function WritingModule() {
         ) : null}
 
         {/* Word Builder Activity */}
-        {activityType === 'wordbuilder' && currentWord ? (
-          <div className="max-w-4xl mx-auto">
+        {activityType === 'wordbuilder' ? (
+          currentWord ? (
+            <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1428,8 +1430,9 @@ export default function WritingModule() {
         ) : null}
 
         {/* Sentence Puzzles Activity */}
-        {activityType === 'sentences' && currentSentence ? (
-          <div className="max-w-4xl mx-auto">
+        {activityType === 'sentences' ? (
+          currentSentence ? (
+            <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
