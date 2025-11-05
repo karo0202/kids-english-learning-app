@@ -959,305 +959,81 @@ export default function WritingModule() {
   }
 
   return (
-    e.preventDefault?.()
-    e.stopPropagation?.()
-    
-    setIsDrawing(true)
-    setStrokeLength(0)
-    drawStartTimeRef.current = Date.now()
-    visitedCellsRef.current = new Set()
-    const canvas = canvasRef.current
-    if (!canvas || !currentLetter) return
-
-    const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
-    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
-    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
-    lastPointRef.current = { x, y }
-
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.strokeStyle = currentLetter.color || '#3B82F6'
-      ctx.lineWidth = 8
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-    }
-  }
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
-    if (!isDrawing || !currentLetter) return
-    
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    e.preventDefault?.()
-    e.stopPropagation?.()
-
-    const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
-    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
-    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
-    const x = (clientX - rect.left) * scaleX
-    const y = (clientY - rect.top) * scaleY
-
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.lineTo(x, y)
-      ctx.stroke()
-      // Accumulate stroke length to ensure sufficient drawing was performed
-      const last = lastPointRef.current
-      if (last) {
-        const dx = x - last.x
-        const dy = y - last.y
-        setStrokeLength(prev => prev + Math.sqrt(dx * dx + dy * dy))
-      }
-      lastPointRef.current = { x, y }
-
-      // Mark visited cell in a 3x3 grid to ensure spread across canvas
-      const CELL_COLS = 3
-      const CELL_ROWS = 3
-      const displayWidth = rect.width
-      const displayHeight = rect.height
-      const cellX = Math.min(CELL_COLS - 1, Math.max(0, Math.floor(((clientX - rect.left) / displayWidth) * CELL_COLS)))
-      const cellY = Math.min(CELL_ROWS - 1, Math.max(0, Math.floor(((clientY - rect.top) / displayHeight) * CELL_ROWS)))
-      visitedCellsRef.current.add(`${cellX},${cellY}`)
-    }
-  }
-
-  const stopDrawing = () => {
-    if (isDrawing) {
-      setIsDrawing(false)
-      // Just stop drawing, don't evaluate yet
-      // The user can continue drawing or use the "Check" button to evaluate
-    }
-  }
-
-  const checkCurrentStroke = () => {
-    if (!currentLetter) return
-    
-    // Determine success based on multiple simple heuristics
-    const MIN_STROKE_LENGTH = 200 // Reduced threshold for easier success
-    const MIN_DRAW_DURATION_MS = 500 // Reduced time requirement
-    const MIN_VISITED_CELLS = 3 // Reduced cell requirement
-
-    const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
-    const visitedCells = visitedCellsRef.current.size
-    const didTraceEnough = strokeLength >= MIN_STROKE_LENGTH && durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
-
-    if (didTraceEnough) {
-      const nextCount = strokesCompleted + 1
-      setStrokesCompleted(nextCount)
-      setIsCorrect(true)
-      setShowFeedback(true)
-      
-      try {
-        audioManager.playSuccess()
-      } catch (error) {
-        console.error('Error playing success sound:', error)
-      }
-        
-      // Check if all required strokes are completed
-      if (nextCount >= requiredStrokes) {
-        // All strokes completed - finish the letter
-        setTimeout(() => {
-          setShowFeedback(false)
-          setScore(prev => prev + 10)
-          setCompletedActivities(prev => prev + 1)
-          progressManager.addScore(10, 5)
-          challengeManager.updateChallengeProgress('writing', 1)
-          setStrokesCompleted(0)
-          nextActivity()
-        }, 1500)
-      } else {
-        // More strokes needed - clear canvas and wait for next stroke
-        setTimeout(() => {
-          setShowFeedback(false)
-          clearCanvas()
-        }, 800)
-      }
-    } else {
-      // Stroke not good enough - show error and clear
-      setIsCorrect(false)
-      setShowFeedback(true)
-      try {
-        audioManager.playError()
-      } catch (error) {
-        console.error('Error playing error sound:', error)
-      }
-      setTimeout(() => {
-        setShowFeedback(false)
-        clearCanvas()
-      }, 1500)
-    }
-  }
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      if (currentLetter && activityType === 'tracing') {
-        drawLetterGuide()
-      }
-    }
-  }
-
-  const addLetterToWord = (letter: string) => {
-    if (!currentWord) return
-    
-    const newBuiltWord = [...builtWord, letter]
-    setBuiltWord(newBuiltWord)
-    setBuilderLetters(prev => prev.filter((l, i) => i !== prev.indexOf(letter)))
-
-    if (newBuiltWord.length === currentWord.word.length) {
-      const isCorrectWord = newBuiltWord.join('') === currentWord.word
-      setIsCorrect(isCorrectWord)
-      setShowFeedback(true)
-      
-      if (isCorrectWord) {
-        setScore(prev => prev + 15)
-        setCompletedActivities(prev => prev + 1)
-        
-        // Play success sound and update progress
-        try {
-          audioManager.playSuccess()
-          progressManager.addScore(15, 8)
-          challengeManager.updateChallengeProgress('writing', 1)
-        } catch (error) {
-          console.error('Error updating progress:', error)
-        }
-      } else {
-        // Play error sound
-        try {
-          audioManager.playError()
-        } catch (error) {
-          console.error('Error playing sound:', error)
-        }
-      }
-
-      setTimeout(() => {
-        setShowFeedback(false)
-        if (isCorrectWord) {
-          nextActivity()
-        } else {
-          resetWordBuilder()
-        }
-      }, 2000)
-    }
-  }
-
-  const removeLetterFromWord = (index: number) => {
-    if (index < 0 || index >= builtWord.length) return
-    const removedLetter = builtWord[index]
-    setBuiltWord(prev => prev.filter((_, i) => i !== index))
-    setBuilderLetters(prev => [...prev, removedLetter])
-  }
-
-  const resetWordBuilder = () => {
-    if (currentWord) {
-      setBuilderLetters(shuffleArray([...currentWord.letters]))
-      setBuiltWord([])
-    }
-  }
-
-  const nextActivity = () => {
-    if (activityType === 'tracing') {
-      const nextIndex = (letterIndex + 1) % tracingLetters.length
-      setLetterIndex(nextIndex)
-      setCurrentLetter(tracingLetters[nextIndex])
-      setRequiredStrokes(getRequiredStrokes(tracingLetters[nextIndex].letter))
-      setStrokesCompleted(0)
-      setTimeout(() => {
-        clearCanvas()
-      }, 100)
-    } else if (activityType === 'wordbuilder') {
-      const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
-      const currentIdx = Math.max(0, source.findIndex(w => w.word === currentWord?.word))
-      const nextIndex = (currentIdx + 1) % source.length
-      const nextWord = source[nextIndex]
-      setCurrentWord(nextWord)
-      setBuilderLetters(shuffleArray([...nextWord.letters]))
-      setBuiltWord([])
-    } else if (activityType === 'sentences') {
-      const source = sentences && sentences.length ? sentences : defaultSentenceBank
-      const next = (sentenceIndex + 1) % source.length
-      setSentenceIndex(next)
-      const s = source[next]
-      setCurrentSentence(s)
-      setChosenWords([])
-      setScrambledWords(shuffleArray(s.split(' ')))
-    } else if (activityType === 'creative') {
-      const source = prompts && prompts.length ? prompts : defaultPrompts
-      const next = (promptIndex + 1) % source.length
-      setPromptIndex(next)
-      setCurrentPrompt(source[next])
-      setStoryText('')
-    }
-  }
-
-  const progress = (completedActivities / totalActivities) * 100
-
-  if (completedActivities >= totalActivities) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4 landscape-optimized">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <Card className="card-kid max-w-md">
-            <CardContent className="p-8">
-              <Mascot emotion="celebrating" size="large" className="mb-6" />
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">Amazing Writing! 🖊️</h2>
-              <p className="text-gray-600 mb-6">You completed all writing activities!</p>
-              
-              <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 mb-6">
-                <div className="flex items-center justify-center gap-4">
-                  <div className="text-center">
-                    <Trophy className="w-8 h-8 text-green-600 mx-auto mb-1" />
-                    <div className="text-2xl font-bold text-green-600">{score}</div>
-                    <div className="text-sm text-gray-600">Points</div>
-                  </div>
-                  <div className="text-center">
-                    <Star className="w-8 h-8 text-purple-600 mx-auto mb-1" />
-                    <div className="text-2xl font-bold text-purple-600">{completedActivities}</div>
-                    <div className="text-sm text-gray-600">Activities</div>
-                  </div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 landscape-optimized">
+      {/* Header */}
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-green-100 dark:border-slate-700 sticky top-0 z-50">
+        <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/dashboard')}
+                className="flex-shrink-0 px-2 md:px-3 text-xs md:text-sm dark:border-slate-600 dark:text-white"
+              >
+                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                <span className="hidden xs:inline">Back</span>
+              </Button>
+              <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                <div className="hidden sm:block flex-shrink-0">
+                  <Mascot emotion="happy" size="medium" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 dark:text-white truncate">Writing & Spelling</h1>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 hidden sm:block">Trace letters and build words! ✏️</p>
                 </div>
               </div>
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  className="btn-success-kid"
-                  onClick={() => window.location.reload()}
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Practice More
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => router.push('/dashboard')}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Dashboard
-                </Button>
+            <ProgressRing 
+              progress={progress}
+              size={60}
+              color="#10B981"
+              className="hidden sm:block flex-shrink-0"
+            >
+              <div className="text-center">
+                <div className="text-base md:text-lg font-bold text-green-600 dark:text-green-400">{completedActivities}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">/{totalActivities}</div>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+            </ProgressRing>
+          </div>
+        </div>
       </div>
-    )
-  }
 
-  return (
+      <div className="container mx-auto px-4 py-8">
+        {/* Activity Selector */}
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex flex-wrap gap-2 md:gap-3 justify-center">
+            {activities.map((activity) => (
+              <Button
+                key={activity.id}
+                variant={activityType === activity.id ? 'default' : 'outline'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setActivityType(activity.id as 'tracing' | 'wordbuilder' | 'sentences' | 'creative')
+                  setIsInitialized(false)
+                }}
+                className={`btn-kid ${
+                  activityType === activity.id
+                    ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white border-0'
+                    : 'bg-white/80 dark:bg-slate-800/80'
+                }`}
+                style={{ pointerEvents: 'auto', zIndex: 10 }}
+                type="button"
+              >
+                {activity.icon}
+                <span className="ml-2">{activity.name}</span>
+              </Button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Letter Tracing Activity */}
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 landscape-optimized">
       {/* Header */}
       <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-green-100 dark:border-slate-700 sticky top-0 z-50">
