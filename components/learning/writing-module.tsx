@@ -643,7 +643,14 @@ export default function WritingModule() {
     }
 
     console.log('Activity type changed to:', activityType)
-    setIsInitialized(false) // Reset initialization when switching activities
+    // Only reset initialization when actually switching to a different activity type
+    // Don't reset if we're just changing letters within the same activity
+    if (activityType === 'tracing' && currentLetter) {
+      console.log('Tracing activity with existing letter, keeping initialization')
+      // Keep current letter, just ensure canvas is ready
+    } else {
+      setIsInitialized(false) // Reset initialization when switching activities
+    }
     
     if (activityType === 'wordbuilder') {
       loadWords().then(() => {
