@@ -9,8 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles
 } from 'lucide-react'
+import { getUserSubscription } from '@/lib/crypto-payment'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -36,6 +37,11 @@ export default function DashboardPage() {
       // Load children for this specific user
       const userChildren = getChildren(currentUser.id)
       setChildren(userChildren)
+      
+      // Load subscription status
+      const userSubscription = getUserSubscription(currentUser.id)
+      setSubscription(userSubscription)
+      
       setLoading(false)
     } else {
       setLoading(false)
