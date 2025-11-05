@@ -700,14 +700,16 @@ export default function WritingModule() {
 
   // Canvas drawing functions - use useCallback to prevent recreation
   const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    console.log('startDrawing called', { currentLetter: !!currentLetter, canvas: !!canvasRef.current, eventType: e?.type, hasTouches: !!(e?.touches?.length) })
+    
     if (!currentLetter) {
-      console.log('No current letter')
+      console.log('No current letter in startDrawing')
       return
     }
     
     const canvas = canvasRef.current
     if (!canvas) {
-      console.log('No canvas ref')
+      console.log('No canvas ref in startDrawing')
       return
     }
 
@@ -741,12 +743,20 @@ export default function WritingModule() {
       // Touch event
       clientX = e.touches[0].clientX
       clientY = e.touches[0].clientY
+      console.log('Using touch coordinates:', { clientX, clientY, touchCount: e.touches.length })
     } else if (e.changedTouches && e.changedTouches.length > 0) {
       // Touch end event
       clientX = e.changedTouches[0].clientX
       clientY = e.changedTouches[0].clientY
+      console.log('Using changedTouches coordinates:', { clientX, clientY })
     } else {
-      console.log('No valid coordinates found', e)
+      console.warn('No valid coordinates found in startDrawing', { 
+        hasClientX: e?.clientX !== undefined, 
+        hasClientY: e?.clientY !== undefined,
+        hasTouches: !!(e?.touches?.length),
+        hasChangedTouches: !!(e?.changedTouches?.length),
+        event: e 
+      })
       return
     }
 
@@ -770,10 +780,16 @@ export default function WritingModule() {
   }, [currentLetter])
 
   const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
-    if (!isDrawing || !currentLetter) return
+    if (!isDrawing || !currentLetter) {
+      console.log('Draw called but not drawing or no letter', { isDrawing, hasLetter: !!currentLetter })
+      return
+    }
     
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas) {
+      console.log('Draw called but no canvas')
+      return
+    }
 
     // Prevent default behavior
     if (e && typeof e.preventDefault === 'function') {
@@ -800,7 +816,19 @@ export default function WritingModule() {
       // Touch event
       clientX = e.touches[0].clientX
       clientY = e.touches[0].clientY
+      console.log('Draw using touch coordinates:', { clientX, clientY, touchCount: e.touches.length })
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      // Touch event (when touch moves) - some mobile browsers use changedTouches
+      clientX = e.changedTouches[0].clientX
+      clientY = e.changedTouches[0].clientY
+      console.log('Draw using changedTouches coordinates:', { clientX, clientY })
     } else {
+      console.warn('No valid coordinates in draw', { 
+        hasClientX: e?.clientX !== undefined, 
+        hasClientY: e?.clientY !== undefined,
+        hasTouches: !!(e?.touches?.length),
+        hasChangedTouches: !!(e?.changedTouches?.length)
+      })
       return // No valid coordinates
     }
 
