@@ -170,25 +170,43 @@ export default function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="card-kid mb-6 p-6">
-                <CardContent>
+              <Card className="card-kid mb-6 p-6 relative z-10">
+                <CardContent className="relative z-10">
                   <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Add New Child</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    placeholder="Child's Name"
-                    value={newChildName}
-                    onChange={(e) => setNewChildName(e.target.value)}
-                    className="text-lg"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Child's Age"
-                    value={newChildAge}
-                    onChange={(e) => setNewChildAge(parseInt(e.target.value) || '')}
-                    className="text-lg"
-                    min="3"
-                    max="12"
-                  />
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Child's Name"
+                      value={newChildName}
+                      onChange={(e) => setNewChildName(e.target.value)}
+                      className="text-lg w-full"
+                      autoFocus
+                      style={{ pointerEvents: 'auto', zIndex: 10 }}
+                    />
+                  </div>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      placeholder="Child's Age (3-12)"
+                      value={newChildAge === '' ? '' : newChildAge}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        if (value === '') {
+                          setNewChildAge('')
+                        } else {
+                          const num = parseInt(value)
+                          if (!isNaN(num) && num >= 3 && num <= 12) {
+                            setNewChildAge(num)
+                          }
+                        }
+                      }}
+                      className="text-lg w-full"
+                      min="3"
+                      max="12"
+                      style={{ pointerEvents: 'auto', zIndex: 10 }}
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Button 
