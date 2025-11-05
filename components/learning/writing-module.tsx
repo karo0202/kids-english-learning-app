@@ -1236,14 +1236,32 @@ export default function WritingModule() {
                         onClick={(e) => { 
                           e.preventDefault(); 
                           e.stopPropagation(); 
-                          const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length; 
-                          setLetterIndex(prev); 
-                          setCurrentLetter(tracingLetters[prev]); 
-                          clearCanvas(); 
-                        }} 
+                          console.log('Previous button clicked', { letterIndex, lettersLength: tracingLetters.length })
+                          if (tracingLetters.length > 0) {
+                            const prev = (letterIndex - 1 + tracingLetters.length) % tracingLetters.length
+                            console.log('Moving to previous letter:', prev, tracingLetters[prev]?.letter)
+                            setLetterIndex(prev)
+                            setCurrentLetter(tracingLetters[prev])
+                            setStrokesCompleted(0)
+                            setRequiredStrokes(getRequiredStrokes(tracingLetters[prev].letter))
+                            setTimeout(() => {
+                              clearCanvas()
+                            }, 100)
+                          } else {
+                            console.error('No tracing letters available')
+                          }
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        onTouchStart={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
                         variant="outline"
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
                       >
                         Previous
                       </Button>
@@ -1252,11 +1270,20 @@ export default function WritingModule() {
                         onClick={(e) => { 
                           e.preventDefault(); 
                           e.stopPropagation(); 
+                          console.log('Clear button clicked')
                           clearCanvas(); 
-                        }} 
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        onTouchStart={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
                         variant="outline"
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
                       >
                         <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                       Clear
@@ -1266,13 +1293,31 @@ export default function WritingModule() {
                         onClick={(e) => { 
                           e.preventDefault(); 
                           e.stopPropagation(); 
-                          const next = (letterIndex + 1) % tracingLetters.length; 
-                          setLetterIndex(next); 
-                          setCurrentLetter(tracingLetters[next]); 
-                          clearCanvas(); 
+                          console.log('Next button clicked', { letterIndex, lettersLength: tracingLetters.length })
+                          if (tracingLetters.length > 0) {
+                            const next = (letterIndex + 1) % tracingLetters.length
+                            console.log('Moving to next letter:', next, tracingLetters[next]?.letter)
+                            setLetterIndex(next)
+                            setCurrentLetter(tracingLetters[next])
+                            setStrokesCompleted(0)
+                            setRequiredStrokes(getRequiredStrokes(tracingLetters[next].letter))
+                            setTimeout(() => {
+                              clearCanvas()
+                            }, 100)
+                          } else {
+                            console.error('No tracing letters available')
+                          }
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        onTouchStart={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
                         }}
                         className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:bg-blue-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 10 }}
+                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
                       >
                         Next
                     </Button>
