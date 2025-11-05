@@ -670,11 +670,18 @@ export default function WritingModule() {
         setTimeout(() => initializeActivity(), 100)
       })
     } else {
-      // Tracing activity - initialize immediately
-      console.log('Initializing tracing activity')
-      setTimeout(() => initializeActivity(), 100)
+      // Tracing activity - only initialize if we don't have a current letter
+      // This prevents re-initialization when Next/Previous buttons change the letter
+      if (!currentLetter) {
+        console.log('Initializing tracing activity - no current letter')
+        setTimeout(() => initializeActivity(), 100)
+      } else {
+        console.log('Tracing activity already has letter:', currentLetter.letter, '- skipping re-initialization')
+        // Still ensure initialization flag is set
+        setIsInitialized(true)
+      }
     }
-  }, [activityType, initializeActivity])
+  }, [activityType, initializeActivity, currentLetter])
 
   // Canvas drawing functions - use useCallback to prevent recreation
   const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
