@@ -1207,22 +1207,39 @@ export default function WritingModule() {
                     onTouchStart={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      console.log('Touch start on canvas')
+                      console.log('Touch start on canvas - mobile', { touches: e.touches?.length })
                       if (e.touches && e.touches.length > 0) {
+                        console.log('Calling startDrawing from touch start')
                         startDrawing(e)
+                      } else {
+                        console.warn('No touches found in touch start event')
                       }
                     }}
                     onTouchMove={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      if (e.touches && e.touches.length > 0 && isDrawing) {
-                        draw(e)
+                      console.log('Touch move on canvas - mobile', { isDrawing, touches: e.touches?.length })
+                      if (e.touches && e.touches.length > 0) {
+                        if (isDrawing) {
+                          console.log('Calling draw from touch move')
+                          draw(e)
+                        } else {
+                          // If we're not drawing yet, start drawing
+                          console.log('Starting drawing from touch move')
+                          startDrawing(e)
+                        }
                       }
                     }}
                     onTouchEnd={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      console.log('Touch end on canvas')
+                      console.log('Touch end on canvas - mobile')
+                      stopDrawing()
+                    }}
+                    onTouchCancel={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      console.log('Touch cancel on canvas - mobile')
                       stopDrawing()
                     }}
                     tabIndex={0}

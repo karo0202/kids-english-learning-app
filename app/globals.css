@@ -150,6 +150,18 @@ button,
     touch-action: none;
   }
   
+  /* Ensure canvas is touchable on mobile */
+  canvas {
+    touch-action: none !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto !important;
+  }
+  
   /* Fix for mobile viewport */
   .mobile-viewport-fix {
     height: 100vh;
