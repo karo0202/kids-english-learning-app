@@ -361,61 +361,101 @@ export default function WritingModule() {
       }
     }
 
+    console.log('Activity type changed to:', activityType)
+    
     if (activityType === 'wordbuilder') {
       loadWords().then(() => {
+        console.log('Words loaded, initializing activity')
+        setTimeout(() => initializeActivity(), 100)
+      }).catch(err => {
+        console.error('Error loading words:', err)
         setTimeout(() => initializeActivity(), 100)
       })
     } else if (activityType === 'sentences') {
       loadSentences().then(() => {
+        console.log('Sentences loaded, initializing activity')
+        setTimeout(() => initializeActivity(), 100)
+      }).catch(err => {
+        console.error('Error loading sentences:', err)
         setTimeout(() => initializeActivity(), 100)
       })
     } else if (activityType === 'creative') {
       loadPrompts().then(() => {
+        console.log('Prompts loaded, initializing activity')
+        setTimeout(() => initializeActivity(), 100)
+      }).catch(err => {
+        console.error('Error loading prompts:', err)
         setTimeout(() => initializeActivity(), 100)
       })
     } else {
       // Tracing activity - initialize immediately
+      console.log('Initializing tracing activity')
       setTimeout(() => initializeActivity(), 100)
     }
   }, [activityType])
 
   const initializeActivity = () => {
+    console.log('Initializing activity:', activityType)
     try {
       if (activityType === 'tracing') {
+        console.log('Setting up tracing, letters available:', tracingLetters.length)
         setLetterIndex(0)
         const firstLetter = tracingLetters[0]
+        console.log('First letter:', firstLetter)
         setCurrentLetter(firstLetter)
-        setRequiredStrokes(getRequiredStrokes(firstLetter.letter))
+        const strokes = getRequiredStrokes(firstLetter.letter)
+        console.log('Required strokes:', strokes)
+        setRequiredStrokes(strokes)
         setStrokesCompleted(0)
         // Clear canvas and redraw guide after state updates
         setTimeout(() => {
           if (canvasRef.current) {
+            console.log('Clearing canvas')
             clearCanvas()
+          } else {
+            console.warn('Canvas ref not available')
           }
-        }, 200)
+        }, 300)
       } else if (activityType === 'wordbuilder') {
         const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
+        console.log('Word builder source:', source?.length, 'words')
         if (source && source.length > 0) {
           const word = source[0]
+          console.log('Setting current word:', word.word)
           setCurrentWord(word)
-          setBuilderLetters(shuffleArray([...word.letters]))
+          const shuffled = shuffleArray([...word.letters])
+          console.log('Shuffled letters:', shuffled)
+          setBuilderLetters(shuffled)
           setBuiltWord([])
+        } else {
+          console.warn('No words available for word builder')
         }
       } else if (activityType === 'sentences') {
         const source = sentences && sentences.length ? sentences : defaultSentenceBank
+        console.log('Sentences source:', source?.length, 'sentences')
         if (source && source.length > 0) {
           const s = source[0]
+          console.log('Setting current sentence:', s)
           setSentenceIndex(0)
           setCurrentSentence(s)
           setChosenWords([])
-          setScrambledWords(shuffleArray(s.split(' ')))
+          const scrambled = shuffleArray(s.split(' '))
+          console.log('Scrambled words:', scrambled)
+          setScrambledWords(scrambled)
+        } else {
+          console.warn('No sentences available')
         }
       } else if (activityType === 'creative') {
         const source = prompts && prompts.length ? prompts : defaultPrompts
+        console.log('Creative prompts source:', source?.length, 'prompts')
         if (source && source.length > 0) {
+          const prompt = source[0]
+          console.log('Setting current prompt:', prompt.title)
           setPromptIndex(0)
-          setCurrentPrompt(source[0])
+          setCurrentPrompt(prompt)
           setStoryText('')
+        } else {
+          console.warn('No prompts available')
         }
       }
     } catch (error) {
@@ -462,38 +502,53 @@ export default function WritingModule() {
   ]
 
   // Canvas drawing functions
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    e.preventDefault?.()
+    e.stopPropagation?.()
+    
     setIsDrawing(true)
     setStrokeLength(0)
     drawStartTimeRef.current = Date.now()
     visitedCellsRef.current = new Set()
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas || !currentLetter) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
+    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
     lastPointRef.current = { x, y }
 
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.beginPath()
       ctx.moveTo(x, y)
-      ctx.strokeStyle = currentLetter?.color || '#3B82F6'
+      ctx.strokeStyle = currentLetter.color || '#3B82F6'
       ctx.lineWidth = 8
       ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
     }
   }
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | TouchEvent | any) => {
+    if (!isDrawing || !currentLetter) return
     
     const canvas = canvasRef.current
     if (!canvas) return
 
+    e.preventDefault?.()
+    e.stopPropagation?.()
+
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const clientX = e.clientX || e.touches?.[0]?.clientX || 0
+    const clientY = e.clientY || e.touches?.[0]?.clientY || 0
+    const x = (clientX - rect.left) * scaleX
+    const y = (clientY - rect.top) * scaleY
 
     const ctx = canvas.getContext('2d')
     if (ctx) {
@@ -511,8 +566,10 @@ export default function WritingModule() {
       // Mark visited cell in a 3x3 grid to ensure spread across canvas
       const CELL_COLS = 3
       const CELL_ROWS = 3
-      const cellX = Math.min(CELL_COLS - 1, Math.max(0, Math.floor((x / canvas.width) * CELL_COLS)))
-      const cellY = Math.min(CELL_ROWS - 1, Math.max(0, Math.floor((y / canvas.height) * CELL_ROWS)))
+      const displayWidth = rect.width
+      const displayHeight = rect.height
+      const cellX = Math.min(CELL_COLS - 1, Math.max(0, Math.floor(((clientX - rect.left) / displayWidth) * CELL_COLS)))
+      const cellY = Math.min(CELL_ROWS - 1, Math.max(0, Math.floor(((clientY - rect.top) / displayHeight) * CELL_ROWS)))
       visitedCellsRef.current.add(`${cellX},${cellY}`)
     }
   }
@@ -526,21 +583,28 @@ export default function WritingModule() {
   }
 
   const checkCurrentStroke = () => {
+    if (!currentLetter) return
+    
     // Determine success based on multiple simple heuristics
-    const MIN_STROKE_LENGTH = 300 // pixels
-    const MIN_DRAW_DURATION_MS = 800
-    const MIN_VISITED_CELLS = 4
+    const MIN_STROKE_LENGTH = 200 // Reduced threshold for easier success
+    const MIN_DRAW_DURATION_MS = 500 // Reduced time requirement
+    const MIN_VISITED_CELLS = 3 // Reduced cell requirement
 
     const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
     const visitedCells = visitedCellsRef.current.size
     const didTraceEnough = strokeLength >= MIN_STROKE_LENGTH && durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
 
-    if (didTraceEnough && currentLetter) {
+    if (didTraceEnough) {
       const nextCount = strokesCompleted + 1
       setStrokesCompleted(nextCount)
-        setIsCorrect(true)
-        setShowFeedback(true)
-      audioManager.playSuccess()
+      setIsCorrect(true)
+      setShowFeedback(true)
+      
+      try {
+        audioManager.playSuccess()
+      } catch (error) {
+        console.error('Error playing success sound:', error)
+      }
         
       // Check if all required strokes are completed
       if (nextCount >= requiredStrokes) {
@@ -565,7 +629,11 @@ export default function WritingModule() {
       // Stroke not good enough - show error and clear
       setIsCorrect(false)
       setShowFeedback(true)
-      audioManager.playError()
+      try {
+        audioManager.playError()
+      } catch (error) {
+        console.error('Error playing error sound:', error)
+      }
       setTimeout(() => {
         setShowFeedback(false)
         clearCanvas()
@@ -785,6 +853,7 @@ export default function WritingModule() {
   }
 
   const removeLetterFromWord = (index: number) => {
+    if (index < 0 || index >= builtWord.length) return
     const removedLetter = builtWord[index]
     setBuiltWord(prev => prev.filter((_, i) => i !== index))
     setBuilderLetters(prev => [...prev, removedLetter])
@@ -939,9 +1008,16 @@ export default function WritingModule() {
             {activities.map((activity) => (
               <Button
                 key={activity.id}
+                type="button"
                 variant={activityType === activity.id ? "default" : "outline"}
-                onClick={() => setActivityType(activity.id as any)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  console.log('Activity selected:', activity.id)
+                  setActivityType(activity.id as any)
+                }}
                 className={`${activityType === activity.id ? 'btn-success-kid' : ''} px-6 py-3`}
+                style={{ pointerEvents: 'auto', zIndex: 10 }}
               >
                 {activity.icon}
                 <span className="ml-2">{activity.name}</span>
@@ -1005,23 +1081,15 @@ export default function WritingModule() {
                     onTouchStart={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      const touch = e.touches[0]
-                      const rect = canvasRef.current?.getBoundingClientRect()
-                      if (rect) {
-                        const x = touch.clientX - rect.left
-                        const y = touch.clientY - rect.top
-                        startDrawing({ clientX: touch.clientX, clientY: touch.clientY } as any)
+                      if (e.touches && e.touches.length > 0) {
+                        startDrawing(e)
                       }
                     }}
                     onTouchMove={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      const touch = e.touches[0]
-                      const rect = canvasRef.current?.getBoundingClientRect()
-                      if (rect) {
-                        const x = touch.clientX - rect.left
-                        const y = touch.clientY - rect.top
-                        draw({ clientX: touch.clientX, clientY: touch.clientY } as any)
+                      if (e.touches && e.touches.length > 0) {
+                        draw(e)
                       }
                     }}
                     onTouchEnd={(e) => {
@@ -1041,9 +1109,16 @@ export default function WritingModule() {
                     {/* Primary action row */}
                     <div className="flex justify-center">
                       <Button 
-                        onClick={checkCurrentStroke} 
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Check stroke clicked')
+                          checkCurrentStroke()
+                        }} 
                         className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-3 text-sm md:text-base lg:text-lg font-semibold shadow-lg"
                         size="lg"
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         <CheckCircle className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 md:mr-2" />
                         Check Stroke
@@ -1182,8 +1257,12 @@ export default function WritingModule() {
                         Clear
                       </Button>
                       <Button
+                        type="button"
                         className="btn-primary-kid"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Submit creative writing clicked')
                           const wordsCount = storyText.trim() ? storyText.trim().split(/\s+/).length : 0
                           const MIN_WORDS = 20
                           const usesPromptWord = (currentPrompt.words || []).some(w =>
@@ -1200,6 +1279,7 @@ export default function WritingModule() {
                             setTimeout(() => setShowFeedback(false), 1800)
                           }
                         }}
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         Submit
                       </Button>
@@ -1210,10 +1290,19 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        )}
+        ) : activityType === 'creative' ? (
+          <div className="max-w-4xl mx-auto text-center p-8">
+            <Card className="card-writing">
+              <CardContent className="p-8">
+                <p className="text-gray-600">Loading creative writing...</p>
+                <p className="text-sm text-gray-500 mt-2">Current prompt: {currentPrompt?.title || 'None'}</p>
+              </CardContent>
+            </Card>
+          </div>
+        ) : null}
 
         {/* Word Builder Activity */}
-        {activityType === 'wordbuilder' && currentWord && (
+        {activityType === 'wordbuilder' && currentWord ? (
           <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1258,10 +1347,16 @@ export default function WritingModule() {
                         <motion.button
                           key={`${letter}-${index}`}
                           className="w-14 h-14 bg-gradient-to-br from-blue-400 to-purple-500 text-white rounded-xl font-bold text-xl shadow-lg hover:shadow-xl"
-                          onClick={() => addLetterToWord(letter)}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            console.log('Letter clicked:', letter)
+                            addLetterToWord(letter)
+                          }}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           layout
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
                         >
                           {letter}
                         </motion.button>
@@ -1282,10 +1377,20 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        )}
+        ) : activityType === 'wordbuilder' ? (
+          <div className="max-w-4xl mx-auto text-center p-8">
+            <Card className="card-writing">
+              <CardContent className="p-8">
+                <p className="text-gray-600">Loading word builder...</p>
+                <p className="text-sm text-gray-500 mt-2">Current word: {currentWord?.word || 'None'}</p>
+                <p className="text-sm text-gray-500">Letters available: {builderLetters.length}</p>
+              </CardContent>
+            </Card>
+          </div>
+        ) : null}
 
         {/* Sentence Puzzles Activity */}
-        {activityType === 'sentences' && currentSentence && (
+        {activityType === 'sentences' && currentSentence ? (
           <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1324,12 +1429,16 @@ export default function WritingModule() {
                         <motion.button
                           key={`${w}-${idx}`}
                           className="px-4 h-12 bg-gradient-to-br from-purple-400 to-pink-500 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            console.log('Word clicked:', w)
                             setChosenWords(prev => [...prev, w])
                             setScrambledWords(prev => prev.filter((_, i) => i !== idx))
                           }}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
+                          style={{ pointerEvents: 'auto', zIndex: 10 }}
                         >
                           {w}
                         </motion.button>
@@ -1339,7 +1448,11 @@ export default function WritingModule() {
                     {/* Controls */}
                     <div className="flex gap-4 justify-center mt-8">
                       <Button
-                        onClick={() => {
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          console.log('Check sentence clicked')
                           const target = currentSentence
                           const attempted = chosenWords.join(' ')
                           const ok = attempted === target
@@ -1354,6 +1467,7 @@ export default function WritingModule() {
                           }
                         }}
                         className="btn-primary-kid"
+                        style={{ pointerEvents: 'auto', zIndex: 10 }}
                       >
                         Check
                       </Button>
@@ -1373,7 +1487,17 @@ export default function WritingModule() {
               </Card>
             </motion.div>
           </div>
-        )}
+        ) : activityType === 'sentences' ? (
+          <div className="max-w-4xl mx-auto text-center p-8">
+            <Card className="card-writing">
+              <CardContent className="p-8">
+                <p className="text-gray-600">Loading sentence puzzles...</p>
+                <p className="text-sm text-gray-500 mt-2">Current sentence: {currentSentence || 'None'}</p>
+                <p className="text-sm text-gray-500">Words available: {scrambledWords.length}</p>
+              </CardContent>
+            </Card>
+          </div>
+        ) : null}
 
         {/* Feedback Modal */}
         <AnimatePresence>
