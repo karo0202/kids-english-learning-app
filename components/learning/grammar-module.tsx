@@ -457,6 +457,385 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     ],
     difficulty: 'beginner',
     icon: '✏️'
+  },
+  {
+    id: 'articles',
+    title: 'Articles (a, an, the)',
+    category: 'Parts of Speech',
+    description: 'Using a, an, and the correctly',
+    explanation: 'Articles are words that come before nouns. Use "a" before words starting with a consonant sound, "an" before words starting with a vowel sound, and "the" when talking about a specific thing.',
+    examples: [
+      'I see a cat. (any cat)',
+      'I see an apple. (any apple)',
+      'I see the cat. (a specific cat we know)',
+      'A dog is friendly. An elephant is big. The sun is bright.'
+    ],
+    exercises: [
+      {
+        id: 'art1',
+        type: 'multiple-choice',
+        question: 'Choose the correct article: "I want ___ apple."',
+        options: ['a', 'an', 'the'],
+        correctAnswer: 'an',
+        explanation: 'Use "an" before words starting with a vowel sound (a, e, i, o, u).'
+      },
+      {
+        id: 'art2',
+        type: 'fill-blank',
+        question: 'Complete: "She has ___ book."',
+        options: ['a', 'an', 'the'],
+        correctAnswer: 'a',
+        explanation: 'Use "a" before words starting with a consonant sound.'
+      },
+      {
+        id: 'art3',
+        type: 'identify',
+        question: 'Which sentence uses "the" correctly?',
+        options: [
+          'I saw the bird in the tree.',
+          'I saw a bird in a tree.',
+          'I want the cookie.'
+        ],
+        correctAnswer: 'I saw the bird in the tree.',
+        explanation: '"The" is used when we talk about specific things we can see or know about.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📰'
+  },
+  {
+    id: 'subject-verb',
+    title: 'Subject-Verb Agreement',
+    category: 'Sentence Structure',
+    description: 'Making sure subjects and verbs match',
+    explanation: 'The subject and verb in a sentence must agree. If the subject is singular (one), the verb is singular. If the subject is plural (more than one), the verb is plural.',
+    examples: [
+      'The cat runs. (singular)',
+      'The cats run. (plural)',
+      'She plays. (singular)',
+      'They play. (plural)',
+      'He is happy. (singular)',
+      'We are happy. (plural)'
+    ],
+    exercises: [
+      {
+        id: 'sv1',
+        type: 'multiple-choice',
+        question: 'Choose the correct verb: "The dogs ___ in the park."',
+        options: ['play', 'plays'],
+        correctAnswer: 'play',
+        explanation: 'Plural subject "dogs" needs plural verb "play".'
+      },
+      {
+        id: 'sv2',
+        type: 'fill-blank',
+        question: 'Complete: "My friend ___ to school."',
+        options: ['go', 'goes'],
+        correctAnswer: 'goes',
+        explanation: 'Singular subject "friend" needs singular verb "goes".'
+      },
+      {
+        id: 'sv3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The birds sings.',
+          'The bird sing.',
+          'The birds sing.'
+        ],
+        correctAnswer: 'The birds sing.',
+        explanation: 'Plural "birds" needs plural verb "sing".'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🤝'
+  },
+  {
+    id: 'contractions',
+    title: 'Contractions',
+    category: 'Word Forms',
+    description: 'Shortening words by combining them',
+    explanation: 'Contractions are shortened forms of words. We combine two words and use an apostrophe (\') to show where letters are removed. For example: "I am" becomes "I\'m", "do not" becomes "don\'t".',
+    examples: [
+      'I am = I\'m',
+      'You are = You\'re',
+      'He is = He\'s',
+      'We are = We\'re',
+      'Do not = Don\'t',
+      'Cannot = Can\'t',
+      'Will not = Won\'t',
+      'It is = It\'s'
+    ],
+    exercises: [
+      {
+        id: 'con1',
+        type: 'multiple-choice',
+        question: 'What is the contraction for "I am"?',
+        options: ['I\'m', 'Im', 'Iam'],
+        correctAnswer: 'I\'m',
+        explanation: 'I am becomes I\'m with an apostrophe.'
+      },
+      {
+        id: 'con2',
+        type: 'fill-blank',
+        question: 'Complete: "___ going to the park." (We are)',
+        options: ['We\'re', 'Were', 'We are'],
+        correctAnswer: 'We\'re',
+        explanation: 'We are becomes We\'re.'
+      },
+      {
+        id: 'con3',
+        type: 'identify',
+        question: 'Which contraction is correct?',
+        options: [
+          'I\'m happy.',
+          'Im happy.',
+          'I am happy.'
+        ],
+        correctAnswer: 'I\'m happy.',
+        explanation: 'Contractions need an apostrophe to show where letters are removed.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📝'
+  },
+  {
+    id: 'possessives',
+    title: 'Possessives',
+    category: 'Word Forms',
+    description: 'Showing ownership with apostrophes',
+    explanation: 'Possessives show that something belongs to someone. Add an apostrophe and "s" (\'s) to show ownership. For example: "the cat\'s toy" means the toy belongs to the cat.',
+    examples: [
+      'The dog\'s bone (the bone belongs to the dog)',
+      'Sarah\'s book (the book belongs to Sarah)',
+      'The teacher\'s desk (the desk belongs to the teacher)',
+      'My friend\'s house (the house belongs to my friend)'
+    ],
+    exercises: [
+      {
+        id: 'pos1',
+        type: 'multiple-choice',
+        question: 'Which shows ownership correctly?',
+        options: ['the cats toy', 'the cat\'s toy', 'the cats\' toy'],
+        correctAnswer: 'the cat\'s toy',
+        explanation: 'Add \'s to show the toy belongs to the cat.'
+      },
+      {
+        id: 'pos2',
+        type: 'fill-blank',
+        question: 'Complete: "That is ___ bike." (belongs to Tom)',
+        options: ['Tom', 'Toms', 'Tom\'s'],
+        correctAnswer: 'Tom\'s',
+        explanation: 'Use Tom\'s to show the bike belongs to Tom.'
+      },
+      {
+        id: 'pos3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The girls doll is pretty.',
+          'The girl\'s doll is pretty.',
+          'The girls doll\'s is pretty.'
+        ],
+        correctAnswer: 'The girl\'s doll is pretty.',
+        explanation: 'The apostrophe shows the doll belongs to the girl.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '👑'
+  },
+  {
+    id: 'comparatives',
+    title: 'Comparatives and Superlatives',
+    category: 'Adjectives',
+    description: 'Comparing things using -er, -est, more, and most',
+    explanation: 'We use comparatives to compare two things (add -er or use "more"). We use superlatives to compare three or more things (add -est or use "most"). For short words, add -er/-est. For long words, use more/most.',
+    examples: [
+      'Big → Bigger (comparative) → Biggest (superlative)',
+      'Happy → Happier → Happiest',
+      'Beautiful → More beautiful → Most beautiful',
+      'Fast → Faster → Fastest',
+      'Good → Better → Best',
+      'Bad → Worse → Worst'
+    ],
+    exercises: [
+      {
+        id: 'comp1',
+        type: 'multiple-choice',
+        question: 'Which is the comparative form of "tall"?',
+        options: ['tallest', 'taller', 'more tall'],
+        correctAnswer: 'taller',
+        explanation: 'Short words add -er for comparatives.'
+      },
+      {
+        id: 'comp2',
+        type: 'fill-blank',
+        question: 'Complete: "This is the ___ mountain." (high)',
+        options: ['high', 'higher', 'highest'],
+        correctAnswer: 'highest',
+        explanation: 'Use -est for superlatives (comparing many things).'
+      },
+      {
+        id: 'comp3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'She is more smart than him.',
+          'She is smarter than him.',
+          'She is smartest than him.'
+        ],
+        correctAnswer: 'She is smarter than him.',
+        explanation: 'Short words like "smart" use -er, not "more".'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '📊'
+  },
+  {
+    id: 'question-words',
+    title: 'Question Words',
+    category: 'Sentence Structure',
+    description: 'Using who, what, where, when, why, and how',
+    explanation: 'Question words help us ask questions. Who asks about people, what asks about things, where asks about places, when asks about time, why asks about reasons, and how asks about ways or methods.',
+    examples: [
+      'Who is your teacher? (person)',
+      'What is your name? (thing)',
+      'Where do you live? (place)',
+      'When is your birthday? (time)',
+      'Why are you happy? (reason)',
+      'How do you get to school? (way/method)'
+    ],
+    exercises: [
+      {
+        id: 'qw1',
+        type: 'multiple-choice',
+        question: 'Which question word asks about a place?',
+        options: ['who', 'what', 'where'],
+        correctAnswer: 'where',
+        explanation: 'Where asks about places.'
+      },
+      {
+        id: 'qw2',
+        type: 'fill-blank',
+        question: 'Complete: "___ is your favorite color?"',
+        options: ['Who', 'What', 'Where'],
+        correctAnswer: 'What',
+        explanation: 'What asks about things like colors.'
+      },
+      {
+        id: 'qw3',
+        type: 'identify',
+        question: 'Which question is correct?',
+        options: [
+          'Who is your favorite book?',
+          'What is your favorite book?',
+          'Where is your favorite book?'
+        ],
+        correctAnswer: 'What is your favorite book?',
+        explanation: 'What asks about things (like books).'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '❓'
+  },
+  {
+    id: 'prepositions-time-place',
+    title: 'Prepositions of Time/Place',
+    category: 'Prepositions',
+    description: 'Using in, on, at for time and place',
+    explanation: 'Prepositions show when or where something happens. For time: "in" for months/years, "on" for days/dates, "at" for specific times. For place: "in" for inside, "on" for surfaces, "at" for specific locations.',
+    examples: [
+      'Time: in January, on Monday, at 3 o\'clock',
+      'Place: in the box, on the table, at school',
+      'I go to school in the morning.',
+      'My birthday is on Friday.',
+      'The book is on the shelf.',
+      'We meet at the park.'
+    ],
+    exercises: [
+      {
+        id: 'prep1',
+        type: 'multiple-choice',
+        question: 'Which preposition is correct? "I play ___ the afternoon."',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'in',
+        explanation: 'Use "in" for parts of the day (morning, afternoon, evening).'
+      },
+      {
+        id: 'prep2',
+        type: 'fill-blank',
+        question: 'Complete: "The cat is ___ the table."',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'on',
+        explanation: 'Use "on" for surfaces like tables.'
+      },
+      {
+        id: 'prep3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I wake up at the morning.',
+          'I wake up in the morning.',
+          'I wake up on the morning.'
+        ],
+        correctAnswer: 'I wake up in the morning.',
+        explanation: 'Use "in" for parts of the day.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🕐'
+  },
+  {
+    id: 'common-rules',
+    title: 'Common Grammar Rules',
+    category: 'Grammar Rules',
+    description: 'Important rules every student should know',
+    explanation: 'Here are some important grammar rules: Start sentences with capital letters. End sentences with punctuation. Use "I" not "i". Use "a" before consonant sounds, "an" before vowel sounds. Add "s" to make most nouns plural. Use "is" for one thing, "are" for many things.',
+    examples: [
+      'Always start sentences with a capital letter.',
+      'Use "I" with a capital letter, not "i".',
+      'Add "s" to make plurals: cat → cats',
+      'Use "is" for one: The cat is sleeping.',
+      'Use "are" for many: The cats are sleeping.',
+      'Use "a" before consonants: a dog, a cat',
+      'Use "an" before vowels: an apple, an egg'
+    ],
+    exercises: [
+      {
+        id: 'rule1',
+        type: 'multiple-choice',
+        question: 'Which sentence follows the rules?',
+        options: [
+          'i like ice cream.',
+          'I like ice cream.',
+          'I like ice cream'
+        ],
+        correctAnswer: 'I like ice cream.',
+        explanation: 'Start with capital "I" and end with a period.'
+      },
+      {
+        id: 'rule2',
+        type: 'fill-blank',
+        question: 'Complete: "The dog ___ happy."',
+        options: ['is', 'are', 'am'],
+        correctAnswer: 'is',
+        explanation: 'Use "is" for one thing (singular).'
+      },
+      {
+        id: 'rule3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The cats is sleeping.',
+          'The cat are sleeping.',
+          'The cats are sleeping.'
+        ],
+        correctAnswer: 'The cats are sleeping.',
+        explanation: 'Plural "cats" needs plural verb "are".'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📚'
   }
 ]
 
