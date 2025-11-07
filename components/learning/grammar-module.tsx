@@ -183,6 +183,14 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['The', 'cat', 'meowed', 'loudly'],
         correctAnswer: 'loudly',
         explanation: 'Loudly is an adverb because it describes how the cat meowed.'
+      },
+      {
+        id: 'adv3',
+        type: 'fill-blank',
+        question: 'Complete: "She sings ___."',
+        options: ['beautiful', 'beautifully', 'beauty', 'beautify'],
+        correctAnswer: 'beautifully',
+        explanation: 'Beautifully is an adverb that describes how she sings.'
       }
     ],
     difficulty: 'intermediate',
