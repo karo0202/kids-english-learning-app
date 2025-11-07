@@ -763,7 +763,9 @@ export default function GrammarModule() {
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               onClick={() => handleAnswerSelect(option)}
+                              onTouchStart={() => handleAnswerSelect(option)}
                               disabled={showResult}
+                              type="button"
                               className={`w-full p-4 text-left rounded-xl border-2 transition-all ${
                                 showResult
                                   ? option === currentExerciseData.correctAnswer
@@ -775,6 +777,7 @@ export default function GrammarModule() {
                                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                   : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
                               }`}
+                              style={{ pointerEvents: 'auto', zIndex: 10 }}
                             >
                               <div className="flex items-center gap-3">
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
@@ -812,7 +815,9 @@ export default function GrammarModule() {
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               onClick={() => handleAnswerSelect(option)}
+                              onTouchStart={() => handleAnswerSelect(option)}
                               disabled={showResult}
+                              type="button"
                               className={`w-full p-4 text-center rounded-xl border-2 transition-all ${
                                 showResult
                                   ? option === currentExerciseData.correctAnswer
@@ -824,6 +829,39 @@ export default function GrammarModule() {
                                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                   : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
                               }`}
+                              style={{ pointerEvents: 'auto', zIndex: 10 }}
+                            >
+                              <span className="text-gray-800 dark:text-white font-medium text-lg">
+                                {option}
+                              </span>
+                            </motion.button>
+                          ))}
+                        </div>
+                      )}
+
+                      {currentExerciseData.type === 'identify' && currentExerciseData.options && (
+                        <div className="space-y-3">
+                          {currentExerciseData.options.map((option, idx) => (
+                            <motion.button
+                              key={idx}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleAnswerSelect(option)}
+                              onTouchStart={() => handleAnswerSelect(option)}
+                              disabled={showResult}
+                              type="button"
+                              className={`w-full p-4 text-center rounded-xl border-2 transition-all ${
+                                showResult
+                                  ? option === currentExerciseData.correctAnswer
+                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                    : selectedAnswer === option
+                                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                                    : 'border-gray-200 dark:border-gray-700'
+                                  : selectedAnswer === option
+                                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700'
+                              }`}
+                              style={{ pointerEvents: 'auto', zIndex: 10 }}
                             >
                               <span className="text-gray-800 dark:text-white font-medium text-lg">
                                 {option}
