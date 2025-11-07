@@ -836,6 +836,486 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     ],
     difficulty: 'beginner',
     icon: '📚'
+  },
+  {
+    id: 'passive-voice',
+    title: 'Passive Voice',
+    category: 'Advanced Grammar',
+    description: 'Using passive voice to focus on the action',
+    explanation: 'Passive voice is used when the action is more important than who does it. Structure: Object + be + past participle + (by + subject). Example: "The cake was baked by mom" (passive) vs "Mom baked the cake" (active).',
+    examples: [
+      'Active: The teacher teaches the students. → Passive: The students are taught by the teacher.',
+      'Active: They built the house. → Passive: The house was built by them.',
+      'Active: She writes books. → Passive: Books are written by her.',
+      'The window was broken. (We don\'t know who broke it)',
+      'English is spoken worldwide. (Focus on English, not who speaks it)'
+    ],
+    exercises: [
+      {
+        id: 'pv1',
+        type: 'multiple-choice',
+        question: 'Which sentence is in passive voice?',
+        options: [
+          'The dog chased the cat.',
+          'The cat was chased by the dog.',
+          'The cat chased the dog.'
+        ],
+        correctAnswer: 'The cat was chased by the dog.',
+        explanation: 'Passive voice: object (cat) + was + past participle (chased) + by + subject (dog).'
+      },
+      {
+        id: 'pv2',
+        type: 'fill-blank',
+        question: 'Complete in passive: "The letter ___ by Sarah." (write)',
+        options: ['writes', 'was written', 'wrote'],
+        correctAnswer: 'was written',
+        explanation: 'Passive voice uses "be" + past participle: was written.'
+      },
+      {
+        id: 'pv3',
+        type: 'identify',
+        question: 'Which sentence uses passive voice correctly?',
+        options: [
+          'The cake was bake by mom.',
+          'The cake was baked by mom.',
+          'The cake baked by mom.'
+        ],
+        correctAnswer: 'The cake was baked by mom.',
+        explanation: 'Passive voice needs "was" + past participle "baked".'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔄'
+  },
+  {
+    id: 'conditionals',
+    title: 'Conditional Sentences',
+    category: 'Advanced Grammar',
+    description: 'Using if clauses to talk about possibilities',
+    explanation: 'Conditional sentences use "if" to talk about what might happen. Type 1 (real possibility): If + present, will + verb. Type 2 (unreal): If + past, would + verb. Type 3 (past unreal): If + past perfect, would have + past participle.',
+    examples: [
+      'Type 1 (real): If it rains, I will stay home.',
+      'Type 2 (unreal): If I were rich, I would travel the world.',
+      'Type 3 (past): If I had studied, I would have passed the test.',
+      'If you practice, you will improve.',
+      'If I were you, I would apologize.'
+    ],
+    exercises: [
+      {
+        id: 'cond1',
+        type: 'multiple-choice',
+        question: 'Which conditional is correct?',
+        options: [
+          'If I will go, I see you.',
+          'If I go, I will see you.',
+          'If I go, I see you.'
+        ],
+        correctAnswer: 'If I go, I will see you.',
+        explanation: 'Type 1 conditional: If + present tense, will + verb.'
+      },
+      {
+        id: 'cond2',
+        type: 'fill-blank',
+        question: 'Complete: "If I ___ you, I would help."',
+        options: ['am', 'was', 'were'],
+        correctAnswer: 'were',
+        explanation: 'Type 2 conditional uses "were" for all subjects (even "I").'
+      },
+      {
+        id: 'cond3',
+        type: 'identify',
+        question: 'Which sentence is a Type 2 conditional?',
+        options: [
+          'If it rains, I will bring an umbrella.',
+          'If it rained, I would bring an umbrella.',
+          'If it had rained, I would have brought an umbrella.'
+        ],
+        correctAnswer: 'If it rained, I would bring an umbrella.',
+        explanation: 'Type 2: If + past tense, would + verb (unreal situation).'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔀'
+  },
+  {
+    id: 'reported-speech',
+    title: 'Reported Speech',
+    category: 'Advanced Grammar',
+    description: 'Telling what someone else said',
+    explanation: 'Reported speech (indirect speech) tells what someone said without using their exact words. We change pronouns, tenses, and time expressions. Example: Direct: "I am happy" → Reported: She said she was happy.',
+    examples: [
+      'Direct: "I am tired." → Reported: He said he was tired.',
+      'Direct: "We will go tomorrow." → Reported: They said they would go the next day.',
+      'Direct: "I have finished." → Reported: She said she had finished.',
+      'Direct: "Can you help me?" → Reported: He asked if I could help him.',
+      'Direct: "Don\'t do that!" → Reported: She told me not to do that.'
+    ],
+    exercises: [
+      {
+        id: 'rs1',
+        type: 'multiple-choice',
+        question: 'Convert to reported speech: "I am studying," she said.',
+        options: [
+          'She said she is studying.',
+          'She said she was studying.',
+          'She said she studies.'
+        ],
+        correctAnswer: 'She said she was studying.',
+        explanation: 'Present tense "am" changes to past tense "was" in reported speech.'
+      },
+      {
+        id: 'rs2',
+        type: 'fill-blank',
+        question: 'Reported speech: "I will come," he said. → He said he ___ come.',
+        options: ['will', 'would', 'is'],
+        correctAnswer: 'would',
+        explanation: '"Will" changes to "would" in reported speech.'
+      },
+      {
+        id: 'rs3',
+        type: 'identify',
+        question: 'Which reported speech is correct?',
+        options: [
+          '"I go to school," she said. → She said she goes to school.',
+          '"I go to school," she said. → She said she went to school.',
+          '"I go to school," she said. → She said she go to school.'
+        ],
+        correctAnswer: '"I go to school," she said. → She said she went to school.',
+        explanation: 'Present tense "go" changes to past tense "went" in reported speech.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💬'
+  },
+  {
+    id: 'modal-verbs',
+    title: 'Modal Verbs',
+    category: 'Advanced Grammar',
+    description: 'Using can, could, should, must, might, may',
+    explanation: 'Modal verbs show possibility, ability, permission, or obligation. They are followed by the base form of the verb. Can = ability, Could = past ability/polite request, Should = advice, Must = necessity, Might/May = possibility.',
+    examples: [
+      'I can swim. (ability)',
+      'Could you help me? (polite request)',
+      'You should study more. (advice)',
+      'You must finish your homework. (necessity)',
+      'It might rain today. (possibility)',
+      'May I go to the bathroom? (permission)'
+    ],
+    exercises: [
+      {
+        id: 'mod1',
+        type: 'multiple-choice',
+        question: 'Which modal shows advice?',
+        options: ['can', 'should', 'must'],
+        correctAnswer: 'should',
+        explanation: '"Should" is used to give advice or recommendations.'
+      },
+      {
+        id: 'mod2',
+        type: 'fill-blank',
+        question: 'Complete: "You ___ wear a seatbelt in the car." (necessity)',
+        options: ['can', 'should', 'must'],
+        correctAnswer: 'must',
+        explanation: '"Must" shows strong necessity or obligation.'
+      },
+      {
+        id: 'mod3',
+        type: 'identify',
+        question: 'Which sentence uses a modal correctly?',
+        options: [
+          'I can to swim.',
+          'I can swim.',
+          'I can swimming.'
+        ],
+        correctAnswer: 'I can swim.',
+        explanation: 'Modal verbs are followed by the base form of the verb (swim), not "to swim" or "swimming".'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '⚡'
+  },
+  {
+    id: 'gerunds-infinitives',
+    title: 'Gerunds and Infinitives',
+    category: 'Advanced Grammar',
+    description: 'Using -ing forms and to + verb',
+    explanation: 'Gerunds are verbs ending in -ing used as nouns (I enjoy reading). Infinitives are "to + verb" forms (I want to read). Some verbs are followed by gerunds, others by infinitives, and some can use both.',
+    examples: [
+      'I enjoy reading. (gerund after "enjoy")',
+      'I want to read. (infinitive after "want")',
+      'I like reading. / I like to read. (both work)',
+      'She stopped smoking. (gerund)',
+      'He decided to leave. (infinitive)',
+      'They finished eating. (gerund)'
+    ],
+    exercises: [
+      {
+        id: 'gi1',
+        type: 'multiple-choice',
+        question: 'Which is correct?',
+        options: [
+          'I enjoy to read.',
+          'I enjoy reading.',
+          'I enjoy read.'
+        ],
+        correctAnswer: 'I enjoy reading.',
+        explanation: '"Enjoy" is followed by a gerund (-ing form), not an infinitive.'
+      },
+      {
+        id: 'gi2',
+        type: 'fill-blank',
+        question: 'Complete: "She decided ___ the job." (take)',
+        options: ['taking', 'to take', 'take'],
+        correctAnswer: 'to take',
+        explanation: '"Decide" is followed by an infinitive (to + verb).'
+      },
+      {
+        id: 'gi3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I stopped to smoke.',
+          'I stopped smoking.',
+          'I stopped smoke.'
+        ],
+        correctAnswer: 'I stopped smoking.',
+        explanation: '"Stop" + gerund means you stopped the activity. "Stop" + infinitive means you stopped to do something else.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '📖'
+  },
+  {
+    id: 'relative-clauses',
+    title: 'Relative Clauses',
+    category: 'Advanced Grammar',
+    description: 'Using who, which, that to add information',
+    explanation: 'Relative clauses add extra information about a noun. Use "who" for people, "which" for things, "that" for both. The clause comes right after the noun it describes. Example: "The book that I read was interesting."',
+    examples: [
+      'The girl who lives next door is friendly. (who = person)',
+      'The book which I read was good. (which = thing)',
+      'The dog that barks is mine. (that = thing)',
+      'The teacher who teaches math is kind. (who = person)',
+      'The car that I bought is red. (that = thing)'
+    ],
+    exercises: [
+      {
+        id: 'rc1',
+        type: 'multiple-choice',
+        question: 'Which relative pronoun is correct? "The person ___ called is my friend."',
+        options: ['which', 'that', 'who'],
+        correctAnswer: 'who',
+        explanation: 'Use "who" for people.'
+      },
+      {
+        id: 'rc2',
+        type: 'fill-blank',
+        question: 'Complete: "The house ___ I live is old."',
+        options: ['who', 'which', 'that'],
+        correctAnswer: 'that',
+        explanation: 'Use "that" or "which" for things (houses).'
+      },
+      {
+        id: 'rc3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The book who I read was good.',
+          'The book which I read was good.',
+          'The book who I read was good.'
+        ],
+        correctAnswer: 'The book which I read was good.',
+        explanation: 'Use "which" or "that" for things (books), not "who".'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔗'
+  },
+  {
+    id: 'complex-sentences',
+    title: 'Complex Sentences',
+    category: 'Advanced Grammar',
+    description: 'Combining sentences with conjunctions',
+    explanation: 'Complex sentences have one independent clause and one or more dependent clauses. Use subordinating conjunctions: because, although, while, since, if, when, after, before, until. Example: "I was happy because I passed the test."',
+    examples: [
+      'I was happy because I passed the test. (because = reason)',
+      'Although it rained, we went outside. (although = contrast)',
+      'While I was studying, my phone rang. (while = time)',
+      'Since you\'re here, let\'s start. (since = reason)',
+      'I will call you when I arrive. (when = time)'
+    ],
+    exercises: [
+      {
+        id: 'cs1',
+        type: 'multiple-choice',
+        question: 'Which conjunction shows contrast?',
+        options: ['because', 'although', 'when'],
+        correctAnswer: 'although',
+        explanation: '"Although" shows contrast or opposition between ideas.'
+      },
+      {
+        id: 'cs2',
+        type: 'fill-blank',
+        question: 'Complete: "I was late ___ I missed the bus."',
+        options: ['because', 'although', 'while'],
+        correctAnswer: 'because',
+        explanation: '"Because" shows the reason for being late.'
+      },
+      {
+        id: 'cs3',
+        type: 'identify',
+        question: 'Which complex sentence is correct?',
+        options: [
+          'I was tired because I studied all night.',
+          'I was tired because I study all night.',
+          'I was tired because I studying all night.'
+        ],
+        correctAnswer: 'I was tired because I studied all night.',
+        explanation: 'Both clauses need correct verb tenses. Past tense "was" and "studied" match.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🧩'
+  },
+  {
+    id: 'phrasal-verbs',
+    title: 'Phrasal Verbs',
+    category: 'Advanced Grammar',
+    description: 'Verbs with prepositions that change meaning',
+    explanation: 'Phrasal verbs are verbs combined with prepositions or adverbs that create new meanings. Examples: "give up" (quit), "look after" (take care of), "turn on" (activate), "find out" (discover). The meaning is different from the base verb.',
+    examples: [
+      'I gave up smoking. (gave up = quit)',
+      'Can you look after my cat? (look after = take care of)',
+      'Please turn on the light. (turn on = activate)',
+      'I found out the truth. (found out = discovered)',
+      'She ran into her friend. (ran into = met by chance)',
+      'We need to figure out the problem. (figure out = solve)'
+    ],
+    exercises: [
+      {
+        id: 'phv1',
+        type: 'multiple-choice',
+        question: 'What does "give up" mean?',
+        options: ['to give something', 'to quit', 'to go up'],
+        correctAnswer: 'to quit',
+        explanation: '"Give up" means to stop trying or quit something.'
+      },
+      {
+        id: 'phv2',
+        type: 'fill-blank',
+        question: 'Complete: "Can you ___ the light?" (activate)',
+        options: ['turn on', 'turn off', 'turn up'],
+        correctAnswer: 'turn on',
+        explanation: '"Turn on" means to activate or start something.'
+      },
+      {
+        id: 'phv3',
+        type: 'identify',
+        question: 'Which sentence uses a phrasal verb correctly?',
+        options: [
+          'I look my keys after.',
+          'I look after my keys.',
+          'I after look my keys.'
+        ],
+        correctAnswer: 'I look after my keys.',
+        explanation: 'Phrasal verbs keep the verb and preposition together: "look after".'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔤'
+  },
+  {
+    id: 'advanced-punctuation',
+    title: 'Advanced Punctuation',
+    category: 'Advanced Grammar',
+    description: 'Using colons, semicolons, and dashes',
+    explanation: 'Advanced punctuation helps create better sentences. Colon (:) introduces lists or explanations. Semicolon (;) connects related sentences. Dash (—) adds emphasis or extra information. Example: "I have three pets: a cat, a dog, and a bird."',
+    examples: [
+      'I have three pets: a cat, a dog, and a bird. (colon introduces list)',
+      'She loves reading; he prefers movies. (semicolon connects related ideas)',
+      'The weather—it was perfect—made the day great. (dash adds extra info)',
+      'Remember this: practice makes perfect. (colon introduces explanation)',
+      'I was tired; however, I kept working. (semicolon with transition)'
+    ],
+    exercises: [
+      {
+        id: 'ap1',
+        type: 'multiple-choice',
+        question: 'Which punctuation introduces a list?',
+        options: [':', ';', '—'],
+        correctAnswer: ':',
+        explanation: 'A colon (:) is used to introduce lists or explanations.'
+      },
+      {
+        id: 'ap2',
+        type: 'fill-blank',
+        question: 'Complete: "I was tired ___ I kept working."',
+        options: [':', ';', '—'],
+        correctAnswer: ';',
+        explanation: 'A semicolon (;) connects two related independent clauses.'
+      },
+      {
+        id: 'ap3',
+        type: 'identify',
+        question: 'Which sentence uses punctuation correctly?',
+        options: [
+          'I have three colors: red, blue, and green.',
+          'I have three colors; red, blue, and green.',
+          'I have three colors—red, blue, and green.'
+        ],
+        correctAnswer: 'I have three colors: red, blue, and green.',
+        explanation: 'Use a colon (:) to introduce a list.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '📝'
+  },
+  {
+    id: 'idioms-expressions',
+    title: 'Idioms and Expressions',
+    category: 'Advanced Grammar',
+    description: 'Common phrases with special meanings',
+    explanation: 'Idioms are phrases whose meanings can\'t be understood from the individual words. They are common expressions in English. Example: "It\'s raining cats and dogs" means it\'s raining very heavily, not that animals are falling from the sky.',
+    examples: [
+      'It\'s raining cats and dogs. (raining very heavily)',
+      'Break a leg! (good luck)',
+      'I\'m feeling under the weather. (sick)',
+      'That costs an arm and a leg. (very expensive)',
+      'Let\'s call it a day. (stop working)',
+      'She\'s the apple of my eye. (someone very special)'
+    ],
+    exercises: [
+      {
+        id: 'ie1',
+        type: 'multiple-choice',
+        question: 'What does "break a leg" mean?',
+        options: ['to hurt your leg', 'good luck', 'to run fast'],
+        correctAnswer: 'good luck',
+        explanation: '"Break a leg" is an idiom meaning "good luck" (often said before performances).'
+      },
+      {
+        id: 'ie2',
+        type: 'fill-blank',
+        question: 'Complete: "I\'m feeling ___ the weather." (sick)',
+        options: ['under', 'over', 'above'],
+        correctAnswer: 'under',
+        explanation: '"Under the weather" is an idiom meaning feeling sick or unwell.'
+      },
+      {
+        id: 'ie3',
+        type: 'identify',
+        question: 'Which sentence uses an idiom correctly?',
+        options: [
+          'The car costs an arm and a leg.',
+          'The car costs a hand and a foot.',
+          'The car costs a leg and an arm.'
+        ],
+        correctAnswer: 'The car costs an arm and a leg.',
+        explanation: '"Costs an arm and a leg" is the correct idiom meaning very expensive.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💡'
   }
 ]
 
