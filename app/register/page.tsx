@@ -62,22 +62,47 @@ export default function RegisterPage() {
       }
       
       // Save user session
-      if (cred.user) {
-        setUserSession({
-          id: cred.user.uid,
-          email: cred.user.email || '',
-          name: cred.user.displayName || formData.parentName || cred.user.email?.split('@')[0] || 'User',
-          accountType: 'parent'
-        })
+      if (!cred.user) {
+        throw new Error('User creation failed')
       }
+
+      setUserSession({
+        id: cred.user.uid,
+        email: cred.user.email || '',
+        name: cred.user.displayName || formData.parentName || cred.user.email?.split('@')[0] || 'User',
+        accountType: 'parent'
+      })
       
-        // Save child information using the children management system
-      if (typeof window !== 'undefined' && cred.user) {
-        const parentId = cred.user.uid
-        const newChild = addChild(parentId, formData.childName, parseInt(formData.childAge))
-        setCurrentChild(newChild)
-        
-        // Initialize progress for the child
+      // Validate child data before saving
+      if (!formData.childName || !formData.childAge) {
+        throw new Error('Child information is required')
+      }
+
+      // Save child information using the children management system
+      // Only proceed if we're in the browser environment
+      if (typeof window === 'undefined') {
+        throw new Error('Registration must be completed in browser environment')
+      }
+
+      const parentId = cred.user.uid
+      const childAge = parseInt(formData.childAge)
+      
+      // Validate child age
+      if (isNaN(childAge) || childAge < 3 || childAge > 12) {
+        throw new Error('Child age must be between 3 and 12 years')
+      }
+
+      // Save child - this can throw an error if it fails
+      const newChild = addChild(parentId, formData.childName, childAge)
+      
+      if (!newChild || !newChild.id) {
+        throw new Error('Failed to save child information')
+      }
+
+      setCurrentChild(newChild)
+      
+      // Initialize progress for the child
+      try {
         const progress = {
           [newChild.id]: {
             completedLessons: [],
@@ -88,12 +113,18 @@ export default function RegisterPage() {
           }
         }
         localStorage.setItem('progress', JSON.stringify(progress))
+      } catch (progressError) {
+        // Log but don't fail registration if progress initialization fails
+        console.warn('Failed to initialize progress:', progressError)
       }
       
-      // Redirect to dashboard
+      // Only redirect to dashboard if everything succeeded
       router.push('/dashboard')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error)
+      // Show user-friendly error message
+      alert(error?.message || 'Registration failed. Please try again.')
+      // Don't redirect if there was an error
     } finally {
       setLoading(false)
     }

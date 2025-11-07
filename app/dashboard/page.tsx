@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 
@@ -460,6 +460,29 @@ export default function DashboardPage() {
                   </motion.div>
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Games</h3>
                   <p className="text-gray-600 dark:text-white/70 text-sm">Interactive learning games</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card className="card-kid cursor-pointer group relative overflow-hidden" onClick={() => router.push('/learning/grammar')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 to-violet-600/0 group-hover:from-indigo-500/10 group-hover:to-violet-600/10 transition-all duration-500"></div>
+                <CardContent className="p-6 text-center relative">
+                  <motion.div 
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 5, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <GraduationCap className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Grammar</h3>
+                  <p className="text-gray-600 dark:text-white/70 text-sm">Learn grammar from A to Z</p>
                 </CardContent>
               </Card>
             </motion.div>
