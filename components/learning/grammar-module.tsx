@@ -838,6 +838,688 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '📚'
   },
   {
+    id: 'simple-present',
+    title: 'Simple Present Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about things that happen now or always',
+    explanation: 'Simple present tense is used to talk about things that happen now, always, or regularly. Use the base form of the verb. For "he", "she", "it", add -s or -es. Examples: "I play" (I always play), "She plays" (She always plays), "They eat" (They always eat).',
+    examples: [
+      'I play soccer every day.',
+      'She reads books every night.',
+      'They eat breakfast at 8 AM.',
+      'He goes to school.',
+      'We like ice cream.',
+      'The cat sleeps on the bed.'
+    ],
+    exercises: [
+      {
+        id: 'sp1',
+        type: 'multiple-choice',
+        question: 'Which sentence is correct?',
+        options: [
+          'I play soccer.',
+          'I plays soccer.',
+          'I playing soccer.'
+        ],
+        correctAnswer: 'I play soccer.',
+        explanation: 'With "I", use the base form "play" (no -s).'
+      },
+      {
+        id: 'sp2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ to school every day." (go)',
+        options: ['go', 'goes', 'going'],
+        correctAnswer: 'goes',
+        explanation: 'With "she", add -es to "go" → "goes".'
+      },
+      {
+        id: 'sp3',
+        type: 'identify',
+        question: 'Which sentence uses simple present correctly?',
+        options: [
+          'I am play soccer.',
+          'I play soccer.',
+          'I will play soccer.'
+        ],
+        correctAnswer: 'I play soccer.',
+        explanation: 'Simple present uses the base form of the verb (play).'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '⏰'
+  },
+  {
+    id: 'simple-past',
+    title: 'Simple Past Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about things that happened before',
+    explanation: 'Simple past tense is used to talk about things that happened in the past (yesterday, last week, etc.). Most verbs add -ed. Some verbs are irregular (go → went, see → saw, eat → ate). Examples: "I played" (regular), "I went" (irregular).',
+    examples: [
+      'I played soccer yesterday.',
+      'She went to school last week.',
+      'They ate pizza for dinner.',
+      'He saw a movie.',
+      'We walked to the park.',
+      'The cat slept all day.'
+    ],
+    exercises: [
+      {
+        id: 'spt1',
+        type: 'multiple-choice',
+        question: 'Which is the past tense of "play"?',
+        options: ['play', 'played', 'playing'],
+        correctAnswer: 'played',
+        explanation: 'Add -ed to make "play" past tense → "played".'
+      },
+      {
+        id: 'spt2',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ to the store yesterday." (go)',
+        options: ['go', 'went', 'going'],
+        correctAnswer: 'went',
+        explanation: '"Go" is irregular. Past tense is "went".'
+      },
+      {
+        id: 'spt3',
+        type: 'identify',
+        question: 'Which sentence is in past tense?',
+        options: [
+          'I play soccer.',
+          'I played soccer.',
+          'I will play soccer.'
+        ],
+        correctAnswer: 'I played soccer.',
+        explanation: '"Played" is past tense (happened before).'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📅'
+  },
+  {
+    id: 'basic-sentence',
+    title: 'Basic Sentence Structure',
+    category: 'Sentence Structure',
+    description: 'How to make simple sentences',
+    explanation: 'A simple sentence has a subject (who or what) and a verb (action). Subject + Verb. Example: "The cat (subject) sleeps (verb)." You can add an object: "The cat (subject) eats (verb) fish (object)."',
+    examples: [
+      'The cat sleeps. (subject + verb)',
+      'I play. (subject + verb)',
+      'She reads books. (subject + verb + object)',
+      'They eat pizza. (subject + verb + object)',
+      'The dog runs. (subject + verb)',
+      'We sing songs. (subject + verb + object)'
+    ],
+    exercises: [
+      {
+        id: 'bs1',
+        type: 'multiple-choice',
+        question: 'What is the subject in "The cat sleeps"?',
+        options: ['cat', 'sleeps', 'the'],
+        correctAnswer: 'cat',
+        explanation: 'The subject is "cat" (who does the action).'
+      },
+      {
+        id: 'bs2',
+        type: 'fill-blank',
+        question: 'Complete: "The bird ___." (fly)',
+        options: ['fly', 'flies', 'flying'],
+        correctAnswer: 'flies',
+        explanation: 'Subject "bird" (singular) needs verb "flies".'
+      },
+      {
+        id: 'bs3',
+        type: 'identify',
+        question: 'Which is a complete sentence?',
+        options: [
+          'The cat.',
+          'The cat sleeps.',
+          'sleeps.'
+        ],
+        correctAnswer: 'The cat sleeps.',
+        explanation: 'A complete sentence needs a subject (cat) and a verb (sleeps).'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📝'
+  },
+  {
+    id: 'this-that',
+    title: 'This, That, These, Those',
+    category: 'Pronouns',
+    description: 'Pointing to things near or far',
+    explanation: 'Use "this" (one thing near), "that" (one thing far), "these" (many things near), "those" (many things far). Examples: "This book" (near me), "That car" (far from me), "These apples" (near me), "Those trees" (far from me).',
+    examples: [
+      'This is my book. (one thing near)',
+      'That is your car. (one thing far)',
+      'These are my toys. (many things near)',
+      'Those are your shoes. (many things far)',
+      'This apple is red.',
+      'That bird is flying.'
+    ],
+    exercises: [
+      {
+        id: 'tt1',
+        type: 'multiple-choice',
+        question: 'Which word is for one thing near you?',
+        options: ['this', 'that', 'these'],
+        correctAnswer: 'this',
+        explanation: '"This" is for one thing near you.'
+      },
+      {
+        id: 'tt2',
+        type: 'fill-blank',
+        question: 'Complete: "___ are my friends." (many people near)',
+        options: ['This', 'That', 'These'],
+        correctAnswer: 'These',
+        explanation: '"These" is for many things near you.'
+      },
+      {
+        id: 'tt3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'This are my books.',
+          'These are my books.',
+          'This is my books.'
+        ],
+        correctAnswer: 'These are my books.',
+        explanation: '"These" (plural) goes with "are". "Books" is plural.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '👆'
+  },
+  {
+    id: 'yes-no-questions',
+    title: 'Yes/No Questions',
+    category: 'Questions',
+    description: 'Asking questions that need yes or no answers',
+    explanation: 'Yes/No questions start with "am", "is", "are", "do", "does", "can", "will", etc. The answer is "Yes" or "No". Examples: "Are you happy?" → "Yes, I am." / "No, I\'m not." "Do you like pizza?" → "Yes, I do." / "No, I don\'t."',
+    examples: [
+      'Are you happy? → Yes, I am. / No, I\'m not.',
+      'Is she your friend? → Yes, she is. / No, she isn\'t.',
+      'Do you like pizza? → Yes, I do. / No, I don\'t.',
+      'Can you swim? → Yes, I can. / No, I can\'t.',
+      'Will you come? → Yes, I will. / No, I won\'t.',
+      'Is it raining? → Yes, it is. / No, it isn\'t.'
+    ],
+    exercises: [
+      {
+        id: 'yn1',
+        type: 'multiple-choice',
+        question: 'Which is a yes/no question?',
+        options: [
+          'What is your name?',
+          'Are you happy?',
+          'Where do you live?'
+        ],
+        correctAnswer: 'Are you happy?',
+        explanation: 'Yes/No questions can be answered with "Yes" or "No".'
+      },
+      {
+        id: 'yn2',
+        type: 'fill-blank',
+        question: 'Complete: "___ you like ice cream?"',
+        options: ['Are', 'Do', 'What'],
+        correctAnswer: 'Do',
+        explanation: '"Do you like..." is a yes/no question.'
+      },
+      {
+        id: 'yn3',
+        type: 'identify',
+        question: 'Which answer is correct? "Are you tired?"',
+        options: [
+          'Yes, I am.',
+          'Yes, I do.',
+          'Yes, I can.'
+        ],
+        correctAnswer: 'Yes, I am.',
+        explanation: 'Answer "Are you...?" with "Yes, I am" or "No, I\'m not".'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '❓'
+  },
+  {
+    id: 'basic-prepositions',
+    title: 'Basic Prepositions',
+    category: 'Prepositions',
+    description: 'Words that show where things are',
+    explanation: 'Prepositions show where things are. Common ones: "in" (inside), "on" (top), "under" (below), "next to" (beside), "behind" (back), "in front of" (before). Examples: "The book is on the table." "The cat is under the bed."',
+    examples: [
+      'The book is on the table.',
+      'The cat is under the bed.',
+      'I sit next to my friend.',
+      'The ball is in the box.',
+      'The dog is behind the tree.',
+      'The car is in front of the house.'
+    ],
+    exercises: [
+      {
+        id: 'bp1',
+        type: 'multiple-choice',
+        question: 'Complete: "The book is ___ the table."',
+        options: ['in', 'on', 'under'],
+        correctAnswer: 'on',
+        explanation: '"On" means on top of something.'
+      },
+      {
+        id: 'bp2',
+        type: 'fill-blank',
+        question: 'Complete: "The cat is ___ the bed." (below)',
+        options: ['on', 'in', 'under'],
+        correctAnswer: 'under',
+        explanation: '"Under" means below something.'
+      },
+      {
+        id: 'bp3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The ball is on the box.',
+          'The ball is in the box.',
+          'Both can be correct.'
+        ],
+        correctAnswer: 'Both can be correct.',
+        explanation: '"On the box" = on top. "In the box" = inside. Both are possible.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📍'
+  },
+  {
+    id: 'numbers',
+    title: 'Numbers and Counting',
+    category: 'Vocabulary',
+    description: 'Learning to count from 1 to 100',
+    explanation: 'Numbers help us count things. Learn 1-10 first: one, two, three, four, five, six, seven, eight, nine, ten. Then 11-20: eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty. Then count by tens: thirty, forty, fifty, sixty, seventy, eighty, ninety, one hundred.',
+    examples: [
+      'I have one apple.',
+      'She has two cats.',
+      'There are three birds.',
+      'I see five cars.',
+      'We have ten books.',
+      'There are twenty students.',
+      'I am eight years old.',
+      'She has fifty toys.'
+    ],
+    exercises: [
+      {
+        id: 'num1',
+        type: 'multiple-choice',
+        question: 'What number comes after five?',
+        options: ['four', 'six', 'seven'],
+        correctAnswer: 'six',
+        explanation: 'After five comes six.'
+      },
+      {
+        id: 'num2',
+        type: 'fill-blank',
+        question: 'Complete: "I have ___ apples." (5)',
+        options: ['five', 'fifty', 'fifteen'],
+        correctAnswer: 'five',
+        explanation: 'Five = 5.'
+      },
+      {
+        id: 'num3',
+        type: 'identify',
+        question: 'Which number is correct?',
+        options: [
+          'I am ten years old.',
+          'I am ten year old.',
+          'I am ten year olds.'
+        ],
+        correctAnswer: 'I am ten years old.',
+        explanation: 'Use "years" (plural) with numbers greater than one.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '🔢'
+  },
+  {
+    id: 'colors',
+    title: 'Colors',
+    category: 'Vocabulary',
+    description: 'Learning color names',
+    explanation: 'Colors describe how things look. Common colors: red, blue, yellow, green, orange, purple, pink, brown, black, white, gray. Use "is" with colors: "The apple is red." "The sky is blue."',
+    examples: [
+      'The apple is red.',
+      'The sky is blue.',
+      'The sun is yellow.',
+      'The grass is green.',
+      'The orange is orange.',
+      'The flower is purple.',
+      'The rose is pink.',
+      'The tree is brown.'
+    ],
+    exercises: [
+      {
+        id: 'col1',
+        type: 'multiple-choice',
+        question: 'What color is the sky?',
+        options: ['red', 'blue', 'green'],
+        correctAnswer: 'blue',
+        explanation: 'The sky is usually blue.'
+      },
+      {
+        id: 'col2',
+        type: 'fill-blank',
+        question: 'Complete: "The apple is ___."',
+        options: ['red', 'blue', 'green'],
+        correctAnswer: 'red',
+        explanation: 'Apples are usually red.'
+      },
+      {
+        id: 'col3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The apple red.',
+          'The apple is red.',
+          'The apple are red.'
+        ],
+        correctAnswer: 'The apple is red.',
+        explanation: 'Use "is" with colors: "The apple is red."'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '🎨'
+  },
+  {
+    id: 'family-words',
+    title: 'Family Words',
+    category: 'Vocabulary',
+    description: 'Words for family members',
+    explanation: 'Family words name people in your family. Common words: mom (mother), dad (father), brother, sister, grandma (grandmother), grandpa (grandfather), aunt, uncle, cousin. Use "my" before family words: "my mom", "my dad", "my sister".',
+    examples: [
+      'This is my mom.',
+      'That is my dad.',
+      'I have one brother.',
+      'She has two sisters.',
+      'My grandma is kind.',
+      'My grandpa is funny.',
+      'I love my family.',
+      'We visit my aunt.'
+    ],
+    exercises: [
+      {
+        id: 'fw1',
+        type: 'multiple-choice',
+        question: 'What do you call your mother?',
+        options: ['dad', 'mom', 'brother'],
+        correctAnswer: 'mom',
+        explanation: 'Mom is another word for mother.'
+      },
+      {
+        id: 'fw2',
+        type: 'fill-blank',
+        question: 'Complete: "I have one ___." (boy sibling)',
+        options: ['sister', 'brother', 'mom'],
+        correctAnswer: 'brother',
+        explanation: 'A brother is a boy sibling.'
+      },
+      {
+        id: 'fw3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'This is mom.',
+          'This is my mom.',
+          'This is a mom.'
+        ],
+        correctAnswer: 'This is my mom.',
+        explanation: 'Use "my" when talking about your own family: "my mom".'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '👨‍👩‍👧‍👦'
+  },
+  {
+    id: 'action-words',
+    title: 'Action Words (Verbs)',
+    category: 'Vocabulary',
+    description: 'Common action words',
+    explanation: 'Action words (verbs) tell what someone or something does. Common action words: run, walk, jump, sit, stand, eat, drink, sleep, play, read, write, sing, dance, swim, fly. Examples: "I run." "She jumps." "They play."',
+    examples: [
+      'I run fast.',
+      'She jumps high.',
+      'They play soccer.',
+      'We eat lunch.',
+      'He reads books.',
+      'She sings songs.',
+      'The bird flies.',
+      'The fish swims.'
+    ],
+    exercises: [
+      {
+        id: 'aw1',
+        type: 'multiple-choice',
+        question: 'Which word is an action word?',
+        options: ['happy', 'run', 'red'],
+        correctAnswer: 'run',
+        explanation: '"Run" is an action word (verb) - it tells what you do.'
+      },
+      {
+        id: 'aw2',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ to school." (move on foot)',
+        options: ['run', 'walk', 'jump'],
+        correctAnswer: 'walk',
+        explanation: '"Walk" means to move on foot at a normal speed.'
+      },
+      {
+        id: 'aw3',
+        type: 'identify',
+        question: 'Which sentence has an action word?',
+        options: [
+          'The cat is big.',
+          'The cat runs.',
+          'The cat is happy.'
+        ],
+        correctAnswer: 'The cat runs.',
+        explanation: '"Runs" is an action word - it tells what the cat does.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '🏃'
+  },
+  {
+    id: 'opposites',
+    title: 'Opposites',
+    category: 'Vocabulary',
+    description: 'Words that mean the opposite',
+    explanation: 'Opposites are words with opposite meanings. Common opposites: big/small, hot/cold, happy/sad, up/down, in/out, fast/slow, good/bad, day/night, light/dark, young/old. Examples: "The elephant is big. The mouse is small."',
+    examples: [
+      'Big and small are opposites.',
+      'Hot and cold are opposites.',
+      'Happy and sad are opposites.',
+      'Up and down are opposites.',
+      'Fast and slow are opposites.',
+      'Day and night are opposites.',
+      'Good and bad are opposites.',
+      'Light and dark are opposites.'
+    ],
+    exercises: [
+      {
+        id: 'opp1',
+        type: 'multiple-choice',
+        question: 'What is the opposite of "big"?',
+        options: ['small', 'huge', 'large'],
+        correctAnswer: 'small',
+        explanation: 'The opposite of "big" is "small".'
+      },
+      {
+        id: 'opp2',
+        type: 'fill-blank',
+        question: 'Complete: "Hot and ___ are opposites."',
+        options: ['warm', 'cold', 'cool'],
+        correctAnswer: 'cold',
+        explanation: 'The opposite of "hot" is "cold".'
+      },
+      {
+        id: 'opp3',
+        type: 'identify',
+        question: 'Which pair are opposites?',
+        options: [
+          'big and large',
+          'big and small',
+          'big and huge'
+        ],
+        correctAnswer: 'big and small',
+        explanation: '"Big" and "small" have opposite meanings.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '🔄'
+  },
+  {
+    id: 'basic-adjectives',
+    title: 'Describing Words (Adjectives)',
+    category: 'Vocabulary',
+    description: 'Words that describe things',
+    explanation: 'Describing words (adjectives) tell us how things look, feel, or are. Common words: big, small, happy, sad, hot, cold, fast, slow, good, bad, pretty, ugly, new, old, clean, dirty. Use "is" or "are": "The cat is big." "The flowers are pretty."',
+    examples: [
+      'The cat is big.',
+      'The flower is pretty.',
+      'The ice cream is cold.',
+      'The car is fast.',
+      'The book is new.',
+      'The room is clean.',
+      'I am happy.',
+      'She is kind.'
+    ],
+    exercises: [
+      {
+        id: 'adj1',
+        type: 'multiple-choice',
+        question: 'Which word describes how something looks?',
+        options: ['run', 'big', 'quickly'],
+        correctAnswer: 'big',
+        explanation: '"Big" is a describing word (adjective) that tells size.'
+      },
+      {
+        id: 'adj2',
+        type: 'fill-blank',
+        question: 'Complete: "The ice cream is ___." (not hot)',
+        options: ['hot', 'cold', 'warm'],
+        correctAnswer: 'cold',
+        explanation: 'Ice cream is cold (not hot).'
+      },
+      {
+        id: 'adj3',
+        type: 'identify',
+        question: 'Which sentence uses a describing word?',
+        options: [
+          'The cat runs.',
+          'The cat is big.',
+          'The cat quickly.'
+        ],
+        correctAnswer: 'The cat is big.',
+        explanation: '"Big" is a describing word that tells about the cat.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '✨'
+  },
+  {
+    id: 'days-week',
+    title: 'Days of the Week',
+    category: 'Vocabulary',
+    description: 'Learning the seven days',
+    explanation: 'There are seven days in a week: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday. Monday is the first day of the school week. Sunday is the last day of the week. Use "on" with days: "on Monday", "on Friday".',
+    examples: [
+      'Monday is the first day of school.',
+      'I go to school on Tuesday.',
+      'Wednesday is in the middle of the week.',
+      'Thursday comes after Wednesday.',
+      'Friday is the last day of school.',
+      'Saturday is a fun day.',
+      'Sunday is a rest day.',
+      'I play on weekends.'
+    ],
+    exercises: [
+      {
+        id: 'dw1',
+        type: 'multiple-choice',
+        question: 'What day comes after Monday?',
+        options: ['Sunday', 'Tuesday', 'Wednesday'],
+        correctAnswer: 'Tuesday',
+        explanation: 'Tuesday comes after Monday.'
+      },
+      {
+        id: 'dw2',
+        type: 'fill-blank',
+        question: 'Complete: "I go to school ___ Monday."',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'on',
+        explanation: 'Use "on" with days: "on Monday".'
+      },
+      {
+        id: 'dw3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I play on Saturday.',
+          'I play in Saturday.',
+          'I play at Saturday.'
+        ],
+        correctAnswer: 'I play on Saturday.',
+        explanation: 'Use "on" with days of the week.'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '📆'
+  },
+  {
+    id: 'months-year',
+    title: 'Months of the Year',
+    category: 'Vocabulary',
+    description: 'Learning the twelve months',
+    explanation: 'There are twelve months in a year: January, February, March, April, May, June, July, August, September, October, November, December. January is the first month. December is the last month. Use "in" with months: "in January", "in June".',
+    examples: [
+      'January is the first month.',
+      'My birthday is in February.',
+      'Spring starts in March.',
+      'April has Easter.',
+      'May has flowers.',
+      'Summer starts in June.',
+      'July is very hot.',
+      'School starts in September.'
+    ],
+    exercises: [
+      {
+        id: 'my1',
+        type: 'multiple-choice',
+        question: 'What is the first month of the year?',
+        options: ['January', 'February', 'March'],
+        correctAnswer: 'January',
+        explanation: 'January is the first month.'
+      },
+      {
+        id: 'my2',
+        type: 'fill-blank',
+        question: 'Complete: "My birthday is ___ June."',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'in',
+        explanation: 'Use "in" with months: "in June".'
+      },
+      {
+        id: 'my3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'Christmas is in December.',
+          'Christmas is on December.',
+          'Christmas is at December.'
+        ],
+        correctAnswer: 'Christmas is in December.',
+        explanation: 'Use "in" with months: "in December".'
+      }
+    ],
+    difficulty: 'beginner',
+    icon: '🗓️'
+  },
+  {
     id: 'passive-voice',
     title: 'Passive Voice',
     category: 'Advanced Grammar',
