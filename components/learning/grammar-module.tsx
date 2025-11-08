@@ -37,12 +37,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Nouns',
     category: 'Parts of Speech',
     description: 'Words that name people, places, things, or ideas',
-    explanation: 'A noun is a word that names a person, place, thing, or idea. For example: cat, school, happiness, teacher.',
+    explanation: 'A noun is a word that names a person, place, thing, or idea. For example: cat, school, happiness, teacher. Nouns can be people (boy, teacher), places (park, school), things (book, car), or ideas (love, happiness).',
     examples: [
       'The cat sat on the mat.',
       'Sarah went to school.',
       'Happiness is important.',
-      'The teacher is kind.'
+      'The teacher is kind.',
+      'My dog loves to play.',
+      'The book is on the table.',
+      'We visited the park yesterday.',
+      'Love makes people happy.',
+      'The car is red.',
+      'The student studies hard.',
+      'The tree grows tall.',
+      'Friendship is valuable.'
     ],
     exercises: [
       {
@@ -68,6 +76,30 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['child', 'running', 'happy', 'quickly'],
         correctAnswer: 'child',
         explanation: 'Child is a noun because it names a person.'
+      },
+      {
+        id: 'n4',
+        type: 'multiple-choice',
+        question: 'Which word names a place?',
+        options: ['run', 'school', 'happy', 'quickly'],
+        correctAnswer: 'school',
+        explanation: 'School is a noun that names a place.'
+      },
+      {
+        id: 'n5',
+        type: 'identify',
+        question: 'Find all nouns in: "The cat and dog play in the garden."',
+        options: ['cat, dog, garden', 'cat, play, garden', 'The, and, play'],
+        correctAnswer: 'cat, dog, garden',
+        explanation: 'Cat, dog, and garden are all nouns - they name things and a place.'
+      },
+      {
+        id: 'n6',
+        type: 'fill-blank',
+        question: 'Complete: "My favorite ___ is reading." (idea)',
+        options: ['book', 'hobby', 'teacher', 'school'],
+        correctAnswer: 'hobby',
+        explanation: 'Hobby is a noun that names an idea or activity.'
       }
     ],
     difficulty: 'beginner',
@@ -78,12 +110,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Verbs',
     category: 'Parts of Speech',
     description: 'Action words that show what someone or something does',
-    explanation: 'A verb is a word that shows an action or a state of being. For example: run, jump, is, think, love.',
+    explanation: 'A verb is a word that shows an action or a state of being. Action verbs show what someone does (run, jump, eat). Being verbs show what someone is (am, is, are). For example: run, jump, is, think, love, play, sleep.',
     examples: [
       'The dog runs fast.',
       'She jumps high.',
       'I am happy.',
-      'We love reading.'
+      'We love reading.',
+      'The cat sleeps all day.',
+      'They play soccer.',
+      'I eat breakfast.',
+      'She reads books.',
+      'The bird flies high.',
+      'We sing songs.',
+      'He is my friend.',
+      'The flowers are beautiful.'
     ],
     exercises: [
       {
@@ -109,6 +149,30 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['fly', 'flies', 'flying', 'flew'],
         correctAnswer: 'flies',
         explanation: 'Flies is a verb that shows what the bird does.'
+      },
+      {
+        id: 'v4',
+        type: 'multiple-choice',
+        question: 'Which word shows a state of being?',
+        options: ['run', 'jump', 'is', 'play'],
+        correctAnswer: 'is',
+        explanation: '"Is" is a being verb that shows what something is.'
+      },
+      {
+        id: 'v5',
+        type: 'identify',
+        question: 'Find the action verb in: "The children play in the park."',
+        options: ['The', 'children', 'play', 'park'],
+        correctAnswer: 'play',
+        explanation: 'Play is an action verb - it shows what the children do.'
+      },
+      {
+        id: 'v6',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ her homework every day."',
+        options: ['do', 'does', 'doing', 'did'],
+        correctAnswer: 'does',
+        explanation: 'Does is a verb that shows action (she does homework).'
       }
     ],
     difficulty: 'beginner',
@@ -119,12 +183,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Adjectives',
     category: 'Parts of Speech',
     description: 'Words that describe nouns and make sentences more interesting',
-    explanation: 'An adjective is a word that describes a noun. It tells us what kind, how many, or which one. For example: big, red, three, happy.',
+    explanation: 'An adjective is a word that describes a noun. It tells us what kind (big, red), how many (three, many), or which one (this, that). Adjectives make sentences more interesting by adding details. For example: big, red, three, happy, beautiful, small.',
     examples: [
       'The big dog barked.',
       'She has a red ball.',
       'Three apples fell.',
-      'The happy child smiled.'
+      'The happy child smiled.',
+      'The beautiful flower bloomed.',
+      'I have a small cat.',
+      'The old car is slow.',
+      'She wore a blue dress.',
+      'The tall tree sways.',
+      'The sweet apple tastes good.',
+      'The brave knight fought.',
+      'The quiet room is peaceful.'
     ],
     exercises: [
       {
@@ -150,6 +222,30 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['gray', 'walk', 'slowly', 'animal'],
         correctAnswer: 'gray',
         explanation: 'Gray is an adjective that describes the color of the elephant.'
+      },
+      {
+        id: 'a4',
+        type: 'multiple-choice',
+        question: 'Which word describes how many?',
+        options: ['big', 'red', 'three', 'happy'],
+        correctAnswer: 'three',
+        explanation: 'Three is an adjective that tells how many.'
+      },
+      {
+        id: 'a5',
+        type: 'identify',
+        question: 'Find all adjectives in: "The big red car is fast."',
+        options: ['big, red, fast', 'The, car, is', 'big, car, fast'],
+        correctAnswer: 'big, red, fast',
+        explanation: 'Big, red, and fast are all adjectives describing the car.'
+      },
+      {
+        id: 'a6',
+        type: 'fill-blank',
+        question: 'Complete: "She has a ___ smile." (describes happiness)',
+        options: ['run', 'happy', 'quickly', 'table'],
+        correctAnswer: 'happy',
+        explanation: 'Happy is an adjective that describes the smile.'
       }
     ],
     difficulty: 'beginner',
@@ -201,12 +297,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Pronouns',
     category: 'Parts of Speech',
     description: 'Words that take the place of nouns',
-    explanation: 'A pronoun is a word that takes the place of a noun. Instead of repeating a name, we use pronouns. For example: I, you, he, she, it, we, they.',
+    explanation: 'A pronoun is a word that takes the place of a noun. Instead of repeating a name, we use pronouns. Common pronouns: I, you, he, she, it, we, they, me, him, her, us, them. For example: "Sarah is happy. She is smiling." (She replaces Sarah).',
     examples: [
       'Sarah is happy. She is smiling.',
       'The boys are playing. They are having fun.',
       'This is my book. It is interesting.',
-      'We are friends.'
+      'We are friends.',
+      'I love my dog. He is my best friend.',
+      'The girls are smart. They study hard.',
+      'You are kind. You help others.',
+      'The cat is sleeping. It is tired.',
+      'My friends and I play together. We have fun.',
+      'The teacher helps us. She is nice.',
+      'I gave him a book. He likes it.',
+      'They are my classmates. I like them.'
     ],
     exercises: [
       {
@@ -224,6 +328,42 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['He', 'She', 'It', 'They'],
         correctAnswer: 'He',
         explanation: 'He is a pronoun that takes the place of Tom.'
+      },
+      {
+        id: 'p3',
+        type: 'multiple-choice',
+        question: 'Which pronoun is for many people?',
+        options: ['I', 'he', 'they', 'she'],
+        correctAnswer: 'they',
+        explanation: 'They is a pronoun used for more than one person.'
+      },
+      {
+        id: 'p4',
+        type: 'identify',
+        question: 'Find the pronoun in: "The girls are playing. They are happy."',
+        options: ['The', 'girls', 'They', 'happy'],
+        correctAnswer: 'They',
+        explanation: 'They is a pronoun that replaces "the girls".'
+      },
+      {
+        id: 'p5',
+        type: 'fill-blank',
+        question: 'Complete: "I love my cat. ___ is fluffy."',
+        options: ['He', 'She', 'It', 'They'],
+        correctAnswer: 'It',
+        explanation: 'It is a pronoun used for animals or things.'
+      },
+      {
+        id: 'p6',
+        type: 'identify',
+        question: 'Which sentence uses a pronoun correctly?',
+        options: [
+          'Sarah is happy. Sarah is smiling.',
+          'Sarah is happy. She is smiling.',
+          'Sarah is happy. He is smiling.'
+        ],
+        correctAnswer: 'Sarah is happy. She is smiling.',
+        explanation: 'She correctly replaces Sarah (a girl\'s name).'
       }
     ],
     difficulty: 'beginner',
@@ -300,12 +440,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Types of Sentences',
     category: 'Sentence Structure',
     description: 'Learn about statements, questions, commands, and exclamations',
-    explanation: 'There are four types of sentences: statements (tell something), questions (ask something), commands (tell someone to do something), and exclamations (show strong feelings).',
+    explanation: 'There are four types of sentences: statements (tell something, end with .), questions (ask something, end with ?), commands (tell someone to do something, end with .), and exclamations (show strong feelings, end with !).',
     examples: [
       'Statement: The sun is shining.',
       'Question: Is it sunny today?',
       'Command: Please close the door.',
-      'Exclamation: What a beautiful day!'
+      'Exclamation: What a beautiful day!',
+      'Statement: I love reading books.',
+      'Question: Do you like pizza?',
+      'Command: Stand up straight.',
+      'Exclamation: How amazing!',
+      'Statement: The cat is sleeping.',
+      'Question: Where is my book?',
+      'Command: Be quiet, please.',
+      'Exclamation: I won the game!'
     ],
     exercises: [
       {
@@ -323,6 +471,43 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['Statement', 'Question', 'Command', 'Exclamation'],
         correctAnswer: 'Command',
         explanation: 'This is a command because it tells someone to do something.'
+      },
+      {
+        id: 's3',
+        type: 'identify',
+        question: 'What type of sentence is: "The dog is barking."',
+        options: ['Statement', 'Question', 'Command', 'Exclamation'],
+        correctAnswer: 'Statement',
+        explanation: 'This is a statement - it tells something and ends with a period.'
+      },
+      {
+        id: 's4',
+        type: 'fill-blank',
+        question: 'Complete: "___ is your name?" (question)',
+        options: ['What', 'The', 'Please', 'Wow'],
+        correctAnswer: 'What',
+        explanation: 'Questions often start with question words like What, Where, Who, How.'
+      },
+      {
+        id: 's5',
+        type: 'identify',
+        question: 'Which sentence is a command?',
+        options: [
+          'I am happy.',
+          'Are you happy?',
+          'Be happy!',
+          'What a happy day!'
+        ],
+        correctAnswer: 'Be happy!',
+        explanation: 'Commands tell someone to do something. "Be happy!" tells someone to be happy.'
+      },
+      {
+        id: 's6',
+        type: 'multiple-choice',
+        question: 'What punctuation does a question need?',
+        options: ['.', '?', '!', ','],
+        correctAnswer: '?',
+        explanation: 'Questions end with a question mark (?).'
       }
     ],
     difficulty: 'beginner',
@@ -365,12 +550,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Plurals',
     category: 'Word Forms',
     description: 'Making words mean more than one',
-    explanation: 'Plurals are words that mean more than one. Most words add -s (cat → cats), some add -es (box → boxes), and some change completely (child → children).',
+    explanation: 'Plurals are words that mean more than one. Most words add -s (cat → cats), some add -es (box → boxes), words ending in -y change to -ies (baby → babies), and some change completely (child → children, mouse → mice).',
     examples: [
       'One cat, two cats',
       'One box, two boxes',
       'One child, two children',
-      'One mouse, two mice'
+      'One mouse, two mice',
+      'One book, many books',
+      'One dog, three dogs',
+      'One baby, two babies',
+      'One toy, many toys',
+      'One apple, five apples',
+      'One bird, many birds',
+      'One fish, two fish (or fishes)',
+      'One tooth, many teeth'
     ],
     exercises: [
       {
@@ -388,6 +581,46 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['book', 'books', 'bookes'],
         correctAnswer: 'books',
         explanation: 'Books is the plural of book.'
+      },
+      {
+        id: 'pl3',
+        type: 'multiple-choice',
+        question: 'What is the plural of "baby"?',
+        options: ['babys', 'babies', 'babyes'],
+        correctAnswer: 'babies',
+        explanation: 'Words ending in -y change to -ies: baby → babies.'
+      },
+      {
+        id: 'pl4',
+        type: 'identify',
+        question: 'Which is the correct plural?',
+        options: [
+          'one child, two childs',
+          'one child, two children',
+          'one child, two childes'
+        ],
+        correctAnswer: 'one child, two children',
+        explanation: 'Child is irregular - the plural is children (not childs).'
+      },
+      {
+        id: 'pl5',
+        type: 'fill-blank',
+        question: 'Complete: "I see many ___ in the sky." (bird)',
+        options: ['bird', 'birds', 'birdes'],
+        correctAnswer: 'birds',
+        explanation: 'Most words add -s: bird → birds.'
+      },
+      {
+        id: 'pl6',
+        type: 'identify',
+        question: 'Which sentence uses plural correctly?',
+        options: [
+          'I have one apple and two apple.',
+          'I have one apple and two apples.',
+          'I have one apples and two apple.'
+        ],
+        correctAnswer: 'I have one apple and two apples.',
+        explanation: 'Use "apple" for one, "apples" for more than one.'
       }
     ],
     difficulty: 'beginner',
@@ -398,12 +631,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Capitalization',
     category: 'Writing Rules',
     description: 'When to use capital letters',
-    explanation: 'We use capital letters at the beginning of sentences, for names of people and places, for the word "I", and for days and months.',
+    explanation: 'We use capital letters at the beginning of sentences, for names of people and places, for the word "I", for days and months, and for titles. Always capitalize the first word of a sentence!',
     examples: [
       'My name is Sarah.',
       'I live in New York.',
       'Today is Monday.',
-      'I love reading books.'
+      'I love reading books.',
+      'The cat is sleeping.',
+      'She goes to school.',
+      'We play in the park.',
+      'He likes ice cream.',
+      'They visit Paris.',
+      'The book is interesting.',
+      'I am happy today.',
+      'Monday is the first day.'
     ],
     exercises: [
       {
@@ -421,6 +662,46 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['my', 'My', 'MY'],
         correctAnswer: 'My',
         explanation: 'Sentences always start with a capital letter.'
+      },
+      {
+        id: 'cap3',
+        type: 'identify',
+        question: 'Which word should always be capitalized?',
+        options: ['you', 'he', 'I', 'they'],
+        correctAnswer: 'I',
+        explanation: 'The word "I" is always capitalized, even in the middle of a sentence.'
+      },
+      {
+        id: 'cap4',
+        type: 'multiple-choice',
+        question: 'Which sentence has correct capitalization?',
+        options: [
+          'the cat is sleeping.',
+          'The cat is sleeping.',
+          'The Cat Is Sleeping.'
+        ],
+        correctAnswer: 'The cat is sleeping.',
+        explanation: 'Only the first word of a sentence needs a capital letter (unless it\'s a name).'
+      },
+      {
+        id: 'cap5',
+        type: 'fill-blank',
+        question: 'Complete: "___ is my favorite day." (monday)',
+        options: ['monday', 'Monday', 'MONDAY'],
+        correctAnswer: 'Monday',
+        explanation: 'Days of the week are always capitalized: Monday, Tuesday, etc.'
+      },
+      {
+        id: 'cap6',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'i am happy. i like school.',
+          'I am happy. I like school.',
+          'I am happy. i like school.'
+        ],
+        correctAnswer: 'I am happy. I like school.',
+        explanation: 'Every sentence starts with a capital letter, and "I" is always capitalized.'
       }
     ],
     difficulty: 'beginner',
@@ -431,11 +712,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Punctuation',
     category: 'Writing Rules',
     description: 'Using periods, question marks, and exclamation marks',
-    explanation: 'Punctuation marks help us understand sentences. Period (.) ends statements, question mark (?) ends questions, and exclamation mark (!) shows strong feelings.',
+    explanation: 'Punctuation marks help us understand sentences. Period (.) ends statements, question mark (?) ends questions, and exclamation mark (!) shows strong feelings. Always use punctuation at the end of sentences!',
     examples: [
       'Statement: The cat is sleeping.',
       'Question: Is the cat sleeping?',
-      'Exclamation: What a cute cat!'
+      'Exclamation: What a cute cat!',
+      'I love reading books.',
+      'Do you like pizza?',
+      'Wow, that\'s amazing!',
+      'The sun is shining.',
+      'Where are you going?',
+      'Happy birthday!',
+      'She is my friend.',
+      'Can you help me?',
+      'I won the game!'
     ],
     exercises: [
       {
@@ -453,6 +743,46 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['.', '?', '!'],
         correctAnswer: '.',
         explanation: 'Statements end with a period.'
+      },
+      {
+        id: 'punc3',
+        type: 'identify',
+        question: 'Which punctuation shows strong feeling?',
+        options: ['.', '?', '!'],
+        correctAnswer: '!',
+        explanation: 'Exclamation mark (!) shows strong feelings like excitement or surprise.'
+      },
+      {
+        id: 'punc4',
+        type: 'multiple-choice',
+        question: 'Which sentence needs a question mark?',
+        options: [
+          'I am happy.',
+          'Are you happy?',
+          'I am so happy!'
+        ],
+        correctAnswer: 'Are you happy?',
+        explanation: 'Questions (sentences that ask something) end with a question mark.'
+      },
+      {
+        id: 'punc5',
+        type: 'fill-blank',
+        question: 'Complete: "What a beautiful day___"',
+        options: ['.', '?', '!'],
+        correctAnswer: '!',
+        explanation: 'Exclamations (sentences showing strong feelings) end with an exclamation mark.'
+      },
+      {
+        id: 'punc6',
+        type: 'identify',
+        question: 'Which sentence has correct punctuation?',
+        options: [
+          'The dog is barking.',
+          'The dog is barking',
+          'The dog is barking?'
+        ],
+        correctAnswer: 'The dog is barking.',
+        explanation: 'Statements (telling something) end with a period.'
       }
     ],
     difficulty: 'beginner',
@@ -463,12 +793,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Articles (a, an, the)',
     category: 'Parts of Speech',
     description: 'Using a, an, and the correctly',
-    explanation: 'Articles are words that come before nouns. Use "a" before words starting with a consonant sound, "an" before words starting with a vowel sound, and "the" when talking about a specific thing.',
+    explanation: 'Articles are words that come before nouns. Use "a" before words starting with a consonant sound (a cat, a dog), "an" before words starting with a vowel sound (an apple, an elephant), and "the" when talking about a specific thing we know about (the sun, the book on the table).',
     examples: [
       'I see a cat. (any cat)',
       'I see an apple. (any apple)',
       'I see the cat. (a specific cat we know)',
-      'A dog is friendly. An elephant is big. The sun is bright.'
+      'A dog is friendly. An elephant is big. The sun is bright.',
+      'I want a cookie. (any cookie)',
+      'I want an orange. (any orange)',
+      'I want the cookie. (a specific cookie we see)',
+      'She has a book. (any book)',
+      'He has an umbrella. (any umbrella)',
+      'The book is on the table. (specific book)',
+      'An hour is long. (starts with vowel sound)',
+      'A unicorn is magical. (starts with consonant sound)'
     ],
     exercises: [
       {
@@ -498,6 +836,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'I saw the bird in the tree.',
         explanation: '"The" is used when we talk about specific things we can see or know about.'
+      },
+      {
+        id: 'art4',
+        type: 'multiple-choice',
+        question: 'Choose the correct article: "I see ___ elephant."',
+        options: ['a', 'an', 'the'],
+        correctAnswer: 'an',
+        explanation: 'Elephant starts with a vowel sound (e), so use "an".'
+      },
+      {
+        id: 'art5',
+        type: 'fill-blank',
+        question: 'Complete: "___ sun is bright." (specific thing)',
+        options: ['A', 'An', 'The'],
+        correctAnswer: 'The',
+        explanation: 'Use "the" for specific things everyone knows about (like the sun).'
+      },
+      {
+        id: 'art6',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I want a cookie. (any cookie)',
+          'I want an cookie. (any cookie)',
+          'I want the cookie. (any cookie)'
+        ],
+        correctAnswer: 'I want a cookie. (any cookie)',
+        explanation: 'Use "a" before words starting with a consonant sound (cookie).'
       }
     ],
     difficulty: 'beginner',
@@ -555,7 +921,7 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Contractions',
     category: 'Word Forms',
     description: 'Shortening words by combining them',
-    explanation: 'Contractions are shortened forms of words. We combine two words and use an apostrophe (\') to show where letters are removed. For example: "I am" becomes "I\'m", "do not" becomes "don\'t".',
+    explanation: 'Contractions are shortened forms of words. We combine two words and use an apostrophe (\') to show where letters are removed. For example: "I am" becomes "I\'m", "do not" becomes "don\'t". Contractions make speaking and writing faster!',
     examples: [
       'I am = I\'m',
       'You are = You\'re',
@@ -564,7 +930,13 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Do not = Don\'t',
       'Cannot = Can\'t',
       'Will not = Won\'t',
-      'It is = It\'s'
+      'It is = It\'s',
+      'I am happy. = I\'m happy.',
+      'You are kind. = You\'re kind.',
+      'She is smart. = She\'s smart.',
+      'They are friends. = They\'re friends.',
+      'I do not know. = I don\'t know.',
+      'I cannot go. = I can\'t go.'
     ],
     exercises: [
       {
@@ -594,6 +966,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'I\'m happy.',
         explanation: 'Contractions need an apostrophe to show where letters are removed.'
+      },
+      {
+        id: 'con4',
+        type: 'multiple-choice',
+        question: 'What is the contraction for "do not"?',
+        options: ['don\'t', 'dont', 'do\'nt'],
+        correctAnswer: 'don\'t',
+        explanation: 'Do not becomes don\'t - the "o" is removed and replaced with an apostrophe.'
+      },
+      {
+        id: 'con5',
+        type: 'fill-blank',
+        question: 'Complete: "___ a good student." (She is)',
+        options: ['She\'s', 'Shes', 'She is'],
+        correctAnswer: 'She\'s',
+        explanation: 'She is becomes She\'s.'
+      },
+      {
+        id: 'con6',
+        type: 'identify',
+        question: 'Which sentence uses a contraction correctly?',
+        options: [
+          'I\'m going to school.',
+          'Im going to school.',
+          'I am going to school. (all are correct)'
+        ],
+        correctAnswer: 'I\'m going to school.',
+        explanation: 'I\'m is the correct contraction for "I am" - it needs an apostrophe.'
       }
     ],
     difficulty: 'beginner',
@@ -604,12 +1004,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Possessives',
     category: 'Word Forms',
     description: 'Showing ownership with apostrophes',
-    explanation: 'Possessives show that something belongs to someone. Add an apostrophe and "s" (\'s) to show ownership. For example: "the cat\'s toy" means the toy belongs to the cat.',
+    explanation: 'Possessives show that something belongs to someone. Add an apostrophe and "s" (\'s) to show ownership. For example: "the cat\'s toy" means the toy belongs to the cat. For plural words ending in s, just add an apostrophe (the cats\' toys).',
     examples: [
       'The dog\'s bone (the bone belongs to the dog)',
       'Sarah\'s book (the book belongs to Sarah)',
       'The teacher\'s desk (the desk belongs to the teacher)',
-      'My friend\'s house (the house belongs to my friend)'
+      'My friend\'s house (the house belongs to my friend)',
+      'The bird\'s nest (the nest belongs to the bird)',
+      'The boy\'s toy (the toy belongs to the boy)',
+      'The cat\'s food (the food belongs to the cat)',
+      'Mom\'s car (the car belongs to mom)',
+      'The students\' books (the books belong to the students)',
+      'The children\'s toys (the toys belong to the children)',
+      'My sister\'s room (the room belongs to my sister)',
+      'The dog\'s tail (the tail belongs to the dog)'
     ],
     exercises: [
       {
@@ -639,6 +1047,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'The girl\'s doll is pretty.',
         explanation: 'The apostrophe shows the doll belongs to the girl.'
+      },
+      {
+        id: 'pos4',
+        type: 'multiple-choice',
+        question: 'Which shows ownership?',
+        options: ['the dog', 'the dogs', 'the dog\'s'],
+        correctAnswer: 'the dog\'s',
+        explanation: 'The apostrophe and s (\'s) shows ownership.'
+      },
+      {
+        id: 'pos5',
+        type: 'fill-blank',
+        question: 'Complete: "This is ___ book." (belongs to Sarah)',
+        options: ['Sarah', 'Sarahs', 'Sarah\'s'],
+        correctAnswer: 'Sarah\'s',
+        explanation: 'Use Sarah\'s to show the book belongs to Sarah.'
+      },
+      {
+        id: 'pos6',
+        type: 'identify',
+        question: 'Which sentence uses possessives correctly?',
+        options: [
+          'The cats toy is red.',
+          'The cat\'s toy is red.',
+          'The cat toy\'s is red.'
+        ],
+        correctAnswer: 'The cat\'s toy is red.',
+        explanation: 'The apostrophe and s shows the toy belongs to the cat.'
       }
     ],
     difficulty: 'beginner',
@@ -696,14 +1132,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Question Words',
     category: 'Sentence Structure',
     description: 'Using who, what, where, when, why, and how',
-    explanation: 'Question words help us ask questions. Who asks about people, what asks about things, where asks about places, when asks about time, why asks about reasons, and how asks about ways or methods.',
+    explanation: 'Question words help us ask questions. Who asks about people, what asks about things, where asks about places, when asks about time, why asks about reasons, and how asks about ways or methods. These words always start questions!',
     examples: [
       'Who is your teacher? (person)',
       'What is your name? (thing)',
       'Where do you live? (place)',
       'When is your birthday? (time)',
       'Why are you happy? (reason)',
-      'How do you get to school? (way/method)'
+      'How do you get to school? (way/method)',
+      'Who is your best friend?',
+      'What do you like to eat?',
+      'Where is the library?',
+      'When do you go to bed?',
+      'Why is the sky blue?',
+      'How old are you?'
     ],
     exercises: [
       {
@@ -733,6 +1175,30 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'What is your favorite book?',
         explanation: 'What asks about things (like books).'
+      },
+      {
+        id: 'qw4',
+        type: 'multiple-choice',
+        question: 'Which question word asks about a person?',
+        options: ['who', 'what', 'where'],
+        correctAnswer: 'who',
+        explanation: 'Who asks about people.'
+      },
+      {
+        id: 'qw5',
+        type: 'fill-blank',
+        question: 'Complete: "___ are you going?" (place)',
+        options: ['Who', 'What', 'Where'],
+        correctAnswer: 'Where',
+        explanation: 'Where asks about places.'
+      },
+      {
+        id: 'qw6',
+        type: 'identify',
+        question: 'Which question word asks about time?',
+        options: ['who', 'when', 'what'],
+        correctAnswer: 'when',
+        explanation: 'When asks about time (like "when is your birthday?").'
       }
     ],
     difficulty: 'beginner',
@@ -790,7 +1256,7 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Common Grammar Rules',
     category: 'Grammar Rules',
     description: 'Important rules every student should know',
-    explanation: 'Here are some important grammar rules: Start sentences with capital letters. End sentences with punctuation. Use "I" not "i". Use "a" before consonant sounds, "an" before vowel sounds. Add "s" to make most nouns plural. Use "is" for one thing, "are" for many things.',
+    explanation: 'Here are some important grammar rules: Start sentences with capital letters. End sentences with punctuation. Use "I" not "i". Use "a" before consonant sounds, "an" before vowel sounds. Add "s" to make most nouns plural. Use "is" for one thing, "are" for many things. These rules help make your writing clear and correct!',
     examples: [
       'Always start sentences with a capital letter.',
       'Use "I" with a capital letter, not "i".',
@@ -798,7 +1264,12 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Use "is" for one: The cat is sleeping.',
       'Use "are" for many: The cats are sleeping.',
       'Use "a" before consonants: a dog, a cat',
-      'Use "an" before vowels: an apple, an egg'
+      'Use "an" before vowels: an apple, an egg',
+      'End statements with a period (.).',
+      'End questions with a question mark (?).',
+      'End exclamations with an exclamation mark (!).',
+      'The dog is happy. (one dog)',
+      'The dogs are happy. (many dogs)'
     ],
     exercises: [
       {
@@ -832,6 +1303,38 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'The cats are sleeping.',
         explanation: 'Plural "cats" needs plural verb "are".'
+      },
+      {
+        id: 'rule4',
+        type: 'multiple-choice',
+        question: 'Which sentence follows capitalization rules?',
+        options: [
+          'i am happy. i like school.',
+          'I am happy. I like school.',
+          'I am happy. i like school.'
+        ],
+        correctAnswer: 'I am happy. I like school.',
+        explanation: 'Every sentence starts with a capital letter, and "I" is always capitalized.'
+      },
+      {
+        id: 'rule5',
+        type: 'fill-blank',
+        question: 'Complete: "I want ___ apple."',
+        options: ['a', 'an', 'the'],
+        correctAnswer: 'an',
+        explanation: 'Use "an" before words starting with a vowel sound (apple).'
+      },
+      {
+        id: 'rule6',
+        type: 'identify',
+        question: 'Which sentence follows all the rules?',
+        options: [
+          'the cat is sleeping',
+          'The cat is sleeping.',
+          'The cat is sleeping?'
+        ],
+        correctAnswer: 'The cat is sleeping.',
+        explanation: 'Starts with capital, ends with period (statement).'
       }
     ],
     difficulty: 'beginner',
@@ -849,7 +1352,13 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'They eat breakfast at 8 AM.',
       'He goes to school.',
       'We like ice cream.',
-      'The cat sleeps on the bed.'
+      'The cat sleeps on the bed.',
+      'I brush my teeth every morning.',
+      'She walks to school.',
+      'They play games after school.',
+      'He helps his mom.',
+      'We study English.',
+      'The dog barks loudly.'
     ],
     exercises: [
       {
@@ -883,6 +1392,38 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'I play soccer.',
         explanation: 'Simple present uses the base form of the verb (play).'
+      },
+      {
+        id: 'sp4',
+        type: 'multiple-choice',
+        question: 'Which sentence is correct?',
+        options: [
+          'They plays soccer.',
+          'They play soccer.',
+          'They playing soccer.'
+        ],
+        correctAnswer: 'They play soccer.',
+        explanation: 'With "they" (plural), use the base form "play" (no -s).'
+      },
+      {
+        id: 'sp5',
+        type: 'fill-blank',
+        question: 'Complete: "The cat ___ on the bed." (sleep)',
+        options: ['sleep', 'sleeps', 'sleeping'],
+        correctAnswer: 'sleeps',
+        explanation: 'With "the cat" (it), add -s to "sleep" → "sleeps".'
+      },
+      {
+        id: 'sp6',
+        type: 'identify',
+        question: 'Which sentence uses simple present?',
+        options: [
+          'I played soccer yesterday.',
+          'I play soccer every day.',
+          'I will play soccer tomorrow.'
+        ],
+        correctAnswer: 'I play soccer every day.',
+        explanation: 'Simple present is used for things that happen regularly (every day).'
       }
     ],
     difficulty: 'beginner',
@@ -900,7 +1441,13 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'They ate pizza for dinner.',
       'He saw a movie.',
       'We walked to the park.',
-      'The cat slept all day.'
+      'The cat slept all day.',
+      'I finished my homework.',
+      'She called her friend.',
+      'They visited the zoo.',
+      'He read a book.',
+      'We cooked dinner.',
+      'The dog ran fast.'
     ],
     exercises: [
       {
@@ -930,6 +1477,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'I played soccer.',
         explanation: '"Played" is past tense (happened before).'
+      },
+      {
+        id: 'spt4',
+        type: 'multiple-choice',
+        question: 'Which is the past tense of "walk"?',
+        options: ['walk', 'walked', 'walking'],
+        correctAnswer: 'walked',
+        explanation: 'Add -ed to make "walk" past tense → "walked".'
+      },
+      {
+        id: 'spt5',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ a book last night." (read)',
+        options: ['read', 'reads', 'reading'],
+        correctAnswer: 'read',
+        explanation: '"Read" is the same for present and past (but sounds different).'
+      },
+      {
+        id: 'spt6',
+        type: 'identify',
+        question: 'Which sentence uses past tense correctly?',
+        options: [
+          'I eat breakfast yesterday.',
+          'I ate breakfast yesterday.',
+          'I will eat breakfast yesterday.'
+        ],
+        correctAnswer: 'I ate breakfast yesterday.',
+        explanation: '"Ate" is the past tense of "eat" (irregular verb).'
       }
     ],
     difficulty: 'beginner',
@@ -940,14 +1515,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Basic Sentence Structure',
     category: 'Sentence Structure',
     description: 'How to make simple sentences',
-    explanation: 'A simple sentence has a subject (who or what) and a verb (action). Subject + Verb. Example: "The cat (subject) sleeps (verb)." You can add an object: "The cat (subject) eats (verb) fish (object)."',
+    explanation: 'A simple sentence has a subject (who or what) and a verb (action). Subject + Verb. Example: "The cat (subject) sleeps (verb)." You can add an object: "The cat (subject) eats (verb) fish (object)." Every sentence needs at least a subject and a verb!',
     examples: [
       'The cat sleeps. (subject + verb)',
       'I play. (subject + verb)',
       'She reads books. (subject + verb + object)',
       'They eat pizza. (subject + verb + object)',
       'The dog runs. (subject + verb)',
-      'We sing songs. (subject + verb + object)'
+      'We sing songs. (subject + verb + object)',
+      'The bird flies. (subject + verb)',
+      'I love ice cream. (subject + verb + object)',
+      'She draws pictures. (subject + verb + object)',
+      'The sun shines. (subject + verb)',
+      'They play games. (subject + verb + object)',
+      'He reads books. (subject + verb + object)'
     ],
     exercises: [
       {
@@ -977,6 +1558,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'The cat sleeps.',
         explanation: 'A complete sentence needs a subject (cat) and a verb (sleeps).'
+      },
+      {
+        id: 'bs4',
+        type: 'multiple-choice',
+        question: 'What is the verb in "The dog runs"?',
+        options: ['The', 'dog', 'runs'],
+        correctAnswer: 'runs',
+        explanation: 'The verb is "runs" (the action).'
+      },
+      {
+        id: 'bs5',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ soccer." (play)',
+        options: ['play', 'plays', 'playing'],
+        correctAnswer: 'play',
+        explanation: 'Subject "I" needs base form verb "play".'
+      },
+      {
+        id: 'bs6',
+        type: 'identify',
+        question: 'Which sentence has both subject and verb?',
+        options: [
+          'The big cat.',
+          'The cat sleeps.',
+          'Sleeps on the bed.'
+        ],
+        correctAnswer: 'The cat sleeps.',
+        explanation: 'It has a subject (cat) and a verb (sleeps).'
       }
     ],
     difficulty: 'beginner',
@@ -994,7 +1603,13 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'These are my toys. (many things near)',
       'Those are your shoes. (many things far)',
       'This apple is red.',
-      'That bird is flying.'
+      'That bird is flying.',
+      'These cookies are delicious.',
+      'Those clouds are white.',
+      'This is my pencil.',
+      'That is your book.',
+      'These are my shoes.',
+      'Those are your toys.'
     ],
     exercises: [
       {
@@ -1024,6 +1639,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'These are my books.',
         explanation: '"These" (plural) goes with "are". "Books" is plural.'
+      },
+      {
+        id: 'tt4',
+        type: 'multiple-choice',
+        question: 'Which word is for one thing far from you?',
+        options: ['this', 'that', 'these'],
+        correctAnswer: 'that',
+        explanation: '"That" is for one thing far from you.'
+      },
+      {
+        id: 'tt5',
+        type: 'fill-blank',
+        question: 'Complete: "___ are your shoes." (many things far)',
+        options: ['This', 'That', 'Those'],
+        correctAnswer: 'Those',
+        explanation: '"Those" is for many things far from you.'
+      },
+      {
+        id: 'tt6',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'That is my book.',
+          'That are my books.',
+          'Those is my books.'
+        ],
+        correctAnswer: 'That is my book.',
+        explanation: '"That" (singular) goes with "is". "Book" is singular.'
       }
     ],
     difficulty: 'beginner',
@@ -1041,7 +1684,10 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
       'Do you like pizza? → Yes, I do. / No, I don\'t.',
       'Can you swim? → Yes, I can. / No, I can\'t.',
       'Will you come? → Yes, I will. / No, I won\'t.',
-      'Is it raining? → Yes, it is. / No, it isn\'t.'
+      'Is it raining? → Yes, it is. / No, it isn\'t.',
+      'Are they coming? → Yes, they are. / No, they aren\'t.',
+      'Do we have time? → Yes, we do. / No, we don\'t.',
+      'Does he like pizza? → Yes, he does. / No, he doesn\'t.'
     ],
     exercises: [
       {
@@ -1075,6 +1721,38 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'Yes, I am.',
         explanation: 'Answer "Are you...?" with "Yes, I am" or "No, I\'m not".'
+      },
+      {
+        id: 'yn4',
+        type: 'multiple-choice',
+        question: 'Which question starts with "is"?',
+        options: [
+          'Is you happy?',
+          'Is she happy?',
+          'Is I happy?'
+        ],
+        correctAnswer: 'Is she happy?',
+        explanation: 'Use "is" with "she", "he", "it" (singular).'
+      },
+      {
+        id: 'yn5',
+        type: 'fill-blank',
+        question: 'Complete: "___ you come to my party?" (will)',
+        options: ['Are', 'Do', 'Will'],
+        correctAnswer: 'Will',
+        explanation: '"Will you...?" is a yes/no question about the future.'
+      },
+      {
+        id: 'yn6',
+        type: 'identify',
+        question: 'Which answer is correct? "Do you like pizza?"',
+        options: [
+          'Yes, I am.',
+          'Yes, I do.',
+          'Yes, I can.'
+        ],
+        correctAnswer: 'Yes, I do.',
+        explanation: 'Answer "Do you...?" with "Yes, I do" or "No, I don\'t".'
       }
     ],
     difficulty: 'beginner',
