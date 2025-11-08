@@ -4170,6 +4170,1435 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     ],
     difficulty: 'advanced',
     icon: '💡'
+  },
+  {
+    id: 'past-perfect',
+    title: 'Past Perfect Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about actions that happened before another past action',
+    explanation: 'Past perfect is used to show that one action happened before another action in the past. Structure: had + past participle. Example: "I had finished my homework before she arrived" (finished happened before arrived).',
+    examples: [
+      'I had finished my homework before she arrived.',
+      'She had eaten lunch when I called.',
+      'They had left by the time we got there.',
+      'He had studied English for 5 years before he moved to the US.',
+      'We had seen that movie before we watched it again.',
+      'The train had already left when we reached the station.',
+      'I had never been to Paris before last year.',
+      'She had already read the book when I gave it to her.',
+      'They had completed the project before the deadline.',
+      'He had lost his keys before he realized it.',
+      'We had known each other for years before we became friends.',
+      'The sun had set before we finished our walk.'
+    ],
+    exercises: [
+      {
+        id: 'ppast1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses past perfect correctly?',
+        options: [
+          'I finished my homework before she arrived.',
+          'I had finished my homework before she arrived.',
+          'I have finished my homework before she arrived.'
+        ],
+        correctAnswer: 'I had finished my homework before she arrived.',
+        explanation: 'Past perfect uses "had" + past participle to show an action before another past action.'
+      },
+      {
+        id: 'ppast2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ eaten lunch when I called."',
+        options: ['has', 'had', 'have'],
+        correctAnswer: 'had',
+        explanation: 'Past perfect uses "had" + past participle (had eaten).'
+      },
+      {
+        id: 'ppast3',
+        type: 'identify',
+        question: 'Which sentence shows the correct order of past events?',
+        options: [
+          'I arrived after she had left.',
+          'I had arrived after she left.',
+          'I arrive after she had left.'
+        ],
+        correctAnswer: 'I arrived after she had left.',
+        explanation: 'Past perfect (had left) shows the earlier action; simple past (arrived) shows the later action.'
+      },
+      {
+        id: 'ppast4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ already left when we got there."',
+        options: ['have', 'had', 'has'],
+        correctAnswer: 'had',
+        explanation: 'Past perfect uses "had" to show an action completed before another past action.'
+      },
+      {
+        id: 'ppast5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ studied English for 5 years before he moved."',
+        options: ['has', 'had', 'have'],
+        correctAnswer: 'had',
+        explanation: 'Past perfect "had studied" shows the action happened before "moved" (past).'
+      },
+      {
+        id: 'ppast6',
+        type: 'identify',
+        question: 'When do we use past perfect?',
+        options: [
+          'For actions happening now.',
+          'For actions that happened before another past action.',
+          'For actions that will happen.'
+        ],
+        correctAnswer: 'For actions that happened before another past action.',
+        explanation: 'Past perfect shows the earlier of two past actions.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '⏮️'
+  },
+  {
+    id: 'future-perfect',
+    title: 'Future Perfect Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about actions that will be completed before a future time',
+    explanation: 'Future perfect is used to show that an action will be completed before a specific time in the future. Structure: will have + past participle. Example: "I will have finished by 5 PM" (finished before 5 PM).',
+    examples: [
+      'I will have finished my homework by 5 PM.',
+      'She will have arrived by the time you get there.',
+      'They will have completed the project by next week.',
+      'He will have graduated by next year.',
+      'We will have eaten dinner before the movie starts.',
+      'The train will have left by the time you arrive.',
+      'I will have read the book by tomorrow.',
+      'She will have learned English by next month.',
+      'They will have moved to a new house by then.',
+      'He will have finished his studies by 2025.',
+      'We will have saved enough money by next year.',
+      'The construction will have been completed by December.'
+    ],
+    exercises: [
+      {
+        id: 'fp1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses future perfect correctly?',
+        options: [
+          'I will finish my homework by 5 PM.',
+          'I will have finished my homework by 5 PM.',
+          'I have finished my homework by 5 PM.'
+        ],
+        correctAnswer: 'I will have finished my homework by 5 PM.',
+        explanation: 'Future perfect uses "will have" + past participle to show completion before a future time.'
+      },
+      {
+        id: 'fp2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ arrived by the time you get there."',
+        options: ['will', 'will have', 'has'],
+        correctAnswer: 'will have',
+        explanation: 'Future perfect uses "will have" + past participle (will have arrived).'
+      },
+      {
+        id: 'fp3',
+        type: 'identify',
+        question: 'Which sentence shows future completion?',
+        options: [
+          'I will finish my homework.',
+          'I will have finished my homework by 5 PM.',
+          'I finished my homework.'
+        ],
+        correctAnswer: 'I will have finished my homework by 5 PM.',
+        explanation: 'Future perfect shows an action will be completed before a specific future time.'
+      },
+      {
+        id: 'fp4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ completed the project by next week."',
+        options: ['will', 'will have', 'have'],
+        correctAnswer: 'will have',
+        explanation: 'Future perfect uses "will have" + past participle.'
+      },
+      {
+        id: 'fp5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ graduated by next year."',
+        options: ['will', 'will have', 'has'],
+        correctAnswer: 'will have',
+        explanation: 'Future perfect "will have graduated" shows completion before next year.'
+      },
+      {
+        id: 'fp6',
+        type: 'identify',
+        question: 'When do we use future perfect?',
+        options: [
+          'For actions happening now.',
+          'For actions that will be completed before a future time.',
+          'For actions that happened in the past.'
+        ],
+        correctAnswer: 'For actions that will be completed before a future time.',
+        explanation: 'Future perfect shows completion before a specific future time or event.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔮'
+  },
+  {
+    id: 'present-perfect-continuous',
+    title: 'Present Perfect Continuous',
+    category: 'Verb Tenses',
+    description: 'Talking about actions that started in the past and continue to now',
+    explanation: 'Present perfect continuous shows actions that started in the past and are still happening now, or recently finished actions. Structure: have/has + been + verb + -ing. Example: "I have been studying for 2 hours" (started 2 hours ago, still studying).',
+    examples: [
+      'I have been studying for 2 hours.',
+      'She has been working here since 2020.',
+      'They have been waiting for an hour.',
+      'He has been learning English for 3 years.',
+      'We have been living in this city for 5 years.',
+      'It has been raining all day.',
+      'I have been reading this book for a week.',
+      'She has been teaching for 10 years.',
+      'They have been playing soccer since morning.',
+      'He has been writing a novel for months.',
+      'We have been trying to solve this problem.',
+      'The children have been playing outside.'
+    ],
+    exercises: [
+      {
+        id: 'ppc1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses present perfect continuous correctly?',
+        options: [
+          'I have been study for 2 hours.',
+          'I have been studying for 2 hours.',
+          'I have studying for 2 hours.'
+        ],
+        correctAnswer: 'I have been studying for 2 hours.',
+        explanation: 'Present perfect continuous uses "have/has been" + verb + -ing.'
+      },
+      {
+        id: 'ppc2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ working here since 2020."',
+        options: ['has been', 'have been', 'has'],
+        correctAnswer: 'has been',
+        explanation: 'Present perfect continuous: "has been" + verb + -ing (with "she").'
+      },
+      {
+        id: 'ppc3',
+        type: 'identify',
+        question: 'Which sentence shows an ongoing action from the past?',
+        options: [
+          'I study English.',
+          'I have been studying English for 3 years.',
+          'I studied English.'
+        ],
+        correctAnswer: 'I have been studying English for 3 years.',
+        explanation: 'Present perfect continuous shows an action that started in the past and continues now.'
+      },
+      {
+        id: 'ppc4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ waiting for an hour."',
+        options: ['have been', 'has been', 'have'],
+        correctAnswer: 'have been',
+        explanation: 'Present perfect continuous: "have been" + verb + -ing (with "they").'
+      },
+      {
+        id: 'ppc5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ learning English for 3 years."',
+        options: ['have been', 'has been', 'has'],
+        correctAnswer: 'has been',
+        explanation: 'Present perfect continuous "has been learning" shows ongoing action from the past.'
+      },
+      {
+        id: 'ppc6',
+        type: 'identify',
+        question: 'When do we use present perfect continuous?',
+        options: [
+          'For actions happening now only.',
+          'For actions that started in the past and continue to now.',
+          'For actions that will happen.'
+        ],
+        correctAnswer: 'For actions that started in the past and continue to now.',
+        explanation: 'Present perfect continuous emphasizes the duration of an ongoing action.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '⏳'
+  },
+  {
+    id: 'past-perfect-continuous',
+    title: 'Past Perfect Continuous',
+    category: 'Verb Tenses',
+    description: 'Talking about actions that were ongoing before another past action',
+    explanation: 'Past perfect continuous shows actions that were in progress before another past action. Structure: had been + verb + -ing. Example: "I had been studying for 2 hours when she called" (was studying before she called).',
+    examples: [
+      'I had been studying for 2 hours when she called.',
+      'She had been working there for 5 years when she quit.',
+      'They had been waiting for an hour when the bus arrived.',
+      'He had been learning English for 3 years before he moved.',
+      'We had been living there for 10 years when we moved.',
+      'It had been raining all day when the sun came out.',
+      'I had been reading for hours when I fell asleep.',
+      'She had been teaching for 20 years when she retired.',
+      'They had been playing soccer when it started raining.',
+      'He had been writing a book for months when he finished it.',
+      'We had been trying to solve it when we found the answer.',
+      'The children had been playing outside when it got dark.'
+    ],
+    exercises: [
+      {
+        id: 'ppasc1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses past perfect continuous correctly?',
+        options: [
+          'I had been study for 2 hours when she called.',
+          'I had been studying for 2 hours when she called.',
+          'I had studying for 2 hours when she called.'
+        ],
+        correctAnswer: 'I had been studying for 2 hours when she called.',
+        explanation: 'Past perfect continuous uses "had been" + verb + -ing.'
+      },
+      {
+        id: 'ppasc2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ working there for 5 years when she quit."',
+        options: ['had been', 'has been', 'had'],
+        correctAnswer: 'had been',
+        explanation: 'Past perfect continuous: "had been" + verb + -ing (had been working).'
+      },
+      {
+        id: 'ppasc3',
+        type: 'identify',
+        question: 'Which sentence shows an ongoing past action before another past action?',
+        options: [
+          'I was studying when she called.',
+          'I had been studying for 2 hours when she called.',
+          'I studied when she called.'
+        ],
+        correctAnswer: 'I had been studying for 2 hours when she called.',
+        explanation: 'Past perfect continuous shows an action in progress before another past action.'
+      },
+      {
+        id: 'ppasc4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ waiting for an hour when the bus arrived."',
+        options: ['had been', 'has been', 'were'],
+        correctAnswer: 'had been',
+        explanation: 'Past perfect continuous: "had been" + verb + -ing (had been waiting).'
+      },
+      {
+        id: 'ppasc5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ learning English for 3 years before he moved."',
+        options: ['had been', 'has been', 'was'],
+        correctAnswer: 'had been',
+        explanation: 'Past perfect continuous "had been learning" shows ongoing action before "moved".'
+      },
+      {
+        id: 'ppasc6',
+        type: 'identify',
+        question: 'When do we use past perfect continuous?',
+        options: [
+          'For actions happening now.',
+          'For actions that were ongoing before another past action.',
+          'For actions that will happen.'
+        ],
+        correctAnswer: 'For actions that were ongoing before another past action.',
+        explanation: 'Past perfect continuous emphasizes the duration of an action before another past event.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '⏪'
+  },
+  {
+    id: 'subjunctive-mood',
+    title: 'Subjunctive Mood',
+    category: 'Advanced Grammar',
+    description: 'Expressing wishes, suggestions, and hypothetical situations',
+    explanation: 'Subjunctive mood is used for wishes, suggestions, demands, and hypothetical situations. It often uses the base form of the verb. Example: "I suggest that he be here" (not "is"), "If I were you" (not "was").',
+    examples: [
+      'I suggest that he be here on time. (suggestion)',
+      'If I were you, I would study harder. (hypothetical)',
+      'I wish I were taller. (wish)',
+      'It is important that she be present. (demand)',
+      'I recommend that he take the test. (recommendation)',
+      'If I were rich, I would travel the world. (hypothetical)',
+      'I wish it were summer. (wish)',
+      'It is necessary that they be informed. (necessity)',
+      'I suggest that we go now. (suggestion)',
+      'If I were a bird, I would fly. (hypothetical)',
+      'I wish I were better at math. (wish)',
+      'It is essential that he be there. (essential)'
+    ],
+    exercises: [
+      {
+        id: 'subj1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses subjunctive mood correctly?',
+        options: [
+          'I suggest that he is here.',
+          'I suggest that he be here.',
+          'I suggest that he was here.'
+        ],
+        correctAnswer: 'I suggest that he be here.',
+        explanation: 'Subjunctive uses base form "be" (not "is" or "was") after suggestions.'
+      },
+      {
+        id: 'subj2',
+        type: 'fill-blank',
+        question: 'Complete: "If I ___ you, I would study harder."',
+        options: ['was', 'were', 'am'],
+        correctAnswer: 'were',
+        explanation: 'Subjunctive uses "were" (not "was") in hypothetical "if I were" statements.'
+      },
+      {
+        id: 'subj3',
+        type: 'identify',
+        question: 'Which sentence shows a wish correctly?',
+        options: [
+          'I wish I was taller.',
+          'I wish I were taller.',
+          'I wish I am taller.'
+        ],
+        correctAnswer: 'I wish I were taller.',
+        explanation: 'Subjunctive uses "were" (not "was") in wishes.'
+      },
+      {
+        id: 'subj4',
+        type: 'multiple-choice',
+        question: 'Complete: "It is important that she ___ present."',
+        options: ['is', 'be', 'was'],
+        correctAnswer: 'be',
+        explanation: 'Subjunctive uses base form "be" after "it is important that".'
+      },
+      {
+        id: 'subj5',
+        type: 'fill-blank',
+        question: 'Complete: "I recommend that he ___ the test."',
+        options: ['takes', 'take', 'took'],
+        correctAnswer: 'take',
+        explanation: 'Subjunctive uses base form "take" (not "takes" or "took") after recommendations.'
+      },
+      {
+        id: 'subj6',
+        type: 'identify',
+        question: 'When do we use subjunctive mood?',
+        options: [
+          'For facts and reality.',
+          'For wishes, suggestions, and hypothetical situations.',
+          'For actions happening now.'
+        ],
+        correctAnswer: 'For wishes, suggestions, and hypothetical situations.',
+        explanation: 'Subjunctive is used for non-real situations: wishes, suggestions, demands, and hypotheticals.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💭'
+  },
+  {
+    id: 'inversion',
+    title: 'Inversion',
+    category: 'Advanced Grammar',
+    description: 'Changing word order for emphasis and formality',
+    explanation: 'Inversion means putting the verb before the subject. It\'s used for emphasis, formality, or after negative words. Example: "Never have I seen such beauty" (inversion after "never"), "Not only did she come, but she also helped" (inversion after "not only").',
+    examples: [
+      'Never have I seen such beauty. (after "never")',
+      'Not only did she come, but she also helped. (after "not only")',
+      'Rarely do we see such talent. (after "rarely")',
+      'Only then did I understand. (after "only")',
+      'Seldom have I been so happy. (after "seldom")',
+      'Hardly had I arrived when it started raining. (after "hardly")',
+      'Little did she know what was coming. (after "little")',
+      'No sooner had I left than it started. (after "no sooner")',
+      'Not until then did I realize. (after "not until")',
+      'So beautiful was the sunset that we stopped. (after "so")',
+      'Such was the noise that we couldn\'t sleep. (after "such")',
+      'Under no circumstances will I agree. (after negative phrase)'
+    ],
+    exercises: [
+      {
+        id: 'inv1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses inversion correctly?',
+        options: [
+          'Never I have seen such beauty.',
+          'Never have I seen such beauty.',
+          'Never I saw such beauty.'
+        ],
+        correctAnswer: 'Never have I seen such beauty.',
+        explanation: 'Inversion: verb (have) comes before subject (I) after "never".'
+      },
+      {
+        id: 'inv2',
+        type: 'fill-blank',
+        question: 'Complete: "Not only ___ she come, but she also helped."',
+        options: ['did', 'does', 'do'],
+        correctAnswer: 'did',
+        explanation: 'Inversion uses "did" + subject after "not only".'
+      },
+      {
+        id: 'inv3',
+        type: 'identify',
+        question: 'Which sentence shows correct inversion?',
+        options: [
+          'Rarely we see such talent.',
+          'Rarely do we see such talent.',
+          'Rarely we do see such talent.'
+        ],
+        correctAnswer: 'Rarely do we see such talent.',
+        explanation: 'Inversion: auxiliary "do" comes before subject "we" after "rarely".'
+      },
+      {
+        id: 'inv4',
+        type: 'multiple-choice',
+        question: 'Complete: "Only then ___ I understand."',
+        options: ['did', 'do', 'does'],
+        correctAnswer: 'did',
+        explanation: 'Inversion uses "did" + subject after "only then".'
+      },
+      {
+        id: 'inv5',
+        type: 'fill-blank',
+        question: 'Complete: "Hardly ___ I arrived when it started raining."',
+        options: ['had', 'have', 'has'],
+        correctAnswer: 'had',
+        explanation: 'Inversion uses "had" + subject after "hardly".'
+      },
+      {
+        id: 'inv6',
+        type: 'identify',
+        question: 'When do we use inversion?',
+        options: [
+          'In all sentences.',
+          'For emphasis, formality, or after negative words.',
+          'Only in questions.'
+        ],
+        correctAnswer: 'For emphasis, formality, or after negative words.',
+        explanation: 'Inversion is used for emphasis, formality, or after negative/limiting words.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔄'
+  },
+  {
+    id: 'ellipsis',
+    title: 'Ellipsis',
+    category: 'Advanced Grammar',
+    description: 'Omitting words that are understood from context',
+    explanation: 'Ellipsis means leaving out words that are already understood. It makes sentences shorter and more natural. Example: "She likes pizza, and I do too" (omitting "like pizza" after "do"), "I can help if you want" (omitting "me to help").',
+    examples: [
+      'She likes pizza, and I do too. (omitting "like pizza")',
+      'I can help if you want. (omitting "me to help")',
+      'He can swim, and she can too. (omitting "swim")',
+      'I will go if you will. (omitting "go")',
+      'She is happy, and he is too. (omitting "happy")',
+      'I have finished, and they have too. (omitting "finished")',
+      'He likes coffee, and I do as well. (omitting "like coffee")',
+      'She can come, and he can too. (omitting "come")',
+      'I will study, and you should too. (omitting "study")',
+      'They are ready, and we are too. (omitting "ready")',
+      'I have seen it, and she has too. (omitting "seen it")',
+      'He wants to go, and I do too. (omitting "want to go")'
+    ],
+    exercises: [
+      {
+        id: 'ell1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses ellipsis correctly?',
+        options: [
+          'She likes pizza, and I like pizza too.',
+          'She likes pizza, and I do too.',
+          'She likes pizza, and I too.'
+        ],
+        correctAnswer: 'She likes pizza, and I do too.',
+        explanation: 'Ellipsis: "do" replaces "like pizza" (understood from context).'
+      },
+      {
+        id: 'ell2',
+        type: 'fill-blank',
+        question: 'Complete: "He can swim, and she ___ too."',
+        options: ['can', 'can swim', 'swims'],
+        correctAnswer: 'can',
+        explanation: 'Ellipsis: "can" is enough (swim is understood).'
+      },
+      {
+        id: 'ell3',
+        type: 'identify',
+        question: 'Which sentence shows correct ellipsis?',
+        options: [
+          'I will go if you will go.',
+          'I will go if you will.',
+          'I will go if you.'
+        ],
+        correctAnswer: 'I will go if you will.',
+        explanation: 'Ellipsis: "will" is enough (go is understood from context).'
+      },
+      {
+        id: 'ell4',
+        type: 'multiple-choice',
+        question: 'Complete: "She is happy, and he ___ too."',
+        options: ['is', 'is happy', 'happy'],
+        correctAnswer: 'is',
+        explanation: 'Ellipsis: "is" is enough (happy is understood).'
+      },
+      {
+        id: 'ell5',
+        type: 'fill-blank',
+        question: 'Complete: "I have finished, and they ___ too."',
+        options: ['have', 'have finished', 'finished'],
+        correctAnswer: 'have',
+        explanation: 'Ellipsis: "have" is enough (finished is understood).'
+      },
+      {
+        id: 'ell6',
+        type: 'identify',
+        question: 'What is ellipsis?',
+        options: [
+          'Adding extra words.',
+          'Omitting words that are understood from context.',
+          'Changing word order.'
+        ],
+        correctAnswer: 'Omitting words that are understood from context.',
+        explanation: 'Ellipsis makes sentences shorter by leaving out words that are already clear.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '✂️'
+  },
+  {
+    id: 'cleft-sentences',
+    title: 'Cleft Sentences',
+    category: 'Advanced Grammar',
+    description: 'Emphasizing parts of a sentence',
+    explanation: 'Cleft sentences split a sentence to emphasize one part. Use "It is/was... that/who" or "What... is/was". Example: "It was John who called" (emphasizes John), "What I need is time" (emphasizes time).',
+    examples: [
+      'It was John who called. (emphasizes John)',
+      'It is time that we need. (emphasizes time)',
+      'What I need is time. (emphasizes time)',
+      'It was yesterday that she arrived. (emphasizes yesterday)',
+      'What she wants is a new car. (emphasizes a new car)',
+      'It is English that I study. (emphasizes English)',
+      'What matters is your effort. (emphasizes your effort)',
+      'It was here that we met. (emphasizes here)',
+      'What I like is pizza. (emphasizes pizza)',
+      'It is she who helped me. (emphasizes she)',
+      'What we need is help. (emphasizes help)',
+      'It was because of you that I succeeded. (emphasizes because of you)'
+    ],
+    exercises: [
+      {
+        id: 'cs1',
+        type: 'multiple-choice',
+        question: 'Which sentence emphasizes "John" correctly?',
+        options: [
+          'John called.',
+          'It was John who called.',
+          'John it was who called.'
+        ],
+        correctAnswer: 'It was John who called.',
+        explanation: 'Cleft sentence "It was... who" emphasizes John.'
+      },
+      {
+        id: 'cs2',
+        type: 'fill-blank',
+        question: 'Complete: "___ I need is time." (emphasize time)',
+        options: ['What', 'That', 'It'],
+        correctAnswer: 'What',
+        explanation: 'Cleft sentence "What... is" emphasizes the object (time).'
+      },
+      {
+        id: 'cs3',
+        type: 'identify',
+        question: 'Which sentence emphasizes "yesterday"?',
+        options: [
+          'She arrived yesterday.',
+          'It was yesterday that she arrived.',
+          'Yesterday she arrived.'
+        ],
+        correctAnswer: 'It was yesterday that she arrived.',
+        explanation: 'Cleft sentence "It was... that" emphasizes yesterday.'
+      },
+      {
+        id: 'cs4',
+        type: 'multiple-choice',
+        question: 'Complete: "___ she wants is a new car." (emphasize a new car)',
+        options: ['What', 'That', 'It'],
+        correctAnswer: 'What',
+        explanation: 'Cleft sentence "What... is" emphasizes a new car.'
+      },
+      {
+        id: 'cs5',
+        type: 'fill-blank',
+        question: 'Complete: "It is English ___ I study." (emphasize English)',
+        options: ['what', 'that', 'which'],
+        correctAnswer: 'that',
+        explanation: 'Cleft sentence uses "It is... that" to emphasize English.'
+      },
+      {
+        id: 'cs6',
+        type: 'identify',
+        question: 'What are cleft sentences used for?',
+        options: [
+          'To make sentences shorter.',
+          'To emphasize parts of a sentence.',
+          'To ask questions.'
+        ],
+        correctAnswer: 'To emphasize parts of a sentence.',
+        explanation: 'Cleft sentences split sentences to highlight specific information.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💡'
+  },
+  {
+    id: 'reduced-relative-clauses',
+    title: 'Reduced Relative Clauses',
+    category: 'Advanced Grammar',
+    description: 'Shortening relative clauses',
+    explanation: 'Reduced relative clauses shorten sentences by removing "who/which/that" and the verb "be". Example: "The man who is standing there" → "The man standing there", "The book that was written by him" → "The book written by him".',
+    examples: [
+      'The man who is standing there → The man standing there.',
+      'The book that was written by him → The book written by him.',
+      'The students who are studying → The students studying.',
+      'The car that is parked outside → The car parked outside.',
+      'The problem that was solved → The problem solved.',
+      'The girl who is singing → The girl singing.',
+      'The house that was built last year → The house built last year.',
+      'The people who are waiting → The people waiting.',
+      'The letter that was sent yesterday → The letter sent yesterday.',
+      'The dog that is barking → The dog barking.',
+      'The food that is cooked well → The food cooked well.',
+      'The children who are playing → The children playing.'
+    ],
+    exercises: [
+      {
+        id: 'rrc1',
+        type: 'multiple-choice',
+        question: 'Which is the reduced form?',
+        options: [
+          'The man who is standing there.',
+          'The man standing there.',
+          'The man who standing there.'
+        ],
+        correctAnswer: 'The man standing there.',
+        explanation: 'Reduced: remove "who is" → "The man standing there".'
+      },
+      {
+        id: 'rrc2',
+        type: 'fill-blank',
+        question: 'Complete: "The book ___ by him is interesting." (reduced)',
+        options: ['that was written', 'written', 'that written'],
+        correctAnswer: 'written',
+        explanation: 'Reduced: remove "that was" → "The book written by him".'
+      },
+      {
+        id: 'rrc3',
+        type: 'identify',
+        question: 'Which sentence uses reduced relative clause?',
+        options: [
+          'The students who are studying.',
+          'The students studying.',
+          'The students who studying.'
+        ],
+        correctAnswer: 'The students studying.',
+        explanation: 'Reduced: remove "who are" → "The students studying".'
+      },
+      {
+        id: 'rrc4',
+        type: 'multiple-choice',
+        question: 'Complete: "The car ___ outside is mine." (reduced)',
+        options: ['that is parked', 'parked', 'that parked'],
+        correctAnswer: 'parked',
+        explanation: 'Reduced: remove "that is" → "The car parked outside".'
+      },
+      {
+        id: 'rrc5',
+        type: 'fill-blank',
+        question: 'Complete: "The problem ___ yesterday was difficult." (reduced)',
+        options: ['that was solved', 'solved', 'that solved'],
+        correctAnswer: 'solved',
+        explanation: 'Reduced: remove "that was" → "The problem solved yesterday".'
+      },
+      {
+        id: 'rrc6',
+        type: 'identify',
+        question: 'What are reduced relative clauses?',
+        options: [
+          'Longer relative clauses.',
+          'Shortened relative clauses by removing "who/which/that" and "be".',
+          'Questions with relative clauses.'
+        ],
+        correctAnswer: 'Shortened relative clauses by removing "who/which/that" and "be".',
+        explanation: 'Reduced relative clauses make sentences shorter and more natural.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '✂️'
+  },
+  {
+    id: 'participles',
+    title: 'Participles (Present and Past)',
+    category: 'Advanced Grammar',
+    description: 'Using -ing and -ed forms as adjectives',
+    explanation: 'Participles can act as adjectives. Present participles (-ing) describe what something does (interesting book = book interests). Past participles (-ed) describe how something is affected (interested student = student is interested).',
+    examples: [
+      'The book is interesting. (present participle - describes the book)',
+      'I am interested in the book. (past participle - describes me)',
+      'The movie was boring. (present participle)',
+      'I was bored. (past participle)',
+      'The news is exciting. (present participle)',
+      'I am excited. (past participle)',
+      'The story is confusing. (present participle)',
+      'I am confused. (past participle)',
+      'The work is tiring. (present participle)',
+      'I am tired. (past participle)',
+      'The game is entertaining. (present participle)',
+      'I am entertained. (past participle)'
+    ],
+    exercises: [
+      {
+        id: 'part1',
+        type: 'multiple-choice',
+        question: 'Complete: "The book is ___." (describes the book)',
+        options: ['interested', 'interesting', 'interest'],
+        correctAnswer: 'interesting',
+        explanation: 'Present participle "interesting" describes what the book does (it interests).'
+      },
+      {
+        id: 'part2',
+        type: 'fill-blank',
+        question: 'Complete: "I am ___ in the book." (describes me)',
+        options: ['interesting', 'interested', 'interest'],
+        correctAnswer: 'interested',
+        explanation: 'Past participle "interested" describes how I am affected (I am interested).'
+      },
+      {
+        id: 'part3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'The movie was bored.',
+          'The movie was boring.',
+          'The movie was bore.'
+        ],
+        correctAnswer: 'The movie was boring.',
+        explanation: 'Present participle "boring" describes the movie (it bores).'
+      },
+      {
+        id: 'part4',
+        type: 'multiple-choice',
+        question: 'Complete: "I was ___ by the movie."',
+        options: ['boring', 'bored', 'bore'],
+        correctAnswer: 'bored',
+        explanation: 'Past participle "bored" describes how I was affected.'
+      },
+      {
+        id: 'part5',
+        type: 'fill-blank',
+        question: 'Complete: "The news is ___." (describes the news)',
+        options: ['excited', 'exciting', 'excite'],
+        correctAnswer: 'exciting',
+        explanation: 'Present participle "exciting" describes the news (it excites).'
+      },
+      {
+        id: 'part6',
+        type: 'identify',
+        question: 'What is the difference between -ing and -ed participles?',
+        options: [
+          'No difference.',
+          '-ing describes what something does; -ed describes how something is affected.',
+          '-ing is past; -ed is present.'
+        ],
+        correctAnswer: '-ing describes what something does; -ed describes how something is affected.',
+        explanation: 'Present participles (-ing) describe the thing; past participles (-ed) describe the person affected.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '📝'
+  },
+  {
+    id: 'infinitive-vs-gerund',
+    title: 'Infinitive vs Gerund',
+    category: 'Advanced Grammar',
+    description: 'Choosing between "to do" and "doing"',
+    explanation: 'Some verbs are followed by infinitives (to + verb), some by gerunds (verb + -ing), and some by both with different meanings. Example: "I want to go" (infinitive), "I enjoy reading" (gerund), "I remember meeting him" (gerund - past) vs "Remember to call" (infinitive - future).',
+    examples: [
+      'I want to go. (infinitive)',
+      'I enjoy reading. (gerund)',
+      'I remember meeting him. (gerund - past memory)',
+      'Remember to call. (infinitive - future action)',
+      'I stopped smoking. (gerund - quit smoking)',
+      'I stopped to smoke. (infinitive - stopped in order to smoke)',
+      'I like to swim. (infinitive - preference)',
+      'I like swimming. (gerund - activity)',
+      'I forget to lock the door. (infinitive - didn\'t lock)',
+      'I forget locking the door. (gerund - can\'t remember locking)',
+      'I try to learn. (infinitive - attempt)',
+      'I try learning. (gerund - experiment)'
+    ],
+    exercises: [
+      {
+        id: 'ivg1',
+        type: 'multiple-choice',
+        question: 'Complete: "I want ___."',
+        options: ['go', 'to go', 'going'],
+        correctAnswer: 'to go',
+        explanation: '"Want" is followed by infinitive "to go".'
+      },
+      {
+        id: 'ivg2',
+        type: 'fill-blank',
+        question: 'Complete: "I enjoy ___."',
+        options: ['read', 'to read', 'reading'],
+        correctAnswer: 'reading',
+        explanation: '"Enjoy" is followed by gerund "reading".'
+      },
+      {
+        id: 'ivg3',
+        type: 'identify',
+        question: 'Which sentence shows a past memory?',
+        options: [
+          'I remember to meet him.',
+          'I remember meeting him.',
+          'I remember meet him.'
+        ],
+        correctAnswer: 'I remember meeting him.',
+        explanation: 'Gerund "meeting" shows a past memory (I remember that I met him).'
+      },
+      {
+        id: 'ivg4',
+        type: 'multiple-choice',
+        question: 'Complete: "Remember ___ me." (future action)',
+        options: ['call', 'to call', 'calling'],
+        correctAnswer: 'to call',
+        explanation: 'Infinitive "to call" shows future action (remember to do it).'
+      },
+      {
+        id: 'ivg5',
+        type: 'fill-blank',
+        question: 'Complete: "I stopped ___." (quit doing it)',
+        options: ['smoke', 'to smoke', 'smoking'],
+        correctAnswer: 'smoking',
+        explanation: 'Gerund "smoking" means quit the activity.'
+      },
+      {
+        id: 'ivg6',
+        type: 'identify',
+        question: 'What is the difference between "I stopped smoking" and "I stopped to smoke"?',
+        options: [
+          'No difference.',
+          '"Stopped smoking" = quit; "stopped to smoke" = stopped in order to smoke.',
+          'Both mean the same thing.'
+        ],
+        correctAnswer: '"Stopped smoking" = quit; "stopped to smoke" = stopped in order to smoke.',
+        explanation: 'Gerund = quit the activity; infinitive = stopped for the purpose of doing it.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔄'
+  },
+  {
+    id: 'conditional-type-3',
+    title: 'Third Conditional',
+    category: 'Conditional Sentences',
+    description: 'Talking about impossible past situations',
+    explanation: 'Third conditional talks about impossible past situations (things that didn\'t happen). Structure: If + past perfect, would have + past participle. Example: "If I had studied, I would have passed" (I didn\'t study, so I didn\'t pass - impossible to change now).',
+    examples: [
+      'If I had studied, I would have passed. (I didn\'t study, so I didn\'t pass)',
+      'If she had come, she would have seen it. (she didn\'t come)',
+      'If they had left earlier, they would have arrived on time. (they didn\'t leave earlier)',
+      'If he had known, he would have helped. (he didn\'t know)',
+      'If we had saved money, we would have bought a car. (we didn\'t save)',
+      'If it had rained, I would have stayed home. (it didn\'t rain)',
+      'If I had been there, I would have seen it. (I wasn\'t there)',
+      'If she had called, I would have answered. (she didn\'t call)',
+      'If they had practiced, they would have won. (they didn\'t practice)',
+      'If he had listened, he would have understood. (he didn\'t listen)',
+      'If we had known, we would have come. (we didn\'t know)',
+      'If it had been sunny, we would have gone out. (it wasn\'t sunny)'
+    ],
+    exercises: [
+      {
+        id: 'cond31',
+        type: 'multiple-choice',
+        question: 'Which sentence uses third conditional correctly?',
+        options: [
+          'If I studied, I would pass.',
+          'If I had studied, I would have passed.',
+          'If I study, I will pass.'
+        ],
+        correctAnswer: 'If I had studied, I would have passed.',
+        explanation: 'Third conditional: If + past perfect, would have + past participle.'
+      },
+      {
+        id: 'cond32',
+        type: 'fill-blank',
+        question: 'Complete: "If she ___ come, she would have seen it."',
+        options: ['had', 'has', 'have'],
+        correctAnswer: 'had',
+        explanation: 'Third conditional uses "had" + past participle (had come).'
+      },
+      {
+        id: 'cond33',
+        type: 'identify',
+        question: 'Which sentence talks about an impossible past situation?',
+        options: [
+          'If I study, I will pass.',
+          'If I studied, I would pass.',
+          'If I had studied, I would have passed.'
+        ],
+        correctAnswer: 'If I had studied, I would have passed.',
+        explanation: 'Third conditional talks about impossible past situations (can\'t change now).'
+      },
+      {
+        id: 'cond34',
+        type: 'multiple-choice',
+        question: 'Complete: "If they ___ left earlier, they would have arrived on time."',
+        options: ['had', 'have', 'has'],
+        correctAnswer: 'had',
+        explanation: 'Third conditional uses "had" + past participle (had left).'
+      },
+      {
+        id: 'cond35',
+        type: 'fill-blank',
+        question: 'Complete: "If he had known, he ___ helped."',
+        options: ['would', 'would have', 'will have'],
+        correctAnswer: 'would have',
+        explanation: 'Third conditional uses "would have" + past participle (would have helped).'
+      },
+      {
+        id: 'cond36',
+        type: 'identify',
+        question: 'When do we use third conditional?',
+        options: [
+          'For possible future situations.',
+          'For impossible past situations that can\'t be changed.',
+          'For real present situations.'
+        ],
+        correctAnswer: 'For impossible past situations that can\'t be changed.',
+        explanation: 'Third conditional expresses regret about past situations that didn\'t happen.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔄'
+  },
+  {
+    id: 'mixed-conditionals',
+    title: 'Mixed Conditionals',
+    category: 'Conditional Sentences',
+    description: 'Combining different conditional types',
+    explanation: 'Mixed conditionals combine different time frames. Example: "If I had studied (past), I would be smarter now (present)" - past condition, present result. Or "If I were rich (present), I would have bought it (past)" - present condition, past result.',
+    examples: [
+      'If I had studied harder, I would be smarter now. (past condition, present result)',
+      'If I were rich, I would have bought that car. (present condition, past result)',
+      'If she had learned English, she would be working here now. (past condition, present result)',
+      'If I knew the answer, I would have told you yesterday. (present condition, past result)',
+      'If they had saved money, they would be traveling now. (past condition, present result)',
+      'If I were you, I would have accepted the offer. (present condition, past result)',
+      'If he had practiced, he would be playing professionally now. (past condition, present result)',
+      'If I understood, I would have explained it earlier. (present condition, past result)',
+      'If we had moved, we would be living there now. (past condition, present result)',
+      'If I were taller, I would have reached it yesterday. (present condition, past result)',
+      'If she had taken the job, she would be earning more now. (past condition, present result)',
+      'If I could drive, I would have gone yesterday. (present condition, past result)'
+    ],
+    exercises: [
+      {
+        id: 'mixc1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses mixed conditional correctly?',
+        options: [
+          'If I had studied, I would have passed.',
+          'If I had studied harder, I would be smarter now.',
+          'If I study, I will pass.'
+        ],
+        correctAnswer: 'If I had studied harder, I would be smarter now.',
+        explanation: 'Mixed conditional: past condition (had studied) + present result (would be).'
+      },
+      {
+        id: 'mixc2',
+        type: 'fill-blank',
+        question: 'Complete: "If I were rich, I ___ bought that car." (present condition, past result)',
+        options: ['would', 'would have', 'will have'],
+        correctAnswer: 'would have',
+        explanation: 'Mixed conditional: present condition (were) + past result (would have bought).'
+      },
+      {
+        id: 'mixc3',
+        type: 'identify',
+        question: 'Which sentence shows past condition with present result?',
+        options: [
+          'If I study, I will pass.',
+          'If I had studied, I would have passed.',
+          'If I had studied harder, I would be smarter now.'
+        ],
+        correctAnswer: 'If I had studied harder, I would be smarter now.',
+        explanation: 'Past condition (had studied) affects present result (would be smarter now).'
+      },
+      {
+        id: 'mixc4',
+        type: 'multiple-choice',
+        question: 'Complete: "If she had learned English, she ___ working here now."',
+        options: ['would', 'would be', 'would have'],
+        correctAnswer: 'would be',
+        explanation: 'Mixed conditional: past condition (had learned) + present result (would be).'
+      },
+      {
+        id: 'mixc5',
+        type: 'fill-blank',
+        question: 'Complete: "If I knew the answer, I ___ told you yesterday."',
+        options: ['would', 'would have', 'will have'],
+        correctAnswer: 'would have',
+        explanation: 'Mixed conditional: present condition (knew) + past result (would have told).'
+      },
+      {
+        id: 'mixc6',
+        type: 'identify',
+        question: 'What are mixed conditionals?',
+        options: [
+          'Conditionals with the same time frame.',
+          'Conditionals that combine different time frames (past/present).',
+          'Only past conditionals.'
+        ],
+        correctAnswer: 'Conditionals that combine different time frames (past/present).',
+        explanation: 'Mixed conditionals connect past conditions with present results, or present conditions with past results.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔀'
+  },
+  {
+    id: 'wish-if-only',
+    title: 'Wish and If Only',
+    category: 'Advanced Grammar',
+    description: 'Expressing regrets and desires',
+    explanation: '"Wish" and "if only" express regrets and desires. Use past tense for present wishes (I wish I were taller), past perfect for past regrets (I wish I had studied), and "would" for future wishes about others (I wish you would come).',
+    examples: [
+      'I wish I were taller. (present wish - I am not taller)',
+      'I wish I had studied harder. (past regret - I didn\'t study)',
+      'I wish you would come. (future wish about someone else)',
+      'If only I were rich. (present wish)',
+      'If only I had known. (past regret)',
+      'I wish it were summer. (present wish)',
+      'I wish I had taken that job. (past regret)',
+      'I wish she would call. (future wish)',
+      'If only I could speak French. (present wish)',
+      'If only we had left earlier. (past regret)',
+      'I wish I were better at math. (present wish)',
+      'I wish they would be quiet. (future wish)'
+    ],
+    exercises: [
+      {
+        id: 'wio1',
+        type: 'multiple-choice',
+        question: 'Complete: "I wish I ___ taller." (present wish)',
+        options: ['am', 'was', 'were'],
+        correctAnswer: 'were',
+        explanation: 'Use "were" (not "was") after "wish" for present wishes.'
+      },
+      {
+        id: 'wio2',
+        type: 'fill-blank',
+        question: 'Complete: "I wish I ___ studied harder." (past regret)',
+        options: ['had', 'have', 'has'],
+        correctAnswer: 'had',
+        explanation: 'Use "had" + past participle for past regrets (had studied).'
+      },
+      {
+        id: 'wio3',
+        type: 'identify',
+        question: 'Which sentence shows a past regret?',
+        options: [
+          'I wish I were taller.',
+          'I wish I had studied harder.',
+          'I wish you would come.'
+        ],
+        correctAnswer: 'I wish I had studied harder.',
+        explanation: 'Past perfect "had studied" shows regret about the past.'
+      },
+      {
+        id: 'wio4',
+        type: 'multiple-choice',
+        question: 'Complete: "I wish you ___ come." (future wish)',
+        options: ['will', 'would', 'could'],
+        correctAnswer: 'would',
+        explanation: 'Use "would" for future wishes about others (you would come).'
+      },
+      {
+        id: 'wio5',
+        type: 'fill-blank',
+        question: 'Complete: "If only I ___ known." (past regret)',
+        options: ['had', 'have', 'has'],
+        correctAnswer: 'had',
+        explanation: '"If only" uses "had" + past participle for past regrets (had known).'
+      },
+      {
+        id: 'wio6',
+        type: 'identify',
+        question: 'What is the difference between "wish" and "if only"?',
+        options: [
+          'No difference - they mean the same.',
+          '"If only" is stronger and more emotional than "wish".',
+          '"Wish" is only for past regrets.'
+        ],
+        correctAnswer: '"If only" is stronger and more emotional than "wish".',
+        explanation: 'Both express wishes/regrets, but "if only" is more emphatic and emotional.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💭'
+  },
+  {
+    id: 'emphatic-structures',
+    title: 'Emphatic Structures',
+    category: 'Advanced Grammar',
+    description: 'Adding emphasis to sentences',
+    explanation: 'Emphatic structures add emphasis. Use "do/does/did" for emphasis (I do like it), "it is/was... that/who" for cleft sentences (It was John who called), or "what... is/was" (What I need is time).',
+    examples: [
+      'I do like it. (emphasis with "do")',
+      'She does want to come. (emphasis with "does")',
+      'I did finish my homework. (emphasis with "did")',
+      'It was John who called. (cleft sentence)',
+      'What I need is time. (cleft sentence)',
+      'I really do enjoy it. (emphasis)',
+      'She really does care. (emphasis)',
+      'I did tell you. (emphasis)',
+      'It is time that matters. (cleft)',
+      'What matters is your effort. (cleft)',
+      'I do understand. (emphasis)',
+      'She does know the answer. (emphasis)'
+    ],
+    exercises: [
+      {
+        id: 'emp1',
+        type: 'multiple-choice',
+        question: 'Which sentence adds emphasis?',
+        options: [
+          'I like it.',
+          'I do like it.',
+          'I am liking it.'
+        ],
+        correctAnswer: 'I do like it.',
+        explanation: '"Do" adds emphasis to show strong feeling (I really like it).'
+      },
+      {
+        id: 'emp2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ want to come." (add emphasis)',
+        options: ['does', 'do', 'is'],
+        correctAnswer: 'does',
+        explanation: '"Does" adds emphasis (she really wants to come).'
+      },
+      {
+        id: 'emp3',
+        type: 'identify',
+        question: 'Which sentence emphasizes "John"?',
+        options: [
+          'John called.',
+          'It was John who called.',
+          'John it was who called.'
+        ],
+        correctAnswer: 'It was John who called.',
+        explanation: 'Cleft sentence "It was... who" emphasizes John.'
+      },
+      {
+        id: 'emp4',
+        type: 'multiple-choice',
+        question: 'Complete: "I ___ finish my homework." (add emphasis)',
+        options: ['did', 'do', 'done'],
+        correctAnswer: 'did',
+        explanation: '"Did" adds emphasis in past tense (I really finished it).'
+      },
+      {
+        id: 'emp5',
+        type: 'fill-blank',
+        question: 'Complete: "___ I need is time." (emphasize time)',
+        options: ['What', 'That', 'It'],
+        correctAnswer: 'What',
+        explanation: 'Cleft sentence "What... is" emphasizes time.'
+      },
+      {
+        id: 'emp6',
+        type: 'identify',
+        question: 'What are emphatic structures used for?',
+        options: [
+          'To make sentences shorter.',
+          'To add emphasis and show strong feelings.',
+          'To ask questions.'
+        ],
+        correctAnswer: 'To add emphasis and show strong feelings.',
+        explanation: 'Emphatic structures highlight important information and show strong feelings.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '💪'
+  },
+  {
+    id: 'fronting',
+    title: 'Fronting',
+    category: 'Advanced Grammar',
+    description: 'Moving elements to the front for emphasis',
+    explanation: 'Fronting means moving words or phrases to the beginning of a sentence for emphasis. Example: "Never have I seen such beauty" (fronting "never"), "So beautiful was the sunset" (fronting "so beautiful").',
+    examples: [
+      'Never have I seen such beauty. (fronting "never")',
+      'So beautiful was the sunset. (fronting "so beautiful")',
+      'Rarely do we see such talent. (fronting "rarely")',
+      'Such was the noise that we couldn\'t sleep. (fronting "such")',
+      'Only then did I understand. (fronting "only then")',
+      'Hardly had I arrived when it started. (fronting "hardly")',
+      'Little did she know. (fronting "little")',
+      'So tired was I that I fell asleep. (fronting "so tired")',
+      'Not only did she come, but she also helped. (fronting "not only")',
+      'Under no circumstances will I agree. (fronting negative phrase)',
+      'So fast did he run that he won. (fronting "so fast")',
+      'Seldom have I been so happy. (fronting "seldom")'
+    ],
+    exercises: [
+      {
+        id: 'front1',
+        type: 'multiple-choice',
+        question: 'Which sentence uses fronting correctly?',
+        options: [
+          'I have never seen such beauty.',
+          'Never have I seen such beauty.',
+          'Never I have seen such beauty.'
+        ],
+        correctAnswer: 'Never have I seen such beauty.',
+        explanation: 'Fronting: "Never" moves to front, then verb (have) before subject (I).'
+      },
+      {
+        id: 'front2',
+        type: 'fill-blank',
+        question: 'Complete: "___ beautiful was the sunset." (fronting)',
+        options: ['So', 'Very', 'Too'],
+        correctAnswer: 'So',
+        explanation: 'Fronting "so beautiful" to the beginning for emphasis.'
+      },
+      {
+        id: 'front3',
+        type: 'identify',
+        question: 'Which sentence shows fronting?',
+        options: [
+          'We rarely see such talent.',
+          'Rarely do we see such talent.',
+          'Rarely we see such talent.'
+        ],
+        correctAnswer: 'Rarely do we see such talent.',
+        explanation: 'Fronting: "Rarely" moves to front, then auxiliary (do) before subject (we).'
+      },
+      {
+        id: 'front4',
+        type: 'multiple-choice',
+        question: 'Complete: "___ was the noise that we couldn\'t sleep."',
+        options: ['Such', 'So', 'Very'],
+        correctAnswer: 'Such',
+        explanation: 'Fronting "such" to emphasize the noise.'
+      },
+      {
+        id: 'front5',
+        type: 'fill-blank',
+        question: 'Complete: "Only then ___ I understand."',
+        options: ['did', 'do', 'does'],
+        correctAnswer: 'did',
+        explanation: 'Fronting "only then" requires inversion: auxiliary (did) before subject (I).'
+      },
+      {
+        id: 'front6',
+        type: 'identify',
+        question: 'What is fronting?',
+        options: [
+          'Moving words to the end of a sentence.',
+          'Moving words or phrases to the beginning for emphasis.',
+          'Removing words from a sentence.'
+        ],
+        correctAnswer: 'Moving words or phrases to the beginning for emphasis.',
+        explanation: 'Fronting emphasizes information by placing it at the start of the sentence.'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '⬆️'
+  },
+  {
+    id: 'discourse-markers',
+    title: 'Discourse Markers',
+    category: 'Advanced Grammar',
+    description: 'Words that organize and connect ideas',
+    explanation: 'Discourse markers organize speech and writing. They show relationships between ideas: addition (furthermore, moreover), contrast (however, nevertheless), cause (therefore, consequently), time (meanwhile, subsequently).',
+    examples: [
+      'I studied hard. Furthermore, I practiced every day. (addition)',
+      'It was raining. However, we still went out. (contrast)',
+      'She was tired. Therefore, she went to bed. (cause/result)',
+      'I finished my work. Meanwhile, she was cooking. (time)',
+      'He didn\'t study. Consequently, he failed. (result)',
+      'I like pizza. Moreover, I love pasta. (addition)',
+      'It was difficult. Nevertheless, we succeeded. (contrast)',
+      'She was late. As a result, she missed the meeting. (result)',
+      'I was working. Meanwhile, he was sleeping. (time)',
+      'He is smart. Furthermore, he is kind. (addition)',
+      'It was expensive. However, I bought it. (contrast)',
+      'She practiced daily. Therefore, she improved. (result)'
+    ],
+    exercises: [
+      {
+        id: 'dm1',
+        type: 'multiple-choice',
+        question: 'Which discourse marker shows addition?',
+        options: ['however', 'furthermore', 'therefore'],
+        correctAnswer: 'furthermore',
+        explanation: '"Furthermore" adds more information (addition).'
+      },
+      {
+        id: 'dm2',
+        type: 'fill-blank',
+        question: 'Complete: "It was raining. ___, we still went out." (contrast)',
+        options: ['However', 'Therefore', 'Meanwhile'],
+        correctAnswer: 'However',
+        explanation: '"However" shows contrast (but we still went).'
+      },
+      {
+        id: 'dm3',
+        type: 'identify',
+        question: 'Which discourse marker shows result?',
+        options: [
+          'I studied hard. Furthermore, I passed.',
+          'I studied hard. Therefore, I passed.',
+          'I studied hard. Meanwhile, I passed.'
+        ],
+        correctAnswer: 'I studied hard. Therefore, I passed.',
+        explanation: '"Therefore" shows cause and result (because I studied, I passed).'
+      },
+      {
+        id: 'dm4',
+        type: 'multiple-choice',
+        question: 'Complete: "I was working. ___, she was cooking." (time)',
+        options: ['However', 'Meanwhile', 'Therefore'],
+        correctAnswer: 'Meanwhile',
+        explanation: '"Meanwhile" shows two things happening at the same time.'
+      },
+      {
+        id: 'dm5',
+        type: 'fill-blank',
+        question: 'Complete: "He didn\'t study. ___, he failed." (result)',
+        options: ['However', 'Consequently', 'Furthermore'],
+        correctAnswer: 'Consequently',
+        explanation: '"Consequently" shows result (because he didn\'t study, he failed).'
+      },
+      {
+        id: 'dm6',
+        type: 'identify',
+        question: 'What are discourse markers?',
+        options: [
+          'Words that only show time.',
+          'Words that organize and connect ideas in speech and writing.',
+          'Words that ask questions.'
+        ],
+        correctAnswer: 'Words that organize and connect ideas in speech and writing.',
+        explanation: 'Discourse markers help organize ideas and show relationships (addition, contrast, cause, time).'
+      }
+    ],
+    difficulty: 'advanced',
+    icon: '🔗'
   }
 ]
 
