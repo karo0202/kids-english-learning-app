@@ -2465,6 +2465,1233 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     icon: '🗓️'
   },
   {
+    id: 'present-continuous',
+    title: 'Present Continuous Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about things happening right now',
+    explanation: 'Present continuous (also called present progressive) is used to talk about things happening right now or around now. Use "am/is/are" + verb + -ing. Example: "I am reading" (happening now), "She is playing" (happening now).',
+    examples: [
+      'I am reading a book right now.',
+      'She is playing soccer.',
+      'They are eating lunch.',
+      'He is studying for the test.',
+      'We are watching a movie.',
+      'The cat is sleeping.',
+      'I am writing a letter.',
+      'She is cooking dinner.',
+      'They are talking on the phone.',
+      'He is running in the park.',
+      'We are learning English.',
+      'The birds are flying.'
+    ],
+    exercises: [
+      {
+        id: 'pc1',
+        type: 'multiple-choice',
+        question: 'Which sentence is in present continuous?',
+        options: [
+          'I read books.',
+          'I am reading a book.',
+          'I will read a book.'
+        ],
+        correctAnswer: 'I am reading a book.',
+        explanation: 'Present continuous uses "am/is/are" + verb + -ing.'
+      },
+      {
+        id: 'pc2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ soccer right now." (play)',
+        options: ['play', 'plays', 'is playing'],
+        correctAnswer: 'is playing',
+        explanation: 'Present continuous: "is" + "playing" (verb + -ing).'
+      },
+      {
+        id: 'pc3',
+        type: 'identify',
+        question: 'Which sentence uses present continuous correctly?',
+        options: [
+          'I am read a book.',
+          'I am reading a book.',
+          'I reading a book.'
+        ],
+        correctAnswer: 'I am reading a book.',
+        explanation: 'Present continuous needs "am/is/are" + verb + -ing.'
+      },
+      {
+        id: 'pc4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ to music." (listen)',
+        options: ['listen', 'are listening', 'listened'],
+        correctAnswer: 'are listening',
+        explanation: 'Present continuous: "are" + "listening" (verb + -ing).'
+      },
+      {
+        id: 'pc5',
+        type: 'fill-blank',
+        question: 'Complete: "The dog ___ in the garden." (run)',
+        options: ['run', 'runs', 'is running'],
+        correctAnswer: 'is running',
+        explanation: 'Present continuous: "is" + "running" (verb + -ing).'
+      },
+      {
+        id: 'pc6',
+        type: 'identify',
+        question: 'When do we use present continuous?',
+        options: [
+          'For things that happen always.',
+          'For things happening right now.',
+          'For things that happened yesterday.'
+        ],
+        correctAnswer: 'For things happening right now.',
+        explanation: 'Present continuous is used for actions happening at the moment of speaking.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '⏳'
+  },
+  {
+    id: 'past-continuous',
+    title: 'Past Continuous Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about things that were happening in the past',
+    explanation: 'Past continuous is used to talk about things that were happening at a specific time in the past. Use "was/were" + verb + -ing. Example: "I was reading" (was happening in the past), "They were playing" (were happening in the past).',
+    examples: [
+      'I was reading when you called.',
+      'She was playing soccer at 3 PM.',
+      'They were eating lunch when it started raining.',
+      'He was studying all night.',
+      'We were watching a movie yesterday.',
+      'The cat was sleeping when I arrived.',
+      'I was writing a letter at that time.',
+      'She was cooking dinner when the phone rang.',
+      'They were talking when I saw them.',
+      'He was running in the park.',
+      'We were learning English last year.',
+      'The birds were flying in the sky.'
+    ],
+    exercises: [
+      {
+        id: 'pasc1',
+        type: 'multiple-choice',
+        question: 'Which sentence is in past continuous?',
+        options: [
+          'I read a book.',
+          'I was reading a book.',
+          'I will read a book.'
+        ],
+        correctAnswer: 'I was reading a book.',
+        explanation: 'Past continuous uses "was/were" + verb + -ing.'
+      },
+      {
+        id: 'pasc2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ soccer at 3 PM." (play)',
+        options: ['played', 'was playing', 'plays'],
+        correctAnswer: 'was playing',
+        explanation: 'Past continuous: "was" + "playing" (verb + -ing).'
+      },
+      {
+        id: 'pasc3',
+        type: 'identify',
+        question: 'Which sentence uses past continuous correctly?',
+        options: [
+          'I was read a book.',
+          'I was reading a book.',
+          'I reading a book.'
+        ],
+        correctAnswer: 'I was reading a book.',
+        explanation: 'Past continuous needs "was/were" + verb + -ing.'
+      },
+      {
+        id: 'pasc4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ to music when I arrived." (listen)',
+        options: ['listened', 'were listening', 'listen'],
+        correctAnswer: 'were listening',
+        explanation: 'Past continuous: "were" + "listening" (verb + -ing).'
+      },
+      {
+        id: 'pasc5',
+        type: 'fill-blank',
+        question: 'Complete: "The dog ___ in the garden." (run - past)',
+        options: ['ran', 'was running', 'runs'],
+        correctAnswer: 'was running',
+        explanation: 'Past continuous: "was" + "running" (verb + -ing).'
+      },
+      {
+        id: 'pasc6',
+        type: 'identify',
+        question: 'When do we use past continuous?',
+        options: [
+          'For things happening now.',
+          'For things that were happening in the past.',
+          'For things that will happen.'
+        ],
+        correctAnswer: 'For things that were happening in the past.',
+        explanation: 'Past continuous is used for actions that were in progress at a specific time in the past.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '⏪'
+  },
+  {
+    id: 'future-tense',
+    title: 'Future Tense (Will and Going to)',
+    category: 'Verb Tenses',
+    description: 'Talking about things that will happen',
+    explanation: 'Future tense talks about things that will happen later. Use "will" + verb or "be going to" + verb. "Will" is for decisions made now or predictions. "Going to" is for plans or things we can see will happen. Example: "I will go" or "I am going to go".',
+    examples: [
+      'I will help you tomorrow.',
+      'She is going to visit her friend.',
+      'They will come to the party.',
+      'He is going to study tonight.',
+      'We will finish our homework.',
+      'The weather will be nice tomorrow.',
+      'I am going to buy a new book.',
+      'She will call you later.',
+      'They are going to travel next month.',
+      'He will be here soon.',
+      'We are going to have a test.',
+      'It will rain tomorrow.'
+    ],
+    exercises: [
+      {
+        id: 'ft1',
+        type: 'multiple-choice',
+        question: 'Which sentence shows future tense?',
+        options: [
+          'I go to school.',
+          'I will go to school.',
+          'I went to school.'
+        ],
+        correctAnswer: 'I will go to school.',
+        explanation: '"Will" + verb shows future tense.'
+      },
+      {
+        id: 'ft2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ visit her friend tomorrow." (plan)',
+        options: ['will', 'is going to', 'went'],
+        correctAnswer: 'is going to',
+        explanation: '"Going to" is used for plans.'
+      },
+      {
+        id: 'ft3',
+        type: 'identify',
+        question: 'Which sentence uses future tense correctly?',
+        options: [
+          'I will helps you.',
+          'I will help you.',
+          'I will helping you.'
+        ],
+        correctAnswer: 'I will help you.',
+        explanation: 'After "will", use the base form of the verb (help, not helps or helping).'
+      },
+      {
+        id: 'ft4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ come to the party." (decision)',
+        options: ['will', 'are going to', 'came'],
+        correctAnswer: 'will',
+        explanation: '"Will" is used for decisions made at the moment.'
+      },
+      {
+        id: 'ft5',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ study tonight." (plan)',
+        options: ['will', 'am going to', 'studied'],
+        correctAnswer: 'am going to',
+        explanation: '"Going to" is used for plans or intentions.'
+      },
+      {
+        id: 'ft6',
+        type: 'identify',
+        question: 'Which sentence shows a prediction?',
+        options: [
+          'I will help you.',
+          'It will rain tomorrow.',
+          'I am going to help you.'
+        ],
+        correctAnswer: 'It will rain tomorrow.',
+        explanation: '"Will" is used for predictions about the future.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🔮'
+  },
+  {
+    id: 'present-perfect',
+    title: 'Present Perfect Tense',
+    category: 'Verb Tenses',
+    description: 'Talking about past actions with present results',
+    explanation: 'Present perfect connects the past to the present. Use "have/has" + past participle. It shows actions that happened before now but are still important. Example: "I have finished" (finished in the past, but important now), "She has eaten" (ate before, but relevant now).',
+    examples: [
+      'I have finished my homework.',
+      'She has eaten lunch.',
+      'They have visited Paris.',
+      'He has read that book.',
+      'We have seen that movie.',
+      'The cat has slept all day.',
+      'I have lived here for five years.',
+      'She has known him since childhood.',
+      'They have worked here for a long time.',
+      'He has been to Japan.',
+      'We have learned many things.',
+      'It has rained today.'
+    ],
+    exercises: [
+      {
+        id: 'pp1',
+        type: 'multiple-choice',
+        question: 'Which sentence is in present perfect?',
+        options: [
+          'I finished my homework.',
+          'I have finished my homework.',
+          'I will finish my homework.'
+        ],
+        correctAnswer: 'I have finished my homework.',
+        explanation: 'Present perfect uses "have/has" + past participle.'
+      },
+      {
+        id: 'pp2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ eaten lunch."',
+        options: ['has', 'have', 'had'],
+        correctAnswer: 'has',
+        explanation: 'Use "has" with "she" (singular).'
+      },
+      {
+        id: 'pp3',
+        type: 'identify',
+        question: 'Which sentence uses present perfect correctly?',
+        options: [
+          'I have finish my homework.',
+          'I have finished my homework.',
+          'I have finishing my homework.'
+        ],
+        correctAnswer: 'I have finished my homework.',
+        explanation: 'Present perfect uses "have" + past participle (finished).'
+      },
+      {
+        id: 'pp4',
+        type: 'multiple-choice',
+        question: 'Complete: "They ___ visited Paris."',
+        options: ['has', 'have', 'had'],
+        correctAnswer: 'have',
+        explanation: 'Use "have" with "they" (plural).'
+      },
+      {
+        id: 'pp5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ read that book."',
+        options: ['has', 'have', 'had'],
+        correctAnswer: 'has',
+        explanation: 'Use "has" with "he" (singular).'
+      },
+      {
+        id: 'pp6',
+        type: 'identify',
+        question: 'When do we use present perfect?',
+        options: [
+          'For things happening now.',
+          'For past actions that are still important now.',
+          'For things that will happen.'
+        ],
+        correctAnswer: 'For past actions that are still important now.',
+        explanation: 'Present perfect connects past actions to the present.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '✅'
+  },
+  {
+    id: 'irregular-verbs',
+    title: 'Irregular Verbs',
+    category: 'Verb Forms',
+    description: 'Verbs that don\'t follow the -ed rule',
+    explanation: 'Irregular verbs don\'t add -ed to make past tense. They change completely. Examples: go → went, see → saw, eat → ate, do → did, have → had, be → was/were. You need to memorize these special forms!',
+    examples: [
+      'Present: go → Past: went → Past participle: gone',
+      'Present: see → Past: saw → Past participle: seen',
+      'Present: eat → Past: ate → Past participle: eaten',
+      'Present: do → Past: did → Past participle: done',
+      'Present: have → Past: had → Past participle: had',
+      'Present: be → Past: was/were → Past participle: been',
+      'I go to school. → I went to school yesterday.',
+      'I see a bird. → I saw a bird yesterday.',
+      'I eat pizza. → I ate pizza yesterday.',
+      'I do homework. → I did homework yesterday.',
+      'I have a cat. → I had a cat last year.',
+      'I am happy. → I was happy yesterday.'
+    ],
+    exercises: [
+      {
+        id: 'iv1',
+        type: 'multiple-choice',
+        question: 'What is the past tense of "go"?',
+        options: ['goed', 'went', 'goes'],
+        correctAnswer: 'went',
+        explanation: '"Go" is irregular. Past tense is "went" (not "goed").'
+      },
+      {
+        id: 'iv2',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ a movie yesterday." (see)',
+        options: ['see', 'saw', 'seen'],
+        correctAnswer: 'saw',
+        explanation: '"See" is irregular. Past tense is "saw".'
+      },
+      {
+        id: 'iv3',
+        type: 'identify',
+        question: 'Which is the past tense of "eat"?',
+        options: ['eated', 'ate', 'eaten'],
+        correctAnswer: 'ate',
+        explanation: '"Eat" is irregular. Past tense is "ate" (not "eated").'
+      },
+      {
+        id: 'iv4',
+        type: 'multiple-choice',
+        question: 'What is the past tense of "do"?',
+        options: ['doed', 'did', 'done'],
+        correctAnswer: 'did',
+        explanation: '"Do" is irregular. Past tense is "did" (not "doed").'
+      },
+      {
+        id: 'iv5',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ my homework yesterday." (do)',
+        options: ['do', 'did', 'done'],
+        correctAnswer: 'did',
+        explanation: '"Do" is irregular. Past tense is "did".'
+      },
+      {
+        id: 'iv6',
+        type: 'identify',
+        question: 'Which sentence uses irregular verb correctly?',
+        options: [
+          'I goed to school.',
+          'I went to school.',
+          'I go to school yesterday.'
+        ],
+        correctAnswer: 'I went to school.',
+        explanation: '"Go" is irregular - past tense is "went" (not "goed").'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🔄'
+  },
+  {
+    id: 'countable-uncountable',
+    title: 'Countable and Uncountable Nouns',
+    category: 'Nouns',
+    description: 'Nouns you can count vs nouns you can\'t count',
+    explanation: 'Countable nouns are things you can count (one apple, two apples). Use "a/an" and make them plural. Uncountable nouns are things you can\'t count (water, rice, information). Don\'t use "a/an" and don\'t make them plural. Use "some" or "much" with uncountable nouns.',
+    examples: [
+      'Countable: an apple, two apples, three books, many cats',
+      'Uncountable: water, rice, information, advice, money',
+      'I have an apple. (countable - one)',
+      'I have some water. (uncountable - can\'t count)',
+      'There are many books. (countable - plural)',
+      'There is much information. (uncountable - no plural)',
+      'I want a cookie. (countable)',
+      'I want some milk. (uncountable)',
+      'She has three dogs. (countable)',
+      'She has some rice. (uncountable)',
+      'We need many chairs. (countable)',
+      'We need some furniture. (uncountable)'
+    ],
+    exercises: [
+      {
+        id: 'cu1',
+        type: 'multiple-choice',
+        question: 'Which is a countable noun?',
+        options: ['water', 'apple', 'rice'],
+        correctAnswer: 'apple',
+        explanation: 'Apple is countable - you can count apples (one apple, two apples).'
+      },
+      {
+        id: 'cu2',
+        type: 'fill-blank',
+        question: 'Complete: "I want ___ water." (uncountable)',
+        options: ['a', 'an', 'some'],
+        correctAnswer: 'some',
+        explanation: 'Use "some" with uncountable nouns like water.'
+      },
+      {
+        id: 'cu3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I have a rice.',
+          'I have some rice.',
+          'I have rices.'
+        ],
+        correctAnswer: 'I have some rice.',
+        explanation: 'Rice is uncountable - use "some" and no plural form.'
+      },
+      {
+        id: 'cu4',
+        type: 'multiple-choice',
+        question: 'Which is an uncountable noun?',
+        options: ['book', 'water', 'cat'],
+        correctAnswer: 'water',
+        explanation: 'Water is uncountable - you can\'t count water (not "one water, two waters").'
+      },
+      {
+        id: 'cu5',
+        type: 'fill-blank',
+        question: 'Complete: "I have ___ apple." (countable)',
+        options: ['a', 'some', 'many'],
+        correctAnswer: 'a',
+        explanation: 'Use "a/an" with countable nouns (one apple).'
+      },
+      {
+        id: 'cu6',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I have many informations.',
+          'I have much information.',
+          'I have an information.'
+        ],
+        correctAnswer: 'I have much information.',
+        explanation: 'Information is uncountable - use "much" and no plural.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🔢'
+  },
+  {
+    id: 'much-many',
+    title: 'Much, Many, A lot of',
+    category: 'Quantifiers',
+    description: 'Talking about quantities',
+    explanation: 'Use "many" with countable nouns (many books, many cats). Use "much" with uncountable nouns (much water, much time). Use "a lot of" with both countable and uncountable nouns (a lot of books, a lot of water). "Much" and "many" are often used in questions and negative sentences.',
+    examples: [
+      'I have many books. (countable)',
+      'I don\'t have much time. (uncountable)',
+      'I have a lot of friends. (countable)',
+      'I have a lot of water. (uncountable)',
+      'How many apples do you want? (countable)',
+      'How much water do you need? (uncountable)',
+      'There are many students. (countable)',
+      'There isn\'t much sugar. (uncountable)',
+      'She has a lot of toys. (countable)',
+      'He drinks a lot of water. (uncountable)',
+      'We don\'t have many cookies. (countable)',
+      'We don\'t have much money. (uncountable)'
+    ],
+    exercises: [
+      {
+        id: 'mm1',
+        type: 'multiple-choice',
+        question: 'Complete: "I have ___ books." (countable)',
+        options: ['much', 'many', 'a lot'],
+        correctAnswer: 'many',
+        explanation: 'Use "many" with countable nouns (books).'
+      },
+      {
+        id: 'mm2',
+        type: 'fill-blank',
+        question: 'Complete: "I don\'t have ___ time." (uncountable)',
+        options: ['many', 'much', 'a lot'],
+        correctAnswer: 'much',
+        explanation: 'Use "much" with uncountable nouns (time).'
+      },
+      {
+        id: 'mm3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I have many water.',
+          'I have much water.',
+          'I have many waters.'
+        ],
+        correctAnswer: 'I have much water.',
+        explanation: 'Use "much" with uncountable nouns like water.'
+      },
+      {
+        id: 'mm4',
+        type: 'multiple-choice',
+        question: 'Complete: "I have ___ friends." (countable)',
+        options: ['much', 'many', 'a lot'],
+        correctAnswer: 'many',
+        explanation: 'Use "many" with countable nouns (friends).'
+      },
+      {
+        id: 'mm5',
+        type: 'fill-blank',
+        question: 'Complete: "I have ___ of toys." (both countable and uncountable)',
+        options: ['much', 'many', 'a lot'],
+        correctAnswer: 'a lot',
+        explanation: '"A lot of" works with both countable and uncountable nouns.'
+      },
+      {
+        id: 'mm6',
+        type: 'identify',
+        question: 'Which question is correct?',
+        options: [
+          'How many water do you need?',
+          'How much water do you need?',
+          'How many waters do you need?'
+        ],
+        correctAnswer: 'How much water do you need?',
+        explanation: 'Use "how much" with uncountable nouns (water).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '📊'
+  },
+  {
+    id: 'some-any',
+    title: 'Some and Any',
+    category: 'Quantifiers',
+    description: 'Using some and any correctly',
+    explanation: 'Use "some" in positive sentences (I have some books). Use "any" in negative sentences and questions (I don\'t have any books. Do you have any books?). "Some" means "a few" or "a little". "Any" means "one or more" or "none".',
+    examples: [
+      'I have some books. (positive)',
+      'I don\'t have any books. (negative)',
+      'Do you have any books? (question)',
+      'She wants some water. (positive)',
+      'She doesn\'t want any water. (negative)',
+      'Do they have any friends? (question)',
+      'I need some help. (positive)',
+      'I don\'t need any help. (negative)',
+      'Is there any milk? (question)',
+      'There is some milk. (positive)',
+      'There isn\'t any milk. (negative)',
+      'Can I have some cookies? (question - polite request)'
+    ],
+    exercises: [
+      {
+        id: 'sa1',
+        type: 'multiple-choice',
+        question: 'Complete: "I have ___ books." (positive)',
+        options: ['some', 'any', 'much'],
+        correctAnswer: 'some',
+        explanation: 'Use "some" in positive sentences.'
+      },
+      {
+        id: 'sa2',
+        type: 'fill-blank',
+        question: 'Complete: "I don\'t have ___ books." (negative)',
+        options: ['some', 'any', 'much'],
+        correctAnswer: 'any',
+        explanation: 'Use "any" in negative sentences.'
+      },
+      {
+        id: 'sa3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'Do you have some books?',
+          'Do you have any books?',
+          'Do you have much books?'
+        ],
+        correctAnswer: 'Do you have any books?',
+        explanation: 'Use "any" in questions (except polite requests).'
+      },
+      {
+        id: 'sa4',
+        type: 'multiple-choice',
+        question: 'Complete: "Can I have ___ water?" (polite request)',
+        options: ['some', 'any', 'much'],
+        correctAnswer: 'some',
+        explanation: 'Use "some" in polite requests (Can I have some...?).'
+      },
+      {
+        id: 'sa5',
+        type: 'fill-blank',
+        question: 'Complete: "There isn\'t ___ milk." (negative)',
+        options: ['some', 'any', 'much'],
+        correctAnswer: 'any',
+        explanation: 'Use "any" in negative sentences.'
+      },
+      {
+        id: 'sa6',
+        type: 'identify',
+        question: 'Which sentence uses "some" correctly?',
+        options: [
+          'I don\'t have some money.',
+          'I have some money.',
+          'Do you have some money?'
+        ],
+        correctAnswer: 'I have some money.',
+        explanation: 'Use "some" in positive sentences.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '📦'
+  },
+  {
+    id: 'too-enough',
+    title: 'Too and Enough',
+    category: 'Adverbs',
+    description: 'Expressing too much or sufficient amount',
+    explanation: '"Too" means more than needed or wanted (too hot = hotter than I want). "Enough" means sufficient or adequate (enough money = sufficient money). Use "too" + adjective (too big). Use "adjective + enough" (big enough).',
+    examples: [
+      'This coffee is too hot. (hotter than I want)',
+      'This coffee is hot enough. (sufficiently hot)',
+      'I am too tired to go out. (more tired than I want)',
+      'I am strong enough to lift it. (sufficiently strong)',
+      'The box is too heavy. (heavier than I can handle)',
+      'The box is light enough. (sufficiently light)',
+      'She is too young to drive. (younger than allowed)',
+      'She is old enough to drive. (sufficiently old)',
+      'It\'s too cold outside. (colder than comfortable)',
+      'It\'s warm enough. (sufficiently warm)',
+      'The test is too difficult. (more difficult than I can handle)',
+      'The test is easy enough. (sufficiently easy)'
+    ],
+    exercises: [
+      {
+        id: 'te1',
+        type: 'multiple-choice',
+        question: 'Complete: "This coffee is ___ hot." (more than I want)',
+        options: ['too', 'enough', 'very'],
+        correctAnswer: 'too',
+        explanation: '"Too" means more than needed or wanted.'
+      },
+      {
+        id: 'te2',
+        type: 'fill-blank',
+        question: 'Complete: "I am strong ___ to lift it." (sufficiently)',
+        options: ['too', 'enough', 'very'],
+        correctAnswer: 'enough',
+        explanation: '"Enough" means sufficient - place it after the adjective.'
+      },
+      {
+        id: 'te3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I am too tired to go out.',
+          'I am tired too to go out.',
+          'I am tired to go out too.'
+        ],
+        correctAnswer: 'I am too tired to go out.',
+        explanation: '"Too" comes before the adjective (too tired).'
+      },
+      {
+        id: 'te4',
+        type: 'multiple-choice',
+        question: 'Complete: "She is ___ young to drive." (more than allowed)',
+        options: ['too', 'enough', 'very'],
+        correctAnswer: 'too',
+        explanation: '"Too" means more than needed or allowed.'
+      },
+      {
+        id: 'te5',
+        type: 'fill-blank',
+        question: 'Complete: "The box is light ___ to carry." (sufficiently)',
+        options: ['too', 'enough', 'very'],
+        correctAnswer: 'enough',
+        explanation: '"Enough" comes after the adjective (light enough).'
+      },
+      {
+        id: 'te6',
+        type: 'identify',
+        question: 'Which sentence shows something is sufficient?',
+        options: [
+          'It\'s too cold.',
+          'It\'s cold enough.',
+          'It\'s very cold.'
+        ],
+        correctAnswer: 'It\'s cold enough.',
+        explanation: '"Enough" means sufficient or adequate.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '⚖️'
+  },
+  {
+    id: 'so-because',
+    title: 'So and Because',
+    category: 'Conjunctions',
+    description: 'Showing results and reasons',
+    explanation: '"Because" shows the reason (why something happens). "So" shows the result (what happens because of something). "Because" comes before the reason. "So" comes before the result. Example: "I was tired because I worked hard" (reason). "I worked hard, so I was tired" (result).',
+    examples: [
+      'I was tired because I worked hard. (reason)',
+      'I worked hard, so I was tired. (result)',
+      'She stayed home because it was raining. (reason)',
+      'It was raining, so she stayed home. (result)',
+      'He was happy because he passed the test. (reason)',
+      'He passed the test, so he was happy. (result)',
+      'I ate because I was hungry. (reason)',
+      'I was hungry, so I ate. (result)',
+      'She studied because she wanted good grades. (reason)',
+      'She wanted good grades, so she studied. (result)',
+      'They left because it was late. (reason)',
+      'It was late, so they left. (result)'
+    ],
+    exercises: [
+      {
+        id: 'sb1',
+        type: 'multiple-choice',
+        question: 'Which word shows the reason?',
+        options: ['so', 'because', 'and'],
+        correctAnswer: 'because',
+        explanation: '"Because" shows the reason (why something happens).'
+      },
+      {
+        id: 'sb2',
+        type: 'fill-blank',
+        question: 'Complete: "I was tired ___ I worked hard." (reason)',
+        options: ['so', 'because', 'and'],
+        correctAnswer: 'because',
+        explanation: '"Because" shows the reason (why I was tired).'
+      },
+      {
+        id: 'sb3',
+        type: 'identify',
+        question: 'Which sentence shows a result?',
+        options: [
+          'I was tired because I worked hard.',
+          'I worked hard, so I was tired.',
+          'I worked hard and I was tired.'
+        ],
+        correctAnswer: 'I worked hard, so I was tired.',
+        explanation: '"So" shows the result (what happened because I worked hard).'
+      },
+      {
+        id: 'sb4',
+        type: 'multiple-choice',
+        question: 'Complete: "It was raining, ___ I took an umbrella." (result)',
+        options: ['so', 'because', 'and'],
+        correctAnswer: 'so',
+        explanation: '"So" shows the result (what I did because it was raining).'
+      },
+      {
+        id: 'sb5',
+        type: 'fill-blank',
+        question: 'Complete: "She stayed home ___ it was raining." (reason)',
+        options: ['so', 'because', 'and'],
+        correctAnswer: 'because',
+        explanation: '"Because" shows the reason (why she stayed home).'
+      },
+      {
+        id: 'sb6',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I was happy because I passed the test.',
+          'I was happy so I passed the test.',
+          'I was happy and I passed the test.'
+        ],
+        correctAnswer: 'I was happy because I passed the test.',
+        explanation: '"Because" shows the reason (why I was happy).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🔗'
+  },
+  {
+    id: 'although-even-though',
+    title: 'Although and Even Though',
+    category: 'Conjunctions',
+    description: 'Showing contrast or opposition',
+    explanation: '"Although" and "even though" show contrast - they connect two ideas that seem opposite. They mean "in spite of" or "despite". Example: "Although it was raining, we went outside" (it was raining, but we still went). Both mean the same thing, but "even though" is stronger.',
+    examples: [
+      'Although it was raining, we went outside.',
+      'Even though it was late, I finished my homework.',
+      'Although she was tired, she kept working.',
+      'Even though he is young, he is very smart.',
+      'Although I studied hard, I didn\'t pass.',
+      'Even though it was difficult, we succeeded.',
+      'Although the movie was long, it was interesting.',
+      'Even though she doesn\'t like math, she studies it.',
+      'Although he is rich, he is not happy.',
+      'Even though it was cold, we went swimming.',
+      'Although I was hungry, I didn\'t eat.',
+      'Even though she was scared, she tried it.'
+    ],
+    exercises: [
+      {
+        id: 'aet1',
+        type: 'multiple-choice',
+        question: 'Which word shows contrast?',
+        options: ['because', 'although', 'so'],
+        correctAnswer: 'although',
+        explanation: '"Although" shows contrast (opposite ideas).'
+      },
+      {
+        id: 'aet2',
+        type: 'fill-blank',
+        question: 'Complete: "___ it was raining, we went outside." (contrast)',
+        options: ['Because', 'Although', 'So'],
+        correctAnswer: 'Although',
+        explanation: '"Although" shows contrast (it was raining, but we still went).'
+      },
+      {
+        id: 'aet3',
+        type: 'identify',
+        question: 'Which sentence shows contrast?',
+        options: [
+          'I was happy because I passed.',
+          'Although I studied, I didn\'t pass.',
+          'I studied, so I passed.'
+        ],
+        correctAnswer: 'Although I studied, I didn\'t pass.',
+        explanation: '"Although" shows contrast (I studied, but still didn\'t pass).'
+      },
+      {
+        id: 'aet4',
+        type: 'multiple-choice',
+        question: 'Which is stronger?',
+        options: ['although', 'even though', 'they are the same'],
+        correctAnswer: 'even though',
+        explanation: '"Even though" is stronger than "although" but means the same.'
+      },
+      {
+        id: 'aet5',
+        type: 'fill-blank',
+        question: 'Complete: "___ it was difficult, we succeeded." (strong contrast)',
+        options: ['Because', 'Even though', 'So'],
+        correctAnswer: 'Even though',
+        explanation: '"Even though" shows strong contrast.'
+      },
+      {
+        id: 'aet6',
+        type: 'identify',
+        question: 'Which sentence uses contrast correctly?',
+        options: [
+          'Although it was sunny, we went outside.',
+          'Although it was sunny, so we went outside.',
+          'Although it was sunny, because we went outside.'
+        ],
+        correctAnswer: 'Although it was sunny, we went outside.',
+        explanation: '"Although" shows contrast - don\'t use "so" or "because" with it.'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '🔄'
+  },
+  {
+    id: 'while-during',
+    title: 'While and During',
+    category: 'Prepositions',
+    description: 'Talking about time when something happens',
+    explanation: '"While" is used with a subject and verb (while I was studying). "During" is used with a noun (during the class). Both mean "at the same time as". "While" shows two actions happening together. "During" shows when something happens in a period of time.',
+    examples: [
+      'I studied while my sister was sleeping. (two actions)',
+      'I studied during the class. (period of time)',
+      'She called while I was eating. (two actions)',
+      'She called during dinner. (period of time)',
+      'He read while I was writing. (two actions)',
+      'He read during the lesson. (period of time)',
+      'We talked while walking. (two actions)',
+      'We talked during the walk. (period of time)',
+      'The phone rang while I was showering. (two actions)',
+      'The phone rang during my shower. (period of time)',
+      'I fell asleep while watching TV. (two actions)',
+      'I fell asleep during the movie. (period of time)'
+    ],
+    exercises: [
+      {
+        id: 'wd1',
+        type: 'multiple-choice',
+        question: 'Complete: "I studied ___ my sister was sleeping."',
+        options: ['while', 'during', 'when'],
+        correctAnswer: 'while',
+        explanation: 'Use "while" with a subject and verb (while + subject + verb).'
+      },
+      {
+        id: 'wd2',
+        type: 'fill-blank',
+        question: 'Complete: "I studied ___ the class." (period of time)',
+        options: ['while', 'during', 'when'],
+        correctAnswer: 'during',
+        explanation: 'Use "during" with a noun (during + noun).'
+      },
+      {
+        id: 'wd3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I called while the dinner.',
+          'I called during the dinner.',
+          'I called while during dinner.'
+        ],
+        correctAnswer: 'I called during the dinner.',
+        explanation: 'Use "during" with a noun (the dinner).'
+      },
+      {
+        id: 'wd4',
+        type: 'multiple-choice',
+        question: 'Complete: "She read ___ I was writing."',
+        options: ['while', 'during', 'when'],
+        correctAnswer: 'while',
+        explanation: 'Use "while" with subject + verb (I was writing).'
+      },
+      {
+        id: 'wd5',
+        type: 'fill-blank',
+        question: 'Complete: "The phone rang ___ my shower." (period)',
+        options: ['while', 'during', 'when'],
+        correctAnswer: 'during',
+        explanation: 'Use "during" with a noun (my shower).'
+      },
+      {
+        id: 'wd6',
+        type: 'identify',
+        question: 'Which sentence uses "while" correctly?',
+        options: [
+          'I studied while the class.',
+          'I studied while I was in class.',
+          'I studied during I was in class.'
+        ],
+        correctAnswer: 'I studied while I was in class.',
+        explanation: 'Use "while" with subject + verb (I was in class).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '⏱️'
+  },
+  {
+    id: 'for-since',
+    title: 'For and Since',
+    category: 'Prepositions',
+    description: 'Talking about how long something has been happening',
+    explanation: '"For" shows a period of time (for 5 years, for 2 hours, for a week). "Since" shows when something started (since 2020, since Monday, since I was a child). Use "for" with present perfect to show duration. Use "since" to show the starting point.',
+    examples: [
+      'I have lived here for 5 years. (period of time)',
+      'I have lived here since 2020. (starting point)',
+      'She has studied for 2 hours. (period)',
+      'She has studied since 3 PM. (starting point)',
+      'We have been friends for a long time. (period)',
+      'We have been friends since childhood. (starting point)',
+      'He has worked here for 10 years. (period)',
+      'He has worked here since 2014. (starting point)',
+      'I have known her for 3 months. (period)',
+      'I have known her since January. (starting point)',
+      'They have been married for 20 years. (period)',
+      'They have been married since 2004. (starting point)'
+    ],
+    exercises: [
+      {
+        id: 'fs1',
+        type: 'multiple-choice',
+        question: 'Complete: "I have lived here ___ 5 years." (period)',
+        options: ['for', 'since', 'during'],
+        correctAnswer: 'for',
+        explanation: 'Use "for" with a period of time (5 years).'
+      },
+      {
+        id: 'fs2',
+        type: 'fill-blank',
+        question: 'Complete: "I have lived here ___ 2020." (starting point)',
+        options: ['for', 'since', 'during'],
+        correctAnswer: 'since',
+        explanation: 'Use "since" with a starting point (2020).'
+      },
+      {
+        id: 'fs3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'I have studied for 2 hours.',
+          'I have studied since 2 hours.',
+          'I have studied during 2 hours.'
+        ],
+        correctAnswer: 'I have studied for 2 hours.',
+        explanation: 'Use "for" with a period of time (2 hours).'
+      },
+      {
+        id: 'fs4',
+        type: 'multiple-choice',
+        question: 'Complete: "She has worked here ___ Monday." (starting point)',
+        options: ['for', 'since', 'during'],
+        correctAnswer: 'since',
+        explanation: 'Use "since" with a starting point (Monday).'
+      },
+      {
+        id: 'fs5',
+        type: 'fill-blank',
+        question: 'Complete: "We have been friends ___ a long time." (period)',
+        options: ['for', 'since', 'during'],
+        correctAnswer: 'for',
+        explanation: 'Use "for" with a period of time (a long time).'
+      },
+      {
+        id: 'fs6',
+        type: 'identify',
+        question: 'Which sentence uses "since" correctly?',
+        options: [
+          'I have known her for January.',
+          'I have known her since January.',
+          'I have known her during January.'
+        ],
+        correctAnswer: 'I have known her since January.',
+        explanation: 'Use "since" with a starting point (January).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '📅'
+  },
+  {
+    id: 'have-has',
+    title: 'Have and Has',
+    category: 'Verb Forms',
+    description: 'Using have and has correctly',
+    explanation: 'Use "have" with I, you, we, they (plural subjects). Use "has" with he, she, it (singular subjects). "Have" and "has" can show possession (I have a cat) or be used in perfect tenses (I have finished). Always match "have/has" to the subject!',
+    examples: [
+      'I have a cat. (I)',
+      'You have a dog. (you)',
+      'He has a bike. (he)',
+      'She has a book. (she)',
+      'It has a tail. (it)',
+      'We have friends. (we)',
+      'They have toys. (they)',
+      'I have finished my homework. (perfect tense)',
+      'She has eaten lunch. (perfect tense)',
+      'They have visited Paris. (perfect tense)',
+      'He has been to Japan. (perfect tense)',
+      'We have learned English. (perfect tense)'
+    ],
+    exercises: [
+      {
+        id: 'hh1',
+        type: 'multiple-choice',
+        question: 'Complete: "I ___ a cat."',
+        options: ['have', 'has', 'had'],
+        correctAnswer: 'have',
+        explanation: 'Use "have" with "I" (first person).'
+      },
+      {
+        id: 'hh2',
+        type: 'fill-blank',
+        question: 'Complete: "She ___ a book."',
+        options: ['have', 'has', 'had'],
+        correctAnswer: 'has',
+        explanation: 'Use "has" with "she" (third person singular).'
+      },
+      {
+        id: 'hh3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'They has a dog.',
+          'They have a dog.',
+          'They have a dogs.'
+        ],
+        correctAnswer: 'They have a dog.',
+        explanation: 'Use "have" with "they" (plural).'
+      },
+      {
+        id: 'hh4',
+        type: 'multiple-choice',
+        question: 'Complete: "We ___ finished our homework."',
+        options: ['have', 'has', 'had'],
+        correctAnswer: 'have',
+        explanation: 'Use "have" with "we" (plural).'
+      },
+      {
+        id: 'hh5',
+        type: 'fill-blank',
+        question: 'Complete: "He ___ eaten lunch."',
+        options: ['have', 'has', 'had'],
+        correctAnswer: 'has',
+        explanation: 'Use "has" with "he" (third person singular).'
+      },
+      {
+        id: 'hh6',
+        type: 'identify',
+        question: 'Which sentence uses "has" correctly?',
+        options: [
+          'I has a cat.',
+          'She has a cat.',
+          'They has a cat.'
+        ],
+        correctAnswer: 'She has a cat.',
+        explanation: 'Use "has" with "she" (third person singular).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '✅'
+  },
+  {
+    id: 'there-is-are',
+    title: 'There is and There are',
+    category: 'Sentence Structure',
+    description: 'Talking about what exists',
+    explanation: 'Use "there is" for one thing (there is a book). Use "there are" for many things (there are books). "There is/are" tells us what exists somewhere. Use "is" with singular nouns. Use "are" with plural nouns.',
+    examples: [
+      'There is a book on the table. (one thing)',
+      'There are books on the table. (many things)',
+      'There is a cat in the garden. (one)',
+      'There are cats in the garden. (many)',
+      'There is some water in the bottle. (uncountable)',
+      'There are many students in class. (many)',
+      'There is a problem. (one)',
+      'There are problems. (many)',
+      'There is an apple in the basket. (one)',
+      'There are apples in the basket. (many)',
+      'There is much information. (uncountable)',
+      'There are many books. (many)'
+    ],
+    exercises: [
+      {
+        id: 'tia1',
+        type: 'multiple-choice',
+        question: 'Complete: "___ a book on the table."',
+        options: ['There is', 'There are', 'There have'],
+        correctAnswer: 'There is',
+        explanation: 'Use "there is" for one thing (a book).'
+      },
+      {
+        id: 'tia2',
+        type: 'fill-blank',
+        question: 'Complete: "___ books on the table." (many)',
+        options: ['There is', 'There are', 'There have'],
+        correctAnswer: 'There are',
+        explanation: 'Use "there are" for many things (books).'
+      },
+      {
+        id: 'tia3',
+        type: 'identify',
+        question: 'Which sentence is correct?',
+        options: [
+          'There is books on the table.',
+          'There are books on the table.',
+          'There have books on the table.'
+        ],
+        correctAnswer: 'There are books on the table.',
+        explanation: 'Use "there are" with plural nouns (books).'
+      },
+      {
+        id: 'tia4',
+        type: 'multiple-choice',
+        question: 'Complete: "___ a cat in the garden."',
+        options: ['There is', 'There are', 'There have'],
+        correctAnswer: 'There is',
+        explanation: 'Use "there is" for one thing (a cat).'
+      },
+      {
+        id: 'tia5',
+        type: 'fill-blank',
+        question: 'Complete: "___ many students in class."',
+        options: ['There is', 'There are', 'There have'],
+        correctAnswer: 'There are',
+        explanation: 'Use "there are" for many things (students).'
+      },
+      {
+        id: 'tia6',
+        type: 'identify',
+        question: 'Which sentence uses "there is" correctly?',
+        options: [
+          'There is cats in the garden.',
+          'There is a cat in the garden.',
+          'There are a cat in the garden.'
+        ],
+        correctAnswer: 'There is a cat in the garden.',
+        explanation: 'Use "there is" with singular nouns (a cat).'
+      }
+    ],
+    difficulty: 'intermediate',
+    icon: '📍'
+  },
+  {
     id: 'passive-voice',
     title: 'Passive Voice',
     category: 'Advanced Grammar',
