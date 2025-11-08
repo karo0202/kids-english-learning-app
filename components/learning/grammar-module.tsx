@@ -256,12 +256,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Adverbs',
     category: 'Parts of Speech',
     description: 'Words that describe verbs, adjectives, or other adverbs',
-    explanation: 'An adverb is a word that describes a verb, an adjective, or another adverb. It often tells us how, when, where, or how much. For example: quickly, slowly, here, very.',
+    explanation: 'An adverb is a word that describes a verb, an adjective, or another adverb. It often tells us how (quickly, slowly), when (now, yesterday), where (here, there), or how much (very, quite). Many adverbs end in -ly. For example: quickly, slowly, here, very, always, never.',
     examples: [
-      'She runs quickly.',
-      'He speaks slowly.',
-      'Come here now.',
-      'It is very cold.'
+      'She runs quickly. (how)',
+      'He speaks slowly. (how)',
+      'Come here now. (where, when)',
+      'It is very cold. (how much)',
+      'I always brush my teeth. (when)',
+      'The bird flew away. (where)',
+      'She sings beautifully. (how)',
+      'He works hard. (how)',
+      'They arrived yesterday. (when)',
+      'The cat is very friendly. (how much)',
+      'I never give up. (when)',
+      'She speaks English well. (how)'
     ],
     exercises: [
       {
@@ -287,6 +295,30 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['beautiful', 'beautifully', 'beauty', 'beautify'],
         correctAnswer: 'beautifully',
         explanation: 'Beautifully is an adverb that describes how she sings.'
+      },
+      {
+        id: 'adv4',
+        type: 'multiple-choice',
+        question: 'Which adverb tells "when"?',
+        options: ['quickly', 'here', 'yesterday', 'very'],
+        correctAnswer: 'yesterday',
+        explanation: 'Yesterday is an adverb that tells when something happened.'
+      },
+      {
+        id: 'adv5',
+        type: 'identify',
+        question: 'Find all adverbs in: "She always works very hard here."',
+        options: ['always, very, hard, here', 'always, very, here', 'works, hard'],
+        correctAnswer: 'always, very, hard, here',
+        explanation: 'Always (when), very (how much), hard (how), here (where) are all adverbs.'
+      },
+      {
+        id: 'adv6',
+        type: 'fill-blank',
+        question: 'Complete: "I ___ go to the park." (every time)',
+        options: ['always', 'quickly', 'here', 'very'],
+        correctAnswer: 'always',
+        explanation: 'Always is an adverb that means every time (when).'
       }
     ],
     difficulty: 'intermediate',
@@ -374,12 +406,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Prepositions',
     category: 'Parts of Speech',
     description: 'Words that show position, direction, or time',
-    explanation: 'A preposition is a word that shows the relationship between a noun or pronoun and other words in a sentence. It tells us where, when, or how. For example: in, on, at, under, over, with.',
+    explanation: 'A preposition is a word that shows the relationship between a noun or pronoun and other words in a sentence. It tells us where (in, on, under), when (at, during, before), or how (with, by). Prepositions always come before a noun or pronoun. For example: in, on, at, under, over, with, by, for, from, to.',
     examples: [
-      'The book is on the table.',
-      'The cat is under the bed.',
-      'We go to school in the morning.',
-      'She plays with her friends.'
+      'The book is on the table. (where)',
+      'The cat is under the bed. (where)',
+      'We go to school in the morning. (when)',
+      'She plays with her friends. (how)',
+      'The bird flew over the house. (where)',
+      'I study at the library. (where)',
+      'She arrived before dinner. (when)',
+      'He walked by the park. (where)',
+      'The gift is for you. (for whom)',
+      'I came from school. (where from)',
+      'She sat next to me. (where)',
+      'The dog ran behind the car. (where)'
     ],
     exercises: [
       {
@@ -397,6 +437,42 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['in', 'run', 'big', 'quickly'],
         correctAnswer: 'in',
         explanation: 'In is a preposition that shows where the ball is.'
+      },
+      {
+        id: 'prep3',
+        type: 'multiple-choice',
+        question: 'Which preposition shows position above?',
+        options: ['under', 'over', 'in', 'on'],
+        correctAnswer: 'over',
+        explanation: 'Over shows position above something.'
+      },
+      {
+        id: 'prep4',
+        type: 'identify',
+        question: 'Find the preposition in: "She walked through the park."',
+        options: ['She', 'walked', 'through', 'park'],
+        correctAnswer: 'through',
+        explanation: 'Through is a preposition showing movement from one side to another.'
+      },
+      {
+        id: 'prep5',
+        type: 'fill-blank',
+        question: 'Complete: "The cat jumped ___ the fence." (above)',
+        options: ['under', 'over', 'in', 'on'],
+        correctAnswer: 'over',
+        explanation: 'Over shows the cat went above the fence.'
+      },
+      {
+        id: 'prep6',
+        type: 'identify',
+        question: 'Which sentence uses a preposition correctly?',
+        options: [
+          'The book is the table.',
+          'The book is on the table.',
+          'The book is table on.'
+        ],
+        correctAnswer: 'The book is on the table.',
+        explanation: 'Prepositions come before the noun (on the table).'
       }
     ],
     difficulty: 'intermediate',
@@ -407,12 +483,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Conjunctions',
     category: 'Parts of Speech',
     description: 'Words that join words, phrases, or sentences together',
-    explanation: 'A conjunction is a word that joins words, phrases, or sentences together. For example: and, but, or, because, so.',
+    explanation: 'A conjunction is a word that joins words, phrases, or sentences together. Common conjunctions: and (adds), but (shows contrast), or (gives choice), because (shows reason), so (shows result), although (shows contrast). For example: and, but, or, because, so, although, while.',
     examples: [
-      'I like apples and oranges.',
-      'She is tired but happy.',
-      'Do you want tea or coffee?',
-      'I stayed home because it was raining.'
+      'I like apples and oranges. (adds)',
+      'She is tired but happy. (contrast)',
+      'Do you want tea or coffee? (choice)',
+      'I stayed home because it was raining. (reason)',
+      'It was raining, so I took an umbrella. (result)',
+      'Although it was late, I finished my homework. (contrast)',
+      'I like pizza and pasta. (adds)',
+      'She is smart but lazy. (contrast)',
+      'Would you like cake or ice cream? (choice)',
+      'I was happy because I passed the test. (reason)',
+      'He studied hard, so he got good grades. (result)',
+      'While I was studying, my phone rang. (time)'
     ],
     exercises: [
       {
@@ -430,6 +514,42 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['and', 'but', 'or', 'because'],
         correctAnswer: 'and',
         explanation: 'And joins the two things I like together.'
+      },
+      {
+        id: 'c3',
+        type: 'multiple-choice',
+        question: 'Which conjunction shows contrast?',
+        options: ['and', 'but', 'or', 'because'],
+        correctAnswer: 'but',
+        explanation: 'But shows contrast or difference between ideas.'
+      },
+      {
+        id: 'c4',
+        type: 'identify',
+        question: 'Find the conjunction in: "I was tired, so I went to bed."',
+        options: ['I', 'was', 'so', 'went'],
+        correctAnswer: 'so',
+        explanation: 'So is a conjunction that shows result (because I was tired, I went to bed).'
+      },
+      {
+        id: 'c5',
+        type: 'fill-blank',
+        question: 'Complete: "I stayed home ___ it was raining." (reason)',
+        options: ['and', 'but', 'because', 'or'],
+        correctAnswer: 'because',
+        explanation: 'Because shows the reason (why I stayed home).'
+      },
+      {
+        id: 'c6',
+        type: 'identify',
+        question: 'Which sentence uses a conjunction correctly?',
+        options: [
+          'I like pizza. I like pasta.',
+          'I like pizza and pasta.',
+          'I like pizza, pasta.'
+        ],
+        correctAnswer: 'I like pizza and pasta.',
+        explanation: 'And joins the two things together correctly.'
       }
     ],
     difficulty: 'intermediate',
@@ -518,11 +638,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Verb Tenses',
     category: 'Verb Forms',
     description: 'Learn about past, present, and future',
-    explanation: 'Verb tenses tell us when something happens. Past tense (happened before), present tense (happening now), and future tense (will happen later).',
+    explanation: 'Verb tenses tell us when something happens. Past tense (happened before - I played), present tense (happening now or always - I play), and future tense (will happen later - I will play). Each tense has different forms. Understanding tenses helps us talk about time correctly!',
     examples: [
       'Past: I walked to school yesterday.',
       'Present: I walk to school every day.',
-      'Future: I will walk to school tomorrow.'
+      'Future: I will walk to school tomorrow.',
+      'Past: She studied for the test.',
+      'Present: She studies every night.',
+      'Future: She will study tomorrow.',
+      'Past: They ate pizza for dinner.',
+      'Present: They eat lunch at noon.',
+      'Future: They will eat breakfast soon.',
+      'Past: He saw a movie last week.',
+      'Present: He sees his friends daily.',
+      'Future: He will see the doctor next month.'
     ],
     exercises: [
       {
@@ -540,6 +669,42 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         options: ['go', 'went', 'will go'],
         correctAnswer: 'went',
         explanation: 'Went is the past tense of go.'
+      },
+      {
+        id: 't3',
+        type: 'multiple-choice',
+        question: 'Which sentence is in the future tense?',
+        options: ['I play soccer.', 'I played soccer.', 'I will play soccer.'],
+        correctAnswer: 'I will play soccer.',
+        explanation: '"Will play" shows future tense (will happen later).'
+      },
+      {
+        id: 't4',
+        type: 'identify',
+        question: 'Find the present tense verb in: "She reads books every day."',
+        options: ['She', 'reads', 'books', 'every'],
+        correctAnswer: 'reads',
+        explanation: '"Reads" is present tense - it happens regularly (every day).'
+      },
+      {
+        id: 't5',
+        type: 'fill-blank',
+        question: 'Complete in future tense: "Tomorrow, I ___ to the store."',
+        options: ['go', 'went', 'will go'],
+        correctAnswer: 'will go',
+        explanation: '"Will go" is future tense (will happen tomorrow).'
+      },
+      {
+        id: 't6',
+        type: 'identify',
+        question: 'Which sentence uses tenses correctly?',
+        options: [
+          'Yesterday I will go to school.',
+          'Yesterday I went to school.',
+          'Yesterday I go to school.'
+        ],
+        correctAnswer: 'Yesterday I went to school.',
+        explanation: 'Use past tense (went) for things that happened yesterday.'
       }
     ],
     difficulty: 'intermediate',
@@ -874,14 +1039,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Subject-Verb Agreement',
     category: 'Sentence Structure',
     description: 'Making sure subjects and verbs match',
-    explanation: 'The subject and verb in a sentence must agree. If the subject is singular (one), the verb is singular. If the subject is plural (more than one), the verb is plural.',
+    explanation: 'The subject and verb in a sentence must agree. If the subject is singular (one), the verb is singular (runs, plays, is). If the subject is plural (more than one), the verb is plural (run, play, are). This is called subject-verb agreement. Always match the verb to the subject!',
     examples: [
-      'The cat runs. (singular)',
-      'The cats run. (plural)',
-      'She plays. (singular)',
-      'They play. (plural)',
-      'He is happy. (singular)',
-      'We are happy. (plural)'
+      'The cat runs. (singular subject + singular verb)',
+      'The cats run. (plural subject + plural verb)',
+      'She plays. (singular subject + singular verb)',
+      'They play. (plural subject + plural verb)',
+      'He is happy. (singular subject + singular verb)',
+      'We are happy. (plural subject + plural verb)',
+      'The dog barks. (singular)',
+      'The dogs bark. (plural)',
+      'My sister studies. (singular)',
+      'My sisters study. (plural)',
+      'The bird flies. (singular)',
+      'The birds fly. (plural)'
     ],
     exercises: [
       {
@@ -911,6 +1082,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'The birds sing.',
         explanation: 'Plural "birds" needs plural verb "sing".'
+      },
+      {
+        id: 'sv4',
+        type: 'multiple-choice',
+        question: 'Choose the correct verb: "The cat ___ on the bed."',
+        options: ['sleep', 'sleeps'],
+        correctAnswer: 'sleeps',
+        explanation: 'Singular subject "cat" needs singular verb "sleeps".'
+      },
+      {
+        id: 'sv5',
+        type: 'fill-blank',
+        question: 'Complete: "The students ___ their homework."',
+        options: ['do', 'does'],
+        correctAnswer: 'do',
+        explanation: 'Plural subject "students" needs plural verb "do".'
+      },
+      {
+        id: 'sv6',
+        type: 'identify',
+        question: 'Which sentence has correct subject-verb agreement?',
+        options: [
+          'The children is playing.',
+          'The children are playing.',
+          'The child are playing.'
+        ],
+        correctAnswer: 'The children are playing.',
+        explanation: 'Plural "children" needs plural verb "are".'
       }
     ],
     difficulty: 'intermediate',
@@ -1085,14 +1284,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Comparatives and Superlatives',
     category: 'Adjectives',
     description: 'Comparing things using -er, -est, more, and most',
-    explanation: 'We use comparatives to compare two things (add -er or use "more"). We use superlatives to compare three or more things (add -est or use "most"). For short words, add -er/-est. For long words, use more/most.',
+    explanation: 'We use comparatives to compare two things (add -er or use "more"). We use superlatives to compare three or more things (add -est or use "most"). For short words (1-2 syllables), add -er/-est. For long words (3+ syllables), use more/most. Some words are irregular (good → better → best).',
     examples: [
       'Big → Bigger (comparative) → Biggest (superlative)',
       'Happy → Happier → Happiest',
       'Beautiful → More beautiful → Most beautiful',
       'Fast → Faster → Fastest',
       'Good → Better → Best',
-      'Bad → Worse → Worst'
+      'Bad → Worse → Worst',
+      'She is taller than me. (comparing two people)',
+      'He is the tallest in class. (comparing many people)',
+      'This book is more interesting than that one. (comparing two books)',
+      'This is the most interesting book. (comparing many books)',
+      'I am faster than you. (comparing two people)',
+      'She is the fastest runner. (comparing many runners)'
     ],
     exercises: [
       {
@@ -1122,6 +1327,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'She is smarter than him.',
         explanation: 'Short words like "smart" use -er, not "more".'
+      },
+      {
+        id: 'comp4',
+        type: 'multiple-choice',
+        question: 'Which is the superlative form of "good"?',
+        options: ['gooder', 'better', 'best'],
+        correctAnswer: 'best',
+        explanation: '"Good" is irregular: good → better → best.'
+      },
+      {
+        id: 'comp5',
+        type: 'fill-blank',
+        question: 'Complete: "This book is ___ than that one." (interesting - long word)',
+        options: ['interesting', 'more interesting', 'most interesting'],
+        correctAnswer: 'more interesting',
+        explanation: 'Long words (3+ syllables) use "more" for comparatives.'
+      },
+      {
+        id: 'comp6',
+        type: 'identify',
+        question: 'Which sentence uses comparatives correctly?',
+        options: [
+          'She is tall than me.',
+          'She is taller than me.',
+          'She is tallest than me.'
+        ],
+        correctAnswer: 'She is taller than me.',
+        explanation: 'Use comparative form (-er) with "than" to compare two things.'
       }
     ],
     difficulty: 'intermediate',
@@ -1209,14 +1442,20 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
     title: 'Prepositions of Time/Place',
     category: 'Prepositions',
     description: 'Using in, on, at for time and place',
-    explanation: 'Prepositions show when or where something happens. For time: "in" for months/years, "on" for days/dates, "at" for specific times. For place: "in" for inside, "on" for surfaces, "at" for specific locations.',
+    explanation: 'Prepositions show when or where something happens. For time: "in" for months/years/parts of day (in January, in the morning), "on" for days/dates (on Monday, on my birthday), "at" for specific times (at 3 o\'clock, at noon). For place: "in" for inside (in the box), "on" for surfaces (on the table), "at" for specific locations (at school, at home).',
     examples: [
       'Time: in January, on Monday, at 3 o\'clock',
       'Place: in the box, on the table, at school',
-      'I go to school in the morning.',
-      'My birthday is on Friday.',
-      'The book is on the shelf.',
-      'We meet at the park.'
+      'I go to school in the morning. (time)',
+      'My birthday is on Friday. (time)',
+      'The book is on the shelf. (place)',
+      'We meet at the park. (place)',
+      'I was born in 2010. (time - year)',
+      'The meeting is on December 25th. (time - date)',
+      'She arrives at 5 PM. (time - specific time)',
+      'The cat is in the box. (place - inside)',
+      'The pen is on the desk. (place - surface)',
+      'I study at the library. (place - location)'
     ],
     exercises: [
       {
@@ -1246,6 +1485,34 @@ const GRAMMAR_TOPICS: GrammarTopic[] = [
         ],
         correctAnswer: 'I wake up in the morning.',
         explanation: 'Use "in" for parts of the day.'
+      },
+      {
+        id: 'prep4',
+        type: 'multiple-choice',
+        question: 'Which preposition is correct? "My birthday is ___ Friday."',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'on',
+        explanation: 'Use "on" for days of the week (Monday, Friday, etc.).'
+      },
+      {
+        id: 'prep5',
+        type: 'fill-blank',
+        question: 'Complete: "I will meet you ___ 3 o\'clock." (specific time)',
+        options: ['in', 'on', 'at'],
+        correctAnswer: 'at',
+        explanation: 'Use "at" for specific times (at 3 o\'clock, at noon).'
+      },
+      {
+        id: 'prep6',
+        type: 'identify',
+        question: 'Which sentence uses prepositions correctly?',
+        options: [
+          'I study in the library in Monday.',
+          'I study at the library on Monday.',
+          'I study on the library at Monday.'
+        ],
+        correctAnswer: 'I study at the library on Monday.',
+        explanation: 'Use "at" for locations (library), "on" for days (Monday).'
       }
     ],
     difficulty: 'intermediate',
