@@ -15,6 +15,12 @@ interface ColoringCardProps {
   onLetterClick: () => void
 }
 
+// Map letters to image filenames
+const getImagePath = (letter: string, word: string): string => {
+  const filename = `${letter.toLowerCase()}-${word.toLowerCase()}.jpg`
+  return `/images/alphabet-coloring/${filename}`
+}
+
 export default function ColoringCard({
   letter,
   word,
@@ -31,7 +37,11 @@ export default function ColoringCard({
   const [isErasing, setIsErasing] = useState(false)
   const [showSparkles, setShowSparkles] = useState(false)
   const [sparklePositions, setSparklePositions] = useState<Array<{ x: number; y: number }>>([])
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [useImage, setUseImage] = useState(false)
+  const imageRef = useRef<HTMLImageElement | null>(null)
 
+  // Check if image exists and load it
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -50,8 +60,50 @@ export default function ColoringCard({
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
       }
       img.src = savedData.imageData
-    } else {
-      // Draw outline image
+      return
+    }
+
+    // Try to load image from public folder
+    const imagePath = getImagePath(letter, word)
+    const img = new Image()
+    
+    img.onload = () => {
+      // Image exists, use it
+      setUseImage(true)
+      setImageLoaded(true)
+      imageRef.current = img
+      
+      // Draw the image on canvas
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      
+      // Calculate dimensions to maintain aspect ratio
+      const imgAspect = img.width / img.height
+      const canvasAspect = canvas.width / canvas.height
+      
+      let drawWidth = canvas.width
+      let drawHeight = canvas.height
+      let drawX = 0
+      let drawY = 0
+      
+      if (imgAspect > canvasAspect) {
+        // Image is wider
+        drawHeight = canvas.width / imgAspect
+        drawY = (canvas.height - drawHeight) / 2
+      } else {
+        // Image is taller
+        drawWidth = canvas.height * imgAspect
+        drawX = (canvas.width - drawWidth) / 2
+      }
+      
+      ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
+    }
+    
+    img.onerror = () => {
+      // Image doesn't exist, fall back to canvas drawing
+      setUseImage(false)
+      setImageLoaded(true)
+      
       ctx.fillStyle = '#ffffff'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
@@ -61,7 +113,9 @@ export default function ColoringCard({
       ctx.lineJoin = 'round'
       drawOutlineShape(ctx, canvas.width, canvas.height, letter)
     }
-  }, [letter, savedData])
+    
+    img.src = imagePath
+  }, [letter, word, savedData])
 
   useEffect(() => {
     const canvas = wordCanvasRef.current
@@ -754,11 +808,34 @@ export default function ColoringCard({
       if (ctx) {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.strokeStyle = '#000000'
-        ctx.lineWidth = 4
-        ctx.lineCap = 'round'
-        ctx.lineJoin = 'round'
-        drawOutlineShape(ctx, canvas.width, canvas.height, letter)
+        
+        // Redraw the base image (either from file or canvas)
+        if (useImage && imageRef.current) {
+          const img = imageRef.current
+          const imgAspect = img.width / img.height
+          const canvasAspect = canvas.width / canvas.height
+          
+          let drawWidth = canvas.width
+          let drawHeight = canvas.height
+          let drawX = 0
+          let drawY = 0
+          
+          if (imgAspect > canvasAspect) {
+            drawHeight = canvas.width / imgAspect
+            drawY = (canvas.height - drawHeight) / 2
+          } else {
+            drawWidth = canvas.height * imgAspect
+            drawX = (canvas.width - drawWidth) / 2
+          }
+          
+          ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
+        } else {
+          ctx.strokeStyle = '#000000'
+          ctx.lineWidth = 4
+          ctx.lineCap = 'round'
+          ctx.lineJoin = 'round'
+          drawOutlineShape(ctx, canvas.width, canvas.height, letter)
+        }
       }
     }
     
