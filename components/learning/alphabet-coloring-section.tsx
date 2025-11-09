@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { 
   ArrowLeft, ArrowRight, Eraser, RotateCcw, Save, 
-  Volume2, Music, MusicOff, Sparkles, Star, X
+  Volume2, Music, VolumeX, Sparkles, Star, X
 } from 'lucide-react'
 import { audioManager } from '@/lib/audio-manager'
 import ColoringCard from './coloring-card'
@@ -433,7 +433,7 @@ export default function AlphabetColoringSection() {
             }}
             className="text-lg px-4 py-2"
           >
-            {backgroundMusic ? <Music className="w-5 h-5 mr-2" /> : <MusicOff className="w-5 h-5 mr-2" />}
+            {backgroundMusic ? <Music className="w-5 h-5 mr-2" /> : <VolumeX className="w-5 h-5 mr-2" />}
             Music
           </Button>
           
