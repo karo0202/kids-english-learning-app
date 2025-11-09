@@ -104,15 +104,15 @@ export default function ColoringCard({
     
     switch (letter.toUpperCase()) {
       case 'A': // Apple
-        // Apple body
-        ctx.ellipse(centerX, centerY - size * 0.1, size * 0.6, size * 0.7, 0, 0, Math.PI * 2)
-        // Apple top indent
-        ctx.moveTo(centerX - size * 0.3, centerY - size * 0.8)
-        ctx.lineTo(centerX, centerY - size * 1.1)
-        ctx.lineTo(centerX + size * 0.3, centerY - size * 0.8)
-        // Leaf
-        ctx.moveTo(centerX + size * 0.1, centerY - size * 1.1)
-        ctx.quadraticCurveTo(centerX + size * 0.3, centerY - size * 1.3, centerX + size * 0.2, centerY - size * 1.2)
+        // Apple body - large circle
+        ctx.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2)
+        // Apple top indent - small inverted V
+        ctx.moveTo(centerX - size * 0.15, centerY - size * 0.4)
+        ctx.lineTo(centerX, centerY - size * 0.55)
+        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.4)
+        // Stem - short diagonal line extending up and slightly right
+        ctx.moveTo(centerX + size * 0.05, centerY - size * 0.55)
+        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.65)
         break
       
       case 'B': // Bird
