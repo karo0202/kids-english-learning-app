@@ -56,7 +56,7 @@ export default function ColoringCard({
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
       ctx.strokeStyle = '#000000'
-      ctx.lineWidth = 3
+      ctx.lineWidth = 4
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
       drawOutlineShape(ctx, canvas.width, canvas.height, letter)
@@ -99,73 +99,85 @@ export default function ColoringCard({
   const drawOutlineShape = (ctx: CanvasRenderingContext2D, width: number, height: number, letter: string) => {
     const centerX = width / 2
     const centerY = height / 2
-    const size = Math.min(width, height) * 0.4
+    const size = Math.min(width, height) * 0.45
     
     ctx.beginPath()
     
     switch (letter.toUpperCase()) {
-      case 'A': // Apple - realistic apple shape
-        // Main apple body (slightly wider at bottom)
-        ctx.arc(centerX, centerY, size * 0.45, 0.2, Math.PI - 0.2, false)
-        ctx.arc(centerX, centerY, size * 0.45, Math.PI + 0.2, -0.2, false)
+      case 'A': // Apple - simple apple with stem and leaf
+        // Apple body (simple rounded shape)
+        ctx.arc(centerX, centerY, size * 0.4, 0, Math.PI * 2)
         // Top indent
-        ctx.moveTo(centerX - size * 0.12, centerY - size * 0.35)
-        ctx.lineTo(centerX, centerY - size * 0.5)
-        ctx.lineTo(centerX + size * 0.12, centerY - size * 0.35)
+        ctx.moveTo(centerX - size * 0.1, centerY - size * 0.3)
+        ctx.lineTo(centerX, centerY - size * 0.4)
+        ctx.lineTo(centerX + size * 0.1, centerY - size * 0.3)
         // Stem
-        ctx.moveTo(centerX + size * 0.03, centerY - size * 0.5)
-        ctx.lineTo(centerX + size * 0.12, centerY - size * 0.62)
+        ctx.moveTo(centerX, centerY - size * 0.4)
+        ctx.lineTo(centerX, centerY - size * 0.5)
+        // Leaf
+        ctx.moveTo(centerX, centerY - size * 0.5)
+        ctx.quadraticCurveTo(centerX + size * 0.15, centerY - size * 0.55, centerX + size * 0.1, centerY - size * 0.45)
+        ctx.quadraticCurveTo(centerX + size * 0.05, centerY - size * 0.5, centerX, centerY - size * 0.5)
         break
       
-      case 'B': // Bird - side view bird
+      case 'B': // Bird - simple bird outline
         // Body (oval)
-        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.3, 0, 0, Math.PI * 2)
+        ctx.ellipse(centerX, centerY, size * 0.35, size * 0.25, 0, 0, Math.PI * 2)
         // Head (circle)
-        ctx.arc(centerX - size * 0.25, centerY - size * 0.15, size * 0.2, 0, Math.PI * 2)
+        ctx.arc(centerX - size * 0.2, centerY - size * 0.1, size * 0.18, 0, Math.PI * 2)
         // Beak (triangle)
-        ctx.moveTo(centerX - size * 0.45, centerY - size * 0.15)
-        ctx.lineTo(centerX - size * 0.6, centerY - size * 0.1)
-        ctx.lineTo(centerX - size * 0.45, centerY - size * 0.05)
-        // Wing (curved)
+        ctx.moveTo(centerX - size * 0.38, centerY - size * 0.1)
+        ctx.lineTo(centerX - size * 0.5, centerY - size * 0.05)
+        ctx.lineTo(centerX - size * 0.38, centerY)
+        ctx.closePath()
+        // Wing (simple curve)
         ctx.moveTo(centerX + size * 0.1, centerY - size * 0.1)
-        ctx.quadraticCurveTo(centerX + size * 0.4, centerY - size * 0.3, centerX + size * 0.3, centerY)
+        ctx.quadraticCurveTo(centerX + size * 0.35, centerY - size * 0.25, centerX + size * 0.25, centerY)
         // Tail
-        ctx.moveTo(centerX + size * 0.4, centerY)
-        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.15)
-        ctx.lineTo(centerX + size * 0.5, centerY)
-        ctx.lineTo(centerX + size * 0.55, centerY + size * 0.15)
+        ctx.moveTo(centerX + size * 0.35, centerY)
+        ctx.lineTo(centerX + size * 0.5, centerY - size * 0.12)
+        ctx.lineTo(centerX + size * 0.45, centerY)
+        ctx.lineTo(centerX + size * 0.5, centerY + size * 0.12)
+        ctx.closePath()
         break
       
-      case 'C': // Cat - front view cat face
+      case 'C': // Cat - simple cat face
         // Head (circle)
-        ctx.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2)
-        // Ears (triangles)
-        ctx.moveTo(centerX - size * 0.3, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.15, centerY - size * 0.6)
-        ctx.lineTo(centerX, centerY - size * 0.35)
-        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.3)
-        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.6)
-        ctx.lineTo(centerX, centerY - size * 0.35)
+        ctx.arc(centerX, centerY, size * 0.45, 0, Math.PI * 2)
+        // Left ear (triangle)
+        ctx.moveTo(centerX - size * 0.25, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.1, centerY - size * 0.55)
+        ctx.lineTo(centerX, centerY - size * 0.3)
+        ctx.closePath()
+        // Right ear (triangle)
+        ctx.moveTo(centerX + size * 0.25, centerY - size * 0.25)
+        ctx.lineTo(centerX + size * 0.1, centerY - size * 0.55)
+        ctx.lineTo(centerX, centerY - size * 0.3)
+        ctx.closePath()
         break
       
-      case 'D': // Dolphin - jumping dolphin
-        // Body (curved)
-        ctx.moveTo(centerX - size * 0.5, centerY)
-        ctx.quadraticCurveTo(centerX, centerY - size * 0.3, centerX + size * 0.4, centerY - size * 0.1)
-        ctx.quadraticCurveTo(centerX + size * 0.5, centerY, centerX + size * 0.4, centerY + size * 0.1)
-        ctx.quadraticCurveTo(centerX, centerY + size * 0.3, centerX - size * 0.5, centerY)
+      case 'D': // Dolphin - simple dolphin outline
+        // Body (curved oval)
+        ctx.moveTo(centerX - size * 0.45, centerY)
+        ctx.quadraticCurveTo(centerX, centerY - size * 0.25, centerX + size * 0.35, centerY - size * 0.08)
+        ctx.quadraticCurveTo(centerX + size * 0.45, centerY, centerX + size * 0.35, centerY + size * 0.08)
+        ctx.quadraticCurveTo(centerX, centerY + size * 0.25, centerX - size * 0.45, centerY)
+        ctx.closePath()
         // Tail fin
-        ctx.moveTo(centerX - size * 0.5, centerY)
-        ctx.lineTo(centerX - size * 0.7, centerY - size * 0.25)
-        ctx.lineTo(centerX - size * 0.6, centerY)
-        ctx.lineTo(centerX - size * 0.7, centerY + size * 0.25)
+        ctx.moveTo(centerX - size * 0.45, centerY)
+        ctx.lineTo(centerX - size * 0.65, centerY - size * 0.2)
+        ctx.lineTo(centerX - size * 0.55, centerY)
+        ctx.lineTo(centerX - size * 0.65, centerY + size * 0.2)
+        ctx.closePath()
         // Dorsal fin
-        ctx.moveTo(centerX + size * 0.2, centerY - size * 0.15)
-        ctx.quadraticCurveTo(centerX + size * 0.3, centerY - size * 0.35, centerX + size * 0.25, centerY - size * 0.2)
+        ctx.moveTo(centerX + size * 0.15, centerY - size * 0.12)
+        ctx.quadraticCurveTo(centerX + size * 0.25, centerY - size * 0.3, centerX + size * 0.2, centerY - size * 0.15)
+        ctx.closePath()
         // Beak
-        ctx.moveTo(centerX + size * 0.4, centerY - size * 0.1)
-        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.05)
-        ctx.lineTo(centerX + size * 0.4, centerY + size * 0.05)
+        ctx.moveTo(centerX + size * 0.35, centerY - size * 0.08)
+        ctx.lineTo(centerX + size * 0.5, centerY - size * 0.04)
+        ctx.lineTo(centerX + size * 0.35, centerY + size * 0.04)
+        ctx.closePath()
         break
       
       case 'E': // Eggs - two eggs
@@ -175,22 +187,23 @@ export default function ColoringCard({
         ctx.ellipse(centerX + size * 0.25, centerY, size * 0.2, size * 0.28, 0, 0, Math.PI * 2)
         break
       
-      case 'F': // Fish - side view fish
+      case 'F': // Fish - simple fish outline
         // Body (oval)
-        ctx.ellipse(centerX, centerY, size * 0.45, size * 0.3, 0, 0, Math.PI * 2)
+        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.25, 0, 0, Math.PI * 2)
         // Tail fin
-        ctx.moveTo(centerX - size * 0.45, centerY)
-        ctx.lineTo(centerX - size * 0.65, centerY - size * 0.25)
-        ctx.lineTo(centerX - size * 0.6, centerY)
-        ctx.lineTo(centerX - size * 0.65, centerY + size * 0.25)
+        ctx.moveTo(centerX - size * 0.4, centerY)
+        ctx.lineTo(centerX - size * 0.6, centerY - size * 0.2)
+        ctx.lineTo(centerX - size * 0.55, centerY)
+        ctx.lineTo(centerX - size * 0.6, centerY + size * 0.2)
+        ctx.closePath()
         // Top fin
-        ctx.moveTo(centerX, centerY - size * 0.3)
-        ctx.quadraticCurveTo(centerX + size * 0.2, centerY - size * 0.45, centerX + size * 0.15, centerY - size * 0.3)
+        ctx.moveTo(centerX, centerY - size * 0.25)
+        ctx.quadraticCurveTo(centerX + size * 0.18, centerY - size * 0.4, centerX + size * 0.12, centerY - size * 0.25)
+        ctx.closePath()
         // Bottom fin
-        ctx.moveTo(centerX, centerY + size * 0.3)
-        ctx.quadraticCurveTo(centerX + size * 0.15, centerY + size * 0.4, centerX + size * 0.1, centerY + size * 0.3)
-        // Eye
-        ctx.arc(centerX + size * 0.15, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2)
+        ctx.moveTo(centerX, centerY + size * 0.25)
+        ctx.quadraticCurveTo(centerX + size * 0.12, centerY + size * 0.35, centerX + size * 0.08, centerY + size * 0.25)
+        ctx.closePath()
         break
       
       case 'G': // Gloves - two mittens
@@ -273,15 +286,11 @@ export default function ColoringCard({
         }
         break
       
-      case 'M': // Mushroom - toadstool
+      case 'M': // Mushroom - simple toadstool
         // Stem (rectangle)
-        ctx.rect(centerX - size * 0.08, centerY + size * 0.15, size * 0.16, size * 0.35)
-        // Cap (semicircle with spots)
-        ctx.arc(centerX, centerY + size * 0.15, size * 0.4, Math.PI, 0, false)
-        // Spots
-        ctx.arc(centerX - size * 0.15, centerY, size * 0.08, 0, Math.PI * 2)
-        ctx.arc(centerX + size * 0.15, centerY + size * 0.05, size * 0.08, 0, Math.PI * 2)
-        ctx.arc(centerX, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2)
+        ctx.rect(centerX - size * 0.07, centerY + size * 0.12, size * 0.14, size * 0.3)
+        // Cap (semicircle)
+        ctx.arc(centerX, centerY + size * 0.12, size * 0.35, Math.PI, 0, false)
         break
       
       case 'N': // Necklace - beaded necklace
@@ -294,25 +303,18 @@ export default function ColoringCard({
         }
         break
       
-      case 'O': // Octopus - octopus with tentacles
+      case 'O': // Octopus - simple octopus
         // Head/body (circle)
-        ctx.arc(centerX, centerY, size * 0.3, 0, Math.PI * 2)
-        // Eyes
-        ctx.arc(centerX - size * 0.1, centerY - size * 0.05, size * 0.05, 0, Math.PI * 2)
-        ctx.arc(centerX + size * 0.1, centerY - size * 0.05, size * 0.05, 0, Math.PI * 2)
-        // Tentacles (8 wavy lines)
+        ctx.arc(centerX, centerY, size * 0.28, 0, Math.PI * 2)
+        // Tentacles (8 simple lines)
         for (let i = 0; i < 8; i++) {
           const angle = (i / 8) * Math.PI * 2
-          const startX = centerX + Math.cos(angle) * size * 0.3
-          const startY = centerY + Math.sin(angle) * size * 0.3
-          const endX = centerX + Math.cos(angle) * size * 0.65
-          const endY = centerY + Math.sin(angle) * size * 0.65
+          const startX = centerX + Math.cos(angle) * size * 0.28
+          const startY = centerY + Math.sin(angle) * size * 0.28
+          const endX = centerX + Math.cos(angle) * size * 0.6
+          const endY = centerY + Math.sin(angle) * size * 0.6
           ctx.moveTo(startX, startY)
-          ctx.quadraticCurveTo(
-            (startX + endX) / 2 + Math.sin(angle) * size * 0.1,
-            (startY + endY) / 2 - Math.cos(angle) * size * 0.1,
-            endX, endY
-          )
+          ctx.lineTo(endX, endY)
         }
         break
       
@@ -363,19 +365,13 @@ export default function ColoringCard({
         ctx.arc(centerX + size * 0.3, centerY + size * 0.25, size * 0.1, 0, Math.PI * 2)
         break
       
-      case 'S': // Snake - coiled snake
-        // Coiled body
-        ctx.arc(centerX, centerY, size * 0.3, 0, Math.PI * 2)
-        ctx.arc(centerX, centerY, size * 0.2, 0, Math.PI * 2)
+      case 'S': // Snake - simple coiled snake
+        // Coiled body (outer)
+        ctx.arc(centerX, centerY, size * 0.28, 0, Math.PI * 2)
+        // Coiled body (inner)
+        ctx.arc(centerX, centerY, size * 0.18, 0, Math.PI * 2)
         // Head
-        ctx.ellipse(centerX + size * 0.35, centerY - size * 0.2, size * 0.15, size * 0.12, -0.3, 0, Math.PI * 2)
-        // Eye
-        ctx.arc(centerX + size * 0.4, centerY - size * 0.25, size * 0.03, 0, Math.PI * 2)
-        // Tongue
-        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.2)
-        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.25)
-        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.2)
-        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.15)
+        ctx.ellipse(centerX + size * 0.32, centerY - size * 0.18, size * 0.14, size * 0.1, -0.3, 0, Math.PI * 2)
         break
       
       case 'T': // Telephone - old rotary phone
@@ -428,23 +424,22 @@ export default function ColoringCard({
         ctx.quadraticCurveTo(centerX + size * 0.12, centerY - size * 0.15, centerX + size * 0.1, centerY - size * 0.25)
         break
       
-      case 'W': // Whale - side view whale
+      case 'W': // Whale - simple whale outline
         // Body (large oval)
-        ctx.ellipse(centerX, centerY, size * 0.6, size * 0.35, 0, 0, Math.PI * 2)
+        ctx.ellipse(centerX, centerY, size * 0.55, size * 0.3, 0, 0, Math.PI * 2)
         // Tail fin
-        ctx.moveTo(centerX - size * 0.6, centerY)
-        ctx.lineTo(centerX - size * 0.85, centerY - size * 0.25)
-        ctx.lineTo(centerX - size * 0.75, centerY)
-        ctx.lineTo(centerX - size * 0.85, centerY + size * 0.25)
+        ctx.moveTo(centerX - size * 0.55, centerY)
+        ctx.lineTo(centerX - size * 0.8, centerY - size * 0.22)
+        ctx.lineTo(centerX - size * 0.7, centerY)
+        ctx.lineTo(centerX - size * 0.8, centerY + size * 0.22)
+        ctx.closePath()
         // Dorsal fin
-        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.35)
-        ctx.quadraticCurveTo(centerX + size * 0.4, centerY - size * 0.5, centerX + size * 0.35, centerY - size * 0.4)
-        // Spout
-        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.35)
-        ctx.quadraticCurveTo(centerX + size * 0.55, centerY - size * 0.5, centerX + size * 0.52, centerY - size * 0.45)
-        ctx.quadraticCurveTo(centerX + size * 0.58, centerY - size * 0.55, centerX + size * 0.55, centerY - size * 0.5)
-        // Eye
-        ctx.arc(centerX + size * 0.2, centerY - size * 0.1, size * 0.06, 0, Math.PI * 2)
+        ctx.moveTo(centerX + size * 0.25, centerY - size * 0.3)
+        ctx.quadraticCurveTo(centerX + size * 0.35, centerY - size * 0.45, centerX + size * 0.3, centerY - size * 0.35)
+        ctx.closePath()
+        // Spout (simple curve)
+        ctx.moveTo(centerX + size * 0.45, centerY - size * 0.3)
+        ctx.quadraticCurveTo(centerX + size * 0.5, centerY - size * 0.45, centerX + size * 0.48, centerY - size * 0.4)
         break
       
       case 'X': // Xylophone - musical bars
@@ -477,26 +472,27 @@ export default function ColoringCard({
         ctx.quadraticCurveTo(centerX + size * 0.15, centerY + size * 0.25, centerX + size * 0.2, centerY + size * 0.4)
         break
       
-      case 'Z': // Zebra - side view zebra head
+      case 'Z': // Zebra - simple zebra outline
         // Head (oval)
-        ctx.ellipse(centerX, centerY - size * 0.1, size * 0.25, size * 0.2, 0, 0, Math.PI * 2)
+        ctx.ellipse(centerX, centerY - size * 0.08, size * 0.22, size * 0.18, 0, 0, Math.PI * 2)
         // Body (oval)
-        ctx.ellipse(centerX, centerY + size * 0.2, size * 0.45, size * 0.25, 0, 0, Math.PI * 2)
-        // Stripes (diagonal)
-        for (let i = 0; i < 6; i++) {
-          const x = centerX - size * 0.35 + i * size * 0.14
+        ctx.ellipse(centerX, centerY + size * 0.18, size * 0.4, size * 0.22, 0, 0, Math.PI * 2)
+        // Stripes (diagonal lines)
+        for (let i = 0; i < 5; i++) {
+          const x = centerX - size * 0.32 + i * size * 0.16
           const y1 = centerY + size * 0.05
-          const y2 = centerY + size * 0.35
+          const y2 = centerY + size * 0.32
           ctx.moveTo(x, y1)
-          ctx.lineTo(x + size * 0.08, y2)
+          ctx.lineTo(x + size * 0.07, y2)
         }
         // Mane
-        ctx.moveTo(centerX - size * 0.2, centerY - size * 0.1)
-        ctx.quadraticCurveTo(centerX - size * 0.25, centerY - size * 0.25, centerX - size * 0.15, centerY - size * 0.15)
+        ctx.moveTo(centerX - size * 0.18, centerY - size * 0.08)
+        ctx.quadraticCurveTo(centerX - size * 0.22, centerY - size * 0.22, centerX - size * 0.12, centerY - size * 0.12)
         // Ear
-        ctx.moveTo(centerX + size * 0.15, centerY - size * 0.2)
-        ctx.lineTo(centerX + size * 0.2, centerY - size * 0.3)
-        ctx.lineTo(centerX + size * 0.18, centerY - size * 0.25)
+        ctx.moveTo(centerX + size * 0.12, centerY - size * 0.18)
+        ctx.lineTo(centerX + size * 0.18, centerY - size * 0.28)
+        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.22)
+        ctx.closePath()
         break
       
       default:
@@ -647,7 +643,7 @@ export default function ColoringCard({
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.strokeStyle = '#000000'
-        ctx.lineWidth = 3
+        ctx.lineWidth = 4
         ctx.lineCap = 'round'
         ctx.lineJoin = 'round'
         drawOutlineShape(ctx, canvas.width, canvas.height, letter)
