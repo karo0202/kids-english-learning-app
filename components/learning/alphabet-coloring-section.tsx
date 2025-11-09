@@ -20,30 +20,30 @@ interface AlphabetCard {
 
 const ALPHABET_DATA: AlphabetCard[] = [
   { letter: 'A', word: 'Apple' },
-  { letter: 'B', word: 'Bird' },
+  { letter: 'B', word: 'Bear' },
   { letter: 'C', word: 'Cat' },
-  { letter: 'D', word: 'Dolphin' },
-  { letter: 'E', word: 'Eggs' },
+  { letter: 'D', word: 'Dog' },
+  { letter: 'E', word: 'Elephant' },
   { letter: 'F', word: 'Fish' },
-  { letter: 'G', word: 'Gloves' },
-  { letter: 'H', word: 'House' },
-  { letter: 'I', word: 'Ice cream' },
-  { letter: 'J', word: 'Jug' },
-  { letter: 'K', word: 'Kite' },
+  { letter: 'G', word: 'Goat' },
+  { letter: 'H', word: 'Horse' },
+  { letter: 'I', word: 'Iguana' },
+  { letter: 'J', word: 'Jaguar' },
+  { letter: 'K', word: 'Kangaroo' },
   { letter: 'L', word: 'Lion' },
-  { letter: 'M', word: 'Mushroom' },
-  { letter: 'N', word: 'Necklace' },
-  { letter: 'O', word: 'Octopus' },
-  { letter: 'P', word: 'Pig' },
+  { letter: 'M', word: 'Monkey' },
+  { letter: 'N', word: 'Notebook' },
+  { letter: 'O', word: 'Owl' },
+  { letter: 'P', word: 'Penguin' },
   { letter: 'Q', word: 'Queen' },
   { letter: 'R', word: 'Rabbit' },
-  { letter: 'S', word: 'Snake' },
-  { letter: 'T', word: 'Telephone' },
-  { letter: 'U', word: 'Unicorn' },
-  { letter: 'V', word: 'Violin' },
+  { letter: 'S', word: 'Sun' },
+  { letter: 'T', word: 'Turtle' },
+  { letter: 'U', word: 'Umbrella' },
+  { letter: 'V', word: 'Vase' },
   { letter: 'W', word: 'Whale' },
   { letter: 'X', word: 'Xylophone' },
-  { letter: 'Y', word: 'Yoga' },
+  { letter: 'Y', word: 'Yak' },
   { letter: 'Z', word: 'Zebra' }
 ]
 
@@ -505,30 +505,30 @@ export default function AlphabetColoringSection() {
                     <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
                       <span className="text-4xl">
                         {card.letter === 'A' && '🍎'}
-                        {card.letter === 'B' && '🐦'}
+                        {card.letter === 'B' && '🐻'}
                         {card.letter === 'C' && '🐱'}
-                        {card.letter === 'D' && '🐬'}
-                        {card.letter === 'E' && '🥚'}
+                        {card.letter === 'D' && '🐶'}
+                        {card.letter === 'E' && '🐘'}
                         {card.letter === 'F' && '🐟'}
-                        {card.letter === 'G' && '🧤'}
-                        {card.letter === 'H' && '🏠'}
-                        {card.letter === 'I' && '🍦'}
-                        {card.letter === 'J' && '🫖'}
-                        {card.letter === 'K' && '🪁'}
+                        {card.letter === 'G' && '🐐'}
+                        {card.letter === 'H' && '🐴'}
+                        {card.letter === 'I' && '🦎'}
+                        {card.letter === 'J' && '🐆'}
+                        {card.letter === 'K' && '🦘'}
                         {card.letter === 'L' && '🦁'}
-                        {card.letter === 'M' && '🍄'}
-                        {card.letter === 'N' && '📿'}
-                        {card.letter === 'O' && '🐙'}
-                        {card.letter === 'P' && '🐷'}
+                        {card.letter === 'M' && '🐵'}
+                        {card.letter === 'N' && '📓'}
+                        {card.letter === 'O' && '🦉'}
+                        {card.letter === 'P' && '🐧'}
                         {card.letter === 'Q' && '👑'}
                         {card.letter === 'R' && '🐰'}
-                        {card.letter === 'S' && '🐍'}
-                        {card.letter === 'T' && '☎️'}
-                        {card.letter === 'U' && '🦄'}
-                        {card.letter === 'V' && '🎻'}
+                        {card.letter === 'S' && '☀️'}
+                        {card.letter === 'T' && '🐢'}
+                        {card.letter === 'U' && '☂️'}
+                        {card.letter === 'V' && '🏺'}
                         {card.letter === 'W' && '🐋'}
                         {card.letter === 'X' && '🎹'}
-                        {card.letter === 'Y' && '🧘'}
+                        {card.letter === 'Y' && '🐂'}
                         {card.letter === 'Z' && '🦓'}
                       </span>
                     </div>
