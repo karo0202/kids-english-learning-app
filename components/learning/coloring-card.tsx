@@ -51,13 +51,14 @@ export default function ColoringCard({
       }
       img.src = savedData.imageData
     } else {
-      // Draw outline image placeholder (in real app, this would be an actual image)
+      // Draw outline image
       ctx.fillStyle = '#ffffff'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
-      // Draw a simple outline shape based on the letter
       ctx.strokeStyle = '#000000'
       ctx.lineWidth = 3
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
       drawOutlineShape(ctx, canvas.width, canvas.height, letter)
     }
   }, [letter, savedData])
@@ -98,317 +99,404 @@ export default function ColoringCard({
   const drawOutlineShape = (ctx: CanvasRenderingContext2D, width: number, height: number, letter: string) => {
     const centerX = width / 2
     const centerY = height / 2
-    const size = Math.min(width, height) * 0.35
+    const size = Math.min(width, height) * 0.4
     
     ctx.beginPath()
     
     switch (letter.toUpperCase()) {
-      case 'A': // Apple
-        // Apple body - large circle
-        ctx.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2)
-        // Apple top indent - small inverted V
-        ctx.moveTo(centerX - size * 0.15, centerY - size * 0.4)
-        ctx.lineTo(centerX, centerY - size * 0.55)
-        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.4)
-        // Stem - short diagonal line extending up and slightly right
-        ctx.moveTo(centerX + size * 0.05, centerY - size * 0.55)
-        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.65)
-        break
-      
-      case 'B': // Bird
-        // Bird body
-        ctx.ellipse(centerX, centerY, size * 0.5, size * 0.6, 0, 0, Math.PI * 2)
-        // Head
-        ctx.arc(centerX - size * 0.3, centerY - size * 0.4, size * 0.3, 0, Math.PI * 2)
-        // Beak
-        ctx.moveTo(centerX - size * 0.6, centerY - size * 0.4)
-        ctx.lineTo(centerX - size * 0.8, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.6, centerY - size * 0.2)
-        // Wing
-        ctx.moveTo(centerX + size * 0.2, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX + size * 0.6, centerY - size * 0.4, centerX + size * 0.4, centerY)
-        break
-      
-      case 'C': // Cat
-        // Cat head
-        ctx.arc(centerX, centerY, size * 0.6, 0, Math.PI * 2)
-        // Ears
-        ctx.moveTo(centerX - size * 0.4, centerY - size * 0.5)
-        ctx.lineTo(centerX - size * 0.2, centerY - size * 0.8)
+      case 'A': // Apple - realistic apple shape
+        // Main apple body (slightly wider at bottom)
+        ctx.arc(centerX, centerY, size * 0.45, 0.2, Math.PI - 0.2, false)
+        ctx.arc(centerX, centerY, size * 0.45, Math.PI + 0.2, -0.2, false)
+        // Top indent
+        ctx.moveTo(centerX - size * 0.12, centerY - size * 0.35)
         ctx.lineTo(centerX, centerY - size * 0.5)
-        ctx.moveTo(centerX + size * 0.4, centerY - size * 0.5)
-        ctx.lineTo(centerX + size * 0.2, centerY - size * 0.8)
-        ctx.lineTo(centerX, centerY - size * 0.5)
-        break
-      
-      case 'D': // Dolphin
-        // Dolphin body
-        ctx.ellipse(centerX, centerY, size * 0.7, size * 0.4, -0.3, 0, Math.PI * 2)
-        // Tail
-        ctx.moveTo(centerX - size * 0.7, centerY)
-        ctx.lineTo(centerX - size, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.9, centerY)
-        ctx.lineTo(centerX - size, centerY + size * 0.3)
-        // Fin
-        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX + size * 0.5, centerY - size * 0.5, centerX + size * 0.4, centerY - size * 0.3)
-        break
-      
-      case 'E': // Eggs
-        ctx.ellipse(centerX - size * 0.3, centerY, size * 0.25, size * 0.35, 0, 0, Math.PI * 2)
-        ctx.moveTo(centerX + size * 0.3, centerY)
-        ctx.ellipse(centerX + size * 0.3, centerY, size * 0.25, size * 0.35, 0, 0, Math.PI * 2)
-        break
-      
-      case 'F': // Fish
-        // Fish body
-        ctx.ellipse(centerX, centerY, size * 0.6, size * 0.4, 0, 0, Math.PI * 2)
-        // Tail
-        ctx.moveTo(centerX - size * 0.6, centerY)
-        ctx.lineTo(centerX - size * 0.9, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.8, centerY)
-        ctx.lineTo(centerX - size * 0.9, centerY + size * 0.3)
-        // Fin
-        ctx.moveTo(centerX, centerY - size * 0.4)
-        ctx.quadraticCurveTo(centerX + size * 0.2, centerY - size * 0.6, centerX + size * 0.1, centerY - size * 0.4)
-        break
-      
-      case 'G': // Gloves
-        // Left glove
-        ctx.moveTo(centerX - size * 0.4, centerY - size * 0.6)
-        ctx.quadraticCurveTo(centerX - size * 0.5, centerY - size * 0.3, centerX - size * 0.4, centerY)
-        ctx.quadraticCurveTo(centerX - size * 0.3, centerY + size * 0.3, centerX - size * 0.2, centerY)
-        ctx.quadraticCurveTo(centerX - size * 0.3, centerY - size * 0.3, centerX - size * 0.4, centerY - size * 0.6)
-        // Right glove
-        ctx.moveTo(centerX + size * 0.2, centerY - size * 0.6)
-        ctx.quadraticCurveTo(centerX + size * 0.1, centerY - size * 0.3, centerX + size * 0.2, centerY)
-        ctx.quadraticCurveTo(centerX + size * 0.3, centerY + size * 0.3, centerX + size * 0.4, centerY)
-        ctx.quadraticCurveTo(centerX + size * 0.3, centerY - size * 0.3, centerX + size * 0.2, centerY - size * 0.6)
-        break
-      
-      case 'H': // House
-        // House base
-        ctx.rect(centerX - size * 0.5, centerY, size, size * 0.6)
-        // Roof
-        ctx.moveTo(centerX - size * 0.5, centerY)
-        ctx.lineTo(centerX, centerY - size * 0.5)
-        ctx.lineTo(centerX + size * 0.5, centerY)
-        // Door
-        ctx.rect(centerX - size * 0.15, centerY + size * 0.3, size * 0.3, size * 0.3)
-        break
-      
-      case 'I': // Ice cream
-        // Cone
-        ctx.moveTo(centerX - size * 0.3, centerY + size * 0.5)
-        ctx.lineTo(centerX, centerY + size * 0.8)
-        ctx.lineTo(centerX + size * 0.3, centerY + size * 0.5)
-        // Scoop 1
-        ctx.arc(centerX, centerY + size * 0.2, size * 0.3, 0, Math.PI * 2)
-        // Scoop 2
-        ctx.arc(centerX, centerY - size * 0.1, size * 0.3, 0, Math.PI * 2)
-        break
-      
-      case 'J': // Jug
-        // Jug body
-        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.5, 0, 0, Math.PI * 2)
-        // Handle
-        ctx.moveTo(centerX + size * 0.4, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX + size * 0.6, centerY, centerX + size * 0.4, centerY + size * 0.2)
-        // Spout
-        ctx.moveTo(centerX - size * 0.4, centerY - size * 0.5)
-        ctx.lineTo(centerX - size * 0.6, centerY - size * 0.6)
-        ctx.lineTo(centerX - size * 0.4, centerY - size * 0.4)
-        break
-      
-      case 'K': // Kite
-        // Kite diamond
-        ctx.moveTo(centerX, centerY - size * 0.6)
-        ctx.lineTo(centerX + size * 0.5, centerY)
-        ctx.lineTo(centerX, centerY + size * 0.6)
-        ctx.lineTo(centerX - size * 0.5, centerY)
-        ctx.closePath()
-        // Tail
-        ctx.moveTo(centerX, centerY + size * 0.6)
-        ctx.lineTo(centerX, centerY + size * 0.9)
-        break
-      
-      case 'L': // Lion
-        // Lion head
-        ctx.arc(centerX, centerY, size * 0.6, 0, Math.PI * 2)
-        // Mane
-        for (let i = 0; i < 8; i++) {
-          const angle = (i / 8) * Math.PI * 2
-          const x = centerX + Math.cos(angle) * size * 0.7
-          const y = centerY + Math.sin(angle) * size * 0.7
-          ctx.moveTo(centerX, centerY)
-          ctx.lineTo(x, y)
-        }
-        break
-      
-      case 'M': // Mushroom
+        ctx.lineTo(centerX + size * 0.12, centerY - size * 0.35)
         // Stem
-        ctx.rect(centerX - size * 0.1, centerY, size * 0.2, size * 0.4)
-        // Cap
-        ctx.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2)
-        // Spots
-        ctx.arc(centerX - size * 0.2, centerY - size * 0.1, size * 0.1, 0, Math.PI * 2)
-        ctx.arc(centerX + size * 0.2, centerY + size * 0.1, size * 0.1, 0, Math.PI * 2)
+        ctx.moveTo(centerX + size * 0.03, centerY - size * 0.5)
+        ctx.lineTo(centerX + size * 0.12, centerY - size * 0.62)
         break
       
-      case 'N': // Necklace
-        // Chain links
-        for (let i = 0; i < 5; i++) {
-          const x = centerX - size * 0.4 + (i * size * 0.2)
-          ctx.arc(x, centerY, size * 0.1, 0, Math.PI * 2)
+      case 'B': // Bird - side view bird
+        // Body (oval)
+        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.3, 0, 0, Math.PI * 2)
+        // Head (circle)
+        ctx.arc(centerX - size * 0.25, centerY - size * 0.15, size * 0.2, 0, Math.PI * 2)
+        // Beak (triangle)
+        ctx.moveTo(centerX - size * 0.45, centerY - size * 0.15)
+        ctx.lineTo(centerX - size * 0.6, centerY - size * 0.1)
+        ctx.lineTo(centerX - size * 0.45, centerY - size * 0.05)
+        // Wing (curved)
+        ctx.moveTo(centerX + size * 0.1, centerY - size * 0.1)
+        ctx.quadraticCurveTo(centerX + size * 0.4, centerY - size * 0.3, centerX + size * 0.3, centerY)
+        // Tail
+        ctx.moveTo(centerX + size * 0.4, centerY)
+        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.15)
+        ctx.lineTo(centerX + size * 0.5, centerY)
+        ctx.lineTo(centerX + size * 0.55, centerY + size * 0.15)
+        break
+      
+      case 'C': // Cat - front view cat face
+        // Head (circle)
+        ctx.arc(centerX, centerY, size * 0.5, 0, Math.PI * 2)
+        // Ears (triangles)
+        ctx.moveTo(centerX - size * 0.3, centerY - size * 0.3)
+        ctx.lineTo(centerX - size * 0.15, centerY - size * 0.6)
+        ctx.lineTo(centerX, centerY - size * 0.35)
+        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.3)
+        ctx.lineTo(centerX + size * 0.15, centerY - size * 0.6)
+        ctx.lineTo(centerX, centerY - size * 0.35)
+        break
+      
+      case 'D': // Dolphin - jumping dolphin
+        // Body (curved)
+        ctx.moveTo(centerX - size * 0.5, centerY)
+        ctx.quadraticCurveTo(centerX, centerY - size * 0.3, centerX + size * 0.4, centerY - size * 0.1)
+        ctx.quadraticCurveTo(centerX + size * 0.5, centerY, centerX + size * 0.4, centerY + size * 0.1)
+        ctx.quadraticCurveTo(centerX, centerY + size * 0.3, centerX - size * 0.5, centerY)
+        // Tail fin
+        ctx.moveTo(centerX - size * 0.5, centerY)
+        ctx.lineTo(centerX - size * 0.7, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.6, centerY)
+        ctx.lineTo(centerX - size * 0.7, centerY + size * 0.25)
+        // Dorsal fin
+        ctx.moveTo(centerX + size * 0.2, centerY - size * 0.15)
+        ctx.quadraticCurveTo(centerX + size * 0.3, centerY - size * 0.35, centerX + size * 0.25, centerY - size * 0.2)
+        // Beak
+        ctx.moveTo(centerX + size * 0.4, centerY - size * 0.1)
+        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.05)
+        ctx.lineTo(centerX + size * 0.4, centerY + size * 0.05)
+        break
+      
+      case 'E': // Eggs - two eggs
+        // Egg 1
+        ctx.ellipse(centerX - size * 0.25, centerY, size * 0.2, size * 0.28, 0, 0, Math.PI * 2)
+        // Egg 2
+        ctx.ellipse(centerX + size * 0.25, centerY, size * 0.2, size * 0.28, 0, 0, Math.PI * 2)
+        break
+      
+      case 'F': // Fish - side view fish
+        // Body (oval)
+        ctx.ellipse(centerX, centerY, size * 0.45, size * 0.3, 0, 0, Math.PI * 2)
+        // Tail fin
+        ctx.moveTo(centerX - size * 0.45, centerY)
+        ctx.lineTo(centerX - size * 0.65, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.6, centerY)
+        ctx.lineTo(centerX - size * 0.65, centerY + size * 0.25)
+        // Top fin
+        ctx.moveTo(centerX, centerY - size * 0.3)
+        ctx.quadraticCurveTo(centerX + size * 0.2, centerY - size * 0.45, centerX + size * 0.15, centerY - size * 0.3)
+        // Bottom fin
+        ctx.moveTo(centerX, centerY + size * 0.3)
+        ctx.quadraticCurveTo(centerX + size * 0.15, centerY + size * 0.4, centerX + size * 0.1, centerY + size * 0.3)
+        // Eye
+        ctx.arc(centerX + size * 0.15, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2)
+        break
+      
+      case 'G': // Gloves - two mittens
+        // Left mitten
+        ctx.moveTo(centerX - size * 0.35, centerY - size * 0.4)
+        ctx.quadraticCurveTo(centerX - size * 0.45, centerY - size * 0.1, centerX - size * 0.35, centerY + size * 0.2)
+        ctx.quadraticCurveTo(centerX - size * 0.25, centerY + size * 0.4, centerX - size * 0.15, centerY + size * 0.15)
+        ctx.quadraticCurveTo(centerX - size * 0.25, centerY - size * 0.1, centerX - size * 0.35, centerY - size * 0.4)
+        // Right mitten
+        ctx.moveTo(centerX + size * 0.15, centerY - size * 0.4)
+        ctx.quadraticCurveTo(centerX + size * 0.05, centerY - size * 0.1, centerX + size * 0.15, centerY + size * 0.2)
+        ctx.quadraticCurveTo(centerX + size * 0.25, centerY + size * 0.4, centerX + size * 0.35, centerY + size * 0.15)
+        ctx.quadraticCurveTo(centerX + size * 0.25, centerY - size * 0.1, centerX + size * 0.15, centerY - size * 0.4)
+        break
+      
+      case 'H': // House - simple house
+        // Base (square)
+        ctx.rect(centerX - size * 0.4, centerY + size * 0.1, size * 0.8, size * 0.5)
+        // Roof (triangle)
+        ctx.moveTo(centerX - size * 0.4, centerY + size * 0.1)
+        ctx.lineTo(centerX, centerY - size * 0.3)
+        ctx.lineTo(centerX + size * 0.4, centerY + size * 0.1)
+        // Door (rectangle)
+        ctx.rect(centerX - size * 0.12, centerY + size * 0.35, size * 0.24, size * 0.25)
+        // Windows (squares)
+        ctx.rect(centerX - size * 0.3, centerY + size * 0.2, size * 0.15, size * 0.15)
+        ctx.rect(centerX + size * 0.15, centerY + size * 0.2, size * 0.15, size * 0.15)
+        break
+      
+      case 'I': // Ice cream - cone with scoops
+        // Cone
+        ctx.moveTo(centerX - size * 0.25, centerY + size * 0.4)
+        ctx.lineTo(centerX, centerY + size * 0.65)
+        ctx.lineTo(centerX + size * 0.25, centerY + size * 0.4)
+        // Bottom scoop
+        ctx.arc(centerX, centerY + size * 0.15, size * 0.25, 0, Math.PI * 2)
+        // Top scoop
+        ctx.arc(centerX, centerY - size * 0.1, size * 0.25, 0, Math.PI * 2)
+        break
+      
+      case 'J': // Jug - pitcher with handle
+        // Body (oval)
+        ctx.ellipse(centerX, centerY, size * 0.3, size * 0.45, 0, 0, Math.PI * 2)
+        // Handle
+        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.15)
+        ctx.quadraticCurveTo(centerX + size * 0.5, centerY, centerX + size * 0.3, centerY + size * 0.15)
+        // Spout
+        ctx.moveTo(centerX - size * 0.3, centerY - size * 0.4)
+        ctx.lineTo(centerX - size * 0.45, centerY - size * 0.5)
+        ctx.lineTo(centerX - size * 0.3, centerY - size * 0.3)
+        break
+      
+      case 'K': // Kite - diamond kite with tail
+        // Kite body (diamond)
+        ctx.moveTo(centerX, centerY - size * 0.5)
+        ctx.lineTo(centerX + size * 0.4, centerY)
+        ctx.lineTo(centerX, centerY + size * 0.5)
+        ctx.lineTo(centerX - size * 0.4, centerY)
+        ctx.closePath()
+        // Tail with bows
+        ctx.moveTo(centerX, centerY + size * 0.5)
+        ctx.lineTo(centerX, centerY + size * 0.7)
+        ctx.arc(centerX, centerY + size * 0.75, size * 0.05, 0, Math.PI * 2)
+        ctx.moveTo(centerX, centerY + size * 0.8)
+        ctx.lineTo(centerX, centerY + size * 0.85)
+        break
+      
+      case 'L': // Lion - lion head with mane
+        // Head (circle)
+        ctx.arc(centerX, centerY, size * 0.35, 0, Math.PI * 2)
+        // Mane (spiky circle)
+        for (let i = 0; i < 12; i++) {
+          const angle = (i / 12) * Math.PI * 2
+          const innerX = centerX + Math.cos(angle) * size * 0.35
+          const innerY = centerY + Math.sin(angle) * size * 0.35
+          const outerX = centerX + Math.cos(angle) * size * 0.55
+          const outerY = centerY + Math.sin(angle) * size * 0.55
+          ctx.moveTo(innerX, innerY)
+          ctx.lineTo(outerX, outerY)
         }
         break
       
-      case 'O': // Octopus
-        // Body
-        ctx.arc(centerX, centerY, size * 0.4, 0, Math.PI * 2)
-        // Tentacles
+      case 'M': // Mushroom - toadstool
+        // Stem (rectangle)
+        ctx.rect(centerX - size * 0.08, centerY + size * 0.15, size * 0.16, size * 0.35)
+        // Cap (semicircle with spots)
+        ctx.arc(centerX, centerY + size * 0.15, size * 0.4, Math.PI, 0, false)
+        // Spots
+        ctx.arc(centerX - size * 0.15, centerY, size * 0.08, 0, Math.PI * 2)
+        ctx.arc(centerX + size * 0.15, centerY + size * 0.05, size * 0.08, 0, Math.PI * 2)
+        ctx.arc(centerX, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2)
+        break
+      
+      case 'N': // Necklace - beaded necklace
+        // Chain curve
+        for (let i = 0; i < 8; i++) {
+          const angle = -Math.PI / 3 + (i / 7) * (Math.PI / 1.5)
+          const x = centerX + Math.cos(angle) * size * 0.4
+          const y = centerY + Math.sin(angle) * size * 0.2
+          ctx.arc(x, y, size * 0.08, 0, Math.PI * 2)
+        }
+        break
+      
+      case 'O': // Octopus - octopus with tentacles
+        // Head/body (circle)
+        ctx.arc(centerX, centerY, size * 0.3, 0, Math.PI * 2)
+        // Eyes
+        ctx.arc(centerX - size * 0.1, centerY - size * 0.05, size * 0.05, 0, Math.PI * 2)
+        ctx.arc(centerX + size * 0.1, centerY - size * 0.05, size * 0.05, 0, Math.PI * 2)
+        // Tentacles (8 wavy lines)
         for (let i = 0; i < 8; i++) {
           const angle = (i / 8) * Math.PI * 2
-          const startX = centerX + Math.cos(angle) * size * 0.4
-          const startY = centerY + Math.sin(angle) * size * 0.4
-          const endX = centerX + Math.cos(angle) * size * 0.7
-          const endY = centerY + Math.sin(angle) * size * 0.7
+          const startX = centerX + Math.cos(angle) * size * 0.3
+          const startY = centerY + Math.sin(angle) * size * 0.3
+          const endX = centerX + Math.cos(angle) * size * 0.65
+          const endY = centerY + Math.sin(angle) * size * 0.65
           ctx.moveTo(startX, startY)
-          ctx.lineTo(endX, endY)
+          ctx.quadraticCurveTo(
+            (startX + endX) / 2 + Math.sin(angle) * size * 0.1,
+            (startY + endY) / 2 - Math.cos(angle) * size * 0.1,
+            endX, endY
+          )
         }
         break
       
-      case 'P': // Pig
-        // Body
-        ctx.ellipse(centerX, centerY, size * 0.5, size * 0.4, 0, 0, Math.PI * 2)
-        // Head
-        ctx.arc(centerX - size * 0.3, centerY, size * 0.3, 0, Math.PI * 2)
-        // Snout
-        ctx.ellipse(centerX - size * 0.5, centerY, size * 0.15, size * 0.1, 0, 0, Math.PI * 2)
-        // Tail
-        ctx.moveTo(centerX + size * 0.5, centerY)
-        ctx.quadraticCurveTo(centerX + size * 0.7, centerY - size * 0.2, centerX + size * 0.6, centerY - size * 0.1)
-        break
-      
-      case 'Q': // Queen
-        // Head
-        ctx.arc(centerX, centerY - size * 0.2, size * 0.3, 0, Math.PI * 2)
-        // Crown
-        ctx.moveTo(centerX - size * 0.3, centerY - size * 0.5)
-        ctx.lineTo(centerX - size * 0.1, centerY - size * 0.7)
-        ctx.lineTo(centerX, centerY - size * 0.5)
-        ctx.lineTo(centerX + size * 0.1, centerY - size * 0.7)
-        ctx.lineTo(centerX + size * 0.3, centerY - size * 0.5)
-        break
-      
-      case 'R': // Rabbit
-        // Body
-        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.5, 0, 0, Math.PI * 2)
-        // Head
-        ctx.arc(centerX, centerY - size * 0.4, size * 0.3, 0, Math.PI * 2)
-        // Ears
-        ctx.moveTo(centerX - size * 0.2, centerY - size * 0.7)
-        ctx.lineTo(centerX - size * 0.1, centerY - size * 1)
-        ctx.lineTo(centerX, centerY - size * 0.7)
-        ctx.moveTo(centerX + size * 0.2, centerY - size * 0.7)
-        ctx.lineTo(centerX + size * 0.1, centerY - size * 1)
-        ctx.lineTo(centerX, centerY - size * 0.7)
-        break
-      
-      case 'S': // Snake
-        // Snake body (curved)
-        ctx.moveTo(centerX - size * 0.6, centerY - size * 0.3)
-        ctx.quadraticCurveTo(centerX, centerY - size * 0.5, centerX + size * 0.3, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX + size * 0.5, centerY, centerX + size * 0.3, centerY + size * 0.2)
-        ctx.quadraticCurveTo(centerX, centerY + size * 0.5, centerX - size * 0.3, centerY + size * 0.2)
-        // Head
-        ctx.arc(centerX - size * 0.6, centerY - size * 0.3, size * 0.15, 0, Math.PI * 2)
-        break
-      
-      case 'T': // Telephone
-        // Base
-        ctx.rect(centerX - size * 0.3, centerY + size * 0.2, size * 0.6, size * 0.4)
-        // Receiver
-        ctx.arc(centerX - size * 0.4, centerY - size * 0.2, size * 0.2, 0, Math.PI * 2)
-        ctx.arc(centerX + size * 0.4, centerY - size * 0.2, size * 0.2, 0, Math.PI * 2)
-        // Cord
-        ctx.moveTo(centerX - size * 0.4, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX, centerY, centerX + size * 0.4, centerY - size * 0.2)
-        break
-      
-      case 'U': // Unicorn
-        // Head
-        ctx.arc(centerX, centerY, size * 0.4, 0, Math.PI * 2)
-        // Horn
-        ctx.moveTo(centerX, centerY - size * 0.4)
-        ctx.lineTo(centerX, centerY - size * 0.7)
-        ctx.lineTo(centerX + size * 0.1, centerY - size * 0.5)
-        ctx.lineTo(centerX, centerY - size * 0.4)
-        // Mane
-        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.2)
-        ctx.quadraticCurveTo(centerX + size * 0.5, centerY - size * 0.4, centerX + size * 0.4, centerY - size * 0.2)
-        break
-      
-      case 'V': // Violin
-        // Body
-        ctx.ellipse(centerX, centerY, size * 0.3, size * 0.6, 0, 0, Math.PI * 2)
-        // Neck
-        ctx.rect(centerX - size * 0.05, centerY - size * 0.6, size * 0.1, size * 0.4)
-        // Scroll
-        ctx.arc(centerX, centerY - size * 0.8, size * 0.1, 0, Math.PI * 2)
-        break
-      
-      case 'W': // Whale
-        // Whale body
-        ctx.ellipse(centerX, centerY, size * 0.7, size * 0.4, 0, 0, Math.PI * 2)
-        // Tail
-        ctx.moveTo(centerX - size * 0.7, centerY)
-        ctx.lineTo(centerX - size, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.9, centerY)
-        ctx.lineTo(centerX - size, centerY + size * 0.3)
-        // Spout
-        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.4)
-        ctx.quadraticCurveTo(centerX + size * 0.6, centerY - size * 0.6, centerX + size * 0.5, centerY - size * 0.5)
-        break
-      
-      case 'X': // Xylophone
-        // Bars
-        for (let i = 0; i < 5; i++) {
-          const width = size * (0.3 - i * 0.05)
-          const x = centerX - width / 2
-          const y = centerY - size * 0.3 + i * size * 0.15
-          ctx.rect(x, y, width, size * 0.1)
-        }
-        break
-      
-      case 'Y': // Yoga
-        // Person in tree pose
-        // Head
-        ctx.arc(centerX, centerY - size * 0.6, size * 0.15, 0, Math.PI * 2)
-        // Body
-        ctx.moveTo(centerX, centerY - size * 0.45)
-        ctx.lineTo(centerX, centerY + size * 0.2)
-        // Arms
-        ctx.moveTo(centerX, centerY - size * 0.3)
-        ctx.lineTo(centerX - size * 0.3, centerY)
-        ctx.lineTo(centerX + size * 0.3, centerY)
+      case 'P': // Pig - side view pig
+        // Body (oval)
+        ctx.ellipse(centerX, centerY, size * 0.4, size * 0.3, 0, 0, Math.PI * 2)
+        // Head (circle)
+        ctx.arc(centerX - size * 0.25, centerY, size * 0.25, 0, Math.PI * 2)
+        // Snout (ellipse)
+        ctx.ellipse(centerX - size * 0.45, centerY, size * 0.12, size * 0.08, 0, 0, Math.PI * 2)
+        // Ear
+        ctx.moveTo(centerX - size * 0.15, centerY - size * 0.2)
+        ctx.quadraticCurveTo(centerX - size * 0.25, centerY - size * 0.35, centerX - size * 0.2, centerY - size * 0.25)
+        // Tail (curly)
+        ctx.moveTo(centerX + size * 0.4, centerY)
+        ctx.quadraticCurveTo(centerX + size * 0.5, centerY - size * 0.15, centerX + size * 0.45, centerY - size * 0.05)
+        ctx.quadraticCurveTo(centerX + size * 0.55, centerY - size * 0.2, centerX + size * 0.5, centerY - size * 0.1)
         // Legs
-        ctx.moveTo(centerX, centerY + size * 0.2)
-        ctx.lineTo(centerX - size * 0.2, centerY + size * 0.5)
-        ctx.lineTo(centerX + size * 0.2, centerY + size * 0.5)
+        ctx.rect(centerX - size * 0.15, centerY + size * 0.3, size * 0.1, size * 0.15)
+        ctx.rect(centerX + size * 0.15, centerY + size * 0.3, size * 0.1, size * 0.15)
         break
       
-      case 'Z': // Zebra
+      case 'Q': // Queen - queen with crown
+        // Head (circle)
+        ctx.arc(centerX, centerY - size * 0.1, size * 0.25, 0, Math.PI * 2)
+        // Crown
+        ctx.moveTo(centerX - size * 0.25, centerY - size * 0.35)
+        ctx.lineTo(centerX - size * 0.1, centerY - size * 0.55)
+        ctx.lineTo(centerX, centerY - size * 0.4)
+        ctx.lineTo(centerX + size * 0.1, centerY - size * 0.55)
+        ctx.lineTo(centerX + size * 0.25, centerY - size * 0.35)
+        // Body (dress shape)
+        ctx.moveTo(centerX - size * 0.2, centerY - size * 0.1)
+        ctx.lineTo(centerX - size * 0.3, centerY + size * 0.3)
+        ctx.lineTo(centerX + size * 0.3, centerY + size * 0.3)
+        ctx.lineTo(centerX + size * 0.2, centerY - size * 0.1)
+        break
+      
+      case 'R': // Rabbit - side view rabbit
+        // Body (oval)
+        ctx.ellipse(centerX, centerY, size * 0.3, size * 0.4, 0, 0, Math.PI * 2)
+        // Head (circle)
+        ctx.arc(centerX, centerY - size * 0.3, size * 0.25, 0, Math.PI * 2)
+        // Ears (long ovals)
+        ctx.ellipse(centerX - size * 0.15, centerY - size * 0.55, size * 0.08, size * 0.3, -0.3, 0, Math.PI * 2)
+        ctx.ellipse(centerX + size * 0.15, centerY - size * 0.55, size * 0.08, size * 0.3, 0.3, 0, Math.PI * 2)
+        // Tail (fluffy circle)
+        ctx.arc(centerX + size * 0.3, centerY + size * 0.25, size * 0.1, 0, Math.PI * 2)
+        break
+      
+      case 'S': // Snake - coiled snake
+        // Coiled body
+        ctx.arc(centerX, centerY, size * 0.3, 0, Math.PI * 2)
+        ctx.arc(centerX, centerY, size * 0.2, 0, Math.PI * 2)
         // Head
-        ctx.ellipse(centerX, centerY - size * 0.2, size * 0.3, size * 0.25, 0, 0, Math.PI * 2)
-        // Body
-        ctx.ellipse(centerX, centerY + size * 0.2, size * 0.5, size * 0.3, 0, 0, Math.PI * 2)
-        // Stripes
+        ctx.ellipse(centerX + size * 0.35, centerY - size * 0.2, size * 0.15, size * 0.12, -0.3, 0, Math.PI * 2)
+        // Eye
+        ctx.arc(centerX + size * 0.4, centerY - size * 0.25, size * 0.03, 0, Math.PI * 2)
+        // Tongue
+        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.2)
+        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.25)
+        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.2)
+        ctx.lineTo(centerX + size * 0.55, centerY - size * 0.15)
+        break
+      
+      case 'T': // Telephone - old rotary phone
+        // Base
+        ctx.rect(centerX - size * 0.25, centerY + size * 0.15, size * 0.5, size * 0.35)
+        // Receiver left
+        ctx.arc(centerX - size * 0.35, centerY - size * 0.1, size * 0.15, 0, Math.PI * 2)
+        // Receiver right
+        ctx.arc(centerX + size * 0.35, centerY - size * 0.1, size * 0.15, 0, Math.PI * 2)
+        // Cord (curved)
+        ctx.moveTo(centerX - size * 0.35, centerY - size * 0.1)
+        ctx.quadraticCurveTo(centerX, centerY + size * 0.05, centerX + size * 0.35, centerY - size * 0.1)
+        // Dial
+        ctx.arc(centerX, centerY + size * 0.25, size * 0.12, 0, Math.PI * 2)
+        break
+      
+      case 'U': // Unicorn - unicorn head
+        // Head (circle)
+        ctx.arc(centerX, centerY, size * 0.35, 0, Math.PI * 2)
+        // Horn (spiral)
+        ctx.moveTo(centerX, centerY - size * 0.35)
+        ctx.lineTo(centerX, centerY - size * 0.55)
+        ctx.moveTo(centerX - size * 0.05, centerY - size * 0.45)
+        ctx.lineTo(centerX + size * 0.05, centerY - size * 0.5)
+        // Mane (wavy)
+        ctx.moveTo(centerX + size * 0.25, centerY - size * 0.2)
+        ctx.quadraticCurveTo(centerX + size * 0.4, centerY - size * 0.35, centerX + size * 0.35, centerY - size * 0.15)
+        ctx.quadraticCurveTo(centerX + size * 0.45, centerY - size * 0.4, centerX + size * 0.4, centerY - size * 0.1)
+        // Ear
+        ctx.moveTo(centerX - size * 0.2, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.15, centerY - size * 0.4)
+        ctx.lineTo(centerX - size * 0.1, centerY - size * 0.3)
+        break
+      
+      case 'V': // Violin - violin instrument
+        // Body (hourglass shape)
+        ctx.moveTo(centerX, centerY - size * 0.4)
+        ctx.quadraticCurveTo(centerX - size * 0.2, centerY - size * 0.1, centerX - size * 0.15, centerY)
+        ctx.quadraticCurveTo(centerX - size * 0.25, centerY + size * 0.1, centerX, centerY + size * 0.4)
+        ctx.quadraticCurveTo(centerX + size * 0.25, centerY + size * 0.1, centerX + size * 0.15, centerY)
+        ctx.quadraticCurveTo(centerX + size * 0.2, centerY - size * 0.1, centerX, centerY - size * 0.4)
+        // Neck
+        ctx.rect(centerX - size * 0.04, centerY - size * 0.4, size * 0.08, size * 0.35)
+        // Scroll
+        ctx.arc(centerX, centerY - size * 0.7, size * 0.08, 0, Math.PI * 2)
+        // F-holes
+        ctx.moveTo(centerX - size * 0.1, centerY - size * 0.05)
+        ctx.quadraticCurveTo(centerX - size * 0.12, centerY - size * 0.15, centerX - size * 0.1, centerY - size * 0.25)
+        ctx.moveTo(centerX + size * 0.1, centerY - size * 0.05)
+        ctx.quadraticCurveTo(centerX + size * 0.12, centerY - size * 0.15, centerX + size * 0.1, centerY - size * 0.25)
+        break
+      
+      case 'W': // Whale - side view whale
+        // Body (large oval)
+        ctx.ellipse(centerX, centerY, size * 0.6, size * 0.35, 0, 0, Math.PI * 2)
+        // Tail fin
+        ctx.moveTo(centerX - size * 0.6, centerY)
+        ctx.lineTo(centerX - size * 0.85, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.75, centerY)
+        ctx.lineTo(centerX - size * 0.85, centerY + size * 0.25)
+        // Dorsal fin
+        ctx.moveTo(centerX + size * 0.3, centerY - size * 0.35)
+        ctx.quadraticCurveTo(centerX + size * 0.4, centerY - size * 0.5, centerX + size * 0.35, centerY - size * 0.4)
+        // Spout
+        ctx.moveTo(centerX + size * 0.5, centerY - size * 0.35)
+        ctx.quadraticCurveTo(centerX + size * 0.55, centerY - size * 0.5, centerX + size * 0.52, centerY - size * 0.45)
+        ctx.quadraticCurveTo(centerX + size * 0.58, centerY - size * 0.55, centerX + size * 0.55, centerY - size * 0.5)
+        // Eye
+        ctx.arc(centerX + size * 0.2, centerY - size * 0.1, size * 0.06, 0, Math.PI * 2)
+        break
+      
+      case 'X': // Xylophone - musical bars
+        // Base
+        ctx.rect(centerX - size * 0.4, centerY + size * 0.25, size * 0.8, size * 0.1)
+        // Bars (decreasing width)
         for (let i = 0; i < 5; i++) {
-          const x = centerX - size * 0.4 + i * size * 0.2
-          ctx.moveTo(x, centerY + size * 0.05)
-          ctx.lineTo(x, centerY + size * 0.35)
+          const width = size * (0.28 - i * 0.05)
+          const x = centerX - width / 2
+          const y = centerY - size * 0.2 + i * size * 0.12
+          ctx.rect(x, y, width, size * 0.08)
         }
+        break
+      
+      case 'Y': // Yoga - person in tree pose
+        // Head
+        ctx.arc(centerX, centerY - size * 0.5, size * 0.12, 0, Math.PI * 2)
+        // Body
+        ctx.moveTo(centerX, centerY - size * 0.38)
+        ctx.lineTo(centerX, centerY + size * 0.15)
+        // Arms (raised)
+        ctx.moveTo(centerX, centerY - size * 0.25)
+        ctx.lineTo(centerX - size * 0.25, centerY - size * 0.05)
+        ctx.lineTo(centerX + size * 0.25, centerY - size * 0.05)
+        // Standing leg
+        ctx.moveTo(centerX, centerY + size * 0.15)
+        ctx.lineTo(centerX, centerY + size * 0.45)
+        // Raised leg (bent)
+        ctx.moveTo(centerX, centerY + size * 0.15)
+        ctx.quadraticCurveTo(centerX + size * 0.15, centerY + size * 0.25, centerX + size * 0.2, centerY + size * 0.4)
+        break
+      
+      case 'Z': // Zebra - side view zebra head
+        // Head (oval)
+        ctx.ellipse(centerX, centerY - size * 0.1, size * 0.25, size * 0.2, 0, 0, Math.PI * 2)
+        // Body (oval)
+        ctx.ellipse(centerX, centerY + size * 0.2, size * 0.45, size * 0.25, 0, 0, Math.PI * 2)
+        // Stripes (diagonal)
+        for (let i = 0; i < 6; i++) {
+          const x = centerX - size * 0.35 + i * size * 0.14
+          const y1 = centerY + size * 0.05
+          const y2 = centerY + size * 0.35
+          ctx.moveTo(x, y1)
+          ctx.lineTo(x + size * 0.08, y2)
+        }
+        // Mane
+        ctx.moveTo(centerX - size * 0.2, centerY - size * 0.1)
+        ctx.quadraticCurveTo(centerX - size * 0.25, centerY - size * 0.25, centerX - size * 0.15, centerY - size * 0.15)
+        // Ear
+        ctx.moveTo(centerX + size * 0.15, centerY - size * 0.2)
+        ctx.lineTo(centerX + size * 0.2, centerY - size * 0.3)
+        ctx.lineTo(centerX + size * 0.18, centerY - size * 0.25)
         break
       
       default:
@@ -558,6 +646,10 @@ export default function ColoringCard({
       if (ctx) {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.strokeStyle = '#000000'
+        ctx.lineWidth = 3
+        ctx.lineCap = 'round'
+        ctx.lineJoin = 'round'
         drawOutlineShape(ctx, canvas.width, canvas.height, letter)
       }
     }
@@ -747,4 +839,3 @@ export default function ColoringCard({
     </div>
   )
 }
-
