@@ -690,9 +690,11 @@ export default function ColoringCard({
         y: (touch.clientY - rect.top) * scaleY
       }
     } else {
+      // TypeScript now knows this is a MouseEvent
+      const mouseEvent = e as React.MouseEvent<HTMLCanvasElement>
       return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
+        x: (mouseEvent.clientX - rect.left) * scaleX,
+        y: (mouseEvent.clientY - rect.top) * scaleY
       }
     }
   }
