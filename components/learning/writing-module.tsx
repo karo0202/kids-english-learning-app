@@ -1193,10 +1193,10 @@ export default function WritingModule() {
         {/* Letter Tracing Activity */}
         {activityType === 'tracing' ? (
           currentLetter ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
+            <div className="max-w-4xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               className="flex flex-col min-h-0"
             >
               <Card className="card-writing h-full flex flex-col dark:bg-slate-800 dark:border-slate-700">
@@ -1579,50 +1579,7 @@ export default function WritingModule() {
                 </CardContent>
               </Card>
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden md:flex flex-col min-h-0"
-            >
-              <Card className="card-writing h-full flex flex-col dark:bg-slate-800 dark:border-slate-700">
-                <CardContent className="p-3 md:p-4 lg:p-6 xl:p-8 flex flex-col h-full overflow-y-auto">
-                  <h4 className="text-base md:text-lg lg:text-xl font-bold text-gray-800 dark:text-white mb-3 md:mb-4 lg:mb-6 text-center flex-shrink-0">How to Trace</h4>
-                  
-                  <div className="space-y-2 md:space-y-3 lg:space-y-4 flex-1">
-                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg md:rounded-xl">
-                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">1</div>
-                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Draw each stroke of the letter</p>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-green-50 dark:bg-green-900/30 rounded-lg md:rounded-xl">
-                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">2</div>
-                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Click "Check Stroke" when done with each stroke</p>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 lg:p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg md:rounded-xl">
-                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-xs md:text-sm lg:text-base flex-shrink-0">3</div>
-                      <p className="text-xs md:text-sm lg:text-base text-gray-700 dark:text-gray-200">Complete all {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''} to finish</p>
-                    </div>
-                  </div>
-
-                  {/* Score Display */}
-                  <div className="mt-4 md:mt-6 lg:mt-8 grid grid-cols-2 gap-2 md:gap-3 lg:gap-4 flex-shrink-0">
-                    <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 text-center">
-                      <Star className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-1 md:mb-2" />
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{score}</div>
-                      <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Points</div>
-                    </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 text-center">
-                      <Trophy className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 text-blue-600 dark:text-blue-400 mx-auto mb-1 md:mb-2" />
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-blue-600 dark:text-blue-400">{completedActivities}</div>
-                      <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Done</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
+            </div>
           ) : (
             <div className="max-w-4xl mx-auto text-center p-8">
               <Card className="card-writing">
