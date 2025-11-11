@@ -98,3 +98,4 @@ The `ColoringCard` component now:
 - The canvas drawing code remains as a fallback
 - All existing coloring functionality (save, clear, eraser) works with both images and canvas drawings
 
+
