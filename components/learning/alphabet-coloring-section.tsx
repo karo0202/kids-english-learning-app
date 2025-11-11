@@ -231,7 +231,7 @@ export default function AlphabetColoringSection() {
     const savedData = savedProgress[savedKey]
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-2 sm:p-4 mobile-viewport-fix">
         <style jsx>{`
           @keyframes confetti-fall-circle {
             to {
@@ -288,30 +288,33 @@ export default function AlphabetColoringSection() {
         
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2 sm:gap-0">
             <Button
               variant="ghost"
               onClick={() => setSelectedCard(null)}
-              className="text-lg p-3"
+              className="text-base sm:text-lg p-2 sm:p-3 min-h-[44px] touch-manipulation w-full sm:w-auto"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Alphabet
+              <ArrowLeft className="w-5 h-5 sm:mr-2" />
+              <span className="hidden sm:inline">Back to Alphabet</span>
+              <span className="sm:hidden">Back</span>
             </Button>
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               <Button
                 variant={currentMode === 'coloring' ? 'default' : 'outline'}
                 onClick={() => setCurrentMode('coloring')}
-                className="text-lg px-4 py-2"
+                className="text-base sm:text-lg px-3 sm:px-4 py-2 min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
               >
-                🎨 Coloring
+                <span className="hidden sm:inline">🎨 Coloring</span>
+                <span className="sm:hidden">🎨</span>
               </Button>
               <Button
                 variant={currentMode === 'word-practice' ? 'default' : 'outline'}
                 onClick={() => setCurrentMode('word-practice')}
-                className="text-lg px-4 py-2"
+                className="text-base sm:text-lg px-3 sm:px-4 py-2 min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
               >
-                ✏️ Word Practice
+                <span className="hidden sm:inline">✏️ Word Practice</span>
+                <span className="sm:hidden">✏️</span>
               </Button>
             </div>
           </div>
@@ -343,7 +346,7 @@ export default function AlphabetColoringSection() {
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between items-center mt-3 sm:mt-4 gap-2">
             <Button
               variant="outline"
               onClick={() => {
@@ -354,17 +357,17 @@ export default function AlphabetColoringSection() {
                 }
               }}
               disabled={selectedCard === 0}
-              className="text-lg px-6 py-3"
+              className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Previous
+              <ArrowLeft className="w-5 h-5 sm:mr-2" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
 
-            <div className="text-center">
-              <p className="text-xl font-bold text-gray-700">
+            <div className="text-center px-2">
+              <p className="text-lg sm:text-xl font-bold text-gray-700">
                 {card.letter} - {card.word}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 {selectedCard + 1} of {ALPHABET_DATA.length}
               </p>
             </div>
@@ -379,10 +382,10 @@ export default function AlphabetColoringSection() {
                 }
               }}
               disabled={selectedCard === ALPHABET_DATA.length - 1}
-              className="text-lg px-6 py-3"
+              className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial"
             >
-              Next
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <span className="hidden sm:inline">Next</span>
+              <ArrowRight className="w-5 h-5 sm:ml-2" />
             </Button>
           </div>
         </div>
@@ -391,7 +394,7 @@ export default function AlphabetColoringSection() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-2 sm:p-4 mobile-viewport-fix">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -462,7 +465,7 @@ export default function AlphabetColoringSection() {
         </div>
 
         {/* Alphabet Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
           {ALPHABET_DATA.map((card, index) => {
             const savedKey = `${card.letter}_${index}`
             const hasProgress = savedProgress[savedKey]
@@ -488,8 +491,9 @@ export default function AlphabetColoringSection() {
                     )}
                     
                     <motion.div
-                      className="text-6xl font-bold mb-2 text-gray-700"
+                      className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 text-gray-700 touch-manipulation"
                       whileHover={{ scale: 1.2, rotate: 5 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
                         e.stopPropagation()
                         handleLetterClick(card.letter, card.word)
@@ -498,11 +502,11 @@ export default function AlphabetColoringSection() {
                       {card.letter}
                     </motion.div>
                     
-                    <p className="text-lg font-semibold text-gray-600 mb-2">
+                    <p className="text-base sm:text-lg font-semibold text-gray-600 mb-2">
                       {card.word}
                     </p>
                     
-                    <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                    <div className="w-full h-24 sm:h-28 md:h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
                       <span className="text-4xl">
                         {card.letter === 'A' && '🍎'}
                         {card.letter === 'B' && '🐻'}
@@ -535,14 +539,14 @@ export default function AlphabetColoringSection() {
                     
                     <Button
                       variant="ghost"
-                      className="mt-2 text-sm"
+                      className="mt-2 text-xs sm:text-sm min-h-[36px] touch-manipulation"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleLetterClick(card.letter, card.word)
                       }}
                     >
-                      <Volume2 className="w-4 h-4 mr-1" />
-                      Listen
+                      <Volume2 className="w-4 h-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Listen</span>
                     </Button>
                   </CardContent>
                 </Card>

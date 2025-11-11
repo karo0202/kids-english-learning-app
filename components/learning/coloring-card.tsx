@@ -675,10 +675,19 @@ export default function ColoringCard({
     const scaleX = canvas.width / rect.width
     const scaleY = canvas.height / rect.height
 
-    if ('touches' in e) {
+    // Improved touch handling for mobile
+    if ('touches' in e && e.touches.length > 0) {
+      const touch = e.touches[0]
       return {
-        x: (e.touches[0].clientX - rect.left) * scaleX,
-        y: (e.touches[0].clientY - rect.top) * scaleY
+        x: (touch.clientX - rect.left) * scaleX,
+        y: (touch.clientY - rect.top) * scaleY
+      }
+    } else if ('changedTouches' in e && e.changedTouches.length > 0) {
+      // Handle touch end events
+      const touch = e.changedTouches[0]
+      return {
+        x: (touch.clientX - rect.left) * scaleX,
+        y: (touch.clientY - rect.top) * scaleY
       }
     } else {
       return {
@@ -750,14 +759,19 @@ export default function ColoringCard({
 
       const { x, y } = getCoordinates(e)
       
+      // Adjust brush size for mobile (larger for easier coloring on touch screens)
+      const isMobile = window.innerWidth < 768
+      const brushSize = isMobile ? 25 : 15
+      const eraserSize = isMobile ? 30 : 20
+      
       if (isErasing) {
         ctx.globalCompositeOperation = 'destination-out'
-        ctx.lineWidth = 20
+        ctx.lineWidth = eraserSize
       } else {
         ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
         ctx.fillStyle = selectedColor
         ctx.strokeStyle = selectedColor
-        ctx.lineWidth = 15
+        ctx.lineWidth = brushSize
       }
 
       ctx.lineCap = 'round'
@@ -872,11 +886,11 @@ export default function ColoringCard({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
       {/* Letter and Word Header */}
       <div className="text-center">
         <motion.div
-          className="text-8xl font-bold text-gray-700 mb-4 cursor-pointer"
+          className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-700 mb-2 sm:mb-4 cursor-pointer touch-manipulation"
           whileHover={{ scale: 1.1, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
           onClick={onLetterClick}
@@ -884,7 +898,7 @@ export default function ColoringCard({
           {letter}
         </motion.div>
         <motion.p
-          className="text-3xl font-semibold text-gray-600 cursor-pointer"
+          className="text-2xl sm:text-3xl font-semibold text-gray-600 cursor-pointer touch-manipulation"
           whileHover={{ scale: 1.05 }}
           onClick={onLetterClick}
         >
@@ -894,30 +908,53 @@ export default function ColoringCard({
           variant="ghost"
           size="sm"
           onClick={onLetterClick}
-          className="mt-2"
+          className="mt-2 min-h-[44px] touch-manipulation"
         >
-          <Volume2 className="w-4 h-4 mr-2" />
-          Listen: {letter} for {word}
+          <Volume2 className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Listen: {letter} for {word}</span>
+          <span className="sm:hidden">Listen</span>
         </Button>
       </div>
 
       {/* Picture Coloring Area */}
       <div className="relative">
-        <h3 className="text-xl font-bold text-gray-700 mb-3 text-center">
+        <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-3 text-center">
           🎨 Color the Picture
         </h3>
-        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-4">
+        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-2 md:p-4 mobile-canvas-container">
           <canvas
             ref={canvasRef}
-            className="w-full h-96 touch-none cursor-crosshair"
-            style={{ maxHeight: '500px' }}
+            className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] touch-none cursor-crosshair select-none"
+            style={{ 
+              touchAction: 'none',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              WebkitTouchCallout: 'none',
+              maxHeight: '70vh'
+            }}
             onMouseDown={(e) => handleMouseDown(e, false)}
             onMouseMove={(e) => handleMouseMove(e, false)}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            onTouchStart={(e) => handleTouchStart(e, false)}
-            onTouchMove={(e) => handleTouchMove(e, false)}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchStart(e, false)
+            }}
+            onTouchMove={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchMove(e, false)
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchEnd(e)
+            }}
+            onTouchCancel={(e) => {
+              e.preventDefault()
+              handleMouseUp()
+            }}
           />
           
           {/* Sparkle animations */}
@@ -945,80 +982,107 @@ export default function ColoringCard({
 
       {/* Word Coloring Area */}
       <div className="relative">
-        <h3 className="text-xl font-bold text-gray-700 mb-3 text-center">
+        <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-3 text-center">
           ✏️ Color the Word
         </h3>
-        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-4">
+        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-2 md:p-4">
           <canvas
             ref={wordCanvasRef}
-            className="w-full h-32 touch-none cursor-crosshair"
+            className="w-full h-24 sm:h-28 md:h-32 touch-none cursor-crosshair select-none"
+            style={{ 
+              touchAction: 'none',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              WebkitTouchCallout: 'none'
+            }}
             onMouseDown={(e) => handleMouseDown(e, true)}
             onMouseMove={(e) => handleMouseMove(e, true)}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            onTouchStart={(e) => handleTouchStart(e, true)}
-            onTouchMove={(e) => handleTouchMove(e, true)}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchStart(e, true)
+            }}
+            onTouchMove={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchMove(e, true)
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTouchEnd(e)
+            }}
+            onTouchCancel={(e) => {
+              e.preventDefault()
+              handleMouseUp()
+            }}
           />
         </div>
       </div>
 
       {/* Color Palette */}
-      <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-        <h3 className="text-lg font-bold text-gray-700 mb-3 text-center">
+      <div className="bg-white rounded-lg p-3 md:p-4 border-2 border-gray-200">
+        <h3 className="text-lg md:text-xl font-bold text-gray-700 mb-3 text-center">
           Color Palette
         </h3>
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 overflow-x-auto pb-2">
           {colorPalette.map((color) => (
             <motion.button
               key={color}
-              className={`w-12 h-12 rounded-full border-4 transition-all ${
+              className={`w-14 h-14 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-4 transition-all touch-manipulation ${
                 selectedColor === color
-                  ? 'border-gray-800 scale-110 shadow-lg'
+                  ? 'border-gray-800 scale-110 shadow-lg ring-4 ring-gray-300'
                   : 'border-gray-300'
               }`}
-              style={{ backgroundColor: color }}
+              style={{ 
+                backgroundColor: color,
+                minWidth: '3.5rem',
+                minHeight: '3.5rem'
+              }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => {
                 setSelectedColor(color)
                 setIsErasing(false)
               }}
+              aria-label={`Select color ${color}`}
             />
           ))}
         </div>
       </div>
 
       {/* Tools */}
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         <Button
           variant={isErasing ? 'default' : 'outline'}
           size="lg"
           onClick={() => setIsErasing(!isErasing)}
-          className="text-lg px-6 py-3"
+          className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
         >
-          <Eraser className="w-5 h-5 mr-2" />
-          Eraser
+          <Eraser className="w-5 h-5 sm:mr-2" />
+          <span className="hidden sm:inline">Eraser</span>
         </Button>
         
         <Button
           variant="outline"
           size="lg"
           onClick={handleClear}
-          className="text-lg px-6 py-3"
+          className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
         >
-          <RotateCcw className="w-5 h-5 mr-2" />
-          Clear All
+          <RotateCcw className="w-5 h-5 sm:mr-2" />
+          <span className="hidden sm:inline">Clear All</span>
         </Button>
         
         <Button
           variant="default"
           size="lg"
           onClick={handleSave}
-          className="text-lg px-6 py-3 bg-green-500 hover:bg-green-600"
+          className="text-base sm:text-lg px-4 sm:px-6 py-3 bg-green-500 hover:bg-green-600 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
         >
-          <Save className="w-5 h-5 mr-2" />
-          Save
+          <Save className="w-5 h-5 sm:mr-2" />
+          <span className="hidden sm:inline">Save</span>
         </Button>
       </div>
     </div>
