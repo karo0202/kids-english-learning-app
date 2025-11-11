@@ -555,7 +555,6 @@ export default function WritingModule() {
       console.error('Error initializing activity:', error)
       if (activityType === 'tracing' && tracingLetters.length > 0) {
         setCurrentLetter(tracingLetters[0])
-        setRequiredStrokes(2)
         // Shape recognition - no stroke tracking needed
         setIsInitialized(true)
       }
