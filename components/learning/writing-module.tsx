@@ -100,6 +100,7 @@ export default function WritingModule() {
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const drawStartTimeRef = useRef<number | null>(null)
   const visitedCellsRef = useRef<Set<string>>(new Set())
+  const drawingPathRef = useRef<Array<{ x: number; y: number }>>([])
   const previousActivityTypeRef = useRef<'tracing' | 'wordbuilder' | 'sentences' | 'creative' | null>(null)
 
   // Component mount check
@@ -725,6 +726,7 @@ export default function WritingModule() {
     setStrokeLength(0)
     drawStartTimeRef.current = Date.now()
     visitedCellsRef.current = new Set()
+    drawingPathRef.current = [] // Reset drawing path
 
     // Get canvas position and size - use getBoundingClientRect for accurate position
     const rect = canvas.getBoundingClientRect()
@@ -791,6 +793,9 @@ export default function WritingModule() {
     console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
     
     lastPointRef.current = { x, y }
+    
+    // Initialize drawing path with starting point
+    drawingPathRef.current = [{ x, y }]
 
     const ctx = canvas.getContext('2d')
     if (ctx) {
@@ -871,6 +876,9 @@ export default function WritingModule() {
       ctx.lineTo(x, y)
       ctx.stroke()
       
+      // Track drawing path for shape recognition
+      drawingPathRef.current.push({ x, y })
+      
       const last = lastPointRef.current
       const dx = x - last.x
       const dy = y - last.y
@@ -896,18 +904,245 @@ export default function WritingModule() {
     }
   }, [isDrawing])
 
+  // Function to get expected stroke segments for a letter
+  const getExpectedSegments = (letter: string): Array<{ from: [number, number]; to: [number, number] }> => {
+    type Segment = { from: [number, number]; to: [number, number] }
+    
+    const A: Segment[] = [
+      { from: [90, 240], to: [150, 60] },
+      { from: [150, 60], to: [210, 240] },
+      { from: [120, 160], to: [180, 160] },
+    ]
+    const B: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 60], to: [180, 120] },
+      { from: [100, 150], to: [180, 210] },
+    ]
+    const C: Segment[] = [
+      { from: [200, 120], to: [150, 60] },
+      { from: [150, 60], to: [100, 120] },
+      { from: [100, 120], to: [100, 180] },
+      { from: [100, 180], to: [150, 240] },
+      { from: [150, 240], to: [200, 180] },
+    ]
+    const D: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 60], to: [200, 150] },
+    ]
+    const E: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 60], to: [200, 60] },
+      { from: [100, 150], to: [180, 150] },
+      { from: [100, 240], to: [200, 240] },
+    ]
+    const F: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 60], to: [200, 60] },
+      { from: [100, 150], to: [180, 150] },
+    ]
+    const G: Segment[] = [
+      { from: [200, 120], to: [150, 60] },
+      { from: [150, 60], to: [100, 120] },
+      { from: [100, 120], to: [100, 180] },
+      { from: [100, 180], to: [150, 240] },
+      { from: [150, 240], to: [200, 180] },
+      { from: [200, 180], to: [200, 150] },
+      { from: [200, 150], to: [150, 150] },
+    ]
+    const H: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 150], to: [200, 150] },
+      { from: [200, 240], to: [200, 60] },
+    ]
+    const I: Segment[] = [
+      { from: [150, 240], to: [150, 60] },
+    ]
+    const J: Segment[] = [
+      { from: [200, 60], to: [200, 180] },
+      { from: [200, 180], to: [150, 240] },
+      { from: [150, 240], to: [100, 180] },
+    ]
+    const K: Segment[] = [
+      { from: [90, 240], to: [90, 60] },
+      { from: [90, 150], to: [210, 60] },
+      { from: [90, 150], to: [210, 240] },
+    ]
+    const L: Segment[] = [
+      { from: [100, 60], to: [100, 240] },
+      { from: [100, 240], to: [200, 240] },
+    ]
+    const M: Segment[] = [
+      { from: [80, 240], to: [80, 60] },
+      { from: [80, 60], to: [150, 160] },
+      { from: [150, 160], to: [220, 60] },
+      { from: [220, 60], to: [220, 240] },
+    ]
+    const N: Segment[] = [
+      { from: [90, 240], to: [90, 60] },
+      { from: [90, 60], to: [210, 240] },
+      { from: [210, 240], to: [210, 60] },
+    ]
+    const O: Segment[] = [
+      { from: [200, 150], to: [150, 60] },
+      { from: [150, 60], to: [100, 150] },
+      { from: [100, 150], to: [150, 240] },
+      { from: [150, 240], to: [200, 150] },
+    ]
+    const P: Segment[] = [
+      { from: [100, 240], to: [100, 60] },
+      { from: [100, 60], to: [180, 120] },
+    ]
+    const Q: Segment[] = [
+      { from: [150, 120], to: [150, 180] },
+      { from: [180, 210], to: [200, 240] },
+    ]
+    const R: Segment[] = [
+      { from: [90, 240], to: [90, 60] },
+      { from: [90, 60], to: [200, 120] },
+      { from: [200, 120], to: [120, 240] },
+    ]
+    const S: Segment[] = [
+      { from: [200, 60], to: [100, 60] },
+      { from: [100, 60], to: [100, 150] },
+      { from: [100, 150], to: [200, 150] },
+      { from: [200, 150], to: [200, 240] },
+      { from: [200, 240], to: [100, 240] },
+    ]
+    const T: Segment[] = [
+      { from: [100, 60], to: [200, 60] },
+      { from: [150, 60], to: [150, 240] },
+    ]
+    const U: Segment[] = [
+      { from: [100, 60], to: [100, 180] },
+      { from: [100, 180], to: [200, 180] },
+      { from: [200, 180], to: [200, 60] },
+    ]
+    const V: Segment[] = [
+      { from: [100, 60], to: [150, 240] },
+      { from: [150, 240], to: [200, 60] },
+    ]
+    const W: Segment[] = [
+      { from: [80, 60], to: [110, 240] },
+      { from: [110, 240], to: [150, 120] },
+      { from: [150, 120], to: [190, 240] },
+      { from: [190, 240], to: [220, 60] },
+    ]
+    const X: Segment[] = [
+      { from: [100, 60], to: [200, 240] },
+      { from: [100, 240], to: [200, 60] },
+    ]
+    const Y: Segment[] = [
+      { from: [100, 60], to: [150, 150] },
+      { from: [200, 60], to: [150, 150] },
+      { from: [150, 150], to: [150, 240] },
+    ]
+    const Z: Segment[] = [
+      { from: [100, 60], to: [200, 60] },
+      { from: [200, 60], to: [100, 240] },
+      { from: [100, 240], to: [200, 240] },
+    ]
+
+    const letterMap: Record<string, Segment[]> = {
+      A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+    }
+    
+    return letterMap[letter.toUpperCase()] || []
+  }
+
+  // Function to calculate angle between two points
+  const calculateAngle = (from: { x: number; y: number }, to: { x: number; y: number }): number => {
+    const dx = to.x - from.x
+    const dy = to.y - from.y
+    return Math.atan2(dy, dx) * (180 / Math.PI)
+  }
+
+  // Function to normalize angle to 0-360
+  const normalizeAngle = (angle: number): number => {
+    let normalized = angle
+    while (normalized < 0) normalized += 360
+    while (normalized >= 360) normalized -= 360
+    return normalized
+  }
+
+  // Function to calculate distance between two points
+  const calculateDistance = (p1: { x: number; y: number }, p2: { x: number; y: number }): number => {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
+  }
+
+  // Function to check if drawn path matches expected stroke
+  const validateStrokeShape = (letter: string, strokeIndex: number, drawnPath: Array<{ x: number; y: number }>): boolean => {
+    if (drawnPath.length < 10) return false // Need enough points to validate
+    
+    const expectedSegments = getExpectedSegments(letter)
+    if (strokeIndex >= expectedSegments.length) return false
+    
+    const expectedSegment = expectedSegments[strokeIndex]
+    
+    // Get canvas dimensions for scaling
+    const canvas = canvasRef.current
+    if (!canvas) return false
+    const rect = canvas.getBoundingClientRect()
+    const canvasWidth = rect.width
+    const canvasHeight = rect.height
+    
+    // Scale expected coordinates to match canvas size (expected coords are for 300x300 canvas)
+    const scaleX = canvasWidth / 300
+    const scaleY = canvasHeight / 300
+    const expectedStartX = expectedSegment.from[0] * scaleX
+    const expectedStartY = expectedSegment.from[1] * scaleY
+    const expectedEndX = expectedSegment.to[0] * scaleX
+    const expectedEndY = expectedSegment.to[1] * scaleY
+    
+    // Get overall direction of drawn path
+    const startPoint = drawnPath[0]
+    const endPoint = drawnPath[drawnPath.length - 1]
+    const drawnAngle = calculateAngle(startPoint, endPoint)
+    
+    // Calculate expected angle
+    const expectedAngle = calculateAngle(
+      { x: expectedStartX, y: expectedStartY },
+      { x: expectedEndX, y: expectedEndY }
+    )
+    
+    // Allow some tolerance (45 degrees) for angle matching
+    const angleDiff = Math.abs(normalizeAngle(drawnAngle - expectedAngle))
+    const isAngleMatch = angleDiff < 45 || angleDiff > 315
+    
+    // Check if path starts near expected start and ends near expected end
+    // Use percentage of canvas size for tolerance (more flexible)
+    const tolerance = Math.max(canvasWidth, canvasHeight) * 0.15 // 15% of canvas size
+    const startDistance = calculateDistance(startPoint, { x: expectedStartX, y: expectedStartY })
+    const endDistance = calculateDistance(endPoint, { x: expectedEndX, y: expectedEndY })
+    
+    // Also check reverse direction (user might draw backwards)
+    const reverseStartDistance = calculateDistance(startPoint, { x: expectedEndX, y: expectedEndY })
+    const reverseEndDistance = calculateDistance(endPoint, { x: expectedStartX, y: expectedStartY })
+    
+    const isPositionMatch = (startDistance < tolerance && endDistance < tolerance) ||
+                           (reverseStartDistance < tolerance && reverseEndDistance < tolerance)
+    
+    return isAngleMatch && isPositionMatch
+  }
+
   const checkCurrentStroke = () => {
     if (!currentLetter) return
     
-    const MIN_STROKE_LENGTH = 200
-    const MIN_DRAW_DURATION_MS = 500
-    const MIN_VISITED_CELLS = 3
+    const MIN_STROKE_LENGTH = 150
+    const MIN_DRAW_DURATION_MS = 300
+    const MIN_VISITED_CELLS = 2
 
     const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
     const visitedCells = visitedCellsRef.current.size
     const didTraceEnough = strokeLength >= MIN_STROKE_LENGTH && durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
+    
+    // Validate shape matches expected letter stroke
+    const shapeMatches = validateStrokeShape(
+      currentLetter.letter,
+      strokesCompleted,
+      drawingPathRef.current
+    )
 
-    if (didTraceEnough) {
+    if (didTraceEnough && shapeMatches) {
       const nextCount = strokesCompleted + 1
       setStrokesCompleted(nextCount)
       setIsCorrect(true)
@@ -948,6 +1183,9 @@ export default function WritingModule() {
         clearCanvas()
       }, 1500)
     }
+    
+    // Reset drawing path for next stroke
+    drawingPathRef.current = []
   }
 
   const clearCanvas = () => {
