@@ -782,12 +782,13 @@ export default function WritingModule() {
       return
     }
 
-    // Calculate canvas coordinates directly in display coordinates
-    // Since context is already scaled, we don't need to multiply by devicePixelRatio
+    // Calculate canvas coordinates
+    // The canvas context is scaled by devicePixelRatio in resizeCanvas
+    // So we use display coordinates directly (the scale is already applied to the context)
     const x = clientX - rect.left
     const y = clientY - rect.top
     
-    console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
+    console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height }, scale })
     
     lastPointRef.current = { x, y }
 
@@ -859,8 +860,9 @@ export default function WritingModule() {
       return // No valid coordinates
     }
 
-    // Calculate canvas coordinates directly in display coordinates
-    // Since context is already scaled, we don't need to multiply by devicePixelRatio
+    // Calculate canvas coordinates
+    // The canvas context is scaled by devicePixelRatio in resizeCanvas
+    // So we use display coordinates directly (the scale is already applied to the context)
     const x = clientX - rect.left
     const y = clientY - rect.top
 
