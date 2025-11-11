@@ -1071,7 +1071,7 @@ export default function WritingModule() {
 
   // Function to check if drawn path matches expected stroke
   const validateStrokeShape = (letter: string, strokeIndex: number, drawnPath: Array<{ x: number; y: number }>): boolean => {
-    if (drawnPath.length < 10) return false // Need enough points to validate
+    if (drawnPath.length < 5) return false // Need enough points to validate
     
     const expectedSegments = getExpectedSegments(letter)
     if (strokeIndex >= expectedSegments.length) return false
@@ -1085,7 +1085,7 @@ export default function WritingModule() {
     const canvasWidth = rect.width
     const canvasHeight = rect.height
     
-    // Scale expected coordinates to match canvas size (expected coords are for 300x300 canvas)
+    // The expected coordinates are based on a 300x300 canvas, scale them to actual canvas size
     const scaleX = canvasWidth / 300
     const scaleY = canvasHeight / 300
     const expectedStartX = expectedSegment.from[0] * scaleX
@@ -1104,13 +1104,12 @@ export default function WritingModule() {
       { x: expectedEndX, y: expectedEndY }
     )
     
-    // Allow some tolerance (45 degrees) for angle matching
+    // More lenient angle matching (60 degrees tolerance)
     const angleDiff = Math.abs(normalizeAngle(drawnAngle - expectedAngle))
-    const isAngleMatch = angleDiff < 45 || angleDiff > 315
+    const isAngleMatch = angleDiff < 60 || angleDiff > 300
     
-    // Check if path starts near expected start and ends near expected end
-    // Use percentage of canvas size for tolerance (more flexible)
-    const tolerance = Math.max(canvasWidth, canvasHeight) * 0.15 // 15% of canvas size
+    // More lenient position matching - use 25% of canvas size for tolerance
+    const tolerance = Math.max(canvasWidth, canvasHeight) * 0.25 // 25% of canvas size
     const startDistance = calculateDistance(startPoint, { x: expectedStartX, y: expectedStartY })
     const endDistance = calculateDistance(endPoint, { x: expectedEndX, y: expectedEndY })
     
@@ -1121,14 +1120,16 @@ export default function WritingModule() {
     const isPositionMatch = (startDistance < tolerance && endDistance < tolerance) ||
                            (reverseStartDistance < tolerance && reverseEndDistance < tolerance)
     
-    return isAngleMatch && isPositionMatch
+    // If angle matches OR position matches, consider it valid (more lenient)
+    // This allows for slight variations in drawing
+    return isAngleMatch || isPositionMatch
   }
 
   const checkCurrentStroke = () => {
     if (!currentLetter) return
     
-    const MIN_STROKE_LENGTH = 150
-    const MIN_DRAW_DURATION_MS = 300
+    const MIN_STROKE_LENGTH = 100
+    const MIN_DRAW_DURATION_MS = 200
     const MIN_VISITED_CELLS = 2
 
     const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
@@ -1141,6 +1142,17 @@ export default function WritingModule() {
       strokesCompleted,
       drawingPathRef.current
     )
+    
+    console.log('Stroke validation:', {
+      didTraceEnough,
+      shapeMatches,
+      strokeLength,
+      durationMs,
+      visitedCells,
+      pathLength: drawingPathRef.current.length,
+      letter: currentLetter.letter,
+      strokeIndex: strokesCompleted
+    })
 
     if (didTraceEnough && shapeMatches) {
       const nextCount = strokesCompleted + 1
