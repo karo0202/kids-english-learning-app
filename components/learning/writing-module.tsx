@@ -1235,8 +1235,6 @@ export default function WritingModule() {
                   <div className="mobile-canvas-container flex-1 flex items-center justify-center min-h-0 my-2 md:my-4">
                   <canvas
                     ref={canvasRef}
-                    width={400}
-                    height={400}
                     className="border-4 border-gray-300 dark:border-slate-600 rounded-xl md:rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full h-full max-w-full max-h-full aspect-square"
                     style={{ 
                       touchAction: 'none', 
