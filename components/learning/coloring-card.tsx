@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Eraser, RotateCcw, Save, Volume2, Sparkles, PenTool, Paintbrush, Highlighter } from 'lucide-react'
+import { Eraser, RotateCcw, Save, Volume2, PenTool, Paintbrush, Highlighter } from 'lucide-react'
 
 interface ColoringCardProps {
   letter: string
@@ -35,8 +35,6 @@ export default function ColoringCard({
   const [selectedColor, setSelectedColor] = useState(colorPalette[0])
   const [isDrawing, setIsDrawing] = useState(false)
   const [isErasing, setIsErasing] = useState(false)
-  const [showSparkles, setShowSparkles] = useState(false)
-  const [sparklePositions, setSparklePositions] = useState<Array<{ x: number; y: number }>>([])
   const [imageLoaded, setImageLoaded] = useState(false)
   const [useImage, setUseImage] = useState(false)
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -770,19 +768,7 @@ export default function ColoringCard({
     
     // Reset alpha
     ctx.globalAlpha = originalAlpha
-
-    // Add sparkle effect
-    if (!isErasing) {
-      setSparklePositions(prev => [...prev, { x, y }])
-      setShowSparkles(true)
-      setTimeout(() => {
-        setSparklePositions(prev => prev.slice(1))
-        if (sparklePositions.length === 0) {
-          setShowSparkles(false)
-        }
-      }, 500)
-    }
-  }, [selectedColor, isErasing, brushSize, toolType, sparklePositions.length])
+  }, [selectedColor, isErasing, brushSize, toolType])
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>, isWord = false) => {
     setIsDrawing(true)
@@ -852,10 +838,6 @@ export default function ColoringCard({
         ctx.stroke()
       }
 
-      // Sparkle effect
-      if (!isErasing && Math.random() > 0.7) {
-        setSparklePositions(prev => [...prev.slice(-5), { x, y }])
-      }
     }
   }
 
@@ -1022,27 +1004,6 @@ export default function ColoringCard({
               handleMouseUp()
             }}
           />
-          
-          {/* Sparkle animations */}
-          <AnimatePresence>
-            {showSparkles && sparklePositions.map((pos, idx) => (
-              <motion.div
-                key={idx}
-                className="absolute pointer-events-none"
-                style={{
-                  left: `${pos.x}px`,
-                  top: `${pos.y}px`,
-                  transform: 'translate(-50%, -50%)'
-                }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1, rotate: 360 }}
-                exit={{ opacity: 0, scale: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Sparkles className="w-6 h-6 text-yellow-400" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
         </div>
       </div>
 
