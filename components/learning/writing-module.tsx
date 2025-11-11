@@ -556,7 +556,7 @@ export default function WritingModule() {
       if (activityType === 'tracing' && tracingLetters.length > 0) {
         setCurrentLetter(tracingLetters[0])
         setRequiredStrokes(2)
-        setStrokesCompleted(0)
+        // Shape recognition - no stroke tracking needed
         setIsInitialized(true)
       }
     }
@@ -1288,7 +1288,6 @@ export default function WritingModule() {
       setLetterIndex(nextIndex)
       setCurrentLetter(tracingLetters[nextIndex])
       // Shape recognition - no stroke tracking needed
-      setStrokesCompleted(0)
       setTimeout(() => {
         clearCanvas()
       }, 100)
@@ -1616,7 +1615,7 @@ export default function WritingModule() {
                             const prevLetter = tracingLetters[prevIndex]
                             if (prevLetter) {
                               setCurrentLetter(prevLetter)
-                              setStrokesCompleted(0)
+                              // Shape recognition - no stroke tracking needed
                               // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
@@ -1662,7 +1661,7 @@ export default function WritingModule() {
                             const prevLetter = tracingLetters[prevIndex]
                             if (prevLetter) {
                               setCurrentLetter(prevLetter)
-                              setStrokesCompleted(0)
+                              // Shape recognition - no stroke tracking needed
                               // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
@@ -1735,7 +1734,7 @@ export default function WritingModule() {
                             const nextLetter = tracingLetters[nextIndex]
                             if (nextLetter) {
                               setCurrentLetter(nextLetter)
-                              setStrokesCompleted(0)
+                              // Shape recognition - no stroke tracking needed
                               // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
@@ -1783,7 +1782,7 @@ export default function WritingModule() {
                             if (nextLetter) {
                               // Update state synchronously to prevent race conditions
                               setCurrentLetter(nextLetter)
-                              setStrokesCompleted(0)
+                              // Shape recognition - no stroke tracking needed
                               // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
