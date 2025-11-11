@@ -890,8 +890,8 @@ export default function WritingModule() {
   const checkLetterShape = useCallback(() => {
     if (!currentLetter) return
     
-    const MIN_DRAW_DURATION_MS = 300
-    const MIN_VISITED_CELLS = 3
+    const MIN_DRAW_DURATION_MS = 500 // Require longer drawing time to ensure completion
+    const MIN_VISITED_CELLS = 5 // Require more cells to be visited
 
     const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
     const visitedCells = visitedCellsRef.current.size
@@ -1129,9 +1129,43 @@ export default function WritingModule() {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
   }
 
+  // Function to calculate distance from a point to a line segment
+  const distanceToSegment = (
+    point: { x: number; y: number },
+    segStart: { x: number; y: number },
+    segEnd: { x: number; y: number }
+  ): number => {
+    const A = point.x - segStart.x
+    const B = point.y - segStart.y
+    const C = segEnd.x - segStart.x
+    const D = segEnd.y - segStart.y
+
+    const dot = A * C + B * D
+    const lenSq = C * C + D * D
+    let param = -1
+    if (lenSq !== 0) param = dot / lenSq
+
+    let xx, yy
+
+    if (param < 0) {
+      xx = segStart.x
+      yy = segStart.y
+    } else if (param > 1) {
+      xx = segEnd.x
+      yy = segEnd.y
+    } else {
+      xx = segStart.x + param * C
+      yy = segStart.y + param * D
+    }
+
+    const dx = point.x - xx
+    const dy = point.y - yy
+    return Math.sqrt(dx * dx + dy * dy)
+  }
+
   // Function to recognize the overall letter shape from the drawn path
   const recognizeLetterShape = (letter: string, drawnPath: Array<{ x: number; y: number }>): boolean => {
-    if (drawnPath.length < 10) return false // Need enough points to recognize shape
+    if (drawnPath.length < 20) return false // Need enough points to recognize shape
     
     const canvas = canvasRef.current
     if (!canvas) return false
@@ -1150,8 +1184,6 @@ export default function WritingModule() {
     
     const drawnWidth = maxX - minX
     const drawnHeight = maxY - minY
-    const drawnCenterX = (minX + maxX) / 2
-    const drawnCenterY = (minY + maxY) / 2
     
     // Get expected letter segments for reference
     const expectedSegments = getExpectedSegments(letter)
@@ -1162,53 +1194,112 @@ export default function WritingModule() {
     const scaleX = canvasWidth / 300
     const scaleY = canvasHeight / 300
     
-    expectedSegments.forEach(seg => {
-      const x1 = seg.from[0] * scaleX
-      const y1 = seg.from[1] * scaleY
-      const x2 = seg.to[0] * scaleX
-      const y2 = seg.to[1] * scaleY
-      expectedMinX = Math.min(expectedMinX, x1, x2)
-      expectedMinY = Math.min(expectedMinY, y1, y2)
-      expectedMaxX = Math.max(expectedMaxX, x1, x2)
-      expectedMaxY = Math.max(expectedMaxY, y1, y2)
+    const scaledSegments = expectedSegments.map(seg => ({
+      from: { x: seg.from[0] * scaleX, y: seg.from[1] * scaleY },
+      to: { x: seg.to[0] * scaleX, y: seg.to[1] * scaleY }
+    }))
+    
+    scaledSegments.forEach(seg => {
+      expectedMinX = Math.min(expectedMinX, seg.from.x, seg.to.x)
+      expectedMinY = Math.min(expectedMinY, seg.from.y, seg.to.y)
+      expectedMaxX = Math.max(expectedMaxX, seg.from.x, seg.to.x)
+      expectedMaxY = Math.max(expectedMaxY, seg.from.y, seg.to.y)
     })
     
     const expectedWidth = expectedMaxX - expectedMinX
     const expectedHeight = expectedMaxY - expectedMinY
     const expectedCenterX = (expectedMinX + expectedMaxX) / 2
     const expectedCenterY = (expectedMinY + expectedMaxY) / 2
+    const drawnCenterX = (minX + maxX) / 2
+    const drawnCenterY = (minY + maxY) / 2
     
-    // Check if drawn shape covers reasonable area (at least 30% of expected area)
+    // Stricter size check - must be 50-200% of expected area
     const expectedArea = expectedWidth * expectedHeight
     const drawnArea = drawnWidth * drawnHeight
     const areaRatio = drawnArea / expectedArea
-    const hasReasonableSize = areaRatio >= 0.3 && areaRatio <= 3.0
+    const hasReasonableSize = areaRatio >= 0.5 && areaRatio <= 2.0
+    if (!hasReasonableSize) {
+      console.log('Size check failed:', { areaRatio, expectedArea, drawnArea })
+      return false
+    }
     
-    // Check if center is reasonably close (within 40% of canvas size)
+    // Stricter center check - must be within 20% of canvas size
     const centerDistance = calculateDistance(
       { x: drawnCenterX, y: drawnCenterY },
       { x: expectedCenterX, y: expectedCenterY }
     )
-    const maxCenterDistance = Math.max(canvasWidth, canvasHeight) * 0.4
+    const maxCenterDistance = Math.max(canvasWidth, canvasHeight) * 0.2
     const isCenterClose = centerDistance < maxCenterDistance
+    if (!isCenterClose) {
+      console.log('Center check failed:', { centerDistance, maxCenterDistance })
+      return false
+    }
     
-    // Check if aspect ratio is similar (for letters that are tall vs wide)
-    const drawnAspectRatio = drawnHeight / (drawnWidth || 1)
-    const expectedAspectRatio = expectedHeight / (expectedWidth || 1)
-    const aspectRatioDiff = Math.abs(drawnAspectRatio - expectedAspectRatio)
-    const hasSimilarAspectRatio = aspectRatioDiff < 1.0 // Allow significant variation
+    // Check if drawn path actually follows the expected segments
+    // For each expected segment, check if enough drawn points are close to it
+    const segmentTolerance = Math.max(canvasWidth, canvasHeight) * 0.15 // 15% of canvas size
+    let segmentsMatched = 0
     
-    // Calculate total path length - should be substantial
+    for (const seg of scaledSegments) {
+      let pointsNearSegment = 0
+      const segmentLength = calculateDistance(seg.from, seg.to)
+      const minPointsRequired = Math.max(3, Math.floor(drawnPath.length * 0.1)) // At least 10% of points or 3, whichever is more
+      
+      for (const point of drawnPath) {
+        const dist = distanceToSegment(point, seg.from, seg.to)
+        if (dist < segmentTolerance) {
+          pointsNearSegment++
+        }
+      }
+      
+      // A segment is matched if at least minPointsRequired points are near it
+      if (pointsNearSegment >= minPointsRequired) {
+        segmentsMatched++
+      }
+    }
+    
+    // Require at least 60% of expected segments to be matched
+    const minSegmentsRequired = Math.ceil(scaledSegments.length * 0.6)
+    const segmentsMatch = segmentsMatched >= minSegmentsRequired
+    
+    if (!segmentsMatch) {
+      console.log('Segment match failed:', { segmentsMatched, minSegmentsRequired, totalSegments: scaledSegments.length })
+      return false
+    }
+    
+    // Calculate total path length - should be substantial (at least 50% of expected total segment length)
+    let totalExpectedLength = 0
+    scaledSegments.forEach(seg => {
+      totalExpectedLength += calculateDistance(seg.from, seg.to)
+    })
+    
     let totalPathLength = 0
     for (let i = 1; i < drawnPath.length; i++) {
       totalPathLength += calculateDistance(drawnPath[i - 1], drawnPath[i])
     }
-    const minPathLength = Math.max(canvasWidth, canvasHeight) * 0.3 // At least 30% of canvas dimension
+    
+    const minPathLength = totalExpectedLength * 0.5 // At least 50% of expected total length
     const hasEnoughPathLength = totalPathLength >= minPathLength
     
-    // Shape is recognized if it has reasonable size, center position, and path length
-    // Aspect ratio is less critical for recognition
-    return hasReasonableSize && isCenterClose && hasEnoughPathLength
+    if (!hasEnoughPathLength) {
+      console.log('Path length check failed:', { totalPathLength, minPathLength, totalExpectedLength })
+      return false
+    }
+    
+    console.log('Shape recognition passed:', {
+      letter,
+      areaRatio,
+      centerDistance,
+      segmentsMatched,
+      totalPathLength,
+      hasReasonableSize,
+      isCenterClose,
+      segmentsMatch,
+      hasEnoughPathLength
+    })
+    
+    // All checks must pass
+    return hasReasonableSize && isCenterClose && segmentsMatch && hasEnoughPathLength
   }
 
 
