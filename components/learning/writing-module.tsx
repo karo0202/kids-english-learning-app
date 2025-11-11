@@ -788,7 +788,7 @@ export default function WritingModule() {
     const x = clientX - rect.left
     const y = clientY - rect.top
     
-    console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height }, scale })
+    console.log('Start drawing:', { clientX, clientY, x, y, rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, canvas: { width: canvas.width, height: canvas.height } })
     
     lastPointRef.current = { x, y }
 
