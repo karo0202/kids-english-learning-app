@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Eraser, RotateCcw, Save, Volume2, Sparkles } from 'lucide-react'
+import { Eraser, RotateCcw, Save, Volume2, Sparkles, PenTool, Paintbrush, Highlighter } from 'lucide-react'
 
 interface ColoringCardProps {
   letter: string
@@ -40,6 +40,11 @@ export default function ColoringCard({
   const [imageLoaded, setImageLoaded] = useState(false)
   const [useImage, setUseImage] = useState(false)
   const imageRef = useRef<HTMLImageElement | null>(null)
+  
+  // Pen/Brush options
+  const [brushSize, setBrushSize] = useState<'small' | 'medium' | 'large'>('medium')
+  const [toolType, setToolType] = useState<'pen' | 'marker' | 'paintbrush'>('pen')
+  const [showToolOptions, setShowToolOptions] = useState(false)
 
   // Check if image exists and load it
   useEffect(() => {
@@ -705,14 +710,46 @@ export default function ColoringCard({
 
     const { x, y } = getCoordinates(e)
     
+    // Get brush size based on selection and device
+    const isMobile = window.innerWidth < 768
+    const sizeMap = {
+      small: isMobile ? 8 : 5,
+      medium: isMobile ? 20 : 12,
+      large: isMobile ? 35 : 25
+    }
+    const eraserSizeMap = {
+      small: isMobile ? 15 : 10,
+      medium: isMobile ? 25 : 18,
+      large: isMobile ? 40 : 30
+    }
+    
+    const currentBrushSize = sizeMap[brushSize]
+    const currentEraserSize = eraserSizeMap[brushSize]
+    
+    // Save original alpha
+    const originalAlpha = ctx.globalAlpha
+    
     if (isErasing) {
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.lineWidth = 20
+      ctx.lineWidth = currentEraserSize
     } else {
-      ctx.globalCompositeOperation = 'source-over'
+      // Adjust tool type behavior
+      if (toolType === 'pen') {
+        ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+        ctx.lineWidth = currentBrushSize
+        ctx.globalAlpha = 1.0
+      } else if (toolType === 'marker') {
+        ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+        ctx.lineWidth = currentBrushSize * 1.5
+        ctx.globalAlpha = 0.7 // Slightly transparent for marker effect
+      } else if (toolType === 'paintbrush') {
+        ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+        ctx.lineWidth = currentBrushSize * 1.2
+        ctx.globalAlpha = 0.9
+      }
+      
       ctx.fillStyle = selectedColor
       ctx.strokeStyle = selectedColor
-      ctx.lineWidth = 15
     }
 
     ctx.lineCap = 'round'
@@ -722,13 +759,17 @@ export default function ColoringCard({
       // Only color within the text outline
       ctx.globalCompositeOperation = 'source-atop'
       ctx.fillStyle = selectedColor
-      ctx.fillRect(x - 10, y - 10, 20, 20)
+      const size = currentBrushSize / 2
+      ctx.fillRect(x - size, y - size, size * 2, size * 2)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
       ctx.lineTo(x, y)
       ctx.stroke()
     }
+    
+    // Reset alpha
+    ctx.globalAlpha = originalAlpha
 
     // Add sparkle effect
     if (!isErasing) {
@@ -741,7 +782,7 @@ export default function ColoringCard({
         }
       }, 500)
     }
-  }, [selectedColor, isErasing, sparklePositions.length])
+  }, [selectedColor, isErasing, brushSize, toolType, sparklePositions.length])
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>, isWord = false) => {
     setIsDrawing(true)
@@ -761,19 +802,42 @@ export default function ColoringCard({
 
       const { x, y } = getCoordinates(e)
       
-      // Adjust brush size for mobile (larger for easier coloring on touch screens)
+      // Get brush size based on selection and device
       const isMobile = window.innerWidth < 768
-      const brushSize = isMobile ? 25 : 15
-      const eraserSize = isMobile ? 30 : 20
+      const sizeMap = {
+        small: isMobile ? 8 : 5,
+        medium: isMobile ? 20 : 12,
+        large: isMobile ? 35 : 25
+      }
+      const eraserSizeMap = {
+        small: isMobile ? 15 : 10,
+        medium: isMobile ? 25 : 18,
+        large: isMobile ? 40 : 30
+      }
+      
+      const currentBrushSize = sizeMap[brushSize]
+      const currentEraserSize = eraserSizeMap[brushSize]
       
       if (isErasing) {
         ctx.globalCompositeOperation = 'destination-out'
-        ctx.lineWidth = eraserSize
+        ctx.lineWidth = currentEraserSize
       } else {
-        ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+        // Adjust tool type behavior
+        if (toolType === 'pen') {
+          ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+          ctx.lineWidth = currentBrushSize
+        } else if (toolType === 'marker') {
+          ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+          ctx.lineWidth = currentBrushSize * 1.5
+          ctx.globalAlpha = 0.7 // Slightly transparent for marker effect
+        } else if (toolType === 'paintbrush') {
+          ctx.globalCompositeOperation = isWord ? 'source-atop' : 'source-over'
+          ctx.lineWidth = currentBrushSize * 1.2
+          ctx.globalAlpha = 0.9
+        }
+        
         ctx.fillStyle = selectedColor
         ctx.strokeStyle = selectedColor
-        ctx.lineWidth = brushSize
       }
 
       ctx.lineCap = 'round'
@@ -1055,12 +1119,128 @@ export default function ColoringCard({
         </div>
       </div>
 
+      {/* Pen/Brush Options */}
+      <div className="bg-white rounded-lg p-3 md:p-4 border-2 border-gray-200">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg md:text-xl font-bold text-gray-700">
+            Pen Options
+          </h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowToolOptions(!showToolOptions)}
+            className="min-h-[36px] touch-manipulation"
+          >
+            {showToolOptions ? 'Hide' : 'Show'} Options
+          </Button>
+        </div>
+        
+        <AnimatePresence>
+          {showToolOptions && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-4 overflow-hidden"
+            >
+              {/* Tool Type Selection */}
+              <div>
+                <p className="text-sm font-semibold text-gray-600 mb-2">Tool Type:</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <motion.button
+                    className={`p-3 rounded-lg border-2 transition-all touch-manipulation ${
+                      toolType === 'pen'
+                        ? 'border-blue-500 bg-blue-50 shadow-md'
+                        : 'border-gray-300 bg-gray-50'
+                    }`}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setToolType('pen')
+                      setIsErasing(false)
+                    }}
+                  >
+                    <PenTool className="w-5 h-5 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Pen</span>
+                  </motion.button>
+                  
+                  <motion.button
+                    className={`p-3 rounded-lg border-2 transition-all touch-manipulation ${
+                      toolType === 'marker'
+                        ? 'border-blue-500 bg-blue-50 shadow-md'
+                        : 'border-gray-300 bg-gray-50'
+                    }`}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setToolType('marker')
+                      setIsErasing(false)
+                    }}
+                  >
+                    <Highlighter className="w-5 h-5 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Marker</span>
+                  </motion.button>
+                  
+                  <motion.button
+                    className={`p-3 rounded-lg border-2 transition-all touch-manipulation ${
+                      toolType === 'paintbrush'
+                        ? 'border-blue-500 bg-blue-50 shadow-md'
+                        : 'border-gray-300 bg-gray-50'
+                    }`}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setToolType('paintbrush')
+                      setIsErasing(false)
+                    }}
+                  >
+                    <Paintbrush className="w-5 h-5 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Brush</span>
+                  </motion.button>
+                </div>
+              </div>
+              
+              {/* Brush Size Selection */}
+              <div>
+                <p className="text-sm font-semibold text-gray-600 mb-2">Size:</p>
+                <div className="flex gap-2">
+                  {(['small', 'medium', 'large'] as const).map((size) => (
+                    <motion.button
+                      key={size}
+                      className={`flex-1 p-3 rounded-lg border-2 transition-all touch-manipulation capitalize ${
+                        brushSize === size
+                          ? 'border-blue-500 bg-blue-50 shadow-md font-semibold'
+                          : 'border-gray-300 bg-gray-50'
+                      }`}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setBrushSize(size)}
+                    >
+                      <div className="flex flex-col items-center gap-1">
+                        <div
+                          className={`rounded-full bg-current ${
+                            size === 'small' ? 'w-2 h-2' : size === 'medium' ? 'w-4 h-4' : 'w-6 h-6'
+                          }`}
+                          style={{ color: selectedColor }}
+                        />
+                        <span className="text-xs">{size}</span>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* Tools */}
       <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         <Button
           variant={isErasing ? 'default' : 'outline'}
           size="lg"
-          onClick={() => setIsErasing(!isErasing)}
+          onClick={() => {
+            setIsErasing(!isErasing)
+            if (!isErasing) {
+              setShowToolOptions(false)
+            }
+          }}
           className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
         >
           <Eraser className="w-5 h-5 sm:mr-2" />
