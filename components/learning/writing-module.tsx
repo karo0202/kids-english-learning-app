@@ -94,8 +94,6 @@ export default function WritingModule() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [strokeLength, setStrokeLength] = useState(0)
-  const [strokesCompleted, setStrokesCompleted] = useState(0)
-  const [requiredStrokes, setRequiredStrokes] = useState(1)
   const [isInitialized, setIsInitialized] = useState(false)
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const drawStartTimeRef = useRef<number | null>(null)
@@ -238,28 +236,25 @@ export default function WritingModule() {
 
       const segmentsByStep = planFor(currentLetter.letter)
 
-      segmentsByStep.forEach((segments, idx) => {
-        const isCurrent = idx === strokesCompleted
-        const color = isCurrent ? '#22C55E' : '#CBD5E1'
-        segments.forEach(seg => {
-          ctx.beginPath()
-          ctx.fillStyle = color
-          ctx.arc(seg.from[0], seg.from[1], isCurrent ? 7 : 5, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.fillStyle = isCurrent ? '#065F46' : '#94A3B8'
-          ctx.font = 'bold 12px sans-serif'
-          ctx.fillText(String(idx + 1), seg.from[0] - 3, seg.from[1] + 4)
-        })
+      // Draw all guide points in a single color (no step-by-step)
+      segmentsByStep.flat().forEach(seg => {
+        ctx.beginPath()
+        ctx.fillStyle = '#CBD5E1'
+        ctx.arc(seg.from[0], seg.from[1], 5, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.fillStyle = '#94A3B8'
+        ctx.font = 'bold 12px sans-serif'
+        ctx.fillText('•', seg.from[0] - 3, seg.from[1] + 4)
       })
     }
-  }, [currentLetter, strokesCompleted, activityType])
+  }, [currentLetter, activityType])
 
   // Redraw the guide whenever letter or stroke step changes
   useEffect(() => {
     if (canvasRef.current && currentLetter && activityType === 'tracing') {
       drawLetterGuide()
     }
-  }, [drawLetterGuide, currentLetter, strokesCompleted, requiredStrokes, activityType])
+  }, [drawLetterGuide, currentLetter, activityType])
 
   // Resize canvas based on container size
   useEffect(() => {
@@ -486,15 +481,11 @@ export default function WritingModule() {
           const firstLetter = tracingLetters[0]
           console.log('No current letter, setting first letter:', firstLetter)
           setCurrentLetter(firstLetter)
-          const strokes = getRequiredStrokes(firstLetter.letter)
-          console.log('Required strokes:', strokes)
-          setRequiredStrokes(strokes)
-          setStrokesCompleted(0)
+          // No longer tracking strokes - using shape recognition instead
         } else {
           // We already have a letter (from Next/Previous button), just ensure canvas is ready
           console.log('Current letter already set:', currentLetter.letter, 'index:', letterIndex, '- NOT resetting')
-          const strokes = getRequiredStrokes(currentLetter.letter)
-          setRequiredStrokes(strokes)
+          // No longer tracking strokes - using shape recognition instead
           // Don't reset letterIndex or currentLetter - they're already correct
           return // Exit early to prevent any reset
         }
@@ -897,12 +888,82 @@ export default function WritingModule() {
     }
   }, [isDrawing, currentLetter])
 
+  const checkLetterShape = useCallback(() => {
+    if (!currentLetter) return
+    
+    const MIN_DRAW_DURATION_MS = 300
+    const MIN_VISITED_CELLS = 3
+
+    const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
+    const visitedCells = visitedCellsRef.current.size
+    const didDrawEnough = durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
+    
+    // Recognize the overall letter shape
+    const shapeRecognized = recognizeLetterShape(
+      currentLetter.letter,
+      drawingPathRef.current
+    )
+    
+    console.log('Shape recognition:', {
+      didDrawEnough,
+      shapeRecognized,
+      strokeLength,
+      durationMs,
+      visitedCells,
+      pathLength: drawingPathRef.current.length,
+      letter: currentLetter.letter
+    })
+
+    if (didDrawEnough && shapeRecognized) {
+      setIsCorrect(true)
+      setShowFeedback(true)
+      
+      try {
+        audioManager.playSuccess()
+      } catch (error) {
+        console.error('Error playing success sound:', error)
+      }
+        
+      setTimeout(() => {
+        setShowFeedback(false)
+        setScore(prev => prev + 10)
+        setCompletedActivities(prev => prev + 1)
+        progressManager.addScore(10, 5)
+        challengeManager.updateChallengeProgress('writing', 1)
+        clearCanvas()
+        nextActivity()
+      }, 1500)
+    } else {
+      setIsCorrect(false)
+      setShowFeedback(true)
+      try {
+        audioManager.playError()
+      } catch (error) {
+        console.error('Error playing error sound:', error)
+      }
+      setTimeout(() => {
+        setShowFeedback(false)
+        clearCanvas()
+      }, 1500)
+    }
+    
+    // Reset drawing path
+    drawingPathRef.current = []
+  }, [currentLetter, strokeLength])
+
   const stopDrawing = useCallback(() => {
     if (isDrawing) {
       console.log('Stop drawing')
       setIsDrawing(false)
+      
+      // Check the letter shape when drawing stops
+      if (currentLetter && activityType === 'tracing' && drawingPathRef.current.length > 0) {
+        setTimeout(() => {
+          checkLetterShape()
+        }, 100) // Small delay to ensure all drawing is complete
+      }
     }
-  }, [isDrawing])
+  }, [isDrawing, currentLetter, activityType, checkLetterShape])
 
   // Function to get expected stroke segments for a letter
   const getExpectedSegments = (letter: string): Array<{ from: [number, number]; to: [number, number] }> => {
@@ -1069,136 +1130,88 @@ export default function WritingModule() {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
   }
 
-  // Function to check if drawn path matches expected stroke
-  const validateStrokeShape = (letter: string, strokeIndex: number, drawnPath: Array<{ x: number; y: number }>): boolean => {
-    if (drawnPath.length < 5) return false // Need enough points to validate
+  // Function to recognize the overall letter shape from the drawn path
+  const recognizeLetterShape = (letter: string, drawnPath: Array<{ x: number; y: number }>): boolean => {
+    if (drawnPath.length < 10) return false // Need enough points to recognize shape
     
-    const expectedSegments = getExpectedSegments(letter)
-    if (strokeIndex >= expectedSegments.length) return false
-    
-    const expectedSegment = expectedSegments[strokeIndex]
-    
-    // Get canvas dimensions for scaling
     const canvas = canvasRef.current
     if (!canvas) return false
     const rect = canvas.getBoundingClientRect()
     const canvasWidth = rect.width
     const canvasHeight = rect.height
     
-    // The expected coordinates are based on a 300x300 canvas, scale them to actual canvas size
+    // Calculate bounding box of the drawn path
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    drawnPath.forEach(point => {
+      minX = Math.min(minX, point.x)
+      minY = Math.min(minY, point.y)
+      maxX = Math.max(maxX, point.x)
+      maxY = Math.max(maxY, point.y)
+    })
+    
+    const drawnWidth = maxX - minX
+    const drawnHeight = maxY - minY
+    const drawnCenterX = (minX + maxX) / 2
+    const drawnCenterY = (minY + maxY) / 2
+    
+    // Get expected letter segments for reference
+    const expectedSegments = getExpectedSegments(letter)
+    if (expectedSegments.length === 0) return false
+    
+    // Calculate expected bounding box from all segments
+    let expectedMinX = Infinity, expectedMinY = Infinity, expectedMaxX = -Infinity, expectedMaxY = -Infinity
     const scaleX = canvasWidth / 300
     const scaleY = canvasHeight / 300
-    const expectedStartX = expectedSegment.from[0] * scaleX
-    const expectedStartY = expectedSegment.from[1] * scaleY
-    const expectedEndX = expectedSegment.to[0] * scaleX
-    const expectedEndY = expectedSegment.to[1] * scaleY
     
-    // Get overall direction of drawn path
-    const startPoint = drawnPath[0]
-    const endPoint = drawnPath[drawnPath.length - 1]
-    const drawnAngle = calculateAngle(startPoint, endPoint)
-    
-    // Calculate expected angle
-    const expectedAngle = calculateAngle(
-      { x: expectedStartX, y: expectedStartY },
-      { x: expectedEndX, y: expectedEndY }
-    )
-    
-    // More lenient angle matching (60 degrees tolerance)
-    const angleDiff = Math.abs(normalizeAngle(drawnAngle - expectedAngle))
-    const isAngleMatch = angleDiff < 60 || angleDiff > 300
-    
-    // More lenient position matching - use 25% of canvas size for tolerance
-    const tolerance = Math.max(canvasWidth, canvasHeight) * 0.25 // 25% of canvas size
-    const startDistance = calculateDistance(startPoint, { x: expectedStartX, y: expectedStartY })
-    const endDistance = calculateDistance(endPoint, { x: expectedEndX, y: expectedEndY })
-    
-    // Also check reverse direction (user might draw backwards)
-    const reverseStartDistance = calculateDistance(startPoint, { x: expectedEndX, y: expectedEndY })
-    const reverseEndDistance = calculateDistance(endPoint, { x: expectedStartX, y: expectedStartY })
-    
-    const isPositionMatch = (startDistance < tolerance && endDistance < tolerance) ||
-                           (reverseStartDistance < tolerance && reverseEndDistance < tolerance)
-    
-    // If angle matches OR position matches, consider it valid (more lenient)
-    // This allows for slight variations in drawing
-    return isAngleMatch || isPositionMatch
-  }
-
-  const checkCurrentStroke = () => {
-    if (!currentLetter) return
-    
-    const MIN_STROKE_LENGTH = 100
-    const MIN_DRAW_DURATION_MS = 200
-    const MIN_VISITED_CELLS = 2
-
-    const durationMs = drawStartTimeRef.current ? Date.now() - drawStartTimeRef.current : 0
-    const visitedCells = visitedCellsRef.current.size
-    const didTraceEnough = strokeLength >= MIN_STROKE_LENGTH && durationMs >= MIN_DRAW_DURATION_MS && visitedCells >= MIN_VISITED_CELLS
-    
-    // Validate shape matches expected letter stroke
-    const shapeMatches = validateStrokeShape(
-      currentLetter.letter,
-      strokesCompleted,
-      drawingPathRef.current
-    )
-    
-    console.log('Stroke validation:', {
-      didTraceEnough,
-      shapeMatches,
-      strokeLength,
-      durationMs,
-      visitedCells,
-      pathLength: drawingPathRef.current.length,
-      letter: currentLetter.letter,
-      strokeIndex: strokesCompleted
+    expectedSegments.forEach(seg => {
+      const x1 = seg.from[0] * scaleX
+      const y1 = seg.from[1] * scaleY
+      const x2 = seg.to[0] * scaleX
+      const y2 = seg.to[1] * scaleY
+      expectedMinX = Math.min(expectedMinX, x1, x2)
+      expectedMinY = Math.min(expectedMinY, y1, y2)
+      expectedMaxX = Math.max(expectedMaxX, x1, x2)
+      expectedMaxY = Math.max(expectedMaxY, y1, y2)
     })
-
-    if (didTraceEnough && shapeMatches) {
-      const nextCount = strokesCompleted + 1
-      setStrokesCompleted(nextCount)
-      setIsCorrect(true)
-      setShowFeedback(true)
-      
-      try {
-        audioManager.playSuccess()
-      } catch (error) {
-        console.error('Error playing success sound:', error)
-      }
-        
-      if (nextCount >= requiredStrokes) {
-        setTimeout(() => {
-          setShowFeedback(false)
-          setScore(prev => prev + 10)
-          setCompletedActivities(prev => prev + 1)
-          progressManager.addScore(10, 5)
-          challengeManager.updateChallengeProgress('writing', 1)
-          setStrokesCompleted(0)
-          nextActivity()
-        }, 1500)
-      } else {
-        setTimeout(() => {
-          setShowFeedback(false)
-          clearCanvas()
-        }, 800)
-      }
-    } else {
-      setIsCorrect(false)
-      setShowFeedback(true)
-      try {
-        audioManager.playError()
-      } catch (error) {
-        console.error('Error playing error sound:', error)
-      }
-      setTimeout(() => {
-        setShowFeedback(false)
-        clearCanvas()
-      }, 1500)
-    }
     
-    // Reset drawing path for next stroke
-    drawingPathRef.current = []
+    const expectedWidth = expectedMaxX - expectedMinX
+    const expectedHeight = expectedMaxY - expectedMinY
+    const expectedCenterX = (expectedMinX + expectedMaxX) / 2
+    const expectedCenterY = (expectedMinY + expectedMaxY) / 2
+    
+    // Check if drawn shape covers reasonable area (at least 30% of expected area)
+    const expectedArea = expectedWidth * expectedHeight
+    const drawnArea = drawnWidth * drawnHeight
+    const areaRatio = drawnArea / expectedArea
+    const hasReasonableSize = areaRatio >= 0.3 && areaRatio <= 3.0
+    
+    // Check if center is reasonably close (within 40% of canvas size)
+    const centerDistance = calculateDistance(
+      { x: drawnCenterX, y: drawnCenterY },
+      { x: expectedCenterX, y: expectedCenterY }
+    )
+    const maxCenterDistance = Math.max(canvasWidth, canvasHeight) * 0.4
+    const isCenterClose = centerDistance < maxCenterDistance
+    
+    // Check if aspect ratio is similar (for letters that are tall vs wide)
+    const drawnAspectRatio = drawnHeight / (drawnWidth || 1)
+    const expectedAspectRatio = expectedHeight / (expectedWidth || 1)
+    const aspectRatioDiff = Math.abs(drawnAspectRatio - expectedAspectRatio)
+    const hasSimilarAspectRatio = aspectRatioDiff < 1.0 // Allow significant variation
+    
+    // Calculate total path length - should be substantial
+    let totalPathLength = 0
+    for (let i = 1; i < drawnPath.length; i++) {
+      totalPathLength += calculateDistance(drawnPath[i - 1], drawnPath[i])
+    }
+    const minPathLength = Math.max(canvasWidth, canvasHeight) * 0.3 // At least 30% of canvas dimension
+    const hasEnoughPathLength = totalPathLength >= minPathLength
+    
+    // Shape is recognized if it has reasonable size, center position, and path length
+    // Aspect ratio is less critical for recognition
+    return hasReasonableSize && isCenterClose && hasEnoughPathLength
   }
+
 
   const clearCanvas = () => {
     const canvas = canvasRef.current
@@ -1274,7 +1287,7 @@ export default function WritingModule() {
       const nextIndex = (letterIndex + 1) % tracingLetters.length
       setLetterIndex(nextIndex)
       setCurrentLetter(tracingLetters[nextIndex])
-      setRequiredStrokes(getRequiredStrokes(tracingLetters[nextIndex].letter))
+      // Shape recognition - no stroke tracking needed
       setStrokesCompleted(0)
       setTimeout(() => {
         clearCanvas()
@@ -1465,7 +1478,7 @@ export default function WritingModule() {
                       <span className="w-2 h-2 rounded-full" 
                             style={{ backgroundColor: getLetterDifficulty(currentLetter.letter) === 'easy' ? '#22C55E' : 
                                                    getLetterDifficulty(currentLetter.letter) === 'medium' ? '#F59E0B' : '#EF4444' }}></span>
-                      {getLetterDifficulty(currentLetter.letter).toUpperCase()} • {requiredStrokes} stroke{requiredStrokes > 1 ? 's' : ''}
+                      {getLetterDifficulty(currentLetter.letter).toUpperCase()} • Trace the letter
                     </div>
                   </div>
                 </CardHeader>
@@ -1565,12 +1578,12 @@ export default function WritingModule() {
                           e.preventDefault()
                           e.stopPropagation()
                           console.log('Check stroke clicked')
-                          checkCurrentStroke()
+                          // Shape recognition happens in stopDrawing
                         }}
                         onMouseDown={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
-                          console.log('Check stroke mouse down')
+                          console.log('Mouse down')
                         }}
                         onMouseUp={(e) => {
                           e.preventDefault()
@@ -1604,7 +1617,7 @@ export default function WritingModule() {
                             if (prevLetter) {
                               setCurrentLetter(prevLetter)
                               setStrokesCompleted(0)
-                              setRequiredStrokes(getRequiredStrokes(prevLetter.letter))
+                              // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
                               setTimeout(() => {
@@ -1650,7 +1663,7 @@ export default function WritingModule() {
                             if (prevLetter) {
                               setCurrentLetter(prevLetter)
                               setStrokesCompleted(0)
-                              setRequiredStrokes(getRequiredStrokes(prevLetter.letter))
+                              // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
                               setTimeout(() => {
@@ -1723,7 +1736,7 @@ export default function WritingModule() {
                             if (nextLetter) {
                               setCurrentLetter(nextLetter)
                               setStrokesCompleted(0)
-                              setRequiredStrokes(getRequiredStrokes(nextLetter.letter))
+                              // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
                               setTimeout(() => {
@@ -1771,7 +1784,7 @@ export default function WritingModule() {
                               // Update state synchronously to prevent race conditions
                               setCurrentLetter(nextLetter)
                               setStrokesCompleted(0)
-                              setRequiredStrokes(getRequiredStrokes(nextLetter.letter))
+                              // Shape recognition - no stroke tracking needed
                               
                               // Clear canvas and redraw guide after a short delay
                               setTimeout(() => {
@@ -1806,24 +1819,10 @@ export default function WritingModule() {
                     </div>
                   </div>
 
-                  {/* Progress indicator */}
+                  {/* Instructions */}
                   <div className="mt-2 md:mt-3 text-center flex-shrink-0">
-                    <div className="text-xs md:text-sm lg:text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 mb-1.5 md:mb-2 lg:mb-3">
-                      Step {Math.min(strokesCompleted + 1, requiredStrokes)} of {requiredStrokes}
-                    </div>
-                    <div className="flex justify-center gap-1.5 md:gap-2">
-                      {Array.from({ length: requiredStrokes }, (_, i) => (
-                        <div
-                          key={i}
-                          className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
-                            i < strokesCompleted 
-                              ? 'bg-green-500 shadow-lg' 
-                              : i === strokesCompleted 
-                                ? 'bg-blue-500 shadow-lg animate-pulse' 
-                                : 'bg-gray-300 dark:bg-gray-600'
-                          }`}
-                        />
-                      ))}
+                    <div className="text-xs md:text-sm lg:text-base font-semibold text-gray-700 dark:text-gray-200">
+                      Draw the letter shape to complete
                     </div>
                   </div>
                 </CardContent>
