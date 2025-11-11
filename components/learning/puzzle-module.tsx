@@ -10,7 +10,7 @@ import {
   X, Volume2, VolumeX, Shuffle, Lightbulb, Target
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { audioManager } from '@/lib/audio'
+import { audioManager } from '@/lib/audio-manager'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
 
