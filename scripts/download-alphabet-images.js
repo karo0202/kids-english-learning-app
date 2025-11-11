@@ -1,47 +1,39 @@
 /**
- * Script to help download alphabet coloring images from coloringlover.com
- * 
- * Usage:
- * 1. Visit https://www.coloringlover.com/alphabet-coloring-pages/
- * 2. Right-click on each image and "Save Image As..."
- * 3. Save them to: app/public/images/alphabet-coloring/
- * 4. Name them as: a-apple.jpg, b-bear.jpg, c-cat.jpg, etc.
- * 
- * OR use this script with image URLs (if you have them):
+ * Script to download alphabet coloring images from coloringlover.com
+ * Uses the exact image URLs found on the page
  */
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const http = require('http');
+const axios = require('axios');
 
 const ALPHABET_IMAGES = [
-  { letter: 'A', word: 'apple', filename: 'a-apple.jpg' },
-  { letter: 'B', word: 'bear', filename: 'b-bear.jpg' },
-  { letter: 'C', word: 'cat', filename: 'c-cat.jpg' },
-  { letter: 'D', word: 'dog', filename: 'd-dog.jpg' },
-  { letter: 'E', word: 'elephant', filename: 'e-elephant.jpg' },
-  { letter: 'F', word: 'fish', filename: 'f-fish.jpg' },
-  { letter: 'G', word: 'goat', filename: 'g-goat.jpg' },
-  { letter: 'H', word: 'horse', filename: 'h-horse.jpg' },
-  { letter: 'I', word: 'iguana', filename: 'i-iguana.jpg' },
-  { letter: 'J', word: 'jaguar', filename: 'j-jaguar.jpg' },
-  { letter: 'K', word: 'kangaroo', filename: 'k-kangaroo.jpg' },
-  { letter: 'L', word: 'lion', filename: 'l-lion.jpg' },
-  { letter: 'M', word: 'monkey', filename: 'm-monkey.jpg' },
-  { letter: 'N', word: 'notebook', filename: 'n-notebook.jpg' },
-  { letter: 'O', word: 'owl', filename: 'o-owl.jpg' },
-  { letter: 'P', word: 'penguin', filename: 'p-penguin.jpg' },
-  { letter: 'Q', word: 'queen', filename: 'q-queen.jpg' },
-  { letter: 'R', word: 'rabbit', filename: 'r-rabbit.jpg' },
-  { letter: 'S', word: 'sun', filename: 's-sun.jpg' },
-  { letter: 'T', word: 'turtle', filename: 't-turtle.jpg' },
-  { letter: 'U', word: 'umbrella', filename: 'u-umbrella.jpg' },
-  { letter: 'V', word: 'vase', filename: 'v-vase.jpg' },
-  { letter: 'W', word: 'whale', filename: 'w-whale.jpg' },
-  { letter: 'X', word: 'xylophone', filename: 'x-xylophone.jpg' },
-  { letter: 'Y', word: 'yak', filename: 'y-yak.jpg' },
-  { letter: 'Z', word: 'zebra', filename: 'z-zebra.jpg' },
+  { letter: 'A', word: 'apple', filename: 'a-apple.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-A-Apple-Coloring-Page-791x1024.jpg' },
+  { letter: 'B', word: 'bear', filename: 'b-bear.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-B-Bear-Coloring-Page.jpg' },
+  { letter: 'C', word: 'cat', filename: 'c-cat.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-C-Cat-Coloring-Page.jpg' },
+  { letter: 'D', word: 'dog', filename: 'd-dog.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-D-Dog-Coloring-Page.jpg' },
+  { letter: 'E', word: 'elephant', filename: 'e-elephant.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-E-Elephant-Coloring-Page.jpg' },
+  { letter: 'F', word: 'fish', filename: 'f-fish.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-F-Fish-Coloring-Page.jpg' },
+  { letter: 'G', word: 'goat', filename: 'g-goat.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-G-Goat-Coloring-Page.jpg' },
+  { letter: 'H', word: 'horse', filename: 'h-horse.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-H-Horse-Coloring-Page.jpg' },
+  { letter: 'I', word: 'iguana', filename: 'i-iguana.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-I-Iguana-Coloring-Page.jpg' },
+  { letter: 'J', word: 'jaguar', filename: 'j-jaguar.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-J-Jaguar-Coloring-Page.jpg' },
+  { letter: 'K', word: 'kangaroo', filename: 'k-kangaroo.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-K-Kangaroo-Coloring-Page.jpg' },
+  { letter: 'L', word: 'lion', filename: 'l-lion.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-L-Lion-Coloring-Page.jpg' },
+  { letter: 'M', word: 'monkey', filename: 'm-monkey.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-M-Monkey-Coloring-Page.jpg' },
+  { letter: 'N', word: 'notebook', filename: 'n-notebook.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-N-Notebook-Coloring-Page.jpg' },
+  { letter: 'O', word: 'owl', filename: 'o-owl.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-O-Owl-Coloring-Page.jpg' },
+  { letter: 'P', word: 'penguin', filename: 'p-penguin.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-P-Penguin-Coloring-Page.jpg' },
+  { letter: 'Q', word: 'queen', filename: 'q-queen.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-Q-Queen-Coloring-Page.jpg' },
+  { letter: 'R', word: 'rabbit', filename: 'r-rabbit.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-R-Rabbit-Coloring-Page.jpg' },
+  { letter: 'S', word: 'sun', filename: 's-sun.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-S-Sun-Coloring-Page.jpg' },
+  { letter: 'T', word: 'turtle', filename: 't-turtle.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-T-Turtle-Coloring-Page.jpg' },
+  { letter: 'U', word: 'umbrella', filename: 'u-umbrella.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-U-Umbrella-Coloring-Page.jpg' },
+  { letter: 'V', word: 'vase', filename: 'v-vase.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-V-Vase-Coloring-Page.jpg' },
+  { letter: 'W', word: 'whale', filename: 'w-whale.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-W-Whale-Coloring-Page.jpg' },
+  { letter: 'X', word: 'xylophone', filename: 'x-xylophone.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-X-Xylophone-Cream-Coloring-Page-For-Preschoolers.jpg' },
+  { letter: 'Y', word: 'yak', filename: 'y-yak.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-Y-Yak-Coloring-Page.jpg' },
+  { letter: 'Z', word: 'zebra', filename: 'z-zebra.jpg', url: 'https://www.coloringlover.com/wp-content/uploads/2024/10/Letter-Z-Zebra-Coloring-Page.jpg' },
 ];
 
 const IMAGE_DIR = path.join(__dirname, '../public/images/alphabet-coloring');
@@ -55,73 +47,80 @@ if (!fs.existsSync(IMAGE_DIR)) {
 /**
  * Download image from URL
  */
-function downloadImage(url, filepath) {
-  return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https') ? https : http;
+async function downloadImage(url, filepath) {
+  try {
+    console.log(`📥 Downloading: ${path.basename(filepath)}`);
     
-    protocol.get(url, (response) => {
-      if (response.statusCode !== 200) {
-        reject(new Error(`Failed to download: ${response.statusCode}`));
-        return;
-      }
+    const response = await axios({
+      method: 'GET',
+      url: url,
+      responseType: 'stream',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      },
+      timeout: 30000
+    });
 
-      const fileStream = fs.createWriteStream(filepath);
-      response.pipe(fileStream);
+    const writer = fs.createWriteStream(filepath);
+    response.data.pipe(writer);
 
-      fileStream.on('finish', () => {
-        fileStream.close();
+    return new Promise((resolve, reject) => {
+      writer.on('finish', () => {
+        const stats = fs.statSync(filepath);
+        console.log(`✅ Saved: ${path.basename(filepath)} (${(stats.size / 1024).toFixed(1)} KB)`);
         resolve();
       });
-
-      fileStream.on('error', (err) => {
-        fs.unlink(filepath, () => {});
-        reject(err);
-      });
-    }).on('error', reject);
-  });
-}
-
-/**
- * Check if image file exists
- */
-function checkImages() {
-  console.log('\n📋 Checking alphabet coloring images...\n');
-  
-  let missing = 0;
-  let found = 0;
-
-  ALPHABET_IMAGES.forEach(({ letter, word, filename }) => {
-    const filepath = path.join(IMAGE_DIR, filename);
-    if (fs.existsSync(filepath)) {
-      const stats = fs.statSync(filepath);
-      console.log(`✅ ${letter} - ${word}: ${filename} (${(stats.size / 1024).toFixed(1)} KB)`);
-      found++;
-    } else {
-      console.log(`❌ ${letter} - ${word}: ${filename} - MISSING`);
-      missing++;
-    }
-  });
-
-  console.log(`\n📊 Summary: ${found}/26 images found, ${missing} missing\n`);
-
-  if (missing > 0) {
-    console.log('📥 To download images:');
-    console.log('1. Visit: https://www.coloringlover.com/alphabet-coloring-pages/');
-    console.log('2. Right-click each image and "Save Image As..."');
-    console.log(`3. Save to: ${IMAGE_DIR}`);
-    console.log('4. Use the filenames listed above\n');
+      writer.on('error', reject);
+    });
+  } catch (error) {
+    console.error(`❌ Failed to download ${path.basename(filepath)}:`, error.message);
+    throw error;
   }
 }
 
-// If URLs are provided as command line arguments, download them
-if (process.argv.length > 2) {
-  const urls = process.argv.slice(2);
-  console.log('⚠️  Note: Direct downloading from coloringlover.com may not work due to CORS/security.');
-  console.log('💡 Recommended: Manually download images from the website.\n');
-} else {
-  // Just check existing images
-  checkImages();
+/**
+ * Main download function
+ */
+async function downloadAllImages() {
+  console.log('🎨 Starting alphabet coloring images download...\n');
+
+  let downloaded = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const { letter, word, filename, url } of ALPHABET_IMAGES) {
+    const filepath = path.join(IMAGE_DIR, filename);
+    
+    // Skip if already exists
+    if (fs.existsSync(filepath)) {
+      const stats = fs.statSync(filepath);
+      console.log(`⏭️  Skipping ${filename} (already exists, ${(stats.size / 1024).toFixed(1)} KB)`);
+      skipped++;
+      continue;
+    }
+
+    try {
+      await downloadImage(url, filepath);
+      downloaded++;
+    } catch (error) {
+      console.error(`❌ Could not download ${filename}`);
+      failed++;
+    }
+
+    // Small delay to be respectful to the server
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  console.log(`\n📊 Summary:`);
+  console.log(`✅ Downloaded: ${downloaded}`);
+  console.log(`⏭️  Skipped: ${skipped}`);
+  console.log(`❌ Failed: ${failed}`);
+  console.log(`\n💡 All images saved to: ${IMAGE_DIR}\n`);
 }
 
-module.exports = { ALPHABET_IMAGES, IMAGE_DIR, checkImages };
+// Run the download
+if (require.main === module) {
+  downloadAllImages().catch(console.error);
+}
 
+module.exports = { ALPHABET_IMAGES, IMAGE_DIR, downloadAllImages };
