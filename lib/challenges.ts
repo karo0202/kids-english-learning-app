@@ -3,7 +3,7 @@ export interface DailyChallenge {
   id: string
   title: string
   description: string
-  type: 'speaking' | 'writing' | 'reading' | 'games'
+  type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle'
   target: number
   current: number
   reward: number
@@ -88,6 +88,14 @@ export class ChallengeManager {
         target: 10,
         reward: 40,
         difficulty: 'easy'
+      },
+      {
+        title: 'Puzzle Master',
+        description: 'Solve 5 puzzles',
+        type: 'puzzle',
+        target: 5,
+        reward: 70,
+        difficulty: 'medium'
       }
     ]
 
@@ -104,7 +112,7 @@ export class ChallengeManager {
   }
 
   // Update challenge progress
-  updateChallengeProgress(type: 'speaking' | 'writing' | 'reading' | 'games', amount: number = 1): void {
+  updateChallengeProgress(type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle', amount: number = 1): void {
     const today = new Date().toISOString().split('T')[0]
     
     this.challenges.forEach(challenge => {
