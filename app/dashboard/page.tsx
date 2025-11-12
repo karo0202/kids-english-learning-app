@@ -34,66 +34,101 @@ export default function DashboardPage() {
     let unsubscribe: (() => void) | undefined
 
     const loadDashboard = async () => {
-      // Check user session immediately (Firebase auth listener should have synced it)
-      const currentUser = getUserSession()
-      if (!currentUser) {
-        // Give Firebase auth a tiny moment to restore (only if no session found)
-        await new Promise(resolve => setTimeout(resolve, 50))
-        const retryUser = getUserSession()
-        if (!retryUser) {
-          console.log('No user session found, redirecting to login')
-          router.push('/login')
+      try {
+        // Check user session immediately (Firebase auth listener should have synced it)
+        const currentUser = getUserSession()
+        if (!currentUser) {
+          // Give Firebase auth a tiny moment to restore (only if no session found)
+          await new Promise(resolve => setTimeout(resolve, 50))
+          const retryUser = getUserSession()
+          if (!retryUser) {
+            console.log('No user session found, redirecting to login')
+            router.push('/login')
+            setLoading(false)
+            return
+          }
+          setUser(retryUser)
+          const userChildren = await getChildren(retryUser.id)
+          if (!mounted) return
+          setChildren(userChildren)
           setLoading(false)
+          unsubscribe = subscribeToChildren(retryUser.id, updatedChildren => {
+            if (!mounted) return
+            setChildren(updatedChildren)
+          })
+          const userSubscription = getUserSubscription(retryUser.id)
+          setSubscription(userSubscription)
           return
         }
-        setUser(retryUser)
-        const userChildren = await getChildren(retryUser.id)
+
+        // User session found - load immediately
+        console.log('User session found:', currentUser)
+        console.log('Loading children for parentId:', currentUser.id)
+        setUser(currentUser)
+
+        // Load children (returns cached data immediately, syncs Firestore in background)
+        const userChildren = await getChildren(currentUser.id)
         if (!mounted) return
+        console.log(`Loaded ${userChildren.length} children for parentId: ${currentUser.id}`)
+        if (userChildren.length > 0) {
+          console.log('Children details:', userChildren.map(c => ({ id: c.id, name: c.name, age: c.age, parentId: c.parentId })))
+        } else {
+          console.warn('No children found! Checking localStorage...')
+          const raw = localStorage.getItem('children')
+          if (raw) {
+            const all = JSON.parse(raw)
+            console.log('All children in localStorage:', all)
+            console.log('Looking for parentId:', currentUser.id)
+          }
+        }
         setChildren(userChildren)
         setLoading(false)
-        unsubscribe = subscribeToChildren(retryUser.id, updatedChildren => {
+
+        // Subscribe to real-time updates (will update when Firestore syncs)
+        unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
           if (!mounted) return
           setChildren(updatedChildren)
         })
-        const userSubscription = getUserSubscription(retryUser.id)
+
+        const userSubscription = getUserSubscription(currentUser.id)
         setSubscription(userSubscription)
-        return
-      }
-
-      // User session found - load immediately
-      console.log('User session found:', currentUser)
-      console.log('Loading children for parentId:', currentUser.id)
-      setUser(currentUser)
-
-      // Load children (returns cached data immediately, syncs Firestore in background)
-      const userChildren = await getChildren(currentUser.id)
-      if (!mounted) return
-      console.log(`Loaded ${userChildren.length} children for parentId: ${currentUser.id}`)
-      if (userChildren.length > 0) {
-        console.log('Children details:', userChildren.map(c => ({ id: c.id, name: c.name, age: c.age, parentId: c.parentId })))
-      } else {
-        console.warn('No children found! Checking localStorage...')
-        const raw = localStorage.getItem('children')
-        if (raw) {
-          const all = JSON.parse(raw)
-          console.log('All children in localStorage:', all)
-          console.log('Looking for parentId:', currentUser.id)
+      } catch (error) {
+        console.error('Error loading dashboard:', error)
+        setLoading(false)
+        // Still try to show what we have
+        const currentUser = getUserSession()
+        if (currentUser) {
+          setUser(currentUser)
+          // Try to load from localStorage as fallback
+          try {
+            const raw = localStorage.getItem('children')
+            if (raw) {
+              const all = JSON.parse(raw)
+              const filtered = all.filter((c: any) => c.parentId === currentUser.id)
+              setChildren(filtered)
+            }
+          } catch (e) {
+            console.error('Failed to load from localStorage fallback:', e)
+          }
         }
       }
-      setChildren(userChildren)
-      setLoading(false)
-
-      // Subscribe to real-time updates (will update when Firestore syncs)
-      unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
-        if (!mounted) return
-        setChildren(updatedChildren)
-      })
-
-      const userSubscription = getUserSubscription(currentUser.id)
-      setSubscription(userSubscription)
     }
 
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn('Dashboard loading timeout - forcing load complete')
+        setLoading(false)
+      }
+    }, 5000) // 5 second timeout
+
     loadDashboard()
+
+    return () => {
+      clearTimeout(timeoutId)
+      mounted = false
+      unsubscribe?.()
+    }
 
     return () => {
       mounted = false
