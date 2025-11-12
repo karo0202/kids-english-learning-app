@@ -129,11 +129,6 @@ export default function DashboardPage() {
       mounted = false
       unsubscribe?.()
     }
-
-    return () => {
-      mounted = false
-      unsubscribe?.()
-    }
   }, [router])
 
   const handleLogout = async () => {
