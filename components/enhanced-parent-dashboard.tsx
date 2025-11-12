@@ -929,7 +929,7 @@ const handleAddChild = async () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {analytics.wordsLearned
+                      {(analytics?.wordsLearned ?? [])
                         .filter(w => w.pronunciationScore !== undefined)
                         .sort((a, b) => (b.pronunciationScore || 0) - (a.pronunciationScore || 0))
                         .map((word, index) => (
