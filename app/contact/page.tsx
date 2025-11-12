@@ -35,12 +35,21 @@ export default function ContactPage() {
   const contactMethods = [
     {
       icon: <MailIcon className="w-6 h-6" />,
-      title: "Email Support",
-      description: "Get help via email within 24 hours",
-      contact: "support@kids-english.app",
+      title: "Parent Support Email",
+      description: "Contact us directly via email for any questions or concerns",
+      contact: "parents@kids-english.app",
       action: "Send Email",
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-50"
+    },
+    {
+      icon: <MailIcon className="w-6 h-6" />,
+      title: "General Support",
+      description: "Technical support and general inquiries",
+      contact: "support@kids-english.app",
+      action: "Send Email",
+      color: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-50"
     },
     {
       icon: <MessageSquare className="w-6 h-6" />,
@@ -79,8 +88,11 @@ export default function ContactPage() {
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000))
     
-    // Open mail client with pre-filled content
-    const mailtoLink = `mailto:support@kids-english.app?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
+    // Open mail client with pre-filled content (use parent email for parent-related inquiries)
+    const emailAddress = formData.inquiryType === 'privacy' || formData.inquiryType === 'general' 
+      ? 'parents@kids-english.app' 
+      : 'support@kids-english.app'
+    const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\nInquiry Type: ${formData.inquiryType}\n\nMessage:\n${formData.message}`
     )}`
     
@@ -140,7 +152,7 @@ export default function ContactPage() {
             <p className="text-xl text-gray-600">Choose your preferred way to reach us</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactMethods.map((method, index) => (
               <motion.div
                 key={method.title}
@@ -159,8 +171,10 @@ export default function ContactPage() {
                     <Button
                       className={`w-full bg-gradient-to-r ${method.color} hover:opacity-90 text-white shadow-lg`}
                         onClick={() => {
-                          if (method.title === "Email Support") {
-                            window.location.href = "mailto:support@kids-english.app"
+                          if (method.title === "Parent Support Email") {
+                            window.location.href = "mailto:parents@kids-english.app?subject=Parent Inquiry"
+                          } else if (method.title === "General Support") {
+                            window.location.href = "mailto:support@kids-english.app?subject=Support Request"
                           } else {
                             // Live chat would open a chat widget
                             alert("Live chat feature coming soon!")
@@ -331,12 +345,44 @@ export default function ContactPage() {
           </motion.div>
         </div>
 
+        {/* Parent Contact Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-16"
+        >
+          <Card className="bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 text-white shadow-2xl">
+            <CardContent className="p-12">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MailIcon className="w-10 h-10 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold mb-4">For Parents</h2>
+                <p className="text-xl text-white/90 mb-6">Have questions about your child's learning journey?</p>
+                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
+                  <p className="text-lg font-semibold mb-2">Email us directly:</p>
+                  <a 
+                    href="mailto:parents@kids-english.app?subject=Parent Inquiry" 
+                    className="text-2xl font-bold text-white hover:text-yellow-200 transition-colors underline decoration-2 underline-offset-4"
+                  >
+                    parents@kids-english.app
+                  </a>
+                  <p className="text-white/90 mt-4 text-sm">
+                    We typically respond within 24 hours. For urgent matters, please mention "URGENT" in your subject line.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Contact Info */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="mt-16"
+          className="mt-8"
         >
           <Card className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-2xl">
             <CardContent className="p-12">
