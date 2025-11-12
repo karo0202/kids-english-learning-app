@@ -468,12 +468,12 @@ export default function SpeakingModule() {
           return
         }
         
-        recognitionRef.current = new SpeechRecognition()
-        recognitionRef.current.continuous = false
-        recognitionRef.current.interimResults = false
-        recognitionRef.current.lang = 'en-US'
+        const recognition = new SpeechRecognition()
+        recognition.continuous = false
+        recognition.interimResults = false
+        recognition.lang = 'en-US'
 
-        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
           console.log('Speech recognition result event:', event)
           if (event.results && event.results.length > 0 && event.results[0].length > 0) {
             const transcript = event.results[0][0].transcript.toLowerCase().trim()
@@ -496,7 +496,7 @@ export default function SpeakingModule() {
           }
         }
 
-        recognitionRef.current.onend = () => {
+        recognition.onend = () => {
           console.log('Speech recognition ended', { isListening })
           setIsListening(false)
           
@@ -506,7 +506,7 @@ export default function SpeakingModule() {
           }
         }
 
-        recognitionRef.current.onerror = (event: any) => {
+        recognition.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error, event)
           setIsListening(false)
           
@@ -528,25 +528,28 @@ export default function SpeakingModule() {
           alert(errorMessage)
         }
 
-        recognitionRef.current.onstart = () => {
+        recognition.onstart = () => {
           console.log('Speech recognition started successfully')
         }
 
-        recognitionRef.current.onaudiostart = () => {
+        recognition.onaudiostart = () => {
           console.log('Audio input started')
         }
 
-        recognitionRef.current.onsoundstart = () => {
+        recognition.onsoundstart = () => {
           console.log('Sound detected')
         }
 
-        recognitionRef.current.onsoundend = () => {
+        recognition.onsoundend = () => {
           console.log('Sound ended')
         }
 
-        recognitionRef.current.onaudioend = () => {
+        recognition.onaudioend = () => {
           console.log('Audio input ended')
         }
+
+        // Assign to ref after setting up all handlers
+        recognitionRef.current = recognition
       }
       
       // Ensure checkPronunciation ref is set
