@@ -130,9 +130,25 @@ export default function DashboardPage() {
     const timeoutId = setTimeout(() => {
       if (loading) {
         console.warn('Dashboard loading timeout - forcing load complete')
+        // Try to load from localStorage as fallback
+        const currentUser = getUserSession()
+        if (currentUser) {
+          setUser(currentUser)
+          try {
+            const raw = localStorage.getItem('children')
+            if (raw) {
+              const all = JSON.parse(raw)
+              const filtered = all.filter((c: any) => c.parentId === currentUser.id)
+              console.log('Timeout fallback: Loading', filtered.length, 'children from localStorage')
+              setChildren(filtered)
+            }
+          } catch (e) {
+            console.error('Failed to load from localStorage on timeout:', e)
+          }
+        }
         setLoading(false)
       }
-    }, 5000) // 5 second timeout
+    }, 3000) // 3 second timeout (reduced from 5)
 
     loadDashboard()
 

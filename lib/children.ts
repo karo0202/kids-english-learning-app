@@ -49,10 +49,20 @@ export async function getChildren(parentId: string): Promise<Child[]> {
     return cloneChildren(local)
   }
 
-  // If no cached data, try Firestore (but don't block if it fails)
+  // If no cached data, try Firestore with timeout (don't block if it fails or times out)
   if (typeof window !== 'undefined') {
     try {
-      await refreshChildrenFromFirestore(parentId)
+      // Add timeout to prevent hanging
+      const firestorePromise = refreshChildrenFromFirestore(parentId)
+      const timeoutPromise = new Promise<void>((resolve) => {
+        setTimeout(() => {
+          console.warn('Firestore refresh timeout for parentId:', parentId)
+          resolve()
+        }, 2000) // 2 second timeout
+      })
+      
+      await Promise.race([firestorePromise, timeoutPromise])
+      
       const firestoreChildren = childCache.get(parentId)
       if (firestoreChildren && firestoreChildren.length > 0) {
         return cloneChildren(firestoreChildren)
