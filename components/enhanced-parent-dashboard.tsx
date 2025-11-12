@@ -159,9 +159,12 @@ useEffect(() => {
     return
   }
 
-  return parentAnalytics.subscribe(session.user.id, selectedChild.id, data => {
+  // Subscribe to analytics - this will call the callback immediately with cached/empty data
+  const unsubscribe = parentAnalytics.subscribe(session.user.id, selectedChild.id, data => {
     setAnalytics(data)
   })
+
+  return unsubscribe
 }, [session?.user?.id, selectedChild])
 
   const loadParentControls = () => {
@@ -188,7 +191,7 @@ const letterAccuracyData = useMemo(() => {
 
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
   return letters.map(letter => {
-    const data = analytics.letterTracing[letter]
+    const data = analytics?.letterTracing?.[letter]
     return {
       letter,
       accuracy: data ? data.averageAccuracy : 0,
@@ -209,25 +212,29 @@ const weeklyUsage = useMemo(() => {
   if (!analytics) return []
   const today = new Date()
   const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
-  return analytics.dailyUsage
+  return (analytics?.dailyUsage ?? [])
     .filter(day => new Date(day.date) >= weekAgo)
     .sort((a, b) => a.date.localeCompare(b.date))
 }, [analytics])
 
   // Module progress
   const moduleProgress = useMemo(() => {
-    if (!analytics || !selectedChild) return { writing: 0, vocabulary: 0, grammar: 0, time: 0 }
+    if (!selectedChild) return { writing: 0, vocabulary: 0, grammar: 0, time: 0 }
     
     const progress = progressManager.loadProgress(selectedChild.id)
-    const totalActivities = analytics.activityLogs.length
-    const writingActivities = analytics.activityLogs.filter(a => a.module === 'writing').length
-    const speakingActivities = analytics.activityLogs.filter(a => a.module === 'speaking').length
+    const activityLogs = analytics?.activityLogs ?? []
+    const dailyUsage = analytics?.dailyUsage ?? []
+    const wordsLearned = analytics?.wordsLearned ?? []
     
-    const totalMinutes = analytics.dailyUsage.reduce((sum, day) => sum + day.totalMinutes, 0)
+    const totalActivities = activityLogs.length
+    const writingActivities = activityLogs.filter(a => a.module === 'writing').length
+    const speakingActivities = activityLogs.filter(a => a.module === 'speaking').length
+    
+    const totalMinutes = dailyUsage.reduce((sum, day) => sum + day.totalMinutes, 0)
     
     return {
       writing: totalActivities > 0 ? (writingActivities / totalActivities) * 100 : 0,
-      vocabulary: analytics.wordsLearned.length,
+      vocabulary: wordsLearned.length,
       grammar: totalActivities > 0 ? (speakingActivities / totalActivities) * 100 : 0,
       time: totalMinutes
     }
@@ -242,9 +249,9 @@ const weeklyUsage = useMemo(() => {
       age: selectedChild.age,
       reportDate: new Date().toLocaleDateString(),
       letterAccuracy: letterAccuracyData.filter(l => l.attempts > 0),
-      wordsLearned: analytics.wordsLearned.length,
-      totalActivities: analytics.activityLogs.length,
-      achievements: analytics.achievements.length,
+      wordsLearned: analytics?.wordsLearned.length ?? 0,
+      totalActivities: analytics?.activityLogs.length ?? 0,
+      achievements: analytics?.achievements.length ?? 0,
       weeklyProgress: weeklyUsage,
       strugglingLetters,
       moduleProgress
@@ -485,7 +492,7 @@ const handleAddChild = async () => {
           </motion.div>
         )}
 
-        {selectedChild && analytics && (
+        {selectedChild && (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 min-w-max sm:min-w-0">
@@ -550,7 +557,7 @@ const handleAddChild = async () => {
                       <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
                         <Star className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{analytics.wordsLearned.length}</h3>
+                      <h3 className="text-2xl font-bold text-gray-800">{analytics?.wordsLearned.length ?? 0}</h3>
                       <p className="text-xs text-gray-600">Words Learned</p>
                     </CardContent>
                   </Card>
@@ -566,7 +573,7 @@ const handleAddChild = async () => {
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
                         <Target className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{analytics.activityLogs.length}</h3>
+                      <h3 className="text-2xl font-bold text-gray-800">{analytics?.activityLogs.length ?? 0}</h3>
                       <p className="text-xs text-gray-600">Activities Done</p>
                     </CardContent>
                   </Card>
@@ -666,26 +673,26 @@ const handleAddChild = async () => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Achievements</span>
-                        <span className="text-2xl font-bold text-yellow-600">{analytics.achievements.length}</span>
+                        <span className="text-2xl font-bold text-yellow-600">{analytics?.achievements.length ?? 0}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Stars Earned</span>
                         <span className="text-2xl font-bold text-blue-600">
-                          {analytics.activityLogs.reduce((sum, log) => sum + log.score, 0)}
+                          {(analytics?.activityLogs ?? []).reduce((sum, log) => sum + log.score, 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Milestones</span>
                         <span className="text-2xl font-bold text-purple-600">
-                          {Math.floor(analytics.activityLogs.length / 10)}
+                          {Math.floor((analytics?.activityLogs.length ?? 0) / 10)}
                         </span>
                       </div>
                       
-                      {analytics.achievements.length > 0 && (
+                      {(analytics?.achievements.length ?? 0) > 0 && (
                         <div className="mt-4 pt-4 border-t">
                           <p className="text-sm font-semibold text-gray-700 mb-2">Recent Achievements:</p>
                           <div className="space-y-2">
-                            {analytics.achievements.slice(0, 3).map((achievement) => (
+                            {(analytics?.achievements ?? []).slice(0, 3).map((achievement) => (
                               <div key={achievement.id} className="flex items-center gap-2 text-sm">
                                 <span className="text-xl">{achievement.icon}</span>
                                 <div>
@@ -716,19 +723,19 @@ const handleAddChild = async () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Last Active</span>
-                      <span className="font-semibold">{formatLastActive(analytics.lastActive)}</span>
+                      <span className="font-semibold">{formatLastActive(analytics?.lastActive ?? new Date().toISOString())}</span>
                     </div>
-                    {analytics.lastActivity && (
+                    {analytics?.lastActivity && (
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Last Activity</span>
                         <span className="font-semibold text-blue-600">{analytics.lastActivity}</span>
                       </div>
                     )}
-                    {analytics.activityLogs.length > 0 && (
+                    {(analytics?.activityLogs.length ?? 0) > 0 && (
                       <div className="mt-4 pt-4 border-t">
                         <p className="text-sm font-semibold text-gray-700 mb-2">Recent Activities:</p>
                         <div className="space-y-2">
-                          {analytics.activityLogs.slice(0, 5).map((log) => (
+                          {(analytics?.activityLogs ?? []).slice(0, 5).map((log) => (
                             <div key={log.id} className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded">
                               <div className="flex items-center gap-2">
                                 {log.module === 'writing' && <PenTool className="w-4 h-4 text-green-500" />}
@@ -871,12 +878,12 @@ const handleAddChild = async () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-blue-500" />
-                    Words Learned ({analytics.wordsLearned.length})
+                    Words Learned ({analytics?.wordsLearned.length ?? 0})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {analytics.wordsLearned.map((word, index) => (
+                    {(analytics?.wordsLearned ?? []).map((word, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -902,7 +909,7 @@ const handleAddChild = async () => {
                         </div>
                       </motion.div>
                     ))}
-                    {analytics.wordsLearned.length === 0 && (
+                    {(analytics?.wordsLearned.length ?? 0) === 0 && (
                       <div className="col-span-full text-center py-8 text-gray-500">
                         No words learned yet. Start learning to see progress here!
                       </div>
@@ -912,7 +919,7 @@ const handleAddChild = async () => {
               </Card>
 
               {/* Pronunciation Scores */}
-              {analytics.wordsLearned.filter(w => w.pronunciationScore !== undefined).length > 0 && (
+              {(analytics?.wordsLearned ?? []).filter(w => w.pronunciationScore !== undefined).length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -960,9 +967,9 @@ const handleAddChild = async () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {analytics.achievements.length > 0 ? (
+                  {(analytics?.achievements.length ?? 0) > 0 ? (
                     <div className="space-y-4">
-                      {analytics.achievements.map((achievement, index) => (
+                      {(analytics?.achievements ?? []).map((achievement, index) => (
                         <motion.div
                           key={achievement.id}
                           initial={{ opacity: 0, x: -20 }}
