@@ -62,11 +62,13 @@ export default function DashboardPage() {
 
       // User session found - load immediately
       console.log('User session found:', currentUser)
+      console.log('Loading children for parentId:', currentUser.id)
       setUser(currentUser)
 
       // Load children (returns cached data immediately, syncs Firestore in background)
       const userChildren = await getChildren(currentUser.id)
       if (!mounted) return
+      console.log(`Loaded ${userChildren.length} children for parentId: ${currentUser.id}`)
       setChildren(userChildren)
       setLoading(false)
 

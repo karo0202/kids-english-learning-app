@@ -97,6 +97,18 @@ export async function addChild(parentId: string, name: string, age: number): Pro
     avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(name)}`,
   }
 
+  console.log('Adding child:', { parentId, childId: newChild.id, name, age })
+
+  // Always save to localStorage first (immediate persistence)
+  const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
+  const updatedChildren = [...currentChildren, newChild]
+  
+  // Update cache and localStorage immediately
+  childCache.set(parentId, updatedChildren)
+  persistLocalChildren(parentId, updatedChildren)
+  console.log('Child saved to cache and localStorage. Total children:', updatedChildren.length)
+
+  // Try to save to Firestore (non-blocking, but log errors)
   const firestore = getFirestoreClient()
   if (firestore) {
     try {
@@ -109,14 +121,17 @@ export async function addChild(parentId: string, name: string, age: number): Pro
         },
         { merge: true }
       )
+      console.log('Child saved to Firestore successfully:', newChild.id)
     } catch (error) {
-      console.error('Failed to save child to Firestore:', error)
+      console.error('Failed to save child to Firestore (but saved locally):', error)
+      // Don't throw - child is already saved locally
     }
+  } else {
+    console.warn('Firestore not available, child saved to localStorage only')
   }
 
-  const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
-  const updatedChildren = [...currentChildren, newChild]
-  updateChildrenCache(parentId, updatedChildren)
+  // Notify subscribers
+  notifySubscribers(parentId, updatedChildren)
 
   setCurrentChild(newChild)
   return newChild
@@ -218,15 +233,21 @@ export function clearCurrentChild(): void {
 
 async function refreshChildrenFromFirestore(parentId: string) {
   const firestore = getFirestoreClient()
-  if (!firestore) return
+  if (!firestore) {
+    console.log('Firestore not available, skipping refresh for parentId:', parentId)
+    return
+  }
 
   try {
+    console.log('Refreshing children from Firestore for parentId:', parentId)
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
     const children = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+    console.log(`Loaded ${children.length} children from Firestore for parentId: ${parentId}`)
     updateChildrenCache(parentId, children)
   } catch (error) {
     console.error('Failed to fetch children from Firestore:', error)
+    // Don't throw - fall back to localStorage
   }
 }
 
@@ -284,9 +305,14 @@ function loadLocalChildren(parentId: string): Child[] {
 
   try {
     const raw = localStorage.getItem('children')
-    if (!raw) return []
+    if (!raw) {
+      console.log('No children found in localStorage for parentId:', parentId)
+      return []
+    }
     const children: Child[] = JSON.parse(raw)
-    return children.filter(child => child.parentId === parentId).map(normalizeChild)
+    const filtered = children.filter(child => child.parentId === parentId).map(normalizeChild)
+    console.log(`Loaded ${filtered.length} children from localStorage for parentId: ${parentId}`)
+    return filtered
   } catch (error) {
     console.error('Failed to load children from localStorage:', error)
     return []
@@ -302,6 +328,7 @@ function persistLocalChildren(parentId: string, children: Child[]) {
     const filtered = allChildren.filter(child => child.parentId !== parentId)
     const updated = [...filtered, ...children]
     localStorage.setItem('children', JSON.stringify(updated))
+    console.log(`Persisted ${children.length} children to localStorage for parentId: ${parentId}`)
   } catch (error) {
     console.error('Failed to persist children locally:', error)
   }
