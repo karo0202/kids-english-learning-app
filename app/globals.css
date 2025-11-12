@@ -4,6 +4,41 @@
 @tailwind utilities;
 
 /* Premium color palette: deep purple, vibrant pink, teal accents */
+/* Mobile viewport fixes - prevent line at top on refresh */
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  /* Remove any borders/outlines that could appear as lines */
+  border: none;
+  outline: none;
+  /* Only apply safe area insets if needed, and ensure they don't create visible lines */
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Prevent scrollbar flash on mobile */
+  -webkit-overflow-scrolling: touch;
+  /* Ensure body fills viewport without gaps */
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  /* Prevent any visual artifacts */
+  border: none;
+  outline: none;
+  /* Smooth rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 @layer base {
   :root {
     --background: oklch(0.97 0.01 70);
@@ -107,8 +142,17 @@
     opacity: 0.5;
   }
 
+  html {
+    /* Remove any default borders/outlines */
+    border: none;
+    outline: none;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* Ensure no border/outline appears */
+    border: none;
+    outline: none;
   }
 }
 
@@ -125,9 +169,27 @@ button,
 
 /* Mobile touch fixes */
 @media (max-width: 768px) {
+  html {
+    /* Prevent any visual artifacts at top on mobile */
+    margin-top: 0 !important;
+    padding-top: max(0px, env(safe-area-inset-top)) !important;
+    border-top: none !important;
+    outline: none !important;
+    /* Ensure background color extends to edges */
+    background-color: transparent;
+  }
+
   body {
     touch-action: manipulation;
     -webkit-overflow-scrolling: touch;
+    /* Ensure no gap at top */
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+    outline: none !important;
+    /* Prevent scrollbar from appearing */
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   
   /* Ensure buttons work on mobile with proper touch handling */
