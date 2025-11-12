@@ -28,26 +28,39 @@ const childSubscribers = new Map<string, Set<ChildrenSubscriber>>()
 const firestoreUnsubscribers = new Map<string, Unsubscribe>()
 
 export async function getChildren(parentId: string): Promise<Child[]> {
-  // Always try to refresh from Firestore first (especially after login)
-  if (typeof window !== 'undefined') {
-    await refreshChildrenFromFirestore(parentId)
-    const firestoreChildren = childCache.get(parentId)
-    if (firestoreChildren && firestoreChildren.length > 0) {
-      return cloneChildren(firestoreChildren)
-    }
-  }
-
-  // Fallback to cache if available
+  // Return cached data immediately for fast loading
   const cached = childCache.get(parentId)
   if (cached && cached.length > 0) {
+    // Refresh from Firestore in background (non-blocking)
+    if (typeof window !== 'undefined') {
+      void refreshChildrenFromFirestore(parentId)
+    }
     return cloneChildren(cached)
   }
 
-  // Fallback to localStorage
+  // Fallback to localStorage for instant display
   const local = loadLocalChildren(parentId)
   if (local.length > 0) {
     childCache.set(parentId, local)
+    // Refresh from Firestore in background (non-blocking)
+    if (typeof window !== 'undefined') {
+      void refreshChildrenFromFirestore(parentId)
+    }
     return cloneChildren(local)
+  }
+
+  // If no cached data, try Firestore (but don't block if it fails)
+  if (typeof window !== 'undefined') {
+    try {
+      await refreshChildrenFromFirestore(parentId)
+      const firestoreChildren = childCache.get(parentId)
+      if (firestoreChildren && firestoreChildren.length > 0) {
+        return cloneChildren(firestoreChildren)
+      }
+    } catch (error) {
+      console.error('Error loading children from Firestore:', error)
+      // Continue with empty array if Firestore fails
+    }
   }
 
   return []

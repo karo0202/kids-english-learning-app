@@ -29,32 +29,48 @@ export default function DashboardPage() {
       return
     }
 
-    // Wait for Firebase auth state to sync
+    // Load immediately for fast page load
     let mounted = true
     let unsubscribe: (() => void) | undefined
 
-    const checkAuthAndLoad = async () => {
-      // Give Firebase auth a moment to restore state
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      if (!mounted) return
-
+    const loadDashboard = async () => {
+      // Check user session immediately (Firebase auth listener should have synced it)
       const currentUser = getUserSession()
       if (!currentUser) {
-        console.log('No user session found, redirecting to login')
-        router.push('/login')
+        // Give Firebase auth a tiny moment to restore (only if no session found)
+        await new Promise(resolve => setTimeout(resolve, 50))
+        const retryUser = getUserSession()
+        if (!retryUser) {
+          console.log('No user session found, redirecting to login')
+          router.push('/login')
+          setLoading(false)
+          return
+        }
+        setUser(retryUser)
+        const userChildren = await getChildren(retryUser.id)
+        if (!mounted) return
+        setChildren(userChildren)
         setLoading(false)
+        unsubscribe = subscribeToChildren(retryUser.id, updatedChildren => {
+          if (!mounted) return
+          setChildren(updatedChildren)
+        })
+        const userSubscription = getUserSubscription(retryUser.id)
+        setSubscription(userSubscription)
         return
       }
 
+      // User session found - load immediately
       console.log('User session found:', currentUser)
       setUser(currentUser)
 
+      // Load children (returns cached data immediately, syncs Firestore in background)
       const userChildren = await getChildren(currentUser.id)
       if (!mounted) return
       setChildren(userChildren)
       setLoading(false)
 
+      // Subscribe to real-time updates (will update when Firestore syncs)
       unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
         if (!mounted) return
         setChildren(updatedChildren)
@@ -64,7 +80,7 @@ export default function DashboardPage() {
       setSubscription(userSubscription)
     }
 
-    checkAuthAndLoad()
+    loadDashboard()
 
     return () => {
       mounted = false
