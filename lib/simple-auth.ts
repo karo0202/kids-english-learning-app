@@ -15,11 +15,23 @@ export function createDemoUser(): User {
   }
 }
 
+// Generate consistent user ID from email
+function generateUserIdFromEmail(email: string): string {
+  // Create a simple hash from email to ensure consistent user ID
+  let hash = 0
+  for (let i = 0; i < email.length; i++) {
+    const char = email.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32-bit integer
+  }
+  return `user-${Math.abs(hash)}`
+}
+
 export function validateCredentials(email: string, password: string): User | null {
   // Demo mode: accept any email/password combination
   if (email && password && email.length > 0 && password.length >= 4) {
     return {
-      id: `user-${Date.now()}`,
+      id: generateUserIdFromEmail(email), // Consistent ID based on email
       email: email,
       name: email.split('@')[0], // Use email prefix as name
       accountType: 'parent'

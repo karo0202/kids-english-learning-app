@@ -28,21 +28,29 @@ const childSubscribers = new Map<string, Set<ChildrenSubscriber>>()
 const firestoreUnsubscribers = new Map<string, Unsubscribe>()
 
 export async function getChildren(parentId: string): Promise<Child[]> {
+  // Always try to refresh from Firestore first (especially after login)
+  if (typeof window !== 'undefined') {
+    await refreshChildrenFromFirestore(parentId)
+    const firestoreChildren = childCache.get(parentId)
+    if (firestoreChildren && firestoreChildren.length > 0) {
+      return cloneChildren(firestoreChildren)
+    }
+  }
+
+  // Fallback to cache if available
   const cached = childCache.get(parentId)
-  if (cached) {
+  if (cached && cached.length > 0) {
     return cloneChildren(cached)
   }
 
+  // Fallback to localStorage
   const local = loadLocalChildren(parentId)
   if (local.length > 0) {
     childCache.set(parentId, local)
+    return cloneChildren(local)
   }
 
-  if (typeof window !== 'undefined') {
-    void refreshChildrenFromFirestore(parentId)
-  }
-
-  return cloneChildren(childCache.get(parentId) ?? local)
+  return []
 }
 
 export function subscribeToChildren(parentId: string, callback: ChildrenSubscriber): () => void {
