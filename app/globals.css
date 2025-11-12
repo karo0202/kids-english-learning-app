@@ -177,6 +177,8 @@ button,
     outline: none !important;
     /* Ensure background color extends to edges */
     background-color: transparent;
+    /* Prevent double-tap zoom */
+    touch-action: manipulation;
   }
 
   body {
@@ -190,6 +192,8 @@ button,
     /* Prevent scrollbar from appearing */
     overflow-x: hidden;
     overflow-y: auto;
+    /* Prevent text selection on double tap (but allow intentional selection) */
+    -webkit-tap-highlight-color: transparent;
   }
   
   /* Ensure buttons work on mobile with proper touch handling */
@@ -203,6 +207,13 @@ button,
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    /* Prevent double-tap zoom on buttons */
+    -ms-touch-action: manipulation;
+  }
+  
+  /* Prevent double-tap zoom on interactive elements */
+  a, button, [role="button"], input, textarea, select {
+    touch-action: manipulation;
   }
   
   /* Prevent screen jumping on mobile */
@@ -920,4 +931,49 @@ button,
   .hover-rotate:hover {
     transform: none;
   }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Focus visible improvements */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Better focus for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

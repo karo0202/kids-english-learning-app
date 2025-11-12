@@ -4,9 +4,15 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { ThemeProvider } from '@/lib/theme-context'
+import { ErrorBoundary } from '@/components/error-boundary'
 // PortraitLock removed to enable landscape mode
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   title: 'Kids English Learning Adventure',
@@ -17,6 +23,19 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.png',
     apple: '/favicon.png',
+  },
+  manifest: '/site.webmanifest',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f5f3ff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Kids English',
+  },
+  formatDetection: {
+    telephone: false,
   },
 }
 
@@ -33,7 +52,16 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#0f172a" />
+        <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#f5f3ff" media="(prefers-color-scheme: light)" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Kids English" />
+        {/* Performance optimizations */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -51,13 +79,24 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <Providers>
-          <ThemeProvider>
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 m-0 p-0">
-              {children}
-            </div>
-          </ThemeProvider>
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            <ThemeProvider>
+              {/* Skip to main content link for accessibility */}
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                Skip to main content
+              </a>
+              <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 m-0 p-0">
+                <main id="main-content">
+                  {children}
+                </main>
+              </div>
+            </ThemeProvider>
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   )
