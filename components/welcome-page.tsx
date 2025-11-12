@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
-import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2 } from 'lucide-react'
+import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AudioSettings from '@/components/audio-settings'
 
@@ -29,16 +29,40 @@ export default function WelcomePage() {
       color: "from-green-400 to-green-600"
     },
     {
+      icon: <BookOpen className="w-8 h-8" />,
+      title: "Reading Library",
+      description: "Explore magical stories and PDF books!",
+      color: "from-pink-400 to-pink-600"
+    },
+    {
       icon: <Gamepad2 className="w-8 h-8" />,
       title: "Educational Games",
       description: "Play exciting games while learning English!",
       color: "from-purple-400 to-purple-600"
     },
     {
-      icon: <BookOpen className="w-8 h-8" />,
-      title: "Story Adventures",
-      description: "Explore magical stories and learn new words!",
-      color: "from-pink-400 to-pink-600"
+      icon: <FileText className="w-8 h-8" />,
+      title: "Grammar & Language",
+      description: "Master grammar rules with interactive exercises!",
+      color: "from-indigo-400 to-indigo-600"
+    },
+    {
+      icon: <Puzzle className="w-8 h-8" />,
+      title: "Word Puzzles",
+      description: "Solve word, sentence, and picture puzzles!",
+      color: "from-orange-400 to-orange-600"
+    },
+    {
+      icon: <Palette className="w-8 h-8" />,
+      title: "Alphabet Coloring",
+      description: "Color letters and learn the alphabet creatively!",
+      color: "from-cyan-400 to-cyan-600"
+    },
+    {
+      icon: <Target className="w-8 h-8" />,
+      title: "Daily Challenges",
+      description: "Complete fun challenges and earn rewards!",
+      color: "from-rose-400 to-rose-600"
     }
   ]
 
@@ -154,7 +178,7 @@ export default function WelcomePage() {
 
         {/* Features Grid */}
 				<motion.div 
-						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 max-w-7xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
