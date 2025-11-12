@@ -69,6 +69,17 @@ export default function DashboardPage() {
       const userChildren = await getChildren(currentUser.id)
       if (!mounted) return
       console.log(`Loaded ${userChildren.length} children for parentId: ${currentUser.id}`)
+      if (userChildren.length > 0) {
+        console.log('Children details:', userChildren.map(c => ({ id: c.id, name: c.name, age: c.age, parentId: c.parentId })))
+      } else {
+        console.warn('No children found! Checking localStorage...')
+        const raw = localStorage.getItem('children')
+        if (raw) {
+          const all = JSON.parse(raw)
+          console.log('All children in localStorage:', all)
+          console.log('Looking for parentId:', currentUser.id)
+        }
+      }
       setChildren(userChildren)
       setLoading(false)
 

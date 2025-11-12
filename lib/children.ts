@@ -97,7 +97,7 @@ export async function addChild(parentId: string, name: string, age: number): Pro
     avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(name)}`,
   }
 
-  console.log('Adding child:', { parentId, childId: newChild.id, name, age })
+  console.log('Adding child:', { parentId, childId: newChild.id, name, age, ageGroup: newChild.ageGroup })
 
   // Always save to localStorage first (immediate persistence)
   const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
@@ -107,6 +107,7 @@ export async function addChild(parentId: string, name: string, age: number): Pro
   childCache.set(parentId, updatedChildren)
   persistLocalChildren(parentId, updatedChildren)
   console.log('Child saved to cache and localStorage. Total children:', updatedChildren.length)
+  console.log('Saved child details:', { id: newChild.id, name: newChild.name, parentId: newChild.parentId, age: newChild.age })
 
   // Try to save to Firestore (non-blocking, but log errors)
   const firestore = getFirestoreClient()
@@ -310,8 +311,21 @@ function loadLocalChildren(parentId: string): Child[] {
       return []
     }
     const children: Child[] = JSON.parse(raw)
-    const filtered = children.filter(child => child.parentId === parentId).map(normalizeChild)
+    console.log(`Found ${children.length} total children in localStorage`)
+    console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId })))
+    
+    const filtered = children.filter(child => {
+      const matches = child.parentId === parentId
+      if (!matches) {
+        console.log(`Child ${child.id} (${child.name}) has parentId ${child.parentId}, expected ${parentId}`)
+      }
+      return matches
+    }).map(normalizeChild)
+    
     console.log(`Loaded ${filtered.length} children from localStorage for parentId: ${parentId}`)
+    if (filtered.length > 0) {
+      console.log('Loaded children details:', filtered.map(c => ({ id: c.id, name: c.name, age: c.age, parentId: c.parentId })))
+    }
     return filtered
   } catch (error) {
     console.error('Failed to load children from localStorage:', error)
