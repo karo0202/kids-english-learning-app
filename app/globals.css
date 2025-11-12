@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .grid-cols-13 {
+    grid-template-columns: repeat(13, minmax(0, 1fr));
+  }
+}
+
 /* Premium color palette: deep purple, vibrant pink, teal accents */
 /* Mobile viewport fixes - prevent line at top on refresh */
 html {

@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, OAuthProvider, setPersistence, browserLocalPersistence, signInWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth'
+import { getFirestore, Firestore } from 'firebase/firestore'
 
 // Read public env vars (Next.js: NEXT_PUBLIC_*)
 const firebaseConfig = {
@@ -31,32 +32,65 @@ let app: any = null
 let auth: any = null
 let googleProvider: any = null
 let appleProvider: any = null
+let firestore: Firestore | null = null
 
-export function getAuthClient() {
+function ensureFirebaseApp() {
   if (typeof window === 'undefined') return null
-  
+
   if (!validateFirebaseConfig()) {
     console.error('Firebase configuration is incomplete. Please check your environment variables.')
     return null
   }
-  
+
   if (!app) {
     try {
       app = getApps().length ? getApps()[0]! : initializeApp(firebaseConfig)
-      auth = getAuth(app)
-      setPersistence(auth, browserLocalPersistence)
-      googleProvider = new GoogleAuthProvider()
-      googleProvider.setCustomParameters({
-        prompt: 'select_account'
-      })
-      appleProvider = new OAuthProvider('apple.com')
       console.log('Firebase initialized successfully')
     } catch (error) {
       console.error('Firebase initialization error:', error)
       return null
     }
   }
+
+  return app
+}
+
+export function getAuthClient() {
+  const firebaseApp = ensureFirebaseApp()
+  if (!firebaseApp) return null
+
+  if (!auth) {
+    try {
+      auth = getAuth(firebaseApp)
+      setPersistence(auth, browserLocalPersistence)
+      googleProvider = new GoogleAuthProvider()
+      googleProvider.setCustomParameters({
+        prompt: 'select_account'
+      })
+      appleProvider = new OAuthProvider('apple.com')
+    } catch (error) {
+      console.error('Failed to initialize Firebase Auth:', error)
+      return null
+    }
+  }
+
   return { auth, googleProvider, appleProvider }
+}
+
+export function getFirestoreClient(): Firestore | null {
+  const firebaseApp = ensureFirebaseApp()
+  if (!firebaseApp) return null
+
+  if (!firestore) {
+    try {
+      firestore = getFirestore(firebaseApp)
+    } catch (error) {
+      console.error('Failed to initialize Firestore:', error)
+      return null
+    }
+  }
+
+  return firestore
 }
 
 // Google Sign In - Use popup method (more reliable)

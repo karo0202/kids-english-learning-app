@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getUserSession, clearUserSession } from '@/lib/simple-auth'
-import { getChildren, addChild, deleteChild, Child } from '@/lib/children'
+import { getChildren, addChild, deleteChild, Child, subscribeToChildren } from '@/lib/children'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -24,29 +24,42 @@ export default function DashboardPage() {
   const [subscription, setSubscription] = useState<any>(null)
 
   useEffect(() => {
-    // Only run on client side
-    if (typeof window !== 'undefined') {
-      const currentUser = getUserSession()
-      if (!currentUser) {
-        console.log('No user session found, redirecting to login')
-        router.push('/login')
-        return
-      }
-      console.log('User session found:', currentUser)
-      setUser(currentUser)
-      
-      // Load children for this specific user
-      const userChildren = getChildren(currentUser.id)
-      setChildren(userChildren)
-      
-      // Load subscription status
-      const userSubscription = getUserSubscription(currentUser.id)
-      setSubscription(userSubscription)
-      
-      setLoading(false)
-    } else {
-      setLoading(false)
-    }
+  if (typeof window === 'undefined') {
+    setLoading(false)
+    return
+  }
+
+  const currentUser = getUserSession()
+  if (!currentUser) {
+    console.log('No user session found, redirecting to login')
+    router.push('/login')
+    setLoading(false)
+    return
+  }
+
+  console.log('User session found:', currentUser)
+  setUser(currentUser)
+
+  let mounted = true
+
+  ;(async () => {
+    const userChildren = await getChildren(currentUser.id)
+    if (!mounted) return
+    setChildren(userChildren)
+    setLoading(false)
+  })()
+
+  const unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
+    setChildren(updatedChildren)
+  })
+
+  const userSubscription = getUserSubscription(currentUser.id)
+  setSubscription(userSubscription)
+
+  return () => {
+    mounted = false
+    unsubscribe?.()
+  }
   }, [router])
 
   const handleLogout = () => {
@@ -55,24 +68,20 @@ export default function DashboardPage() {
     router.push('/')
   }
 
-  const handleAddChild = () => {
-    if (user && newChildName && newChildAge) {
-      const newChild = addChild(user.id, newChildName, newChildAge as number)
-      setChildren(prev => [...prev, newChild])
-      setNewChildName('')
-      setNewChildAge('')
-      setIsAddingChild(false)
-    }
+const handleAddChild = async () => {
+  if (user && newChildName && newChildAge) {
+    await addChild(user.id, newChildName, newChildAge as number)
+    setNewChildName('')
+    setNewChildAge('')
+    setIsAddingChild(false)
   }
+}
 
-  const handleDeleteChild = (childId: string) => {
-    if (user && confirm('Are you sure you want to delete this child profile?')) {
-      const success = deleteChild(user.id, childId)
-      if (success) {
-        setChildren(prev => prev.filter(child => child.id !== childId))
-      }
-    }
+const handleDeleteChild = async (childId: string) => {
+  if (user && confirm('Are you sure you want to delete this child profile?')) {
+    await deleteChild(user.id, childId)
   }
+}
 
   if (loading) {
     return (

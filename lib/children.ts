@@ -1,118 +1,189 @@
-// Children management system
+import { getFirestoreClient } from '@/lib/firebase'
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
+  Unsubscribe,
+} from 'firebase/firestore'
 import { AgeGroup, getAgeGroup } from './age-utils'
 
 export interface Child {
   id: string
   name: string
   age: number
-  ageGroup: AgeGroup // Automatically determined from age
+  ageGroup: AgeGroup
   parentId: string
   createdAt: string
   avatar?: string
 }
 
-export function getChildren(parentId: string): Child[] {
-  if (typeof window === 'undefined') return []
-  
-  try {
-    const childrenData = localStorage.getItem('children')
-    if (!childrenData) return []
-    
-    const allChildren: Child[] = JSON.parse(childrenData)
-    return allChildren.filter(child => child.parentId === parentId)
-  } catch (error) {
-    console.error('Error loading children:', error)
-    return []
+type ChildrenSubscriber = (children: Child[]) => void
+
+const childCache = new Map<string, Child[]>()
+const childSubscribers = new Map<string, Set<ChildrenSubscriber>>()
+const firestoreUnsubscribers = new Map<string, Unsubscribe>()
+
+export async function getChildren(parentId: string): Promise<Child[]> {
+  const cached = childCache.get(parentId)
+  if (cached) {
+    return cloneChildren(cached)
+  }
+
+  const local = loadLocalChildren(parentId)
+  if (local.length > 0) {
+    childCache.set(parentId, local)
+  }
+
+  if (typeof window !== 'undefined') {
+    void refreshChildrenFromFirestore(parentId)
+  }
+
+  return cloneChildren(childCache.get(parentId) ?? local)
+}
+
+export function subscribeToChildren(parentId: string, callback: ChildrenSubscriber): () => void {
+  const subscribers = childSubscribers.get(parentId) ?? new Set<ChildrenSubscriber>()
+  subscribers.add(callback)
+  childSubscribers.set(parentId, subscribers)
+
+  callback(cloneChildren(childCache.get(parentId) ?? loadLocalChildren(parentId)))
+  ensureFirestoreListener(parentId)
+
+  return () => {
+    const current = childSubscribers.get(parentId)
+    if (!current) return
+    current.delete(callback)
+    if (current.size === 0) {
+      childSubscribers.delete(parentId)
+      detachFirestoreListener(parentId)
+    }
   }
 }
 
-export function addChild(parentId: string, name: string, age: number): Child {
-  // Automatically determine age group from age
+export async function addChild(parentId: string, name: string, age: number): Promise<Child> {
   const ageGroup = getAgeGroup(age)
-  
   const newChild: Child = {
-    id: `child-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `child-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     name,
     age,
-    ageGroup, // Automatically assigned based on age
+    ageGroup,
     parentId,
     createdAt: new Date().toISOString(),
-    avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}`
+    avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(name)}`,
   }
-  
-  if (typeof window !== 'undefined') {
+
+  const firestore = getFirestoreClient()
+  if (firestore) {
     try {
-      const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
-      const updatedChildren = [...existingChildren, newChild]
-      localStorage.setItem('children', JSON.stringify(updatedChildren))
+      const docRef = doc(firestore, 'parents', parentId, 'children', newChild.id)
+      await setDoc(
+        docRef,
+        {
+          ...newChild,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      )
     } catch (error) {
-      console.error('Error saving child:', error)
+      console.error('Failed to save child to Firestore:', error)
     }
   }
-  
+
+  const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
+  const updatedChildren = [...currentChildren, newChild]
+  updateChildrenCache(parentId, updatedChildren)
+
+  setCurrentChild(newChild)
   return newChild
 }
 
-export function updateChild(parentId: string, childId: string, updates: Partial<Child>): Child | null {
-  if (typeof window === 'undefined') return null
-  
-  try {
-    const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
-    const childIndex = existingChildren.findIndex((child: Child) => 
-      child.id === childId && child.parentId === parentId
-    )
-    
-    if (childIndex === -1) return null
-    
-    const updatedChild = { ...existingChildren[childIndex], ...updates }
-    existingChildren[childIndex] = updatedChild
-    localStorage.setItem('children', JSON.stringify(existingChildren))
-    
-    return updatedChild
-  } catch (error) {
-    console.error('Error updating child:', error)
-    return null
+export async function updateChild(parentId: string, childId: string, updates: Partial<Child>): Promise<Child | null> {
+  const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
+  const targetIndex = currentChildren.findIndex(child => child.id === childId)
+
+  if (targetIndex === -1) {
+    await refreshChildrenFromFirestore(parentId)
+    const refreshedChildren = childCache.get(parentId) ?? []
+    const refreshedIndex = refreshedChildren.findIndex(child => child.id === childId)
+    if (refreshedIndex === -1) return null
+    return updateChild(parentId, childId, updates)
   }
+
+  const existingChild = currentChildren[targetIndex]
+  const updatedChild: Child = {
+    ...existingChild,
+    ...updates,
+    ageGroup: updates.age !== undefined ? getAgeGroup(updates.age) : existingChild.ageGroup,
+  }
+
+  const firestore = getFirestoreClient()
+  if (firestore) {
+    try {
+      const docRef = doc(firestore, 'parents', parentId, 'children', childId)
+      await setDoc(
+        docRef,
+        {
+          ...updatedChild,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      )
+    } catch (error) {
+      console.error('Failed to update child in Firestore:', error)
+    }
+  }
+
+  const updatedChildren = [...currentChildren]
+  updatedChildren[targetIndex] = updatedChild
+  updateChildrenCache(parentId, updatedChildren)
+
+  const currentChild = getCurrentChild()
+  if (currentChild && currentChild.id === childId) {
+    setCurrentChild(updatedChild)
+  }
+
+  return updatedChild
 }
 
-export function deleteChild(parentId: string, childId: string): boolean {
-  if (typeof window === 'undefined') return false
-  
-  try {
-    const existingChildren = JSON.parse(localStorage.getItem('children') || '[]')
-    const filteredChildren = existingChildren.filter((child: Child) => 
-      !(child.id === childId && child.parentId === parentId)
-    )
-    
-    localStorage.setItem('children', JSON.stringify(filteredChildren))
-    
-    // Also clear current child if it was deleted
-    const currentChild = JSON.parse(localStorage.getItem('currentChild') || 'null')
-    if (currentChild && currentChild.id === childId) {
-      localStorage.removeItem('currentChild')
+export async function deleteChild(parentId: string, childId: string): Promise<boolean> {
+  const firestore = getFirestoreClient()
+  if (firestore) {
+    try {
+      const docRef = doc(firestore, 'parents', parentId, 'children', childId)
+      await deleteDoc(docRef)
+    } catch (error) {
+      console.error('Failed to delete child from Firestore:', error)
     }
-    
-    return true
-  } catch (error) {
-    console.error('Error deleting child:', error)
-    return false
   }
+
+  const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
+  const updatedChildren = currentChildren.filter(child => child.id !== childId)
+  updateChildrenCache(parentId, updatedChildren)
+
+  const currentChild = getCurrentChild()
+  if (currentChild?.id === childId) {
+    clearCurrentChild()
+  }
+
+  return true
 }
 
 export function setCurrentChild(child: Child): void {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('currentChild', JSON.stringify(child))
-  }
+  if (typeof window === 'undefined') return
+  localStorage.setItem('currentChild', JSON.stringify(child))
 }
 
 export function getCurrentChild(): Child | null {
   if (typeof window === 'undefined') return null
-  
+
   try {
-    const currentChildData = localStorage.getItem('currentChild')
-    if (!currentChildData) return null
-    
-    return JSON.parse(currentChildData)
+    const raw = localStorage.getItem('currentChild')
+    if (!raw) return null
+    return JSON.parse(raw)
   } catch (error) {
     console.error('Error loading current child:', error)
     return null
@@ -120,7 +191,116 @@ export function getCurrentChild(): Child | null {
 }
 
 export function clearCurrentChild(): void {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('currentChild')
+  if (typeof window === 'undefined') return
+  localStorage.removeItem('currentChild')
+}
+
+async function refreshChildrenFromFirestore(parentId: string) {
+  const firestore = getFirestoreClient()
+  if (!firestore) return
+
+  try {
+    const collectionRef = collection(firestore, 'parents', parentId, 'children')
+    const snapshot = await getDocs(collectionRef)
+    const children = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+    updateChildrenCache(parentId, children)
+  } catch (error) {
+    console.error('Failed to fetch children from Firestore:', error)
   }
+}
+
+function ensureFirestoreListener(parentId: string) {
+  if (firestoreUnsubscribers.has(parentId)) return
+
+  const firestore = getFirestoreClient()
+  if (!firestore) return
+
+  const collectionRef = collection(firestore, 'parents', parentId, 'children')
+  const unsubscribe = onSnapshot(
+    collectionRef,
+    snapshot => {
+      const children = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+      updateChildrenCache(parentId, children)
+    },
+    error => {
+      console.error('Children snapshot listener error:', error)
+    }
+  )
+
+  firestoreUnsubscribers.set(parentId, unsubscribe)
+}
+
+function detachFirestoreListener(parentId: string) {
+  const unsubscribe = firestoreUnsubscribers.get(parentId)
+  if (unsubscribe) {
+    unsubscribe()
+    firestoreUnsubscribers.delete(parentId)
+  }
+}
+
+function updateChildrenCache(parentId: string, children: Child[]) {
+  childCache.set(parentId, children)
+  persistLocalChildren(parentId, children)
+  notifySubscribers(parentId, children)
+}
+
+function notifySubscribers(parentId: string, children: Child[]) {
+  const subscribers = childSubscribers.get(parentId)
+  if (!subscribers) return
+
+  const clonedChildren = cloneChildren(children)
+  subscribers.forEach(callback => {
+    try {
+      callback(clonedChildren)
+    } catch (error) {
+      console.error('Child subscriber error:', error)
+    }
+  })
+}
+
+function loadLocalChildren(parentId: string): Child[] {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const raw = localStorage.getItem('children')
+    if (!raw) return []
+    const children: Child[] = JSON.parse(raw)
+    return children.filter(child => child.parentId === parentId).map(normalizeChild)
+  } catch (error) {
+    console.error('Failed to load children from localStorage:', error)
+    return []
+  }
+}
+
+function persistLocalChildren(parentId: string, children: Child[]) {
+  if (typeof window === 'undefined') return
+
+  try {
+    const raw = localStorage.getItem('children')
+    const allChildren: Child[] = raw ? JSON.parse(raw) : []
+    const filtered = allChildren.filter(child => child.parentId !== parentId)
+    const updated = [...filtered, ...children]
+    localStorage.setItem('children', JSON.stringify(updated))
+  } catch (error) {
+    console.error('Failed to persist children locally:', error)
+  }
+}
+
+function normalizeChild(data: any): Child {
+  const age = Number(data?.age ?? 0)
+  const child: Child = {
+    id: data?.id ?? `child-${Math.random().toString(36).slice(2)}`,
+    name: data?.name ?? 'Learner',
+    age,
+    ageGroup: data?.ageGroup ?? getAgeGroup(age),
+    parentId: data?.parentId ?? '',
+    createdAt: data?.createdAt ?? new Date().toISOString(),
+    avatar: data?.avatar,
+  }
+
+  return child
+}
+
+function cloneChildren(children: Child[]): Child[] {
+  return children.map(child => ({ ...child }))
 }

@@ -4,7 +4,7 @@
 import { getUserSession } from '@/lib/simple-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import ParentDashboard from '@/components/parent-dashboard'
+import EnhancedParentDashboard from '@/components/enhanced-parent-dashboard'
 
 export default function ParentDashboardPage() {
   const [session, setSession] = useState<any>(null)
@@ -32,5 +32,5 @@ export default function ParentDashboardPage() {
     return null
   }
 
-  return <ParentDashboard />
+  return <EnhancedParentDashboard />
 }

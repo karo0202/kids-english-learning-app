@@ -322,6 +322,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const letterPath = getLetterPath(letter)
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const completedStrokesRef = useRef<Set<number>>(new Set())
+  const startTimeRef = useRef<number>(0)
 
   const penColors = [
     '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
@@ -485,6 +486,11 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     e.preventDefault()
     const canvas = canvasRef.current
     if (!canvas) return
+
+    // Record start time for analytics
+    if (startTimeRef.current === 0) {
+      startTimeRef.current = Date.now()
+    }
 
     const rect = canvas.getBoundingClientRect()
     const scale = window.devicePixelRatio || 1
@@ -659,6 +665,35 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     setStarsEarned(prev => prev + 1)
     setProgress(100)
 
+    // Track analytics
+    if (typeof window !== 'undefined') {
+      try {
+        const { parentAnalytics } = require('@/lib/parent-analytics')
+        const startTime = startTimeRef.current
+        const endTime = Date.now()
+        const timeSpent = (endTime - startTime) / 1000 // seconds
+        
+        // Get current child ID from localStorage
+        const currentChild = JSON.parse(localStorage.getItem('currentChild') || 'null')
+        if (currentChild?.id && currentChild?.parentId) {
+          // Calculate accuracy based on correct strokes
+          const accuracy = (completedStrokesRef.current.size / letterPath.strokes.length) * 100
+          
+          // Save trace data (optional - can be enhanced to save canvas data)
+          parentAnalytics.recordLetterTracing(
+            currentChild.parentId,
+            currentChild.id,
+            letter,
+            true, // success
+            accuracy,
+            timeSpent
+          )
+        }
+      } catch (error) {
+        console.error('Error recording analytics:', error)
+      }
+    }
+
     // Play letter sound
     if (soundEnabled) {
       try {
@@ -711,6 +746,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     
     setIsDrawing(false)
     setCurrentStroke(0)
+    startTimeRef.current = 0
     setDrawingPath([])
     setIsCorrect(null)
     setShowFeedback(false)
