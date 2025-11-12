@@ -1298,19 +1298,55 @@ export default function SpeakingModule() {
                         if (isListening) {
                           stopListening()
                         } else {
-                          // Request microphone permission first if needed
-                          try {
-                            await navigator.mediaDevices.getUserMedia({ audio: true })
-                            console.log('Microphone permission granted')
-                          } catch (permError: any) {
-                            console.error('Microphone permission error:', permError)
-                            if (permError.name === 'NotAllowedError' || permError.name === 'PermissionDeniedError') {
-                              alert('Microphone permission is required. Please allow microphone access in your browser settings and try again.')
-                              return
-                            }
-                          }
+                          // Check permission state first
+                          let permissionGranted = false
                           
-                          startListening()
+                          try {
+                            // Check if Permissions API is available
+                            if (navigator.permissions) {
+                              const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName })
+                              console.log('Microphone permission status:', permissionStatus.state)
+                              
+                              if (permissionStatus.state === 'denied') {
+                                alert('Microphone permission is denied. Please:\n\n1. Click the lock icon in your browser\'s address bar\n2. Allow microphone access\n3. Refresh the page and try again')
+                                return
+                              } else if (permissionStatus.state === 'granted') {
+                                permissionGranted = true
+                              }
+                            }
+                            
+                            // Request microphone permission if not already granted
+                            if (!permissionGranted) {
+                              try {
+                                const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                                console.log('Microphone permission granted')
+                                // Stop the stream immediately - we just needed permission
+                                stream.getTracks().forEach(track => track.stop())
+                                permissionGranted = true
+                              } catch (permError: any) {
+                                console.error('Microphone permission error:', permError)
+                                if (permError.name === 'NotAllowedError' || permError.name === 'PermissionDeniedError') {
+                                  alert('Microphone permission is required for speech practice.\n\nTo enable:\n1. Look for a microphone icon in your browser\'s address bar\n2. Click it and select "Allow"\n3. Refresh the page and try again\n\nOr check your browser settings for microphone permissions.')
+                                  return
+                                } else if (permError.name === 'NotFoundError') {
+                                  alert('No microphone found. Please connect a microphone and try again.')
+                                  return
+                                } else {
+                                  alert('Unable to access microphone. Please check your browser settings and try again.')
+                                  return
+                                }
+                              }
+                            }
+                            
+                            // Start listening if permission is granted
+                            if (permissionGranted) {
+                              startListening()
+                            }
+                          } catch (error: any) {
+                            console.error('Permission check error:', error)
+                            // Try to start anyway - some browsers don't support Permissions API
+                            startListening()
+                          }
                         }
                       } catch (error) {
                         console.error('Button click error:', error)
