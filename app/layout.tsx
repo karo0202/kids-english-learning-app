@@ -15,10 +15,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Kids English Learning Adventure',
-  description: 'A fun and interactive English learning app for kids ages 3-12',
-  keywords: ['kids', 'english', 'learning', 'education', 'games', 'speaking', 'writing'],
+  title: 'Kids English Learning Adventure | Fun & Interactive Learning for Ages 3-12',
+  description: 'A fun and interactive English learning app for kids ages 3-12. Learn speaking, writing, reading, grammar, and more through games and activities.',
+  keywords: ['kids', 'english', 'learning', 'education', 'games', 'speaking', 'writing', 'reading', 'grammar', 'puzzles', 'coloring', 'challenges', 'children', 'preschool', 'elementary'],
   authors: [{ name: 'Kids Learning Team' }],
+  creator: 'Kids English Learning',
+  publisher: 'Kids English Learning',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   icons: {
     icon: '/favicon.png',
@@ -36,6 +38,28 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
+  },
+  openGraph: {
+    title: 'Kids English Learning Adventure',
+    description: 'Fun and interactive English learning for kids ages 3-12',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kids English Learning Adventure',
+    description: 'Fun and interactive English learning for kids',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 }
 

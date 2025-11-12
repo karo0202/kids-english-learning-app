@@ -7,6 +7,24 @@
   .grid-cols-13 {
     grid-template-columns: repeat(13, minmax(0, 1fr));
   }
+  
+  /* Touch optimization for mobile */
+  .touch-optimized {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Smooth scrolling */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Focus visible for accessibility */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2;
+  }
 }
 
 /* Premium color palette: deep purple, vibrant pink, teal accents */
