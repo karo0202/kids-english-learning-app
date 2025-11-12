@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 import { 
   Mic, PenTool, BookOpen, Gamepad2, Target, Trophy, 
   Users, Shield, Sparkles, Star, Zap, Heart,
-  ArrowLeft, ChevronRight, CheckCircle, Clock
+  ArrowLeft, ChevronRight, CheckCircle, Clock,
+  FileText, Palette, Puzzle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -33,10 +34,11 @@ export default function AboutPage() {
       title: "Writing & Spelling",
       description: "Master letter formation and word building",
       details: [
-        "Multi-step letter tracing with visual guides",
+        "Smart letter tracing with animated stroke guides",
+        "Real-time feedback with visual corrections",
         "Word building and spelling exercises",
-        "Creative writing prompts",
-        "Progress tracking for each letter"
+        "Creative writing prompts with age-appropriate topics",
+        "Progress tracking for each letter and word"
       ],
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50"
@@ -47,6 +49,7 @@ export default function AboutPage() {
       description: "Immersive stories and interactive books",
       details: [
         "Interactive story reading with vocabulary highlights",
+        "PDF book reader for educational content",
         "Multiple choice comprehension questions",
         "Age-appropriate content selection",
         "Progress tracking and completion certificates",
@@ -68,6 +71,62 @@ export default function AboutPage() {
       ],
       color: "from-orange-500 to-red-500",
       bgColor: "bg-orange-50"
+    },
+    {
+      icon: <FileText className="w-8 h-8" />,
+      title: "Grammar & Language",
+      description: "Master grammar rules with interactive exercises",
+      details: [
+        "Comprehensive grammar topics for all age groups",
+        "Interactive exercises with instant feedback",
+        "Parts of speech, tenses, and sentence structure",
+        "Progressive difficulty levels",
+        "Progress tracking and mastery badges"
+      ],
+      color: "from-indigo-500 to-indigo-600",
+      bgColor: "bg-indigo-50"
+    },
+    {
+      icon: <Puzzle className="w-8 h-8" />,
+      title: "Word Puzzles",
+      description: "Solve word, sentence, and picture puzzles",
+      details: [
+        "Word scramble puzzles with hints",
+        "Sentence building challenges",
+        "Picture-word matching games",
+        "Progressive difficulty levels",
+        "Score tracking and completion rewards"
+      ],
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-50"
+    },
+    {
+      icon: <Palette className="w-8 h-8" />,
+      title: "Alphabet Coloring",
+      description: "Color letters and learn the alphabet creatively",
+      details: [
+        "Interactive coloring pages for all 26 letters",
+        "Color palette with vibrant options",
+        "Save and share artwork",
+        "Learn letter-word associations",
+        "Creative expression while learning"
+      ],
+      color: "from-cyan-500 to-cyan-600",
+      bgColor: "bg-cyan-50"
+    },
+    {
+      icon: <Target className="w-8 h-8" />,
+      title: "Daily Challenges",
+      description: "Complete fun challenges and earn rewards",
+      details: [
+        "Daily learning goals and tasks",
+        "Reward system with stars and badges",
+        "Progress tracking and streaks",
+        "Age-appropriate challenge difficulty",
+        "Motivational achievements and milestones"
+      ],
+      color: "from-rose-500 to-rose-600",
+      bgColor: "bg-rose-50"
     }
   ]
 
@@ -187,7 +246,7 @@ export default function AboutPage() {
             <p className="text-xl text-gray-600 dark:text-white/70">Comprehensive English learning through interactive experiences</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
