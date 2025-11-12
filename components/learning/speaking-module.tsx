@@ -474,18 +474,36 @@ export default function SpeakingModule() {
         recognitionRef.current.lang = 'en-US'
 
         recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-          const transcript = event.results[0][0].transcript.toLowerCase().trim()
-          console.log('Speech recognized:', transcript)
-          setUserSpeech(transcript)
-          // Use the latest checkPronunciation via ref
-          if (checkPronunciationRef.current) {
-            checkPronunciationRef.current(transcript)
+          console.log('Speech recognition result event:', event)
+          if (event.results && event.results.length > 0 && event.results[0].length > 0) {
+            const transcript = event.results[0][0].transcript.toLowerCase().trim()
+            console.log('Speech recognized:', transcript)
+            setUserSpeech(transcript)
+            // Use the latest checkPronunciation via ref
+            if (checkPronunciationRef.current) {
+              checkPronunciationRef.current(transcript)
+            } else {
+              console.warn('checkPronunciationRef.current is null - pronunciation check will be skipped')
+              // Show the transcript but don't check pronunciation
+              setShowFeedback(true)
+              setIsCorrect(false)
+              setTimeout(() => {
+                setShowFeedback(false)
+              }, 2000)
+            }
+          } else {
+            console.warn('Speech recognition result event has no results')
           }
         }
 
         recognitionRef.current.onend = () => {
-          console.log('Speech recognition ended')
+          console.log('Speech recognition ended', { isListening })
           setIsListening(false)
+          
+          // If recognition ended without results and we were listening, it might be a timeout
+          if (isListening) {
+            console.log('Recognition ended while listening - might be timeout or no speech')
+          }
         }
 
         recognitionRef.current.onerror = (event: any) => {
@@ -496,22 +514,76 @@ export default function SpeakingModule() {
           if (event.error === 'not-allowed') {
             errorMessage = 'Microphone permission denied. Please allow microphone access in your browser settings.'
           } else if (event.error === 'no-speech') {
-            errorMessage = 'No speech detected. Please try again.'
+            errorMessage = 'No speech detected. Please try speaking again.'
+            // Don't show alert for no-speech, just log it
+            console.log('No speech detected - user can try again')
+            return
           } else if (event.error === 'network') {
             errorMessage = 'Network error. Please check your internet connection.'
+          } else if (event.error === 'aborted') {
+            console.log('Speech recognition aborted (likely by user)')
+            return
           }
           
           alert(errorMessage)
         }
+
+        recognitionRef.current.onstart = () => {
+          console.log('Speech recognition started successfully')
+        }
+
+        recognitionRef.current.onaudiostart = () => {
+          console.log('Audio input started')
+        }
+
+        recognitionRef.current.onsoundstart = () => {
+          console.log('Sound detected')
+        }
+
+        recognitionRef.current.onsoundend = () => {
+          console.log('Sound ended')
+        }
+
+        recognitionRef.current.onaudioend = () => {
+          console.log('Audio input ended')
+        }
+      }
+      
+      // Ensure checkPronunciation ref is set
+      if (!checkPronunciationRef.current) {
+        checkPronunciationRef.current = checkPronunciation
+        console.log('Set checkPronunciationRef.current')
       }
       
       // Start listening
       if (recognitionRef.current) {
         setIsListening(true)
         setUserSpeech('')
-        recognitionRef.current.start()
-        audioManager.playClick()
-        console.log('Speech recognition started successfully')
+        try {
+          recognitionRef.current.start()
+          audioManager.playClick()
+          console.log('Speech recognition start() called successfully')
+        } catch (startError: any) {
+          console.error('Error calling recognition.start():', startError)
+          setIsListening(false)
+          
+          // If already started, stop and restart
+          if (startError.message?.includes('already started') || startError.name === 'InvalidStateError') {
+            console.log('Recognition already started, stopping and restarting...')
+            try {
+              recognitionRef.current.stop()
+              setTimeout(() => {
+                recognitionRef.current?.start()
+                setIsListening(true)
+              }, 100)
+            } catch (restartError) {
+              console.error('Error restarting recognition:', restartError)
+              alert('Speech recognition is already active. Please wait a moment and try again.')
+            }
+          } else {
+            throw startError
+          }
+        }
       } else {
         throw new Error('Failed to initialize SpeechRecognition')
       }
