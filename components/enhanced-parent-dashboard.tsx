@@ -16,7 +16,7 @@ import {
   Lock, Unlock, Timer, Shield, FileText, MessageSquare,
   AlertCircle, CheckCircle, XCircle, Play, Edit, Plus,
   Volume2, VolumeX, Bell, BellOff, Sparkles, Gift,
-  Activity, Zap, BookMarked, Mic, Puzzle
+  Activity, Zap, BookMarked, Mic, Puzzle, Lightbulb
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getUserSession } from '@/lib/simple-auth'
