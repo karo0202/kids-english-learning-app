@@ -37,7 +37,7 @@ export default function ContactPage() {
       icon: <MailIcon className="w-6 h-6" />,
       title: "Parent Support Email",
       description: "Contact us directly via email for any questions or concerns",
-      contact: "parents@kids-english.app",
+      contact: "karo.latif88@gmail.com",
       action: "Send Email",
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-50"
@@ -46,7 +46,7 @@ export default function ContactPage() {
       icon: <MailIcon className="w-6 h-6" />,
       title: "General Support",
       description: "Technical support and general inquiries",
-      contact: "support@kids-english.app",
+      contact: "karo.latif88@gmail.com",
       action: "Send Email",
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50"
@@ -88,10 +88,8 @@ export default function ContactPage() {
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000))
     
-    // Open mail client with pre-filled content (use parent email for parent-related inquiries)
-    const emailAddress = formData.inquiryType === 'privacy' || formData.inquiryType === 'general' 
-      ? 'parents@kids-english.app' 
-      : 'support@kids-english.app'
+    // Open mail client with pre-filled content
+    const emailAddress = 'karo.latif88@gmail.com'
     const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\nInquiry Type: ${formData.inquiryType}\n\nMessage:\n${formData.message}`
     )}`
@@ -172,9 +170,9 @@ export default function ContactPage() {
                       className={`w-full bg-gradient-to-r ${method.color} hover:opacity-90 text-white shadow-lg`}
                         onClick={() => {
                           if (method.title === "Parent Support Email") {
-                            window.location.href = "mailto:parents@kids-english.app?subject=Parent Inquiry"
+                            window.location.href = "mailto:karo.latif88@gmail.com?subject=Parent Inquiry"
                           } else if (method.title === "General Support") {
-                            window.location.href = "mailto:support@kids-english.app?subject=Support Request"
+                            window.location.href = "mailto:karo.latif88@gmail.com?subject=Support Request"
                           } else {
                             // Live chat would open a chat widget
                             alert("Live chat feature coming soon!")
@@ -363,10 +361,10 @@ export default function ContactPage() {
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto">
                   <p className="text-lg font-semibold mb-2">Email us directly:</p>
                   <a 
-                    href="mailto:parents@kids-english.app?subject=Parent Inquiry" 
+                    href="mailto:karo.latif88@gmail.com?subject=Parent Inquiry" 
                     className="text-2xl font-bold text-white hover:text-yellow-200 transition-colors underline decoration-2 underline-offset-4"
                   >
-                    parents@kids-english.app
+                    karo.latif88@gmail.com
                   </a>
                   <p className="text-white/90 mt-4 text-sm">
                     We typically respond within 24 hours. For urgent matters, please mention "URGENT" in your subject line.
