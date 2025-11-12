@@ -23,6 +23,15 @@ export default function DashboardPage() {
   const [newChildAge, setNewChildAge] = useState<number | ''>('')
   const [subscription, setSubscription] = useState<any>(null)
 
+  // Debug: Log whenever children state changes
+  useEffect(() => {
+    console.log('Children state updated:', {
+      count: children.length,
+      children: children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId })),
+      user: user ? { id: user.id, email: user.email } : null
+    })
+  }, [children, user])
+
   useEffect(() => {
     if (typeof window === 'undefined') {
       setLoading(false)
@@ -81,12 +90,15 @@ export default function DashboardPage() {
             console.log('Looking for parentId:', currentUser.id)
           }
         }
+        console.log('Setting children state:', userChildren.length, 'children')
         setChildren(userChildren)
         setLoading(false)
+        console.log('Loading complete. Children state should have:', userChildren.length, 'children')
 
         // Subscribe to real-time updates (will update when Firestore syncs)
         unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
           if (!mounted) return
+          console.log('Children updated from subscription:', updatedChildren.length, 'children')
           setChildren(updatedChildren)
         })
 
