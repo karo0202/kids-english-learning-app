@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
+import SmartLetterTracing from '@/components/learning/smart-letter-tracing'
 
 interface TracingLetter {
   letter: string
@@ -1545,385 +1546,35 @@ export default function WritingModule() {
         {/* Letter Tracing Activity */}
         {activityType === 'tracing' ? (
           currentLetter ? (
-            <div className="max-w-4xl mx-auto px-3 md:px-4 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col min-h-0"
-            >
-              <Card className="card-writing h-full flex flex-col dark:bg-slate-800 dark:border-slate-700">
-                <CardHeader className="p-3 md:p-4 lg:p-6 flex-shrink-0">
-                  <h3 className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-center text-gray-800 dark:text-white break-words leading-tight">
-                    Trace the Letter: {currentLetter.letter}
-                  </h3>
-                  <div className="text-center mt-2">
-                    <div className="inline-flex items-center gap-2 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium"
-                         style={{ 
-                           backgroundColor: getLetterDifficulty(currentLetter.letter) === 'easy' ? '#DCFCE7' : 
-                                          getLetterDifficulty(currentLetter.letter) === 'medium' ? '#FEF3C7' : '#FEE2E2',
-                           color: getLetterDifficulty(currentLetter.letter) === 'easy' ? '#166534' : 
-                                 getLetterDifficulty(currentLetter.letter) === 'medium' ? '#92400E' : '#991B1B'
-                         }}>
-                      <span className="w-2 h-2 rounded-full" 
-                            style={{ backgroundColor: getLetterDifficulty(currentLetter.letter) === 'easy' ? '#22C55E' : 
-                                                   getLetterDifficulty(currentLetter.letter) === 'medium' ? '#F59E0B' : '#EF4444' }}></span>
-                      {getLetterDifficulty(currentLetter.letter).toUpperCase()} • Trace the letter
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-3 md:p-4 lg:p-6 flex-1 flex flex-col min-h-0 overflow-y-auto">
-                  <div className="text-center mb-3 md:mb-4 flex-shrink-0">
-                    <div 
-                      className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mx-auto mb-2 md:mb-3 inline-block px-3 md:px-4 lg:px-6 py-2 md:py-3 lg:py-4 rounded-xl md:rounded-2xl bg-gray-50 dark:bg-slate-700 border-4 border-dashed border-gray-300 dark:border-slate-600"
-                      style={{ color: currentLetter.color }}
-                    >
-                      {currentLetter.letter}
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      {getStrokeDescription(currentLetter.letter)}
-                    </p>
-                  </div>
-
-                  <div className="mobile-canvas-container flex-1 flex items-center justify-center min-h-0 my-2 md:my-4">
-                  <canvas
-                    ref={canvasRef}
-                    className="border-4 border-gray-300 dark:border-slate-600 rounded-xl md:rounded-2xl bg-white dark:bg-slate-900 cursor-crosshair touch-none select-none focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 w-full h-full max-w-full max-h-full aspect-square"
-                    style={{ 
-                      touchAction: 'none', 
-                      userSelect: 'none',
-                      pointerEvents: 'auto',
-                      position: 'relative',
-                      zIndex: 10
-                    }}
-                    onMouseDown={(e) => {
-                      console.log('Mouse down on canvas')
-                      startDrawing(e)
-                    }}
-                    onMouseMove={(e) => {
-                      if (isDrawing) {
-                        draw(e)
-                      }
-                    }}
-                    onMouseUp={(e) => {
-                      console.log('Mouse up on canvas')
-                      stopDrawing()
-                    }}
-                    onMouseLeave={(e) => {
-                      console.log('Mouse leave canvas')
-                      stopDrawing()
-                    }}
-                    onTouchStart={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      console.log('Touch start on canvas - mobile', { touches: e.touches?.length })
-                      if (e.touches && e.touches.length > 0) {
-                        console.log('Calling startDrawing from touch start')
-                        startDrawing(e)
-                      } else {
-                        console.warn('No touches found in touch start event')
-                      }
-                    }}
-                    onTouchMove={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      console.log('Touch move on canvas - mobile', { isDrawing, touches: e.touches?.length })
-                      if (e.touches && e.touches.length > 0) {
-                        if (isDrawing) {
-                          console.log('Calling draw from touch move')
-                          draw(e)
-                        } else {
-                          // If we're not drawing yet, start drawing
-                          console.log('Starting drawing from touch move')
-                          startDrawing(e)
-                        }
-                      }
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      console.log('Touch end on canvas - mobile')
-                      stopDrawing()
-                    }}
-                    onTouchCancel={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      console.log('Touch cancel on canvas - mobile')
-                      stopDrawing()
-                    }}
-                    tabIndex={0}
-                    role="img"
-                    aria-label={`Drawing canvas for letter ${currentLetter?.letter}. Use mouse or touch to trace the letter.`}
-                    aria-describedby="canvas-instructions"
-                  />
-                  </div>
-
-                  {/* Mobile-optimized button layout */}
-                  <div className="mt-2 md:mt-3 space-y-2 md:space-y-3 flex-shrink-0" style={{ position: 'relative', zIndex: 20 }}>
-                    {/* Primary action row */}
-                    <div className="flex justify-center">
-                      <Button 
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Check stroke clicked')
-                          // Shape recognition happens in stopDrawing
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Mouse down')
-                        }}
-                        onMouseUp={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-3 text-sm md:text-base lg:text-lg font-semibold shadow-lg"
-                        size="lg"
-                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
-                      >
-                        <CheckCircle className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 mr-1 md:mr-2" />
-                        Check Stroke
-                      </Button>
-                    </div>
-                    
-                    {/* Secondary actions row */}
-                    <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3">
-                      <Button 
-                        type="button"
-                        onClick={(e) => { 
-                          e.preventDefault(); 
-                          e.stopPropagation(); 
-                          console.log('Previous button clicked', { letterIndex, lettersLength: tracingLetters.length })
-                          
-                          // Use functional update to ensure we have the latest state
-                          setLetterIndex((currentIndex) => {
-                            const prevIndex = (currentIndex - 1 + tracingLetters.length) % tracingLetters.length
-                            console.log('Moving to previous letter:', prevIndex, 'from', currentIndex, 'letter:', tracingLetters[prevIndex]?.letter)
-                            
-                            // Update all related state
-                            const prevLetter = tracingLetters[prevIndex]
-                            if (prevLetter) {
-                              setCurrentLetter(prevLetter)
-                              // Shape recognition - no stroke tracking needed
-                              // Shape recognition - no stroke tracking needed
-                              
-                              // Clear canvas and redraw guide after a short delay
-                              setTimeout(() => {
-                                clearCanvas()
-                                // Force redraw of guide
-                                if (canvasRef.current && prevLetter) {
-                                  const canvas = canvasRef.current
-                                  const ctx = canvas.getContext('2d')
-                                  if (ctx) {
-                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
-                                    setTimeout(() => {
-                                      drawLetterGuide()
-                                    }, 50)
-                                  }
-                                }
-                              }, 100)
-                            }
-                            
-                            return prevIndex
-                          })
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Previous button mouse down')
-                        }}
-                        onMouseUp={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        onTouchStart={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Previous button touch start - mobile')
-                          
-                          // On mobile, also trigger the onClick logic directly
-                          setLetterIndex((currentIndex) => {
-                            const prevIndex = (currentIndex - 1 + tracingLetters.length) % tracingLetters.length
-                            console.log('Mobile: Moving to previous letter:', prevIndex, 'from', currentIndex, 'letter:', tracingLetters[prevIndex]?.letter)
-                            
-                            // Update all related state
-                            const prevLetter = tracingLetters[prevIndex]
-                            if (prevLetter) {
-                              setCurrentLetter(prevLetter)
-                              // Shape recognition - no stroke tracking needed
-                              // Shape recognition - no stroke tracking needed
-                              
-                              // Clear canvas and redraw guide after a short delay
-                              setTimeout(() => {
-                                clearCanvas()
-                                // Force redraw of guide
-                                if (canvasRef.current && prevLetter) {
-                                  const canvas = canvasRef.current
-                                  const ctx = canvas.getContext('2d')
-                                  if (ctx) {
-                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
-                                    setTimeout(() => {
-                                      drawLetterGuide()
-                                    }, 50)
-                                  }
-                                }
-                              }, 100)
-                            }
-                            
-                            return prevIndex
-                          })
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Previous button touch end')
-                        }}
-                        variant="outline"
-                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
-                      >
-                        Previous
-                      </Button>
-                      <Button 
-                        type="button"
-                        onClick={(e) => { 
-                          e.preventDefault(); 
-                          e.stopPropagation(); 
-                          console.log('Clear button clicked')
-                          clearCanvas(); 
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        onTouchStart={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        variant="outline"
-                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:border-slate-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
-                      >
-                        <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />
-                      Clear
-                    </Button>
-                      <Button 
-                        type="button"
-                        onClick={(e) => { 
-                          e.preventDefault(); 
-                          e.stopPropagation(); 
-                          console.log('Next button clicked', { letterIndex, lettersLength: tracingLetters.length })
-                          
-                          // Use functional update to ensure we have the latest state
-                          setLetterIndex((currentIndex) => {
-                            const nextIndex = (currentIndex + 1) % tracingLetters.length
-                            console.log('Moving to next letter:', nextIndex, 'from', currentIndex, 'letter:', tracingLetters[nextIndex]?.letter)
-                            
-                            // Update all related state
-                            const nextLetter = tracingLetters[nextIndex]
-                            if (nextLetter) {
-                              setCurrentLetter(nextLetter)
-                              // Shape recognition - no stroke tracking needed
-                              // Shape recognition - no stroke tracking needed
-                              
-                              // Clear canvas and redraw guide after a short delay
-                              setTimeout(() => {
-                                clearCanvas()
-                                // Force redraw of guide
-                                if (canvasRef.current && nextLetter) {
-                                  const canvas = canvasRef.current
-                                  const ctx = canvas.getContext('2d')
-                                  if (ctx) {
-                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
-                                    setTimeout(() => {
-                                      drawLetterGuide()
-                                    }, 50)
-                                  }
-                                }
-                              }, 100)
-                            }
-                            
-                            return nextIndex
-                          })
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Next button mouse down')
-                        }}
-                        onMouseUp={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        onTouchStart={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Next button touch start - mobile')
-                          
-                          // On mobile, also trigger the onClick logic directly
-                          // Use functional update to ensure we have the latest state
-                          setLetterIndex((currentIndex) => {
-                            const nextIndex = (currentIndex + 1) % tracingLetters.length
-                            console.log('Mobile: Moving to next letter:', nextIndex, 'from', currentIndex, 'letter:', tracingLetters[nextIndex]?.letter)
-                            
-                            // Update all related state
-                            const nextLetter = tracingLetters[nextIndex]
-                            if (nextLetter) {
-                              // Update state synchronously to prevent race conditions
-                              setCurrentLetter(nextLetter)
-                              // Shape recognition - no stroke tracking needed
-                              // Shape recognition - no stroke tracking needed
-                              
-                              // Clear canvas and redraw guide after a short delay
-                              setTimeout(() => {
-                                clearCanvas()
-                                // Force redraw of guide
-                                if (canvasRef.current && nextLetter) {
-                                  const canvas = canvasRef.current
-                                  const ctx = canvas.getContext('2d')
-                                  if (ctx) {
-                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
-                                    setTimeout(() => {
-                                      drawLetterGuide()
-                                    }, 50)
-                                  }
-                                }
-                              }, 150)
-                            }
-                            
-                            return nextIndex
-                          })
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          console.log('Next button touch end')
-                        }}
-                        className="px-2 md:px-3 lg:px-4 py-1.5 md:py-2 text-xs md:text-sm lg:text-base dark:bg-blue-600 dark:text-white"
-                        style={{ pointerEvents: 'auto', zIndex: 20, position: 'relative', cursor: 'pointer' }}
-                      >
-                        Next
-                    </Button>
-                    </div>
-                  </div>
-
-                  {/* Instructions */}
-                  <div className="mt-2 md:mt-3 text-center flex-shrink-0">
-                    <div className="text-xs md:text-sm lg:text-base font-semibold text-gray-700 dark:text-gray-200">
-                      Draw the letter shape to complete
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <div className="w-full">
+              <SmartLetterTracing
+                letter={currentLetter.letter}
+                onComplete={() => {
+                  // Update score and progress when letter is completed
+                  setScore(prev => prev + 10)
+                  setCompletedActivities(prev => prev + 1)
+                  progressManager.addScore(10, 5)
+                  challengeManager.updateChallengeProgress('writing', 1)
+                  
+                  // Move to next letter after a short delay
+                  setTimeout(() => {
+                    nextActivity()
+                  }, 1000)
+                }}
+                onNext={() => {
+                  // Move to next letter
+                  const nextIndex = (letterIndex + 1) % tracingLetters.length
+                  setLetterIndex(nextIndex)
+                  setCurrentLetter(tracingLetters[nextIndex])
+                }}
+              />
             </div>
           ) : (
             <div className="max-w-4xl mx-auto text-center p-8">
               <Card className="card-writing">
                 <CardContent className="p-8">
                   <p className="text-gray-600">Loading letter tracing...</p>
-                  <p className="text-sm text-gray-500 mt-2">Initializing canvas...</p>
+                  <p className="text-sm text-gray-500 mt-2">Initializing tracing activity...</p>
                 </CardContent>
               </Card>
             </div>
