@@ -355,39 +355,43 @@ const handleAddChild = async () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => router.push('/dashboard')}
+                className="flex-shrink-0"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Learning
+                <ArrowLeft className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">Parent Dashboard</h1>
-                <p className="text-gray-600 text-sm">Monitor and guide your child's learning journey</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-800 truncate">Parent Dashboard</h1>
+                <p className="text-gray-600 text-xs sm:text-sm hidden sm:block">Monitor and guide your child's learning journey</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowAddChild(true)}
+                className="text-xs sm:text-sm"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Child
+                <Plus className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Add Child</span>
+                <span className="sm:hidden">Add</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => router.push('/settings')}
+                className="p-2 sm:px-3"
               >
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
+                <Settings className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Settings</span>
               </Button>
             </div>
           </div>
@@ -481,8 +485,9 @@ const handleAddChild = async () => {
         )}
 
         {selectedChild && analytics && (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 min-w-max sm:min-w-0">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
                 <span className="hidden sm:inline">Overview</span>
@@ -512,6 +517,7 @@ const handleAddChild = async () => {
                 <span className="hidden sm:inline">Reports</span>
               </TabsTrigger>
             </TabsList>
+            </div>
 
             {/* 1. Overview Dashboard */}
             <TabsContent value="overview" className="space-y-6">

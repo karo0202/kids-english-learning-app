@@ -228,6 +228,36 @@ const handleDeleteChild = async (childId: string) => {
           </motion.div>
         )}
 
+        {/* Mobile Quick Access to Parent Dashboard */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 md:hidden"
+        >
+          <Card className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white border-0 shadow-xl">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">View Progress</h3>
+                    <p className="text-white/90 text-sm">Track your child's learning</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => router.push('/parent-dashboard')}
+                  className="bg-white text-blue-600 hover:bg-gray-100 font-semibold px-4 py-2"
+                  size="sm"
+                >
+                  Open
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Children Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
