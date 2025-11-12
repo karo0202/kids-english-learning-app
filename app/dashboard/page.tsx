@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 
@@ -155,6 +155,13 @@ const handleDeleteChild = async (childId: string) => {
               )}
             </div>
             <div className="flex items-center gap-2">
+              <Button 
+                onClick={() => router.push('/parent-dashboard')}
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 font-semibold px-4"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Parent Dashboard
+              </Button>
               {!subscription?.isPremium && (
                 <Button 
                   onClick={() => router.push('/payment')}
