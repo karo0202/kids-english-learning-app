@@ -145,7 +145,7 @@ useEffect(() => {
         const updated = updatedChildren.find(c => c.id === prev.id)
         return updated || prev
       }
-      return prev || updatedChildren[0] ?? null
+      return prev || (updatedChildren[0] ?? null)
     })
   })
 
