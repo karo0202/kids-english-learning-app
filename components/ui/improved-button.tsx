@@ -4,7 +4,13 @@ import { ButtonHTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 
-interface ImprovedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+// Exclude animation-related props that conflict with Framer Motion
+type ButtonProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onAnimationStart' | 'onAnimationEnd' | 'onDrag' | 'onDragStart' | 'onDragEnd'
+>
+
+interface ImprovedButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
@@ -54,7 +60,7 @@ const ImprovedButton = forwardRef<HTMLButtonElement, ImprovedButtonProps>(
         whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
         transition={{ duration: 0.1 }}
         aria-busy={isLoading}
-        {...props}
+        {...(props as any)}
       >
         {isLoading ? (
           <>
