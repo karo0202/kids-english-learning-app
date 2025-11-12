@@ -136,19 +136,22 @@ useEffect(() => {
     setLoading(false)
   })()
 
-  const unsubscribe = subscribeToChildren(session.user.id, updatedChildren => {
+  // Subscribe to real-time updates
+  const unsubscribe = subscribeToChildren(session.user.id, (updatedChildren) => {
+    if (!mounted) return
     setChildren(updatedChildren)
     setSelectedChild(prev => {
       if (prev && updatedChildren.some(child => child.id === prev.id)) {
-        return prev
+        const updated = updatedChildren.find(c => c.id === prev.id)
+        return updated || prev
       }
-      return updatedChildren[0] ?? null
+      return prev || updatedChildren[0] ?? null
     })
   })
 
   return () => {
     mounted = false
-    unsubscribe?.()
+    unsubscribe()
   }
 }, [session?.user?.id])
 
