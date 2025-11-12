@@ -7,7 +7,8 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy
+  Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
+  FileText, Palette, Puzzle, Target
 } from 'lucide-react'
 import { getCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
@@ -356,6 +357,153 @@ export default function LearningPage() {
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+                    >→</motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Grammar & Language */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card 
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
+                onClick={() => router.push('/learning/grammar')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 to-indigo-600/0 group-hover:from-indigo-500/15 group-hover:to-indigo-600/15 transition-all duration-500"></div>
+                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                  <motion.div 
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg relative"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
+                  >
+                    <FileText className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '1.2s' }}></span>
+                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '2.2s' }}></span>
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">📝 Grammar</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Master grammar rules and language</p>
+                  <div className="text-sm text-indigo-600 dark:text-indigo-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
+                    <span>Start Learning</span>
+                    <motion.span
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
+                    >→</motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Word Puzzles */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card 
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
+                onClick={() => router.push('/learning/puzzle')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-600/0 group-hover:from-orange-500/15 group-hover:to-orange-600/15 transition-all duration-500"></div>
+                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                  <motion.div 
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg relative"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
+                  >
+                    <Puzzle className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '1.5s' }}></span>
+                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '2.5s' }}></span>
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">🧩 Puzzles</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Solve word and sentence puzzles</p>
+                  <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
+                    <span>Start Solving</span>
+                    <motion.span
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 1.0 }}
+                    >→</motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Alphabet Coloring */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card 
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
+                onClick={() => router.push('/learning/alphabet-coloring')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-600/0 group-hover:from-cyan-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
+                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                  <motion.div 
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-lg relative"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
+                  >
+                    <Palette className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '1.8s' }}></span>
+                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '2.8s' }}></span>
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">🎨 Coloring</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Color letters and learn alphabet</p>
+                  <div className="text-sm text-cyan-600 dark:text-cyan-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
+                    <span>Start Coloring</span>
+                    <motion.span
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 1.2 }}
+                    >→</motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Daily Challenges */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card 
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
+                onClick={() => {
+                  // Navigate to dashboard challenges section or create challenges page
+                  router.push('/dashboard')
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/0 to-rose-600/0 group-hover:from-rose-500/15 group-hover:to-rose-600/15 transition-all duration-500"></div>
+                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                  <motion.div 
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg relative"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
+                  >
+                    <Target className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '2.1s' }}></span>
+                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '3.1s' }}></span>
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors">🎯 Challenges</h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">Complete daily challenges</p>
+                  <div className="text-sm text-rose-600 dark:text-rose-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
+                    <span>View Challenges</span>
+                    <motion.span
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 1.4 }}
                     >→</motion.span>
                   </div>
                 </CardContent>
