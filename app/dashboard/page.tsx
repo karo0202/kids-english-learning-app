@@ -24,47 +24,57 @@ export default function DashboardPage() {
   const [subscription, setSubscription] = useState<any>(null)
 
   useEffect(() => {
-  if (typeof window === 'undefined') {
-    setLoading(false)
-    return
-  }
+    if (typeof window === 'undefined') {
+      setLoading(false)
+      return
+    }
 
-  const currentUser = getUserSession()
-  if (!currentUser) {
-    console.log('No user session found, redirecting to login')
-    router.push('/login')
-    setLoading(false)
-    return
-  }
+    // Wait for Firebase auth state to sync
+    let mounted = true
+    let unsubscribe: (() => void) | undefined
 
-  console.log('User session found:', currentUser)
-  setUser(currentUser)
+    const checkAuthAndLoad = async () => {
+      // Give Firebase auth a moment to restore state
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      if (!mounted) return
 
-  let mounted = true
+      const currentUser = getUserSession()
+      if (!currentUser) {
+        console.log('No user session found, redirecting to login')
+        router.push('/login')
+        setLoading(false)
+        return
+      }
 
-  ;(async () => {
-    const userChildren = await getChildren(currentUser.id)
-    if (!mounted) return
-    setChildren(userChildren)
-    setLoading(false)
-  })()
+      console.log('User session found:', currentUser)
+      setUser(currentUser)
 
-  const unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
-    setChildren(updatedChildren)
-  })
+      const userChildren = await getChildren(currentUser.id)
+      if (!mounted) return
+      setChildren(userChildren)
+      setLoading(false)
 
-  const userSubscription = getUserSubscription(currentUser.id)
-  setSubscription(userSubscription)
+      unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
+        if (!mounted) return
+        setChildren(updatedChildren)
+      })
 
-  return () => {
-    mounted = false
-    unsubscribe?.()
-  }
+      const userSubscription = getUserSubscription(currentUser.id)
+      setSubscription(userSubscription)
+    }
+
+    checkAuthAndLoad()
+
+    return () => {
+      mounted = false
+      unsubscribe?.()
+    }
   }, [router])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Use the centralized logout function that preserves children data
-    clearUserSession()
+    await clearUserSession()
     router.push('/')
   }
 

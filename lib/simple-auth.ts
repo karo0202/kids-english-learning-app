@@ -60,9 +60,22 @@ export function getUserSession(): User | null {
   return null
 }
 
-export function clearUserSession() {
+export async function clearUserSession() {
   if (typeof window !== 'undefined') {
-    // Only clear user session, preserve children data
+    // Sign out from Firebase if available
+    try {
+      const { getAuthClient } = await import('@/lib/firebase')
+      const client = getAuthClient()
+      if (client?.auth) {
+        const { signOut } = await import('firebase/auth')
+        await signOut(client.auth)
+        console.log('Signed out from Firebase')
+      }
+    } catch (error) {
+      console.error('Error signing out from Firebase:', error)
+    }
+    
+    // Clear localStorage session
     localStorage.removeItem('user')
     localStorage.removeItem('currentChild')
     // Don't clear children and progress - they should persist across sessions

@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, OAuthProvider, setPersistence, browserLocalPersistence, signInWithRedirect, getRedirectResult, signInWithPopup } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, OAuthProvider, setPersistence, browserLocalPersistence, signInWithRedirect, getRedirectResult, signInWithPopup, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
 import { getFirestore, Firestore } from 'firebase/firestore'
 
 // Read public env vars (Next.js: NEXT_PUBLIC_*)
@@ -33,6 +33,7 @@ let auth: any = null
 let googleProvider: any = null
 let appleProvider: any = null
 let firestore: Firestore | null = null
+let authStateListenerSet = false
 
 function ensureFirebaseApp() {
   if (typeof window === 'undefined') return null
@@ -68,6 +69,29 @@ export function getAuthClient() {
         prompt: 'select_account'
       })
       appleProvider = new OAuthProvider('apple.com')
+      
+      // Sync Firebase auth state with localStorage (only set up once)
+      if (typeof window !== 'undefined' && !authStateListenerSet) {
+        authStateListenerSet = true
+        onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+          if (firebaseUser) {
+            // Sync Firebase user to localStorage
+            const userSession = {
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+              accountType: 'parent'
+            }
+            localStorage.setItem('user', JSON.stringify(userSession))
+            console.log('Firebase auth state synced to localStorage:', userSession)
+          } else {
+            // User signed out - clear session
+            localStorage.removeItem('user')
+            localStorage.removeItem('currentChild')
+            console.log('Firebase auth state cleared from localStorage')
+          }
+        })
+      }
     } catch (error) {
       console.error('Failed to initialize Firebase Auth:', error)
       return null
