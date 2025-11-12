@@ -42,7 +42,7 @@ export default function AddChildPage() {
       }
 
       // Automatically determine age group and add child
-      const newChild = await addChild(user.id, formData.childName, age)
+      const newChild = await addChild(user.id, formData.childName, age, user.email)
       
       // Get age group info for feedback
       const ageGroupConfig = getAgeGroupConfigByAge(age)

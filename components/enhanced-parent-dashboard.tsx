@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getUserSession } from '@/lib/simple-auth'
-import { getChildren, Child, updateChild, addChild, deleteChild, subscribeToChildren } from '@/lib/children'
+import { getChildrenSync, Child, updateChild, addChild, deleteChild, subscribeToChildren } from '@/lib/children'
 import { parentAnalytics, ChildAnalytics } from '@/lib/parent-analytics'
 import { progressManager } from '@/lib/progress'
 import { getAgeGroupConfigByAge } from '@/lib/age-utils'
@@ -120,21 +120,19 @@ useEffect(() => {
   if (!session?.user?.id) return
 
   let mounted = true
-  setLoading(true)
+  
+  // Load children synchronously (instant)
+  const initialChildren = getChildrenSync(session.user.id, session.user.email)
+  if (!mounted) return
 
-  ;(async () => {
-    const initialChildren = await getChildren(session.user.id)
-    if (!mounted) return
-
-    setChildren(initialChildren)
-    setSelectedChild(prev => {
-      if (prev && initialChildren.some(child => child.id === prev.id)) {
-        return prev
-      }
-      return initialChildren[0] ?? null
-    })
-    setLoading(false)
-  })()
+  setChildren(initialChildren)
+  setSelectedChild(prev => {
+    if (prev && initialChildren.some(child => child.id === prev.id)) {
+      return prev
+    }
+    return initialChildren[0] ?? null
+  })
+  setLoading(false)
 
   // Subscribe to real-time updates
   const unsubscribe = subscribeToChildren(session.user.id, (updatedChildren) => {
@@ -147,7 +145,7 @@ useEffect(() => {
       }
       return prev || (updatedChildren[0] ?? null)
     })
-  })
+  }, session.user.email)
 
   return () => {
     mounted = false
@@ -314,7 +312,7 @@ const handleAddChild = async () => {
     return
   }
 
-  const newChild = await addChild(session.user.id, newChildData.name, age)
+  const newChild = await addChild(session.user.id, newChildData.name, age, session.user.email)
   setSelectedChild(newChild)
   setNewChildData({ name: '', age: '' })
   setShowAddChild(false)

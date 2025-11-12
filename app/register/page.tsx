@@ -93,7 +93,7 @@ export default function RegisterPage() {
       }
 
       // Save child - this can throw an error if it fails
-      const newChild = await addChild(parentId, formData.childName, childAge)
+      const newChild = await addChild(parentId, formData.childName, childAge, cred.user.email || formData.email)
       
       if (!newChild || !newChild.id) {
         throw new Error('Failed to save child information')

@@ -10,7 +10,7 @@ import {
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
   FileText, Palette, Puzzle, Target
 } from 'lucide-react'
-import { getCurrentChild } from '@/lib/children'
+import { getCurrentChild, getChildrenSync } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
 
@@ -46,35 +46,19 @@ export default function LearningPage() {
     }
     setUser(currentUser)
     
-    // Load children from localStorage
-    const storedChildren = JSON.parse(localStorage.getItem('children') || '[]')
-    
-    // Ensure all children have ageGroup (migration for existing data)
-    const migratedChildren = storedChildren.map((child: any) => {
-      if (!child.ageGroup) {
-        // Import dynamically to avoid circular dependency
-        const { getAgeGroup } = require('@/lib/age-utils')
-        child.ageGroup = getAgeGroup(child.age)
-      }
-      return child
-    })
-    
-    // Update localStorage with migrated data
-    if (migratedChildren.length > 0 && migratedChildren.some((c: any) => !storedChildren.find((sc: any) => sc.id === c.id && sc.ageGroup === c.ageGroup))) {
-      localStorage.setItem('children', JSON.stringify(migratedChildren))
-    }
-    
-    setChildren(migratedChildren)
+    // Load children synchronously (instant)
+    const storedChildren = getChildrenSync(currentUser.id, currentUser.email)
+    setChildren(storedChildren)
     
     // Try to get current child first, otherwise use first child
     const currentChild = getCurrentChild()
     if (currentChild) {
       setSelectedChild(currentChild)
-    } else if (migratedChildren.length > 0) {
-      setSelectedChild(migratedChildren[0])
+    } else if (storedChildren.length > 0) {
+      setSelectedChild(storedChildren[0])
       // Set as current child
       const { setCurrentChild } = require('@/lib/children')
-      setCurrentChild(migratedChildren[0])
+      setCurrentChild(storedChildren[0])
     }
     
     setLoading(false)
