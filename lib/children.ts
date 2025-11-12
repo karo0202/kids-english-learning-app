@@ -262,11 +262,28 @@ function ensureFirestoreListener(parentId: string) {
   const unsubscribe = onSnapshot(
     collectionRef,
     snapshot => {
-      const children = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
-      updateChildrenCache(parentId, children)
+      const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+      console.log(`Firestore snapshot: ${firestoreChildren.length} children for parentId: ${parentId}`)
+      
+      // Merge Firestore children with localStorage children (don't replace if Firestore is empty)
+      const localChildren = loadLocalChildren(parentId)
+      const mergedChildren = firestoreChildren.length > 0 
+        ? firestoreChildren // Use Firestore if it has data
+        : localChildren.length > 0 
+          ? localChildren // Fall back to localStorage if Firestore is empty
+          : [] // Only use empty array if both are empty
+      
+      console.log(`Merged children: ${mergedChildren.length} (Firestore: ${firestoreChildren.length}, Local: ${localChildren.length})`)
+      updateChildrenCache(parentId, mergedChildren)
     },
     error => {
       console.error('Children snapshot listener error:', error)
+      // On error, keep using localStorage data
+      const localChildren = loadLocalChildren(parentId)
+      if (localChildren.length > 0) {
+        console.log('Using localStorage children due to Firestore error')
+        updateChildrenCache(parentId, localChildren)
+      }
     }
   )
 
