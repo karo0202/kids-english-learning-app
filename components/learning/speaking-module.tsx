@@ -450,50 +450,76 @@ export default function SpeakingModule() {
   }, [])
 
   const startListening = useCallback(() => {
-    console.log('startListening called')
+    console.log('startListening called', { hasRecognition: !!recognitionRef.current })
     try {
+      // Check if SpeechRecognition is available
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.')
+        console.error('SpeechRecognition not available in window')
+        return
+      }
+
+      // Reinitialize if not available
       if (!recognitionRef.current) {
-        // Try to reinitialize if not available
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-          recognitionRef.current = new SpeechRecognition()
-          recognitionRef.current.continuous = false
-          recognitionRef.current.interimResults = false
-          recognitionRef.current.lang = 'en-US'
-
-          recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-            const transcript = event.results[0][0].transcript.toLowerCase().trim()
-            setUserSpeech(transcript)
-            // Use the latest checkPronunciation via ref
-            if (checkPronunciationRef.current) {
-              checkPronunciationRef.current(transcript)
-            }
-          }
-
-          recognitionRef.current.onend = () => {
-            setIsListening(false)
-          }
-
-          recognitionRef.current.onerror = (event: any) => {
-            console.error('Speech recognition error:', event.error)
-            setIsListening(false)
-            alert('Speech recognition is not available. Please check your microphone permissions or use a supported browser (Chrome, Edge).')
-          }
-        } else {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+        if (!SpeechRecognition) {
           alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.')
+          console.error('SpeechRecognition constructor not found')
           return
+        }
+        
+        recognitionRef.current = new SpeechRecognition()
+        recognitionRef.current.continuous = false
+        recognitionRef.current.interimResults = false
+        recognitionRef.current.lang = 'en-US'
+
+        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+          const transcript = event.results[0][0].transcript.toLowerCase().trim()
+          console.log('Speech recognized:', transcript)
+          setUserSpeech(transcript)
+          // Use the latest checkPronunciation via ref
+          if (checkPronunciationRef.current) {
+            checkPronunciationRef.current(transcript)
+          }
+        }
+
+        recognitionRef.current.onend = () => {
+          console.log('Speech recognition ended')
+          setIsListening(false)
+        }
+
+        recognitionRef.current.onerror = (event: any) => {
+          console.error('Speech recognition error:', event.error, event)
+          setIsListening(false)
+          
+          let errorMessage = 'Speech recognition error occurred.'
+          if (event.error === 'not-allowed') {
+            errorMessage = 'Microphone permission denied. Please allow microphone access in your browser settings.'
+          } else if (event.error === 'no-speech') {
+            errorMessage = 'No speech detected. Please try again.'
+          } else if (event.error === 'network') {
+            errorMessage = 'Network error. Please check your internet connection.'
+          }
+          
+          alert(errorMessage)
         }
       }
       
-      setIsListening(true)
-      setUserSpeech('')
-      recognitionRef.current.start()
-      audioManager.playClick()
-      console.log('Speech recognition started')
-    } catch (error) {
+      // Start listening
+      if (recognitionRef.current) {
+        setIsListening(true)
+        setUserSpeech('')
+        recognitionRef.current.start()
+        audioManager.playClick()
+        console.log('Speech recognition started successfully')
+      } else {
+        throw new Error('Failed to initialize SpeechRecognition')
+      }
+    } catch (error: any) {
       console.error('Error starting speech recognition:', error)
       setIsListening(false)
-      alert('Unable to start speech recognition. Please check your microphone permissions.')
+      const errorMessage = error?.message || 'Unable to start speech recognition. Please check your microphone permissions and try again.'
+      alert(errorMessage)
     }
   }, [])
 
@@ -1188,14 +1214,32 @@ export default function SpeakingModule() {
                   
                   {/* Microphone Button */}
                   <button
-                    onClick={(e) => {
-                      console.log('Microphone button clicked', { isListening })
+                    onClick={async (e) => {
+                      console.log('Microphone button clicked', { isListening, hasRecognition: !!recognitionRef.current })
                       e.preventDefault()
                       e.stopPropagation()
-                      if (isListening) {
-                        stopListening()
-                      } else {
-                        startListening()
+                      
+                      try {
+                        if (isListening) {
+                          stopListening()
+                        } else {
+                          // Request microphone permission first if needed
+                          try {
+                            await navigator.mediaDevices.getUserMedia({ audio: true })
+                            console.log('Microphone permission granted')
+                          } catch (permError: any) {
+                            console.error('Microphone permission error:', permError)
+                            if (permError.name === 'NotAllowedError' || permError.name === 'PermissionDeniedError') {
+                              alert('Microphone permission is required. Please allow microphone access in your browser settings and try again.')
+                              return
+                            }
+                          }
+                          
+                          startListening()
+                        }
+                      } catch (error) {
+                        console.error('Button click error:', error)
+                        alert('An error occurred. Please try again.')
                       }
                     }}
                     onMouseDown={(e) => {
@@ -1216,6 +1260,7 @@ export default function SpeakingModule() {
                     tabIndex={0}
                     type="button"
                     disabled={false}
+                    style={{ touchAction: 'manipulation' }}
                   >
                     {isListening ? (
                       <MicOff className="w-12 h-12 md:w-16 md:h-16 pointer-events-none" />
