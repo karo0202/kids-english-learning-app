@@ -145,35 +145,43 @@ const handleDeleteChild = async (childId: string) => {
 
       {/* Header */}
       <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border-b border-purple-100/50 dark:border-white/10 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4 relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 relative z-10">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            {/* Left side - Logo and Title */}
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
               <motion.div 
-                className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-violet-500 flex items-center justify-center shadow-lg animate-glow"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-violet-500 flex items-center justify-center shadow-lg animate-glow flex-shrink-0"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <span className="text-2xl">🎓</span>
+                <span className="text-xl sm:text-2xl">🎓</span>
               </motion.div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400">Kids English Learning</h1>
-                <p className="text-gray-600 dark:text-white/70">Welcome back, {user?.name || 'Parent'}! ✨</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400 truncate">
+                  Kids English Learning
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-white/70 truncate">
+                  Welcome back, {user?.name || 'Parent'}! ✨
+                </p>
               </div>
               {subscription?.isPremium && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-white text-sm font-semibold shadow-lg"
+                  className="hidden sm:flex items-center gap-1 px-2 sm:px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-white text-xs sm:text-sm font-semibold shadow-lg flex-shrink-0"
                 >
-                  <Crown className="w-4 h-4" />
+                  <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Premium</span>
                 </motion.div>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            
+            {/* Right side - Buttons and Icons */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              {/* Desktop buttons - hidden on mobile */}
               <Button 
                 onClick={() => router.push('/parent-dashboard')}
-                className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 font-semibold px-4"
+                className="hidden md:flex bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 font-semibold px-3 sm:px-4 text-sm"
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Parent Dashboard
@@ -181,17 +189,42 @@ const handleDeleteChild = async (childId: string) => {
               {!subscription?.isPremium && (
                 <Button 
                   onClick={() => router.push('/payment')}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 font-semibold px-4"
+                  className="hidden md:flex bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 font-semibold px-3 sm:px-4 text-sm"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Upgrade
                 </Button>
               )}
+              
+              {/* Mobile icon buttons - show icons only on mobile */}
+              <Button 
+                onClick={() => router.push('/parent-dashboard')}
+                variant="ghost"
+                size="icon"
+                className="md:hidden hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl"
+                title="Parent Dashboard"
+              >
+                <BarChart3 className="w-5 h-5" />
+              </Button>
+              {!subscription?.isPremium && (
+                <Button 
+                  onClick={() => router.push('/payment')}
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl"
+                  title="Upgrade"
+                >
+                  <Sparkles className="w-5 h-5" />
+                </Button>
+              )}
+              
+              {/* Settings and Logout - always visible */}
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => router.push('/settings')}
                 className="hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl"
+                title="Settings"
               >
                 <Settings className="w-5 h-5" />
               </Button>
@@ -200,11 +233,24 @@ const handleDeleteChild = async (childId: string) => {
                 size="icon" 
                 onClick={handleLogout}
                 className="hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl"
+                title="Logout"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
             </div>
           </div>
+          
+          {/* Mobile Premium Badge - shown below on mobile */}
+          {subscription?.isPremium && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="sm:hidden flex items-center justify-center gap-1 mt-2 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-white text-xs font-semibold shadow-lg w-fit mx-auto"
+            >
+              <Crown className="w-3 h-3" />
+              <span>Premium</span>
+            </motion.div>
+          )}
         </div>
       </div>
 
