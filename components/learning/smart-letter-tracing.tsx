@@ -613,79 +613,445 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     // Additional validation: Check letter-specific characteristics
     const letterUpper = letter.toUpperCase()
     
-    if (letterUpper === 'B') {
-      // B must have:
-      // 1. A vertical line on the left (check for points near x=30)
-      // 2. Two distinct curves (top and bottom)
-      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
-      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.2 // At least 20% of points near left edge
-      
-      // Check for two curves by looking at y-coordinate distribution
-      // B should have curves at top (y ~30-50) and bottom (y ~50-80)
-      const topCurvePoints = normalizedDrawn.filter(p => p.y >= 20 && p.y <= 50 && p.x > 30)
-      const bottomCurvePoints = normalizedDrawn.filter(p => p.y >= 50 && p.y <= 80 && p.x > 30)
-      
-      // B should have both top and bottom curves
-      if (!hasVerticalLine || topCurvePoints.length < normalizedDrawn.length * 0.15 || 
-          bottomCurvePoints.length < normalizedDrawn.length * 0.15) {
-        return false
+    // Helper function to check for vertical line
+    const hasVerticalLine = (xPos: number, threshold: number = 10, minRatio: number = 0.15) => {
+      const verticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - xPos) < threshold)
+      return verticalPoints.length > normalizedDrawn.length * minRatio
+    }
+    
+    // Helper function to check for horizontal line
+    const hasHorizontalLine = (yPos: number, threshold: number = 10, minRatio: number = 0.15) => {
+      const horizontalPoints = normalizedDrawn.filter(p => Math.abs(p.y - yPos) < threshold)
+      return horizontalPoints.length > normalizedDrawn.length * minRatio
+    }
+    
+    switch (letterUpper) {
+      case 'A': {
+        // A: Two diagonals meeting at top, crossbar in middle
+        const topPoint = normalizedDrawn.filter(p => p.y < 30)
+        const crossbar = hasHorizontalLine(50, 8, 0.1)
+        const leftDiagonal = normalizedDrawn.filter(p => p.x < 50 && p.y > 30 && p.y < 80).length
+        const rightDiagonal = normalizedDrawn.filter(p => p.x > 50 && p.y > 30 && p.y < 80).length
+        
+        if (!crossbar || topPoint.length < normalizedDrawn.length * 0.1) return false
+        if (leftDiagonal < normalizedDrawn.length * 0.2 || rightDiagonal < normalizedDrawn.length * 0.2) return false
+        // Reject if looks like H (two verticals) or V (no crossbar)
+        if (hasVerticalLine(30) && hasVerticalLine(70) && !crossbar) return false
+        break
       }
       
-      // Reject if it looks like D (only one curve) or C (no vertical line)
-      const rightCurvePoints = normalizedDrawn.filter(p => p.x > 40 && p.x < 60)
-      // If there's only one main curve area, it might be D
-      if (rightCurvePoints.length > normalizedDrawn.length * 0.6 && !hasVerticalLine) {
-        return false // Looks like C
-      }
-    } 
-    else if (letterUpper === 'D') {
-      // D must have:
-      // 1. A vertical line on the left
-      // 2. One curve (not two like B)
-      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
-      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.2
-      
-      // D should have one continuous curve, not two separate ones
-      const curvePoints = normalizedDrawn.filter(p => p.x > 30 && p.x < 60)
-      
-      // Reject if it looks like B (two distinct curves) or C (no vertical line)
-      if (!hasVerticalLine) {
-        return false // Looks like C
+      case 'B': {
+        // B: Vertical line + two curves (top and bottom)
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topCurve = normalizedDrawn.filter(p => p.y >= 20 && p.y <= 50 && p.x > 30).length
+        const bottomCurve = normalizedDrawn.filter(p => p.y >= 50 && p.y <= 80 && p.x > 30).length
+        
+        if (!leftVertical) return false
+        if (topCurve < normalizedDrawn.length * 0.15 || bottomCurve < normalizedDrawn.length * 0.15) return false
+        
+        // Reject if looks like D (one curve) or P (only top curve)
+        const topHalf = normalizedDrawn.filter(p => p.y < 50)
+        const bottomHalf = normalizedDrawn.filter(p => p.y >= 50)
+        const topCurveArea = topHalf.filter(p => p.x > 30 && p.x < 60).length
+        const bottomCurveArea = bottomHalf.filter(p => p.x > 30 && p.x < 60).length
+        if (topCurveArea > topHalf.length * 0.3 && bottomCurveArea < bottomHalf.length * 0.1) return false // Looks like P
+        if (topCurveArea < topHalf.length * 0.2 && bottomCurveArea > bottomHalf.length * 0.3) return false // Looks like D
+        break
       }
       
-      // Check if there are two distinct curve areas (like B)
-      const topHalf = normalizedDrawn.filter(p => p.y < 50)
-      const bottomHalf = normalizedDrawn.filter(p => p.y >= 50)
-      const topCurveArea = topHalf.filter(p => p.x > 30 && p.x < 60).length
-      const bottomCurveArea = bottomHalf.filter(p => p.x > 30 && p.x < 60).length
-      
-      // If both top and bottom have significant curve areas, it might be B
-      if (topCurveArea > topHalf.length * 0.3 && bottomCurveArea > bottomHalf.length * 0.3) {
-        return false // Looks like B (two curves)
+      case 'C': {
+        // C: One continuous curve, NO vertical line
+        const leftVertical = hasVerticalLine(30, 10, 0.15)
+        if (leftVertical) return false // Has vertical line, might be B, D, or G
+        
+        const curvePoints = normalizedDrawn.filter(p => {
+          const centerX = 45, centerY = 50
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return dist > 10 && dist < 30
+        })
+        if (curvePoints.length < normalizedDrawn.length * 0.5) return false
+        
+        // Reject if looks like O (closed circle) or G (has vertical line)
+        const closedCircle = normalizedDrawn.filter(p => {
+          const centerX = 45, centerY = 50
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return Math.abs(dist - 20) < 5
+        })
+        if (closedCircle.length > normalizedDrawn.length * 0.6) return false // Looks like O
+        break
       }
-    } 
-    else if (letterUpper === 'C') {
-      // C must have:
-      // 1. One continuous curve
-      // 2. NO vertical line on the left
-      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
-      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.15
       
-      // C should NOT have a vertical line
-      if (hasVerticalLine) {
-        return false // Has vertical line, might be B or D
+      case 'D': {
+        // D: Vertical line + one continuous curve
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        if (!leftVertical) return false
+        
+        // Reject if looks like B (two curves)
+        const topHalf = normalizedDrawn.filter(p => p.y < 50)
+        const bottomHalf = normalizedDrawn.filter(p => p.y >= 50)
+        const topCurveArea = topHalf.filter(p => p.x > 30 && p.x < 60).length
+        const bottomCurveArea = bottomHalf.filter(p => p.x > 30 && p.x < 60).length
+        if (topCurveArea > topHalf.length * 0.3 && bottomCurveArea > bottomHalf.length * 0.3) return false
+        break
       }
       
-      // C should be mostly curved points
-      const curvePoints = normalizedDrawn.filter(p => {
-        const centerX = 45
-        const centerY = 50
-        const distFromCenter = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
-        return distFromCenter > 10 && distFromCenter < 30
-      })
+      case 'E': {
+        // E: Vertical line + three horizontals (top, middle, bottom)
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topHorizontal = hasHorizontalLine(20, 8, 0.1)
+        const middleHorizontal = hasHorizontalLine(50, 8, 0.1)
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.1)
+        
+        if (!leftVertical) return false
+        if (!topHorizontal || !middleHorizontal || !bottomHorizontal) return false
+        
+        // Reject if looks like F (missing bottom) or L (missing top and middle)
+        if (!bottomHorizontal) return false // Looks like F
+        if (!topHorizontal && !middleHorizontal) return false // Looks like L
+        break
+      }
       
-      if (curvePoints.length < normalizedDrawn.length * 0.5) {
-        return false // Not enough curve points
+      case 'F': {
+        // F: Vertical line + two horizontals (top, middle)
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topHorizontal = hasHorizontalLine(20, 8, 0.1)
+        const middleHorizontal = hasHorizontalLine(50, 8, 0.1)
+        
+        if (!leftVertical) return false
+        if (!topHorizontal || !middleHorizontal) return false
+        
+        // Reject if has bottom horizontal (looks like E)
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.1)
+        if (bottomHorizontal) return false
+        break
+      }
+      
+      case 'G': {
+        // G: C shape + vertical line on right side
+        const leftVertical = hasVerticalLine(30, 10, 0.15)
+        if (leftVertical) return false // Should not have left vertical
+        
+        const rightVertical = normalizedDrawn.filter(p => Math.abs(p.x - 60) < 8 && p.y >= 50 && p.y <= 70).length
+        if (rightVertical < normalizedDrawn.length * 0.1) return false // Should have right vertical
+        
+        // Reject if looks like C (no right vertical) or O (closed circle)
+        const closedCircle = normalizedDrawn.filter(p => {
+          const centerX = 45, centerY = 50
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return Math.abs(dist - 20) < 5
+        })
+        if (closedCircle.length > normalizedDrawn.length * 0.6) return false
+        break
+      }
+      
+      case 'H': {
+        // H: Two verticals + one horizontal crossbar
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const rightVertical = hasVerticalLine(60, 10, 0.2)
+        const crossbar = hasHorizontalLine(50, 8, 0.1)
+        
+        if (!leftVertical || !rightVertical || !crossbar) return false
+        
+        // Reject if looks like A (diagonals) or N (diagonal)
+        const diagonal = normalizedDrawn.filter(p => {
+          const slope = Math.abs((p.y - 20) / (p.x - 30))
+          return slope > 0.5 && slope < 2
+        })
+        if (diagonal.length > normalizedDrawn.length * 0.3) return false
+        break
+      }
+      
+      case 'I': {
+        // I: Top horizontal + vertical + bottom horizontal
+        const topHorizontal = hasHorizontalLine(20, 8, 0.1)
+        const vertical = hasVerticalLine(45, 10, 0.3)
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.1)
+        
+        if (!topHorizontal || !vertical || !bottomHorizontal) return false
+        
+        // Reject if looks like T (no bottom) or L (no top)
+        if (!topHorizontal) return false
+        if (!bottomHorizontal) return false
+        break
+      }
+      
+      case 'J': {
+        // J: Vertical line + bottom curve
+        const vertical = hasVerticalLine(45, 10, 0.3)
+        const bottomCurve = normalizedDrawn.filter(p => p.y > 70 && p.x < 45).length
+        
+        if (!vertical || bottomCurve < normalizedDrawn.length * 0.15) return false
+        
+        // Reject if looks like I (straight bottom) or U (no curve at bottom)
+        const straightBottom = normalizedDrawn.filter(p => p.y > 70 && Math.abs(p.x - 45) < 5).length
+        if (straightBottom > normalizedDrawn.length * 0.2) return false
+        break
+      }
+      
+      case 'K': {
+        // K: Vertical line + two diagonals from middle
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topDiagonal = normalizedDrawn.filter(p => p.x > 30 && p.y < 50 && p.x < 60).length
+        const bottomDiagonal = normalizedDrawn.filter(p => p.x > 30 && p.y >= 50 && p.x < 60).length
+        
+        if (!leftVertical) return false
+        if (topDiagonal < normalizedDrawn.length * 0.15 || bottomDiagonal < normalizedDrawn.length * 0.15) return false
+        
+        // Reject if looks like R (has curve) or X (crossing diagonals)
+        const curvePoints = normalizedDrawn.filter(p => {
+          const centerX = 45, centerY = 50
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return dist < 20
+        })
+        if (curvePoints.length > normalizedDrawn.length * 0.3) return false // Looks like R
+        break
+      }
+      
+      case 'L': {
+        // L: Vertical line + bottom horizontal
+        const leftVertical = hasVerticalLine(30, 10, 0.3)
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.15)
+        
+        if (!leftVertical || !bottomHorizontal) return false
+        
+        // Reject if has top or middle horizontal (looks like E or F)
+        const topHorizontal = hasHorizontalLine(20, 8, 0.1)
+        const middleHorizontal = hasHorizontalLine(50, 8, 0.1)
+        if (topHorizontal || middleHorizontal) return false
+        break
+      }
+      
+      case 'M': {
+        // M: Two verticals + two diagonals meeting at top
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const rightVertical = hasVerticalLine(60, 10, 0.2)
+        const topPoint = normalizedDrawn.filter(p => p.y < 30).length
+        const middlePoint = normalizedDrawn.filter(p => Math.abs(p.x - 45) < 5 && p.y > 40 && p.y < 60).length
+        
+        if (!leftVertical || !rightVertical) return false
+        if (topPoint < normalizedDrawn.length * 0.1) return false
+        if (middlePoint < normalizedDrawn.length * 0.1) return false
+        
+        // Reject if looks like H (no diagonals) or W (bottom point)
+        const bottomPoint = normalizedDrawn.filter(p => p.y > 70 && Math.abs(p.x - 45) < 5).length
+        if (bottomPoint > normalizedDrawn.length * 0.15) return false // Looks like W
+        break
+      }
+      
+      case 'N': {
+        // N: Two verticals + diagonal
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const rightVertical = hasVerticalLine(60, 10, 0.2)
+        const diagonal = normalizedDrawn.filter(p => {
+          const slope = Math.abs((p.y - 20) / (p.x - 30))
+          return slope > 0.8 && slope < 1.5 && p.x > 30 && p.x < 60
+        }).length
+        
+        if (!leftVertical || !rightVertical) return false
+        if (diagonal < normalizedDrawn.length * 0.2) return false
+        
+        // Reject if looks like H (horizontal crossbar) or M (top point)
+        const crossbar = hasHorizontalLine(50, 8, 0.1)
+        if (crossbar) return false // Looks like H
+        break
+      }
+      
+      case 'O': {
+        // O: Closed circle/oval
+        const centerX = 45, centerY = 50
+        const circlePoints = normalizedDrawn.filter(p => {
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return Math.abs(dist - 20) < 8
+        })
+        
+        if (circlePoints.length < normalizedDrawn.length * 0.6) return false
+        
+        // Reject if looks like C (open) or Q (has tail)
+        const leftVertical = hasVerticalLine(30, 10, 0.15)
+        if (leftVertical) return false // Looks like C or G
+        const tail = normalizedDrawn.filter(p => p.x > 55 && p.y > 65).length
+        if (tail > normalizedDrawn.length * 0.1) return false // Looks like Q
+        break
+      }
+      
+      case 'P': {
+        // P: Vertical line + top curve only
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topCurve = normalizedDrawn.filter(p => p.y >= 20 && p.y <= 50 && p.x > 30).length
+        
+        if (!leftVertical) return false
+        if (topCurve < normalizedDrawn.length * 0.15) return false
+        
+        // Reject if has bottom curve (looks like B) or diagonal (looks like R)
+        const bottomCurve = normalizedDrawn.filter(p => p.y >= 50 && p.y <= 80 && p.x > 30).length
+        if (bottomCurve > normalizedDrawn.length * 0.15) return false // Looks like B
+        const diagonal = normalizedDrawn.filter(p => p.x > 30 && p.y > 50 && p.x < 60).length
+        if (diagonal > normalizedDrawn.length * 0.2) return false // Looks like R
+        break
+      }
+      
+      case 'Q': {
+        // Q: O shape + tail
+        const centerX = 45, centerY = 50
+        const circlePoints = normalizedDrawn.filter(p => {
+          const dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+          return Math.abs(dist - 20) < 8
+        })
+        const tail = normalizedDrawn.filter(p => p.x > 50 && p.y > 65).length
+        
+        if (circlePoints.length < normalizedDrawn.length * 0.5) return false
+        if (tail < normalizedDrawn.length * 0.05) return false
+        
+        // Reject if looks like O (no tail)
+        if (tail < normalizedDrawn.length * 0.05) return false
+        break
+      }
+      
+      case 'R': {
+        // R: P shape + diagonal
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const topCurve = normalizedDrawn.filter(p => p.y >= 20 && p.y <= 50 && p.x > 30).length
+        const diagonal = normalizedDrawn.filter(p => p.x > 30 && p.y > 50 && p.x < 60).length
+        
+        if (!leftVertical) return false
+        if (topCurve < normalizedDrawn.length * 0.15) return false
+        if (diagonal < normalizedDrawn.length * 0.15) return false
+        
+        // Reject if looks like P (no diagonal) or B (has bottom curve)
+        const bottomCurve = normalizedDrawn.filter(p => p.y >= 50 && p.y <= 80 && p.x > 30 && p.x < 55).length
+        if (bottomCurve > normalizedDrawn.length * 0.15) return false // Looks like B
+        break
+      }
+      
+      case 'S': {
+        // S: Curved S shape
+        const topCurve = normalizedDrawn.filter(p => p.y < 50 && p.x > 35 && p.x < 65).length
+        const bottomCurve = normalizedDrawn.filter(p => p.y >= 50 && p.x > 35 && p.x < 65).length
+        
+        if (topCurve < normalizedDrawn.length * 0.2 || bottomCurve < normalizedDrawn.length * 0.2) return false
+        
+        // Reject if looks like 5 or 8 (straight lines)
+        const straightLines = normalizedDrawn.filter(p => {
+          return (Math.abs(p.x - 50) < 3) || (Math.abs(p.y - 50) < 3)
+        })
+        if (straightLines.length > normalizedDrawn.length * 0.3) return false
+        break
+      }
+      
+      case 'T': {
+        // T: Top horizontal + vertical
+        const topHorizontal = hasHorizontalLine(20, 8, 0.2)
+        const vertical = hasVerticalLine(45, 10, 0.3)
+        
+        if (!topHorizontal || !vertical) return false
+        
+        // Reject if has bottom horizontal (looks like I)
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.1)
+        if (bottomHorizontal) return false
+        break
+      }
+      
+      case 'U': {
+        // U: Two verticals + bottom curve
+        const leftVertical = hasVerticalLine(30, 10, 0.2)
+        const rightVertical = hasVerticalLine(60, 10, 0.2)
+        const bottomCurve = normalizedDrawn.filter(p => p.y > 60 && p.x > 30 && p.x < 60).length
+        
+        if (!leftVertical || !rightVertical) return false
+        if (bottomCurve < normalizedDrawn.length * 0.2) return false
+        
+        // Reject if looks like V (no curve) or W (has middle point)
+        const middlePoint = normalizedDrawn.filter(p => p.y > 50 && p.y < 70 && Math.abs(p.x - 45) < 5).length
+        if (middlePoint > normalizedDrawn.length * 0.15) return false // Looks like W
+        break
+      }
+      
+      case 'V': {
+        // V: Two diagonals meeting at bottom
+        const leftDiagonal = normalizedDrawn.filter(p => p.x < 45 && p.y > 20).length
+        const rightDiagonal = normalizedDrawn.filter(p => p.x > 45 && p.y > 20).length
+        const bottomPoint = normalizedDrawn.filter(p => p.y > 70 && Math.abs(p.x - 45) < 5).length
+        
+        if (leftDiagonal < normalizedDrawn.length * 0.25 || rightDiagonal < normalizedDrawn.length * 0.25) return false
+        if (bottomPoint < normalizedDrawn.length * 0.1) return false
+        
+        // Reject if looks like U (has curve) or A (has crossbar)
+        const curve = normalizedDrawn.filter(p => p.y > 60 && p.x > 30 && p.x < 60).length
+        if (curve > normalizedDrawn.length * 0.25) return false // Looks like U
+        const crossbar = hasHorizontalLine(50, 8, 0.1)
+        if (crossbar) return false // Looks like A
+        break
+      }
+      
+      case 'W': {
+        // W: Four segments forming W
+        const leftDiagonal = normalizedDrawn.filter(p => p.x < 40 && p.y > 20).length
+        const rightDiagonal = normalizedDrawn.filter(p => p.x > 50 && p.y > 20).length
+        const middlePoint = normalizedDrawn.filter(p => p.y > 50 && Math.abs(p.x - 45) < 5).length
+        
+        if (leftDiagonal < normalizedDrawn.length * 0.15 || rightDiagonal < normalizedDrawn.length * 0.15) return false
+        if (middlePoint < normalizedDrawn.length * 0.1) return false
+        
+        // Reject if looks like M (top point) or V (no middle point)
+        const topPoint = normalizedDrawn.filter(p => p.y < 30 && Math.abs(p.x - 45) < 5).length
+        if (topPoint > normalizedDrawn.length * 0.15) return false // Looks like M
+        break
+      }
+      
+      case 'X': {
+        // X: Two crossing diagonals
+        const topLeftBottomRight = normalizedDrawn.filter(p => {
+          const slope = (p.y - 20) / (p.x - 30)
+          return Math.abs(slope - 1) < 0.3 && p.x > 30 && p.x < 60 && p.y > 20 && p.y < 80
+        }).length
+        const topRightBottomLeft = normalizedDrawn.filter(p => {
+          const slope = (p.y - 20) / (60 - p.x)
+          return Math.abs(slope - 1) < 0.3 && p.x > 30 && p.x < 60 && p.y > 20 && p.y < 80
+        }).length
+        
+        if (topLeftBottomRight < normalizedDrawn.length * 0.2 || topRightBottomLeft < normalizedDrawn.length * 0.2) return false
+        
+        // Reject if looks like K (has vertical) or Y (has vertical)
+        const vertical = hasVerticalLine(45, 10, 0.2)
+        if (vertical) return false
+        break
+      }
+      
+      case 'Y': {
+        // Y: V shape at top + vertical line at bottom
+        const topV = normalizedDrawn.filter(p => p.y < 50 && (p.x < 45 || p.x > 45)).length
+        const bottomVertical = hasVerticalLine(45, 10, 0.2)
+        
+        if (topV < normalizedDrawn.length * 0.2) return false
+        if (!bottomVertical) return false
+        
+        // Reject if looks like V (no bottom vertical) or X (crossing)
+        const crossing = normalizedDrawn.filter(p => {
+          const dist1 = Math.sqrt((p.x - 30) ** 2 + (p.y - 20) ** 2)
+          const dist2 = Math.sqrt((p.x - 60) ** 2 + (p.y - 20) ** 2)
+          return Math.abs(dist1 - dist2) < 5
+        })
+        if (crossing.length > normalizedDrawn.length * 0.3) return false // Looks like X
+        break
+      }
+      
+      case 'Z': {
+        // Z: Top horizontal + diagonal + bottom horizontal
+        const topHorizontal = hasHorizontalLine(20, 8, 0.15)
+        const diagonal = normalizedDrawn.filter(p => {
+          const slope = Math.abs((p.y - 20) / (p.x - 30))
+          return slope > 0.8 && slope < 1.5 && p.x > 30 && p.x < 60 && p.y > 20 && p.y < 80
+        }).length
+        const bottomHorizontal = hasHorizontalLine(80, 8, 0.15)
+        
+        if (!topHorizontal || !bottomHorizontal) return false
+        if (diagonal < normalizedDrawn.length * 0.2) return false
+        
+        // Reject if looks like N (has verticals) or 2 (curved)
+        const leftVertical = hasVerticalLine(30, 10, 0.15)
+        const rightVertical = hasVerticalLine(60, 10, 0.15)
+        if (leftVertical || rightVertical) return false // Looks like N
+        break
       }
     }
 
