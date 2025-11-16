@@ -241,25 +241,49 @@ export async function updateChild(parentId: string, childId: string, updates: Pa
 }
 
 export async function deleteChild(parentId: string, childId: string): Promise<boolean> {
+  console.log(`🗑️ deleteChild called: parentId=${parentId}, childId=${childId}`)
+  
   const firestore = getFirestoreClient()
   if (firestore) {
     try {
+      console.log(`🔥 Deleting from Firestore: parents/${parentId}/children/${childId}`)
       const docRef = doc(firestore, 'parents', parentId, 'children', childId)
       await deleteDoc(docRef)
+      console.log(`✅ Successfully deleted from Firestore`)
     } catch (error) {
-      console.error('Failed to delete child from Firestore:', error)
+      console.error('❌ Failed to delete child from Firestore:', error)
+      // Continue with local deletion even if Firestore fails
     }
+  } else {
+    console.log('⚠️ Firestore not available, deleting from localStorage only')
   }
 
+  // Get current children from cache or localStorage
   const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
+  console.log(`📋 Current children before delete: ${currentChildren.length}`)
+  console.log('Current children:', currentChildren.map(c => ({ id: c.id, name: c.name })))
+  
   const updatedChildren = currentChildren.filter(child => child.id !== childId)
+  console.log(`📋 Children after filter: ${updatedChildren.length}`)
+  
+  if (updatedChildren.length === currentChildren.length) {
+    console.warn(`⚠️ Child ${childId} not found in current children list!`)
+  } else {
+    console.log(`✅ Child removed from list`)
+  }
+  
+  // Update cache and localStorage
   updateChildrenCache(parentId, updatedChildren)
+  console.log(`💾 Cache updated with ${updatedChildren.length} children`)
 
+  // Clear current child if it's the one being deleted
   const currentChild = getCurrentChild()
   if (currentChild?.id === childId) {
+    console.log('🧹 Clearing current child selection')
     clearCurrentChild()
   }
 
+  console.log(`✅ deleteChild completed successfully`)
   return true
 }
 
@@ -571,9 +595,12 @@ function detachFirestoreListener(parentId: string) {
 }
 
 function updateChildrenCache(parentId: string, children: Child[]) {
+  console.log(`🔄 Updating cache for parentId ${parentId}: ${children.length} children`)
   childCache.set(parentId, children)
   persistLocalChildren(parentId, children)
+  console.log(`📢 Notifying ${childSubscribers.get(parentId)?.size || 0} subscribers`)
   notifySubscribers(parentId, children)
+  console.log(`✅ Cache update complete`)
 }
 
 function notifySubscribers(parentId: string, children: Child[]) {
