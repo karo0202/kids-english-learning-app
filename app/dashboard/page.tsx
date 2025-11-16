@@ -132,16 +132,35 @@ const handleAddChild = async () => {
 }
 
 const handleDeleteChild = async (childId: string) => {
-  if (!user) return
+  if (!user) {
+    console.error('Cannot delete: No user logged in')
+    return
+  }
+  
+  console.log('Delete button clicked for child:', childId)
   
   // Use a more mobile-friendly confirmation
   const confirmed = window.confirm('Are you sure you want to delete this child profile? This action cannot be undone.')
+  console.log('Delete confirmed:', confirmed)
+  
   if (confirmed) {
     try {
-      await deleteChild(user.id, childId)
-      // Force refresh children list
+      console.log('Deleting child:', childId, 'for parent:', user.id)
+      const result = await deleteChild(user.id, childId)
+      console.log('Delete result:', result)
+      
+      // Force refresh children list from cache
       const updatedChildren = getChildrenSync(user.id, user.email)
+      console.log('Updated children count:', updatedChildren.length)
       setChildren(updatedChildren)
+      
+      // Also trigger a re-render by updating state
+      setTimeout(() => {
+        const refreshed = getChildrenSync(user.id, user.email)
+        if (refreshed.length !== children.length) {
+          setChildren(refreshed)
+        }
+      }, 100)
     } catch (error) {
       console.error('Failed to delete child:', error)
       alert('Failed to delete child. Please try again.')
@@ -511,20 +530,30 @@ const handleDeleteChild = async (childId: string) => {
                           <Button 
                             variant="outline"
                             size="icon"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 rounded-xl min-w-[44px] min-h-[44px] touch-manipulation"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 rounded-xl min-w-[44px] min-h-[44px] touch-manipulation relative z-10"
+                            style={{ touchAction: 'manipulation' }}
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
+                              console.log('Delete onClick triggered for:', child.id)
                               handleDeleteChild(child.id)
+                            }}
+                            onTouchStart={(e) => {
+                              e.stopPropagation()
                             }}
                             onTouchEnd={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
+                              console.log('Delete onTouchEnd triggered for:', child.id)
                               handleDeleteChild(child.id)
                             }}
+                            onMouseDown={(e) => {
+                              e.stopPropagation()
+                            }}
                             title="Delete child profile"
+                            aria-label="Delete child profile"
                           >
-                            <Trash2 className="w-5 h-5" />
+                            <Trash2 className="w-5 h-5 pointer-events-none" />
                           </Button>
                         </div>
                       </div>
