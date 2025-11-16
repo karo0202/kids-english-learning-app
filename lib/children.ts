@@ -27,6 +27,7 @@ type ChildrenSubscriber = (children: Child[]) => void
 const childCache = new Map<string, Child[]>()
 const childSubscribers = new Map<string, Set<ChildrenSubscriber>>()
 const firestoreUnsubscribers = new Map<string, Unsubscribe>()
+const deletedChildren = new Set<string>() // Track deleted child IDs to prevent restoration
 
 // Synchronous function for instant loading from localStorage
 export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
@@ -223,6 +224,19 @@ export async function updateChild(parentId: string, childId: string, updates: Pa
 export async function deleteChild(parentId: string, childId: string): Promise<boolean> {
   console.log(`🗑️ deleteChild called: parentId=${parentId}, childId=${childId}`)
   
+  // Mark as deleted FIRST to prevent any restoration
+  deletedChildren.add(childId)
+  console.log(`🚫 Marked child ${childId} as deleted (preventing restoration)`)
+  
+  // Save deleted children list to localStorage for persistence across refreshes
+  try {
+    const deletedList = Array.from(deletedChildren)
+    localStorage.setItem('deleted_children', JSON.stringify(deletedList))
+    console.log(`💾 Saved ${deletedList.length} deleted child IDs to localStorage`)
+  } catch (error) {
+    console.error('Failed to save deleted children list:', error)
+  }
+  
   // FIRST: Delete from Firestore (source of truth)
   const firestore = getFirestoreClient()
   if (firestore) {
@@ -245,6 +259,7 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
     if (raw) {
       const allChildren: Child[] = JSON.parse(raw)
       const beforeCount = allChildren.length
+      // Filter out the deleted child
       const filtered = allChildren.filter(child => child.id !== childId)
       const afterCount = filtered.length
       
@@ -264,6 +279,7 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
   console.log(`📋 Current children before delete: ${currentChildren.length}`)
   console.log('Current children:', currentChildren.map(c => ({ id: c.id, name: c.name })))
   
+  // Filter out deleted child
   const updatedChildren = currentChildren.filter(child => child.id !== childId)
   console.log(`📋 Children after filter: ${updatedChildren.length}`)
   
@@ -273,10 +289,10 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
     console.log(`✅ Child removed from list`)
   }
   
-  // Update cache (this also persists to localStorage, but we already did that above)
+  // Update cache
   childCache.set(parentId, updatedChildren)
   
-  // Also manually update localStorage again to be absolutely sure
+  // Persist to localStorage (this will also filter out deleted children)
   persistLocalChildren(parentId, updatedChildren)
   console.log(`💾 Cache and localStorage updated with ${updatedChildren.length} children`)
 
@@ -292,6 +308,26 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
 
   console.log(`✅ deleteChild completed successfully`)
   return true
+}
+
+// Load deleted children list from localStorage on initialization
+function loadDeletedChildren(): void {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem('deleted_children')
+    if (raw) {
+      const deleted: string[] = JSON.parse(raw)
+      deleted.forEach(id => deletedChildren.add(id))
+      console.log(`🚫 Loaded ${deleted.length} deleted child IDs from localStorage`)
+    }
+  } catch (error) {
+    console.error('Failed to load deleted children list:', error)
+  }
+}
+
+// Initialize on module load
+if (typeof window !== 'undefined') {
+  loadDeletedChildren()
 }
 
 export function setCurrentChild(child: Child): void {
@@ -401,8 +437,10 @@ async function refreshChildrenFromFirestore(parentId: string, userEmail?: string
     // First, try to get children by parentId
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
-    let firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
-    console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId}`)
+    let firestoreChildren = snapshot.docs
+      .map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
+      .filter(child => !deletedChildren.has(child.id)) // EXCLUDE deleted children
+    console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId} (after filtering deleted)`)
     
     // Always search by email to find any children that might be under a different parentId
     // This consolidates all children for the same email under the correct parentId
@@ -559,8 +597,10 @@ function ensureFirestoreListener(parentId: string, userEmail?: string) {
   const unsubscribe = onSnapshot(
     collectionRef,
     snapshot => {
-      const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
-      console.log(`Firestore snapshot: ${firestoreChildren.length} children for parentId: ${parentId}`)
+      const firestoreChildren = snapshot.docs
+        .map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
+        .filter(child => !deletedChildren.has(child.id)) // EXCLUDE deleted children
+      console.log(`Firestore snapshot: ${firestoreChildren.length} children for parentId: ${parentId} (after filtering deleted)`)
       
       // Prioritize Firestore data (source of truth across devices)
       const localChildren = loadLocalChildren(parentId, userEmail)
@@ -640,6 +680,9 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
   if (typeof window === 'undefined') return []
 
   try {
+    // Load deleted children list first
+    loadDeletedChildren()
+    
     const raw = localStorage.getItem('children')
     if (!raw) {
       console.log('No children found in localStorage for parentId:', parentId)
@@ -650,9 +693,17 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
     console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, parentEmail: c.parentEmail })))
     
     // First, try to find children by parentId
-    let filtered = children.filter(child => child.parentId === parentId).map(child => normalizeChild(child, userEmail))
+    let filtered = children
+      .filter(child => child.parentId === parentId)
+      .filter(child => !deletedChildren.has(child.id)) // EXCLUDE deleted children
+      .map(child => normalizeChild(child, userEmail))
     
-    console.log(`Found ${filtered.length} children by parentId: ${parentId}`)
+    if (filtered.length < children.filter(c => c.parentId === parentId).length) {
+      const removedCount = children.filter(c => c.parentId === parentId).length - filtered.length
+      console.log(`🚫 Filtered out ${removedCount} deleted child(ren)`)
+    }
+    
+    console.log(`Found ${filtered.length} children by parentId: ${parentId} (after filtering deleted)`)
     return filtered
   } catch (error) {
     console.error('Failed to load children from localStorage:', error)
