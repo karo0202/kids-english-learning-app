@@ -567,10 +567,14 @@ function ensureFirestoreListener(parentId: string, userEmail?: string) {
       
       if (firestoreChildren.length > 0) {
         // Firestore has data - use it as source of truth, but keep local-only children
+        // IMPORTANT: Only keep local children that are NOT in Firestore
+        // This prevents deleted children (removed from Firestore) from being restored
         const firestoreIds = new Set(firestoreChildren.map(c => c.id))
         const localOnly = localChildren.filter(c => !firestoreIds.has(c.id))
         const mergedChildren = [...firestoreChildren, ...localOnly]
         console.log(`Merged children: ${mergedChildren.length} (Firestore: ${firestoreChildren.length}, Local-only: ${localOnly.length})`)
+        console.log('Firestore children IDs:', Array.from(firestoreIds))
+        console.log('Local-only children:', localOnly.map(c => ({ id: c.id, name: c.name })))
         updateChildrenCache(parentId, mergedChildren)
       } else if (localChildren.length > 0) {
         // Firestore is empty but we have local children - keep them
