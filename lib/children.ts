@@ -243,6 +243,7 @@ export async function updateChild(parentId: string, childId: string, updates: Pa
 export async function deleteChild(parentId: string, childId: string): Promise<boolean> {
   console.log(`🗑️ deleteChild called: parentId=${parentId}, childId=${childId}`)
   
+  // FIRST: Delete from Firestore (source of truth)
   const firestore = getFirestoreClient()
   if (firestore) {
     try {
@@ -258,7 +259,27 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
     console.log('⚠️ Firestore not available, deleting from localStorage only')
   }
 
-  // Get current children from cache or localStorage
+  // SECOND: Remove from localStorage (permanent removal)
+  try {
+    const raw = localStorage.getItem('children')
+    if (raw) {
+      const allChildren: Child[] = JSON.parse(raw)
+      const beforeCount = allChildren.length
+      const filtered = allChildren.filter(child => child.id !== childId)
+      const afterCount = filtered.length
+      
+      if (beforeCount !== afterCount) {
+        localStorage.setItem('children', JSON.stringify(filtered))
+        console.log(`💾 Removed from localStorage: ${beforeCount} → ${afterCount} children`)
+      } else {
+        console.warn(`⚠️ Child ${childId} not found in localStorage`)
+      }
+    }
+  } catch (error) {
+    console.error('❌ Failed to update localStorage:', error)
+  }
+
+  // THIRD: Update cache
   const currentChildren = childCache.get(parentId) ?? loadLocalChildren(parentId)
   console.log(`📋 Current children before delete: ${currentChildren.length}`)
   console.log('Current children:', currentChildren.map(c => ({ id: c.id, name: c.name })))
@@ -272,9 +293,12 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
     console.log(`✅ Child removed from list`)
   }
   
-  // Update cache and localStorage
-  updateChildrenCache(parentId, updatedChildren)
-  console.log(`💾 Cache updated with ${updatedChildren.length} children`)
+  // Update cache (this also persists to localStorage, but we already did that above)
+  childCache.set(parentId, updatedChildren)
+  
+  // Also manually update localStorage again to be absolutely sure
+  persistLocalChildren(parentId, updatedChildren)
+  console.log(`💾 Cache and localStorage updated with ${updatedChildren.length} children`)
 
   // Clear current child if it's the one being deleted
   const currentChild = getCurrentChild()
@@ -282,6 +306,9 @@ export async function deleteChild(parentId: string, childId: string): Promise<bo
     console.log('🧹 Clearing current child selection')
     clearCurrentChild()
   }
+
+  // Notify subscribers
+  notifySubscribers(parentId, updatedChildren)
 
   console.log(`✅ deleteChild completed successfully`)
   return true
@@ -716,12 +743,31 @@ function persistLocalChildren(parentId: string, children: Child[]) {
   try {
     const raw = localStorage.getItem('children')
     const allChildren: Child[] = raw ? JSON.parse(raw) : []
+    
+    // Remove all children for this parentId first
     const filtered = allChildren.filter(child => child.parentId !== parentId)
+    
+    // Then add the updated children
     const updated = [...filtered, ...children]
     localStorage.setItem('children', JSON.stringify(updated))
-    console.log(`Persisted ${children.length} children to localStorage for parentId: ${parentId}`)
+    console.log(`💾 Persisted ${children.length} children to localStorage for parentId: ${parentId}`)
+    console.log(`💾 Total children in localStorage: ${updated.length}`)
+    
+    // Verify the save worked
+    const verify = localStorage.getItem('children')
+    if (verify) {
+      const verified = JSON.parse(verify)
+      const parentChildren = verified.filter((c: Child) => c.parentId === parentId)
+      if (parentChildren.length !== children.length) {
+        console.error(`❌ Verification failed! Expected ${children.length}, found ${parentChildren.length}`)
+        // Force save again
+        localStorage.setItem('children', JSON.stringify(updated))
+      } else {
+        console.log(`✅ Verification passed: ${parentChildren.length} children for parentId ${parentId}`)
+      }
+    }
   } catch (error) {
-    console.error('Failed to persist children locally:', error)
+    console.error('❌ Failed to persist children locally:', error)
   }
 }
 
