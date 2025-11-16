@@ -266,10 +266,27 @@ async function refreshChildrenFromFirestore(parentId: string, userEmail?: string
 
   try {
     console.log('Refreshing children from Firestore for parentId:', parentId, 'email:', userEmail)
+    
+    // First, try to get children by parentId
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
-    const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+    let firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
     console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId}`)
+    
+    // Always search by email to find any children that might be under a different parentId
+    // This consolidates all children for the same email under the correct parentId
+    if (userEmail) {
+      console.log(`Searching Firestore by email to consolidate children: ${userEmail}`)
+      const childrenByEmail = await findChildrenInFirestoreByEmail(userEmail, parentId)
+      if (childrenByEmail.length > 0) {
+        console.log(`Found ${childrenByEmail.length} children in Firestore by email`)
+        // Merge: combine children found by parentId and by email, removing duplicates
+        const existingIds = new Set(firestoreChildren.map(c => c.id))
+        const newFromEmail = childrenByEmail.filter(c => !existingIds.has(c.id))
+        firestoreChildren = [...firestoreChildren, ...newFromEmail]
+        console.log(`Consolidated ${firestoreChildren.length} total children (${newFromEmail.length} found by email)`)
+      }
+    }
     
     // If Firestore has children, prioritize them (they're the source of truth across devices)
     if (firestoreChildren.length > 0) {
@@ -301,10 +318,10 @@ async function refreshChildrenFromFirestore(parentId: string, userEmail?: string
         }
         updateChildrenCache(parentId, localChildren)
       } else if (userEmail) {
-        // Try email-based migration
+        // Try email-based migration from localStorage
         const migrated = findChildrenByEmail(userEmail, parentId)
         if (migrated.length > 0) {
-          console.log(`Migrated ${migrated.length} children by email to parentId: ${parentId}`)
+          console.log(`Migrated ${migrated.length} children from localStorage by email to parentId: ${parentId}`)
           // Save migrated children to Firestore
           for (const child of migrated) {
             try {
@@ -330,6 +347,74 @@ async function refreshChildrenFromFirestore(parentId: string, userEmail?: string
     if (localChildren.length > 0) {
       updateChildrenCache(parentId, localChildren)
     }
+  }
+}
+
+// Search Firestore for children by email across all parent collections
+async function findChildrenInFirestoreByEmail(userEmail: string, targetParentId: string): Promise<Child[]> {
+  const firestore = getFirestoreClient()
+  if (!firestore) return []
+
+  try {
+    console.log(`Searching Firestore for children with email: ${userEmail}`)
+    const emailLower = userEmail.toLowerCase()
+    const allChildren: Child[] = []
+
+    // Get all parent documents
+    const parentsRef = collection(firestore, 'parents')
+    const parentsSnapshot = await getDocs(parentsRef)
+    
+    // Search through each parent's children collection
+    for (const parentDoc of parentsSnapshot.docs) {
+      const parentId = parentDoc.id
+      const childrenRef = collection(firestore, 'parents', parentId, 'children')
+      const childrenSnapshot = await getDocs(childrenRef)
+      
+      for (const childDoc of childrenSnapshot.docs) {
+        const childData = childDoc.data()
+        const childEmail = (childData.parentEmail || '').toLowerCase()
+        
+        if (childEmail === emailLower) {
+          const child = normalizeChild({
+            ...childData,
+            id: childDoc.id,
+            parentId: targetParentId, // Update to target parentId
+            parentEmail: userEmail
+          })
+          allChildren.push(child)
+          
+          // Update the child in Firestore to use the correct parentId
+          try {
+            const targetDocRef = doc(firestore, 'parents', targetParentId, 'children', child.id)
+            await setDoc(targetDocRef, {
+              ...child,
+              parentId: targetParentId,
+              parentEmail: userEmail,
+              updatedAt: serverTimestamp(),
+            }, { merge: true })
+            
+            // Delete from old location if different
+            if (parentId !== targetParentId) {
+              try {
+                const oldDocRef = doc(firestore, 'parents', parentId, 'children', childDoc.id)
+                await deleteDoc(oldDocRef)
+                console.log(`Moved child ${child.id} from parentId ${parentId} to ${targetParentId}`)
+              } catch (error) {
+                console.error(`Failed to delete child from old location:`, error)
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to update child ${child.id} in Firestore:`, error)
+          }
+        }
+      }
+    }
+    
+    console.log(`Found ${allChildren.length} children in Firestore by email: ${userEmail}`)
+    return allChildren
+  } catch (error) {
+    console.error('Failed to search Firestore by email:', error)
+    return []
   }
 }
 
