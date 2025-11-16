@@ -65,8 +65,23 @@ export default function DashboardPage() {
     // Subscribe to real-time updates (Firestore sync happens in background)
     unsubscribe = subscribeToChildren(currentUser.id, updatedChildren => {
       if (!mounted) return
+      console.log(`Children updated via subscription: ${updatedChildren.length} children`)
       setChildren(updatedChildren)
     }, currentUser.email)
+    
+    // Force migration after a short delay to ensure everything is loaded
+    // This helps consolidate children that might be in different locations
+    setTimeout(async () => {
+      if (mounted && currentUser.email) {
+        console.log('Running forced migration to consolidate all children...')
+        const { forceMigrateChildrenByEmail } = await import('@/lib/children')
+        const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
+        if (migrated.length > userChildren.length) {
+          console.log(`Migration found ${migrated.length} total children (was ${userChildren.length})`)
+          setChildren(migrated)
+        }
+      }
+    }, 2000) // Wait 2 seconds for Firestore to initialize
 
     // Load subscription data
     const userSubscription = getUserSubscription(currentUser.id)

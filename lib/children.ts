@@ -41,6 +41,30 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
   // Load from localStorage immediately (synchronous)
   const local = loadLocalChildren(parentId, userEmail)
   
+  // ALWAYS try email-based migration from localStorage first (even if we have local children)
+  // This ensures we find children that might be stored under a different parentId
+  if (userEmail) {
+    const childrenByEmail = findChildrenByEmail(userEmail, parentId)
+    if (childrenByEmail.length > 0) {
+      console.log(`Email migration found ${childrenByEmail.length} children for ${userEmail}`)
+      // Merge with local children (avoid duplicates)
+      const localIds = new Set(local.map(c => c.id))
+      const newFromEmail = childrenByEmail.filter(c => !localIds.has(c.id))
+      const merged = [...local, ...newFromEmail]
+      
+      if (merged.length > local.length) {
+        console.log(`Merged ${merged.length} children (${local.length} local + ${newFromEmail.length} from email migration)`)
+        childCache.set(parentId, merged)
+        persistLocalChildren(parentId, merged)
+        // Start Firestore sync to consolidate everything
+        if (typeof window !== 'undefined') {
+          void refreshChildrenFromFirestore(parentId, userEmail)
+        }
+        return cloneChildren(merged)
+      }
+    }
+  }
+  
   // If we have local data, cache it and start Firestore sync
   if (local.length > 0) {
     childCache.set(parentId, local)
@@ -49,19 +73,6 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
       void refreshChildrenFromFirestore(parentId, userEmail)
     }
     return cloneChildren(local)
-  }
-  
-  // If no local data, try to find children by email (for cross-device migration)
-  if (userEmail) {
-    const childrenByEmail = findChildrenByEmail(userEmail, parentId)
-    if (childrenByEmail.length > 0) {
-      childCache.set(parentId, childrenByEmail)
-      // Start Firestore sync to get the latest data
-      if (typeof window !== 'undefined') {
-        void refreshChildrenFromFirestore(parentId, userEmail)
-      }
-      return cloneChildren(childrenByEmail)
-    }
   }
 
   // No local data found - start Firestore sync immediately
@@ -90,11 +101,29 @@ export function subscribeToChildren(parentId: string, callback: ChildrenSubscrib
   subscribers.add(callback)
   childSubscribers.set(parentId, subscribers)
 
-  callback(cloneChildren(childCache.get(parentId) ?? loadLocalChildren(parentId, userEmail)))
+  // First, do aggressive email-based migration from localStorage
+  let initialChildren: Child[] = []
+  if (userEmail) {
+    const migrated = findChildrenByEmail(userEmail, parentId)
+    if (migrated.length > 0) {
+      initialChildren = migrated
+      childCache.set(parentId, migrated)
+      persistLocalChildren(parentId, migrated)
+    }
+  }
+  
+  // If no migrated children, load from cache or localStorage
+  if (initialChildren.length === 0) {
+    initialChildren = childCache.get(parentId) ?? loadLocalChildren(parentId, userEmail)
+  }
+  
+  callback(cloneChildren(initialChildren))
   ensureFirestoreListener(parentId, userEmail)
   
   // Immediately trigger Firestore refresh to sync across devices
+  // This will also search Firestore by email and consolidate
   if (typeof window !== 'undefined') {
+    console.log(`Starting Firestore sync for parentId: ${parentId}, email: ${userEmail}`)
     void refreshChildrenFromFirestore(parentId, userEmail)
   }
 
@@ -257,6 +286,35 @@ export function clearCurrentChild(): void {
   localStorage.removeItem('currentChild')
 }
 
+// Force migration function - can be called manually to consolidate children
+export async function forceMigrateChildrenByEmail(parentId: string, userEmail: string): Promise<Child[]> {
+  console.log(`Force migrating children for email: ${userEmail}, parentId: ${parentId}`)
+  
+  // 1. Migrate from localStorage
+  const migratedLocal = findChildrenByEmail(userEmail, parentId)
+  console.log(`Migrated ${migratedLocal.length} children from localStorage`)
+  
+  // 2. Migrate from Firestore
+  const firestore = getFirestoreClient()
+  if (firestore) {
+    const migratedFirestore = await findChildrenInFirestoreByEmail(userEmail, parentId)
+    console.log(`Migrated ${migratedFirestore.length} children from Firestore`)
+    
+    // Merge both
+    const allIds = new Set(migratedLocal.map(c => c.id))
+    const newFromFirestore = migratedFirestore.filter(c => !allIds.has(c.id))
+    const allChildren = [...migratedLocal, ...newFromFirestore]
+    
+    // Update cache and persist
+    updateChildrenCache(parentId, allChildren)
+    return allChildren
+  }
+  
+  // If no Firestore, just use local
+  updateChildrenCache(parentId, migratedLocal)
+  return migratedLocal
+}
+
 async function refreshChildrenFromFirestore(parentId: string, userEmail?: string) {
   const firestore = getFirestoreClient()
   if (!firestore) {
@@ -270,7 +328,7 @@ async function refreshChildrenFromFirestore(parentId: string, userEmail?: string
     // First, try to get children by parentId
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
-    let firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+    let firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
     console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId}`)
     
     // Always search by email to find any children that might be under a different parentId
@@ -380,7 +438,7 @@ async function findChildrenInFirestoreByEmail(userEmail: string, targetParentId:
             id: childDoc.id,
             parentId: targetParentId, // Update to target parentId
             parentEmail: userEmail
-          })
+          }, userEmail)
           allChildren.push(child)
           
           // Update the child in Firestore to use the correct parentId
@@ -428,7 +486,7 @@ function ensureFirestoreListener(parentId: string, userEmail?: string) {
   const unsubscribe = onSnapshot(
     collectionRef,
     snapshot => {
-      const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
+      const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
       console.log(`Firestore snapshot: ${firestoreChildren.length} children for parentId: ${parentId}`)
       
       // Prioritize Firestore data (source of truth across devices)
@@ -504,7 +562,7 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
     console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, parentEmail: c.parentEmail })))
     
     // First, try to find children by parentId
-    let filtered = children.filter(child => child.parentId === parentId).map(normalizeChild)
+    let filtered = children.filter(child => child.parentId === parentId).map(child => normalizeChild(child, userEmail))
     
     console.log(`Found ${filtered.length} children by parentId: ${parentId}`)
     return filtered
@@ -515,31 +573,46 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
 }
 
 // Helper function to find children by email (for cross-device migration)
+// This searches ALL children in localStorage, not just those with matching parentId
 function findChildrenByEmail(userEmail: string, newParentId: string): Child[] {
   if (typeof window === 'undefined') return []
 
   try {
     const raw = localStorage.getItem('children')
-    if (!raw) return []
+    if (!raw) {
+      console.log('No children in localStorage to search by email')
+      return []
+    }
     
     const children: Child[] = JSON.parse(raw)
     const emailLower = userEmail.toLowerCase()
     
-    // Find children that match this email
+    console.log(`Searching ${children.length} total children in localStorage for email: ${userEmail}`)
+    
+    // Find children that match this email OR have no parentEmail (might be orphaned)
+    // Also check if parentId doesn't match (might be from different device)
     const childrenByEmail = children
       .filter(child => {
-        const childEmail = child.parentEmail?.toLowerCase() || ''
-        return childEmail === emailLower
+        const childEmail = (child.parentEmail || '').toLowerCase()
+        const matchesEmail = childEmail === emailLower
+        const hasDifferentParentId = child.parentId && child.parentId !== newParentId
+        
+        // Include if:
+        // 1. Email matches exactly, OR
+        // 2. No email but parentId is different (might be orphaned from this user)
+        return matchesEmail || (hasDifferentParentId && !childEmail)
       })
-      .map(normalizeChild)
+      .map(child => normalizeChild(child, userEmail))
     
     if (childrenByEmail.length > 0) {
-      console.log(`Found ${childrenByEmail.length} children by email: ${userEmail}`)
+      console.log(`Found ${childrenByEmail.length} children by email or different parentId: ${userEmail}`)
+      console.log('Children found:', childrenByEmail.map(c => ({ id: c.id, name: c.name, oldParentId: c.parentId, email: c.parentEmail })))
+      
       // Migrate children to new parentId
       const migrated = childrenByEmail.map(child => ({
         ...child,
         parentId: newParentId,
-        parentEmail: userEmail
+        parentEmail: userEmail // Always set email
       }))
       
       // Update localStorage with migrated children
@@ -575,7 +648,7 @@ function persistLocalChildren(parentId: string, children: Child[]) {
   }
 }
 
-function normalizeChild(data: any): Child {
+function normalizeChild(data: any, defaultEmail?: string): Child {
   const age = Number(data?.age ?? 0)
   const child: Child = {
     id: data?.id ?? `child-${Math.random().toString(36).slice(2)}`,
@@ -583,6 +656,7 @@ function normalizeChild(data: any): Child {
     age,
     ageGroup: data?.ageGroup ?? getAgeGroup(age),
     parentId: data?.parentId ?? '',
+    parentEmail: data?.parentEmail || defaultEmail, // Always set email if missing
     createdAt: data?.createdAt ?? new Date().toISOString(),
     avatar: data?.avatar,
   }
