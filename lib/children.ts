@@ -605,16 +605,24 @@ function updateChildrenCache(parentId: string, children: Child[]) {
 
 function notifySubscribers(parentId: string, children: Child[]) {
   const subscribers = childSubscribers.get(parentId)
-  if (!subscribers) return
+  if (!subscribers) {
+    console.log(`⚠️ No subscribers for parentId: ${parentId}`)
+    return
+  }
 
+  console.log(`📢 Notifying ${subscribers.size} subscriber(s) with ${children.length} children`)
   const clonedChildren = cloneChildren(children)
+  let notifiedCount = 0
   subscribers.forEach(callback => {
     try {
       callback(clonedChildren)
+      notifiedCount++
+      console.log(`✅ Subscriber ${notifiedCount} notified`)
     } catch (error) {
-      console.error('Child subscriber error:', error)
+      console.error('❌ Child subscriber error:', error)
     }
   })
+  console.log(`✅ All ${notifiedCount} subscribers notified`)
 }
 
 function loadLocalChildren(parentId: string, userEmail?: string): Child[] {

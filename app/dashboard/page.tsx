@@ -146,23 +146,47 @@ const handleDeleteChild = async (childId: string) => {
   if (confirmed) {
     try {
       console.log('Deleting child:', childId, 'for parent:', user.id)
+      
+      // Optimistically update UI - remove child immediately
+      setChildren(prev => {
+        const filtered = prev.filter(child => child.id !== childId)
+        console.log(`UI updated: ${filtered.length} children (was ${prev.length})`)
+        return filtered
+      })
+      
+      // Then delete from backend
       const result = await deleteChild(user.id, childId)
       console.log('Delete result:', result)
       
-      // Force refresh children list from cache
-      const updatedChildren = getChildrenSync(user.id, user.email)
-      console.log('Updated children count:', updatedChildren.length)
-      setChildren(updatedChildren)
+      // Force multiple refreshes to ensure UI updates
+      const refreshChildren = () => {
+        const updated = getChildrenSync(user.id, user.email)
+        console.log('Refreshed children count:', updated.length)
+        setChildren(updated)
+        return updated.length
+      }
       
-      // Also trigger a re-render by updating state
+      // Immediate refresh
+      const count1 = refreshChildren()
+      
+      // Refresh after short delay
       setTimeout(() => {
-        const refreshed = getChildrenSync(user.id, user.email)
-        if (refreshed.length !== children.length) {
-          setChildren(refreshed)
+        const count2 = refreshChildren()
+        if (count2 !== count1) {
+          console.log('Children count changed, updating again')
         }
-      }, 100)
+      }, 200)
+      
+      // Final refresh after longer delay
+      setTimeout(() => {
+        refreshChildren()
+      }, 500)
+      
     } catch (error) {
       console.error('Failed to delete child:', error)
+      // Revert optimistic update on error
+      const refreshed = getChildrenSync(user.id, user.email)
+      setChildren(refreshed)
       alert('Failed to delete child. Please try again.')
     }
   }
