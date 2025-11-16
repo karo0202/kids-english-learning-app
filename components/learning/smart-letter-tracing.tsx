@@ -566,6 +566,133 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     lastPointRef.current = { x, y }
   }
 
+  // Validate overall shape matches the target letter
+  const validateLetterShape = (drawnPath: Array<{ x: number; y: number }>): boolean => {
+    if (drawnPath.length < 10) return false // Need minimum points to validate
+    
+    const size = canvasRef.current?.width ? canvasRef.current.width / (window.devicePixelRatio || 1) : 500
+    const scale = size / 100
+    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * scale) / 2
+    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * scale) / 2
+
+    // Normalize drawn path to 0-100 coordinate system for comparison
+    const normalizedDrawn: Array<{ x: number; y: number }> = drawnPath.map(point => ({
+      x: ((point.x - offsetX) / scale) + letterPath.bounds.minX,
+      y: ((point.y - offsetY) / scale) + letterPath.bounds.minY
+    }))
+
+    // Get all guide points from the target letter
+    const allGuidePoints: Array<{ x: number; y: number }> = []
+    letterPath.strokes.forEach(stroke => {
+      stroke.forEach(point => allGuidePoints.push(point))
+    })
+
+    // Calculate average distance from drawn path to guide points
+    let totalDistance = 0
+    let matchedPoints = 0
+    const MAX_DISTANCE = 15 // Stricter threshold
+
+    normalizedDrawn.forEach(drawnPoint => {
+      let minDist = Infinity
+      allGuidePoints.forEach(guidePoint => {
+        const dist = Math.sqrt((drawnPoint.x - guidePoint.x) ** 2 + (drawnPoint.y - guidePoint.y) ** 2)
+        if (dist < minDist) {
+          minDist = dist
+        }
+      })
+      if (minDist < MAX_DISTANCE) {
+        totalDistance += minDist
+        matchedPoints++
+      }
+    })
+
+    // Require at least 70% of drawn points to be close to guide points
+    const matchRatio = matchedPoints / normalizedDrawn.length
+    const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
+
+    // Additional validation: Check letter-specific characteristics
+    const letterUpper = letter.toUpperCase()
+    
+    if (letterUpper === 'B') {
+      // B must have:
+      // 1. A vertical line on the left (check for points near x=30)
+      // 2. Two distinct curves (top and bottom)
+      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
+      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.2 // At least 20% of points near left edge
+      
+      // Check for two curves by looking at y-coordinate distribution
+      // B should have curves at top (y ~30-50) and bottom (y ~50-80)
+      const topCurvePoints = normalizedDrawn.filter(p => p.y >= 20 && p.y <= 50 && p.x > 30)
+      const bottomCurvePoints = normalizedDrawn.filter(p => p.y >= 50 && p.y <= 80 && p.x > 30)
+      
+      // B should have both top and bottom curves
+      if (!hasVerticalLine || topCurvePoints.length < normalizedDrawn.length * 0.15 || 
+          bottomCurvePoints.length < normalizedDrawn.length * 0.15) {
+        return false
+      }
+      
+      // Reject if it looks like D (only one curve) or C (no vertical line)
+      const rightCurvePoints = normalizedDrawn.filter(p => p.x > 40 && p.x < 60)
+      // If there's only one main curve area, it might be D
+      if (rightCurvePoints.length > normalizedDrawn.length * 0.6 && !hasVerticalLine) {
+        return false // Looks like C
+      }
+    } 
+    else if (letterUpper === 'D') {
+      // D must have:
+      // 1. A vertical line on the left
+      // 2. One curve (not two like B)
+      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
+      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.2
+      
+      // D should have one continuous curve, not two separate ones
+      const curvePoints = normalizedDrawn.filter(p => p.x > 30 && p.x < 60)
+      
+      // Reject if it looks like B (two distinct curves) or C (no vertical line)
+      if (!hasVerticalLine) {
+        return false // Looks like C
+      }
+      
+      // Check if there are two distinct curve areas (like B)
+      const topHalf = normalizedDrawn.filter(p => p.y < 50)
+      const bottomHalf = normalizedDrawn.filter(p => p.y >= 50)
+      const topCurveArea = topHalf.filter(p => p.x > 30 && p.x < 60).length
+      const bottomCurveArea = bottomHalf.filter(p => p.x > 30 && p.x < 60).length
+      
+      // If both top and bottom have significant curve areas, it might be B
+      if (topCurveArea > topHalf.length * 0.3 && bottomCurveArea > bottomHalf.length * 0.3) {
+        return false // Looks like B (two curves)
+      }
+    } 
+    else if (letterUpper === 'C') {
+      // C must have:
+      // 1. One continuous curve
+      // 2. NO vertical line on the left
+      const leftVerticalPoints = normalizedDrawn.filter(p => Math.abs(p.x - 30) < 10)
+      const hasVerticalLine = leftVerticalPoints.length > normalizedDrawn.length * 0.15
+      
+      // C should NOT have a vertical line
+      if (hasVerticalLine) {
+        return false // Has vertical line, might be B or D
+      }
+      
+      // C should be mostly curved points
+      const curvePoints = normalizedDrawn.filter(p => {
+        const centerX = 45
+        const centerY = 50
+        const distFromCenter = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2)
+        return distFromCenter > 10 && distFromCenter < 30
+      })
+      
+      if (curvePoints.length < normalizedDrawn.length * 0.5) {
+        return false // Not enough curve points
+      }
+    }
+
+    // Final validation: match ratio and average distance
+    return matchRatio >= 0.7 && avgDistance < MAX_DISTANCE
+  }
+
   // Check if drawing path is correct
   const checkPathCorrectness = (x: number, y: number) => {
     const size = canvasRef.current?.width ? canvasRef.current.width / (window.devicePixelRatio || 1) : 500
@@ -589,8 +716,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       })
     })
 
-    // If within 20px of guide, consider correct
-    if (minDistance < 20) {
+    // Stricter threshold: If within 15px of guide (reduced from 20px)
+    if (minDistance < 15) {
       if (closestStroke === currentStroke && !completedStrokesRef.current.has(closestStroke)) {
         completedStrokesRef.current.add(closestStroke)
         setCurrentStroke(prev => prev + 1)
@@ -612,8 +739,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
         }
       }
       setIsCorrect(true)
-    } else if (minDistance > 40) {
-      // Too far from guide - red highlight
+    } else if (minDistance > 30) {
+      // Too far from guide - red highlight (stricter threshold)
       setIsCorrect(false)
       const canvas = canvasRef.current
       if (canvas) {
@@ -636,23 +763,46 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     if (!isDrawing) return
     setIsDrawing(false)
 
-    // Check if all strokes are completed
-    if (completedStrokesRef.current.size === letterPath.strokes.length) {
+    // Validate the overall shape matches the target letter
+    const shapeIsValid = validateLetterShape(drawingPath)
+    
+    // Check if all strokes are completed AND shape is valid
+    const allStrokesCompleted = completedStrokesRef.current.size === letterPath.strokes.length
+    
+    if (allStrokesCompleted && shapeIsValid) {
       handleComplete()
     } else {
-      // Show feedback
-      setShowFeedback(true)
-      if (soundEnabled) {
-        if (isCorrect) {
-          audioManager.playSuccess()
-        } else {
+      // If strokes are completed but shape doesn't match, show error
+      if (allStrokesCompleted && !shapeIsValid) {
+        setIsCorrect(false)
+        setShowFeedback(true)
+        // Reset completed strokes to allow retry
+        completedStrokesRef.current.clear()
+        setCurrentStroke(0)
+        setProgress(0)
+        
+        if (soundEnabled) {
           audioManager.playError()
         }
+        
+        setTimeout(() => {
+          setShowFeedback(false)
+        }, 2000)
+      } else {
+        // Show feedback for incomplete strokes
+        setShowFeedback(true)
+        if (soundEnabled) {
+          if (isCorrect) {
+            audioManager.playSuccess()
+          } else {
+            audioManager.playError()
+          }
+        }
+        
+        setTimeout(() => {
+          setShowFeedback(false)
+        }, 1500)
       }
-      
-      setTimeout(() => {
-        setShowFeedback(false)
-      }, 1500)
     }
 
     lastPointRef.current = null
