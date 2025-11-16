@@ -728,10 +728,19 @@ function findChildrenByEmail(userEmail: string, newParentId: string): Child[] {
     
     console.log(`Searching ${children.length} total children in localStorage for email: ${userEmail}`)
     
+    // Load deleted children list first
+    loadDeletedChildren()
+    
     // Find children that match this email OR have no parentEmail (might be orphaned)
     // Also check if parentId doesn't match (might be from different device)
+    // BUT EXCLUDE deleted children
     const childrenByEmail = children
       .filter(child => {
+        // First check: Is this child deleted?
+        if (deletedChildren.has(child.id)) {
+          return false // Skip deleted children
+        }
+        
         const childEmail = (child.parentEmail || '').toLowerCase()
         const matchesEmail = childEmail === emailLower
         const hasDifferentParentId = child.parentId && child.parentId !== newParentId
