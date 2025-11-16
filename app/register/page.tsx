@@ -8,6 +8,7 @@ import { getAuthClient, signInWithGoogle, handleGoogleRedirect } from '@/lib/fir
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { setUserSession } from '@/lib/simple-auth'
 import { addChild, setCurrentChild } from '@/lib/children'
+import { setUserRegistrationDate } from '@/lib/subscription'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,6 +33,10 @@ export default function RegisterPage() {
             name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
             accountType: 'parent'
           })
+          
+          // Set registration date for 7-day free trial
+          setUserRegistrationDate()
+          
           router.push('/dashboard')
         }
       } catch (err: any) {
@@ -72,6 +77,9 @@ export default function RegisterPage() {
         name: cred.user.displayName || formData.parentName || cred.user.email?.split('@')[0] || 'User',
         accountType: 'parent'
       })
+      
+      // Set registration date for 7-day free trial
+      setUserRegistrationDate()
       
       // Validate child data before saving
       if (!formData.childName || !formData.childAge) {
@@ -142,6 +150,10 @@ export default function RegisterPage() {
           name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
           accountType: 'parent'
         })
+        
+        // Set registration date for 7-day free trial
+        setUserRegistrationDate()
+        
         router.push('/dashboard')
       }
       // If result is null, redirect is happening
