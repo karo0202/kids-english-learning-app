@@ -73,15 +73,38 @@ export default function DashboardPage() {
     // This helps consolidate children that might be in different locations
     setTimeout(async () => {
       if (mounted && currentUser.email) {
-        console.log('Running forced migration to consolidate all children...')
+        console.log('🔄 Running forced migration to consolidate all children...')
         const { forceMigrateChildrenByEmail } = await import('@/lib/children')
-        const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
-        if (migrated.length > userChildren.length) {
-          console.log(`Migration found ${migrated.length} total children (was ${userChildren.length})`)
-          setChildren(migrated)
+        try {
+          const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
+          console.log(`📊 Migration complete: ${migrated.length} children (was ${userChildren.length})`)
+          if (migrated.length !== userChildren.length) {
+            console.log('✅ Children list updated after migration')
+            setChildren(migrated)
+          }
+        } catch (error) {
+          console.error('❌ Migration error:', error)
         }
       }
     }, 2000) // Wait 2 seconds for Firestore to initialize
+    
+    // Also run migration again after 5 seconds (in case Firestore takes longer)
+    setTimeout(async () => {
+      if (mounted && currentUser.email) {
+        console.log('🔄 Running second migration pass...')
+        const { forceMigrateChildrenByEmail } = await import('@/lib/children')
+        try {
+          const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
+          const currentCount = children.length
+          if (migrated.length !== currentCount) {
+            console.log(`✅ Second pass found ${migrated.length} children (was ${currentCount})`)
+            setChildren(migrated)
+          }
+        } catch (error) {
+          console.error('❌ Second migration error:', error)
+        }
+      }
+    }, 5000)
 
     // Load subscription data
     const userSubscription = getUserSubscription(currentUser.id)
@@ -109,8 +132,20 @@ const handleAddChild = async () => {
 }
 
 const handleDeleteChild = async (childId: string) => {
-  if (user && confirm('Are you sure you want to delete this child profile?')) {
-    await deleteChild(user.id, childId)
+  if (!user) return
+  
+  // Use a more mobile-friendly confirmation
+  const confirmed = window.confirm('Are you sure you want to delete this child profile? This action cannot be undone.')
+  if (confirmed) {
+    try {
+      await deleteChild(user.id, childId)
+      // Force refresh children list
+      const updatedChildren = getChildrenSync(user.id, user.email)
+      setChildren(updatedChildren)
+    } catch (error) {
+      console.error('Failed to delete child:', error)
+      alert('Failed to delete child. Please try again.')
+    }
   }
 }
 
@@ -476,10 +511,20 @@ const handleDeleteChild = async (childId: string) => {
                           <Button 
                             variant="outline"
                             size="icon"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 rounded-xl"
-                            onClick={() => handleDeleteChild(child.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 rounded-xl min-w-[44px] min-h-[44px] touch-manipulation"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleDeleteChild(child.id)
+                            }}
+                            onTouchEnd={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleDeleteChild(child.id)
+                            }}
+                            title="Delete child profile"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                           </Button>
                         </div>
                       </div>

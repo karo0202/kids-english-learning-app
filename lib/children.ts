@@ -288,22 +288,63 @@ export function clearCurrentChild(): void {
 
 // Force migration function - can be called manually to consolidate children
 export async function forceMigrateChildrenByEmail(parentId: string, userEmail: string): Promise<Child[]> {
-  console.log(`Force migrating children for email: ${userEmail}, parentId: ${parentId}`)
+  console.log(`🔍 FORCE MIGRATION: Starting for email: ${userEmail}, parentId: ${parentId}`)
   
-  // 1. Migrate from localStorage
+  // 1. First, get ALL children from localStorage (not filtered by parentId)
+  let allLocalChildren: Child[] = []
+  try {
+    const raw = localStorage.getItem('children')
+    if (raw) {
+      allLocalChildren = JSON.parse(raw)
+      console.log(`📦 Found ${allLocalChildren.length} total children in localStorage`)
+      console.log('All children:', allLocalChildren.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, email: c.parentEmail })))
+    }
+  } catch (error) {
+    console.error('Error reading localStorage:', error)
+  }
+  
+  // 2. Find children by email in localStorage
   const migratedLocal = findChildrenByEmail(userEmail, parentId)
-  console.log(`Migrated ${migratedLocal.length} children from localStorage`)
+  console.log(`✅ Migrated ${migratedLocal.length} children from localStorage by email`)
   
-  // 2. Migrate from Firestore
+  // 3. Also find ALL children regardless of email (in case email wasn't set)
+  // This is a fallback to catch orphaned children
+  const emailLower = userEmail.toLowerCase()
+  const orphanedChildren = allLocalChildren
+    .filter(child => {
+      const childEmail = (child.parentEmail || '').toLowerCase()
+      // Include if no email set or if parentId is different (might be from this user)
+      return !childEmail || child.parentId !== parentId
+    })
+    .map(child => normalizeChild({
+      ...child,
+      parentId: parentId,
+      parentEmail: userEmail
+    }, userEmail))
+  
+  if (orphanedChildren.length > 0) {
+    console.log(`🔗 Found ${orphanedChildren.length} potentially orphaned children, migrating them too`)
+  }
+  
+  // Merge local migrations
+  const localIds = new Set(migratedLocal.map(c => c.id))
+  const newOrphaned = orphanedChildren.filter(c => !localIds.has(c.id))
+  const allLocalMerged = [...migratedLocal, ...newOrphaned]
+  console.log(`📊 Total from localStorage: ${allLocalMerged.length} children`)
+  
+  // 4. Migrate from Firestore
   const firestore = getFirestoreClient()
   if (firestore) {
     const migratedFirestore = await findChildrenInFirestoreByEmail(userEmail, parentId)
-    console.log(`Migrated ${migratedFirestore.length} children from Firestore`)
+    console.log(`✅ Migrated ${migratedFirestore.length} children from Firestore by email`)
     
-    // Merge both
-    const allIds = new Set(migratedLocal.map(c => c.id))
+    // Merge both sources
+    const allIds = new Set(allLocalMerged.map(c => c.id))
     const newFromFirestore = migratedFirestore.filter(c => !allIds.has(c.id))
-    const allChildren = [...migratedLocal, ...newFromFirestore]
+    const allChildren = [...allLocalMerged, ...newFromFirestore]
+    
+    console.log(`🎯 FINAL RESULT: ${allChildren.length} total children consolidated`)
+    console.log('Consolidated children:', allChildren.map(c => ({ id: c.id, name: c.name, age: c.age })))
     
     // Update cache and persist
     updateChildrenCache(parentId, allChildren)
@@ -311,8 +352,9 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
   }
   
   // If no Firestore, just use local
-  updateChildrenCache(parentId, migratedLocal)
-  return migratedLocal
+  console.log(`🎯 FINAL RESULT (localStorage only): ${allLocalMerged.length} total children`)
+  updateChildrenCache(parentId, allLocalMerged)
+  return allLocalMerged
 }
 
 async function refreshChildrenFromFirestore(parentId: string, userEmail?: string) {
