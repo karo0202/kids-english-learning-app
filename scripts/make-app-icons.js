@@ -19,14 +19,37 @@ const PUBLIC_DIR = path.join(PROJECT_ROOT, 'public')
 
 async function main() {
   const srcArg = process.argv[2]
-  const srcPath = srcArg ? path.resolve(srcArg) : path.join(PUBLIC_DIR, 'logo.png')
+  // Try multiple possible logo file names
+  const possibleLogos = [
+    srcArg ? path.resolve(srcArg) : null,
+    path.join(PUBLIC_DIR, 'logo.png'),
+    path.join(PUBLIC_DIR, 'logo.jpg'),
+    path.join(PUBLIC_DIR, 'icons', 'logo.jpg'),
+  ].filter(Boolean)
+  
+  let srcPath = null
+  for (const possiblePath of possibleLogos) {
+    if (fs.existsSync(possiblePath)) {
+      srcPath = possiblePath
+      break
+    }
+  }
+  
   const outDir = path.join(PUBLIC_DIR, 'icons')
   const sizes = [1024, 512, 256, 192, 128, 64]
 
-  if (!fs.existsSync(srcPath)) {
-    console.error(`Source image not found: ${srcPath}`)
+  if (!srcPath) {
+    console.error(`Source image not found. Tried:`)
+    possibleLogos.forEach(p => console.error(`  - ${p}`))
+    console.error(`\nPlease place your logo image as one of:`)
+    console.error(`  - app/public/logo.png`)
+    console.error(`  - app/public/logo.jpg`)
+    console.error(`  - app/public/icons/logo.jpg`)
+    console.error(`\nOr pass the path as an argument: node scripts/make-app-icons.js <path-to-your-icon>`)
     process.exit(1)
   }
+  
+  console.log(`Using source image: ${srcPath}`)
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true })
 
   // Load and trim edges automatically
