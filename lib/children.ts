@@ -525,6 +525,9 @@ async function findChildrenInFirestoreByEmail(userEmail: string, targetParentId:
   if (!firestore) return []
 
   try {
+    // Load deleted children list first
+    loadDeletedChildren()
+    
     console.log(`Searching Firestore for children with email: ${userEmail}`)
     const emailLower = userEmail.toLowerCase()
     const allChildren: Child[] = []
@@ -542,6 +545,12 @@ async function findChildrenInFirestoreByEmail(userEmail: string, targetParentId:
       for (const childDoc of childrenSnapshot.docs) {
         const childData = childDoc.data()
         const childEmail = (childData.parentEmail || '').toLowerCase()
+        
+        // Skip deleted children
+        if (deletedChildren.has(childDoc.id)) {
+          console.log(`🚫 Skipping deleted child in Firestore: ${childDoc.id}`)
+          continue
+        }
         
         if (childEmail === emailLower) {
           const child = normalizeChild({
