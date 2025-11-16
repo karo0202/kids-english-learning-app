@@ -40,15 +40,35 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
 
   // Load from localStorage immediately (synchronous)
   const local = loadLocalChildren(parentId, userEmail)
+  
+  // If we have local data, cache it and start Firestore sync
   if (local.length > 0) {
     childCache.set(parentId, local)
-    // Start Firestore sync in background (non-blocking)
+    // Start Firestore sync in background (non-blocking) - this will merge any new data
     if (typeof window !== 'undefined') {
-      void refreshChildrenFromFirestore(parentId)
+      void refreshChildrenFromFirestore(parentId, userEmail)
     }
     return cloneChildren(local)
   }
+  
+  // If no local data, try to find children by email (for cross-device migration)
+  if (userEmail) {
+    const childrenByEmail = findChildrenByEmail(userEmail, parentId)
+    if (childrenByEmail.length > 0) {
+      childCache.set(parentId, childrenByEmail)
+      // Start Firestore sync to get the latest data
+      if (typeof window !== 'undefined') {
+        void refreshChildrenFromFirestore(parentId, userEmail)
+      }
+      return cloneChildren(childrenByEmail)
+    }
+  }
 
+  // No local data found - start Firestore sync immediately
+  if (typeof window !== 'undefined') {
+    void refreshChildrenFromFirestore(parentId, userEmail)
+  }
+  
   return []
 }
 
@@ -71,7 +91,12 @@ export function subscribeToChildren(parentId: string, callback: ChildrenSubscrib
   childSubscribers.set(parentId, subscribers)
 
   callback(cloneChildren(childCache.get(parentId) ?? loadLocalChildren(parentId, userEmail)))
-  ensureFirestoreListener(parentId)
+  ensureFirestoreListener(parentId, userEmail)
+  
+  // Immediately trigger Firestore refresh to sync across devices
+  if (typeof window !== 'undefined') {
+    void refreshChildrenFromFirestore(parentId, userEmail)
+  }
 
   return () => {
     const current = childSubscribers.get(parentId)
@@ -232,7 +257,7 @@ export function clearCurrentChild(): void {
   localStorage.removeItem('currentChild')
 }
 
-async function refreshChildrenFromFirestore(parentId: string) {
+async function refreshChildrenFromFirestore(parentId: string, userEmail?: string) {
   const firestore = getFirestoreClient()
   if (!firestore) {
     console.log('Firestore not available, skipping refresh for parentId:', parentId)
@@ -240,33 +265,75 @@ async function refreshChildrenFromFirestore(parentId: string) {
   }
 
   try {
-    console.log('Refreshing children from Firestore for parentId:', parentId)
+    console.log('Refreshing children from Firestore for parentId:', parentId, 'email:', userEmail)
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
     const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
     console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId}`)
     
-    // Merge with localStorage - never replace if local has data
-    const localChildren = loadLocalChildren(parentId, undefined)
-    if (localChildren.length > 0) {
-      // Merge: keep local, add new from Firestore
-      const localIds = new Set(localChildren.map(c => c.id))
-      const newFromFirestore = firestoreChildren.filter(c => !localIds.has(c.id))
-      const merged = [...localChildren, ...newFromFirestore]
-      console.log(`Merged: ${merged.length} (Local: ${localChildren.length}, New from Firestore: ${newFromFirestore.length})`)
+    // If Firestore has children, prioritize them (they're the source of truth across devices)
+    if (firestoreChildren.length > 0) {
+      // Merge with localStorage - Firestore is source of truth, but keep local-only children too
+      const localChildren = loadLocalChildren(parentId, userEmail)
+      const firestoreIds = new Set(firestoreChildren.map(c => c.id))
+      const localOnly = localChildren.filter(c => !firestoreIds.has(c.id))
+      const merged = [...firestoreChildren, ...localOnly]
+      console.log(`Merged: ${merged.length} (Firestore: ${firestoreChildren.length}, Local-only: ${localOnly.length})`)
       updateChildrenCache(parentId, merged)
-    } else if (firestoreChildren.length > 0) {
-      // Only use Firestore if local is empty
-      updateChildrenCache(parentId, firestoreChildren)
+    } else {
+      // If Firestore is empty, check localStorage and try email-based migration
+      const localChildren = loadLocalChildren(parentId, userEmail)
+      if (localChildren.length > 0) {
+        // We have local children but not in Firestore - save them to Firestore
+        console.log(`Saving ${localChildren.length} local children to Firestore`)
+        for (const child of localChildren) {
+          try {
+            const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
+            await setDoc(docRef, {
+              ...child,
+              parentId, // Ensure parentId is correct
+              parentEmail: userEmail, // Store email for future migrations
+              updatedAt: serverTimestamp(),
+            }, { merge: true })
+          } catch (error) {
+            console.error(`Failed to save child ${child.id} to Firestore:`, error)
+          }
+        }
+        updateChildrenCache(parentId, localChildren)
+      } else if (userEmail) {
+        // Try email-based migration
+        const migrated = findChildrenByEmail(userEmail, parentId)
+        if (migrated.length > 0) {
+          console.log(`Migrated ${migrated.length} children by email to parentId: ${parentId}`)
+          // Save migrated children to Firestore
+          for (const child of migrated) {
+            try {
+              const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
+              await setDoc(docRef, {
+                ...child,
+                parentId,
+                parentEmail: userEmail,
+                updatedAt: serverTimestamp(),
+              }, { merge: true })
+            } catch (error) {
+              console.error(`Failed to save migrated child ${child.id} to Firestore:`, error)
+            }
+          }
+          updateChildrenCache(parentId, migrated)
+        }
+      }
     }
-    // If both are empty, do nothing (don't clear cache)
   } catch (error) {
     console.error('Failed to fetch children from Firestore:', error)
-    // Don't throw - keep using localStorage
+    // Fallback to localStorage
+    const localChildren = loadLocalChildren(parentId, userEmail)
+    if (localChildren.length > 0) {
+      updateChildrenCache(parentId, localChildren)
+    }
   }
 }
 
-function ensureFirestoreListener(parentId: string) {
+function ensureFirestoreListener(parentId: string, userEmail?: string) {
   if (firestoreUnsubscribers.has(parentId)) return
 
   const firestore = getFirestoreClient()
@@ -279,29 +346,27 @@ function ensureFirestoreListener(parentId: string) {
       const firestoreChildren = snapshot.docs.map(docSnapshot => normalizeChild(docSnapshot.data()))
       console.log(`Firestore snapshot: ${firestoreChildren.length} children for parentId: ${parentId}`)
       
-      // ALWAYS prioritize localStorage - only merge if Firestore has MORE data
-      const localChildren = loadLocalChildren(parentId, undefined)
+      // Prioritize Firestore data (source of truth across devices)
+      const localChildren = loadLocalChildren(parentId, userEmail)
       
-      // Merge strategy: Keep all local children, add any new ones from Firestore
-      const localIds = new Set(localChildren.map(c => c.id))
-      const newFromFirestore = firestoreChildren.filter(c => !localIds.has(c.id))
-      const mergedChildren = localChildren.length > 0 
-        ? [...localChildren, ...newFromFirestore] // Keep local, add new from Firestore
-        : firestoreChildren.length > 0 
-          ? firestoreChildren // Only use Firestore if local is empty
-          : [] // Empty if both are empty
-      
-      console.log(`Merged children: ${mergedChildren.length} (Local: ${localChildren.length}, Firestore: ${firestoreChildren.length}, New: ${newFromFirestore.length})`)
-      
-      // Only update if we have children (never clear existing data)
-      if (mergedChildren.length > 0 || localChildren.length === 0) {
+      if (firestoreChildren.length > 0) {
+        // Firestore has data - use it as source of truth, but keep local-only children
+        const firestoreIds = new Set(firestoreChildren.map(c => c.id))
+        const localOnly = localChildren.filter(c => !firestoreIds.has(c.id))
+        const mergedChildren = [...firestoreChildren, ...localOnly]
+        console.log(`Merged children: ${mergedChildren.length} (Firestore: ${firestoreChildren.length}, Local-only: ${localOnly.length})`)
         updateChildrenCache(parentId, mergedChildren)
+      } else if (localChildren.length > 0) {
+        // Firestore is empty but we have local children - keep them
+        console.log(`Using local children (${localChildren.length}) - Firestore is empty`)
+        updateChildrenCache(parentId, localChildren)
       }
+      // If both are empty, do nothing
     },
     error => {
       console.error('Children snapshot listener error:', error)
       // On error, keep using localStorage data - NEVER clear it
-      const localChildren = loadLocalChildren(parentId, undefined)
+      const localChildren = loadLocalChildren(parentId, userEmail)
       if (localChildren.length > 0) {
         console.log('Using localStorage children due to Firestore error')
         updateChildrenCache(parentId, localChildren)
@@ -351,48 +416,61 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
     }
     const children: Child[] = JSON.parse(raw)
     console.log(`Found ${children.length} total children in localStorage`)
-    console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId })))
+    console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, parentEmail: c.parentEmail })))
     
     // First, try to find children by parentId
     let filtered = children.filter(child => child.parentId === parentId).map(normalizeChild)
     
-    // If no children found and we have email, try to find by email (for migration)
-    if (filtered.length === 0 && userEmail) {
-      console.log(`No children found for parentId ${parentId}, trying to find by email: ${userEmail}`)
-      // Try to find children that belong to this user by email
-      const childrenByEmail = children
-        .filter(child => {
-          // Check if child has matching email OR if it's the only child (likely belongs to this user)
-          const hasMatchingEmail = child.parentEmail === userEmail || 
-                                   (child.parentEmail && child.parentEmail.toLowerCase() === userEmail.toLowerCase())
-          return hasMatchingEmail
-        })
-        .map(normalizeChild)
-      
-      if (childrenByEmail.length > 0) {
-        console.log(`Found ${childrenByEmail.length} children by email, migrating to new parentId: ${parentId}`)
-        // Migrate children to new parentId
-        const migrated = childrenByEmail.map(child => ({
-          ...child,
-          parentId: parentId,
-          parentEmail: userEmail // Update email too
-        }))
-        // Save migrated children (remove old ones, add migrated ones)
-        const otherChildren = children.filter(c => !childrenByEmail.some(mc => mc.id === c.id))
-        const updated = [...otherChildren, ...migrated]
-        localStorage.setItem('children', JSON.stringify(updated))
-        filtered = migrated
-        console.log(`Migrated ${filtered.length} children to parentId: ${parentId}`)
-      }
-    }
-    
-    console.log(`Loaded ${filtered.length} children from localStorage for parentId: ${parentId}`)
-    if (filtered.length > 0) {
-      console.log('Loaded children details:', filtered.map(c => ({ id: c.id, name: c.name, age: c.age, parentId: c.parentId })))
-    }
+    console.log(`Found ${filtered.length} children by parentId: ${parentId}`)
     return filtered
   } catch (error) {
     console.error('Failed to load children from localStorage:', error)
+    return []
+  }
+}
+
+// Helper function to find children by email (for cross-device migration)
+function findChildrenByEmail(userEmail: string, newParentId: string): Child[] {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const raw = localStorage.getItem('children')
+    if (!raw) return []
+    
+    const children: Child[] = JSON.parse(raw)
+    const emailLower = userEmail.toLowerCase()
+    
+    // Find children that match this email
+    const childrenByEmail = children
+      .filter(child => {
+        const childEmail = child.parentEmail?.toLowerCase() || ''
+        return childEmail === emailLower
+      })
+      .map(normalizeChild)
+    
+    if (childrenByEmail.length > 0) {
+      console.log(`Found ${childrenByEmail.length} children by email: ${userEmail}`)
+      // Migrate children to new parentId
+      const migrated = childrenByEmail.map(child => ({
+        ...child,
+        parentId: newParentId,
+        parentEmail: userEmail
+      }))
+      
+      // Update localStorage with migrated children
+      const otherChildren = children.filter(c => 
+        !childrenByEmail.some(mc => mc.id === c.id)
+      )
+      const updated = [...otherChildren, ...migrated]
+      localStorage.setItem('children', JSON.stringify(updated))
+      
+      console.log(`Migrated ${migrated.length} children to parentId: ${newParentId}`)
+      return migrated
+    }
+    
+    return []
+  } catch (error) {
+    console.error('Failed to find children by email:', error)
     return []
   }
 }
