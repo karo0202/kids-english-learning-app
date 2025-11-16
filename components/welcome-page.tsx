@@ -6,14 +6,23 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
-import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target } from 'lucide-react'
+import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target, Menu, X, MessageSquare } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AudioSettings from '@/components/audio-settings'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 
 export default function WelcomePage() {
   const router = useRouter()
   const [bgSrc, setBgSrc] = useState('https://images.unsplash.com/photo-1604882737218-2c5622a3b3c5?q=80&w=1600&auto=format&fit=crop')
   const [showAudioSettings, setShowAudioSettings] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const features = [
     {
@@ -72,10 +81,62 @@ export default function WelcomePage() {
 			<div className="absolute inset-x-0 top-0 z-20">
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
 					<Logo size="md" showText={true} />
+					{/* Desktop Menu */}
 					<div className="hidden sm:flex items-center gap-2">
-					<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
-					<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
+						<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
+						<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
 					</div>
+					{/* Mobile Menu */}
+					<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+						<SheetTrigger asChild className="sm:hidden">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="sm:hidden bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20"
+							>
+								<Menu className="h-6 w-6" />
+								<span className="sr-only">Open menu</span>
+							</Button>
+						</SheetTrigger>
+						<SheetContent side="right" className="w-[300px] sm:w-[400px] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
+							<SheetHeader>
+								<SheetTitle className="text-2xl font-bold text-gray-800 dark:text-white">Menu</SheetTitle>
+								<SheetDescription className="text-gray-600 dark:text-gray-400">
+									Navigate to different sections
+								</SheetDescription>
+							</SheetHeader>
+							<div className="mt-8 flex flex-col gap-4">
+								<Button
+									variant="outline"
+									className="w-full justify-start text-left h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+									onClick={() => {
+										router.push('/about')
+										setMobileMenuOpen(false)
+									}}
+								>
+									<BookOpen className="mr-3 h-5 w-5" />
+									<div className="flex flex-col items-start">
+										<span className="font-semibold text-gray-800 dark:text-white">About</span>
+										<span className="text-xs text-gray-600 dark:text-gray-400">Learn about our app</span>
+									</div>
+								</Button>
+								<Button
+									variant="outline"
+									className="w-full justify-start text-left h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+									onClick={() => {
+										router.push('/contact')
+										setMobileMenuOpen(false)
+									}}
+								>
+									<MessageSquare className="mr-3 h-5 w-5" />
+									<div className="flex flex-col items-start">
+										<span className="font-semibold text-gray-800 dark:text-white">Contact</span>
+										<span className="text-xs text-gray-600 dark:text-gray-400">Get in touch with us</span>
+									</div>
+								</Button>
+							</div>
+						</SheetContent>
+					</Sheet>
 				</div>
 			</div>
       {/* Background image */}
