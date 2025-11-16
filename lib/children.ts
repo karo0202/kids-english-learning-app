@@ -41,29 +41,9 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
   // Load from localStorage immediately (synchronous)
   const local = loadLocalChildren(parentId, userEmail)
   
-  // ALWAYS try email-based migration from localStorage first (even if we have local children)
-  // This ensures we find children that might be stored under a different parentId
-  if (userEmail) {
-    const childrenByEmail = findChildrenByEmail(userEmail, parentId)
-    if (childrenByEmail.length > 0) {
-      console.log(`Email migration found ${childrenByEmail.length} children for ${userEmail}`)
-      // Merge with local children (avoid duplicates)
-      const localIds = new Set(local.map(c => c.id))
-      const newFromEmail = childrenByEmail.filter(c => !localIds.has(c.id))
-      const merged = [...local, ...newFromEmail]
-      
-      if (merged.length > local.length) {
-        console.log(`Merged ${merged.length} children (${local.length} local + ${newFromEmail.length} from email migration)`)
-        childCache.set(parentId, merged)
-        persistLocalChildren(parentId, merged)
-        // Start Firestore sync to consolidate everything
-        if (typeof window !== 'undefined') {
-          void refreshChildrenFromFirestore(parentId, userEmail)
-        }
-        return cloneChildren(merged)
-      }
-    }
-  }
+  // NOTE: We removed automatic email migration here to prevent deleted children from being restored
+  // Email migration only happens in forceMigrateChildrenByEmail (explicit migration)
+  // This ensures that when a child is deleted, it stays deleted even after refresh
   
   // If we have local data, cache it and start Firestore sync
   if (local.length > 0) {
