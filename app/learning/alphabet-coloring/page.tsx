@@ -13,16 +13,19 @@ export default function AlphabetColoringPage() {
   const [showLock, setShowLock] = useState(false)
 
   useEffect(() => {
-    const user = getUserSession()
-    if (!user) {
-      router.push('/login')
-    } else {
-      const access = checkModuleAccess('alphabet-coloring')
-      if (!access.hasAccess) {
-        setShowLock(true)
+    async function checkAccess() {
+      const user = getUserSession()
+      if (!user) {
+        router.push('/login')
+      } else {
+        const access = await checkModuleAccess('alphabet-coloring')
+        if (!access.hasAccess) {
+          setShowLock(true)
+        }
+        setLoading(false)
       }
-      setLoading(false)
     }
+    checkAccess()
   }, [router])
 
   if (loading) {

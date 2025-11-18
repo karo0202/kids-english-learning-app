@@ -74,11 +74,29 @@ export default function LearningPage() {
     )
   }
 
-  const subscriptionStatus = getSubscriptionStatus()
+  const [subscriptionStatus, setSubscriptionStatus] = useState<any>({ isTrial: false, isActive: false })
+  const [moduleAccess, setModuleAccess] = useState<Record<string, any>>({})
+
+  useEffect(() => {
+    async function loadSubscription() {
+      const status = await getSubscriptionStatus()
+      setSubscriptionStatus(status)
+      
+      // Pre-load module access for all modules
+      const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
+      const accessMap: Record<string, any> = {}
+      for (const moduleId of modules) {
+        accessMap[moduleId] = await checkModuleAccess(moduleId)
+      }
+      setModuleAccess(accessMap)
+    }
+    loadSubscription()
+  }, [])
 
   // Helper function to handle module click with access check
-  const handleModuleClick = (moduleId: string, moduleName: string) => {
-    const access = checkModuleAccess(moduleId)
+  const handleModuleClick = async (moduleId: string, moduleName: string) => {
+    const access = await checkModuleAccess(moduleId)
+    setModuleAccess(prev => ({ ...prev, [moduleId]: access }))
     if (access.hasAccess) {
       router.push(`/learning/${moduleId}`)
     } else {
@@ -248,7 +266,7 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors flex items-center justify-center gap-2">
                     📚 Reading
-                    {!checkModuleAccess('reading').hasAccess && (
+                    {!moduleAccess['reading']?.hasAccess && (
                       <Lock className="w-4 h-4 text-yellow-600" />
                     )}
                   </h3>
@@ -314,7 +332,7 @@ export default function LearningPage() {
             >
               <Card 
                 className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !checkModuleAccess('speaking').hasAccess ? 'opacity-75' : ''
+                  !moduleAccess['speaking']?.hasAccess ? 'opacity-75' : ''
                 }`}
                 onClick={() => handleModuleClick('speaking', 'Speaking')}
               >
@@ -331,7 +349,7 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors flex items-center justify-center gap-2">
                     🎤 Speaking
-                    {!checkModuleAccess('speaking').hasAccess && (
+                    {!moduleAccess['speaking']?.hasAccess && (
                       <Lock className="w-4 h-4 text-yellow-600" />
                     )}
                   </h3>
@@ -434,7 +452,7 @@ export default function LearningPage() {
             >
               <Card 
                 className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !checkModuleAccess('puzzle').hasAccess ? 'opacity-75' : ''
+                  !moduleAccess['puzzle']?.hasAccess ? 'opacity-75' : ''
                 }`}
                 onClick={() => handleModuleClick('puzzle', 'Puzzles')}
               >
@@ -451,7 +469,7 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors flex items-center justify-center gap-2">
                     🧩 Puzzles
-                    {!checkModuleAccess('puzzle').hasAccess && (
+                    {!moduleAccess['puzzle']?.hasAccess && (
                       <Lock className="w-4 h-4 text-yellow-600" />
                     )}
                   </h3>
@@ -483,7 +501,7 @@ export default function LearningPage() {
             >
               <Card 
                 className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !checkModuleAccess('alphabet-coloring').hasAccess ? 'opacity-75' : ''
+                  !moduleAccess['alphabet-coloring']?.hasAccess ? 'opacity-75' : ''
                 }`}
                 onClick={() => handleModuleClick('alphabet-coloring', 'Coloring')}
               >
@@ -500,7 +518,7 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors flex items-center justify-center gap-2">
                     🎨 Coloring
-                    {!checkModuleAccess('alphabet-coloring').hasAccess && (
+                    {!moduleAccess['alphabet-coloring']?.hasAccess && (
                       <Lock className="w-4 h-4 text-yellow-600" />
                     )}
                   </h3>

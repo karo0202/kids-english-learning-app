@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { checkModuleAccess, getSubscriptionStatus } from '@/lib/subscription'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import WhopPurchaseButton from '@/components/whop-purchase-button'
 
 interface SubscriptionLockOverlayProps {
   moduleId: string
@@ -19,8 +21,18 @@ export default function SubscriptionLockOverlay({
   onSubscribe
 }: SubscriptionLockOverlayProps) {
   const router = useRouter()
-  const access = checkModuleAccess(moduleId)
-  const status = getSubscriptionStatus()
+  const [access, setAccess] = useState<any>({ isLocked: true })
+  const [status, setStatus] = useState<any>({ isTrial: false, trialDaysRemaining: 0 })
+
+  useEffect(() => {
+    async function loadAccess() {
+      const accessData = await checkModuleAccess(moduleId)
+      const statusData = await getSubscriptionStatus()
+      setAccess(accessData)
+      setStatus(statusData)
+    }
+    loadAccess()
+  }, [moduleId])
 
   if (!access.isLocked) return null
 
@@ -82,14 +94,10 @@ export default function SubscriptionLockOverlay({
             )}
 
             <div className="space-y-3">
-              <Button
-                onClick={handleSubscribe}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-6 rounded-xl shadow-lg"
+              <WhopPurchaseButton
+                className="w-full text-lg py-6 rounded-xl shadow-lg"
                 size="lg"
-              >
-                <Crown className="w-5 h-5 mr-2" />
-                Subscribe Now
-              </Button>
+              />
               <Button
                 onClick={() => router.back()}
                 variant="outline"

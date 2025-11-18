@@ -77,12 +77,17 @@ export function getTrialDaysRemaining(): number {
   return Math.max(0, remaining)
 }
 
-// Check if user has active subscription (for future implementation)
-export function hasActiveSubscription(): boolean {
+// Check if user has active subscription (including Whop)
+export async function hasActiveSubscription(): Promise<boolean> {
   if (typeof window === 'undefined') return false
   
-  // For now, check if user has subscription flag
-  // In future, this will check payment status
+  // First check Whop subscription
+  const whopSubscription = await checkWhopSubscription()
+  if (whopSubscription) {
+    return true
+  }
+  
+  // Then check local subscription flag
   const subscriptionStr = localStorage.getItem('user_subscription')
   if (subscriptionStr) {
     try {
@@ -100,13 +105,96 @@ export function hasActiveSubscription(): boolean {
   return false
 }
 
-// Get subscription status
-export function getSubscriptionStatus(): SubscriptionStatus {
-  const hasSubscription = hasActiveSubscription()
+// Check Whop subscription status
+async function checkWhopSubscription(): Promise<boolean> {
+  if (typeof window === 'undefined') return false
+  
+  try {
+    // Get stored Whop subscription
+    const { getStoredWhopSubscription } = await import('@/lib/whop')
+    const whopSub = getStoredWhopSubscription()
+    
+    if (whopSub && whopSub.status === 'active') {
+      // Check if subscription hasn't expired
+      if (!whopSub.expiresAt || new Date(whopSub.expiresAt) > new Date()) {
+        return true
+      }
+    }
+    
+    // Also verify with server if we have a user ID
+    const { getUserSession } = await import('@/lib/simple-auth')
+    const user = getUserSession()
+    if (user?.id) {
+      try {
+        const response = await fetch('/api/whop/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id }),
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          if (data.isValid && data.subscription?.status === 'active') {
+            // Store the verified subscription
+            const { storeWhopSubscription } = await import('@/lib/whop')
+            storeWhopSubscription(data.subscription)
+            return true
+          }
+        }
+      } catch (error) {
+        console.error('Error verifying Whop subscription:', error)
+      }
+    }
+  } catch (error) {
+    console.error('Error checking Whop subscription:', error)
+  }
+  
+  return false
+}
+
+// Get subscription status (async to support Whop verification)
+export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
+  const hasSubscription = await hasActiveSubscription()
   const isTrial = isWithinFreeTrial()
   const trialDaysRemaining = getTrialDaysRemaining()
   
+  // Check if it's a Whop subscription
   if (hasSubscription) {
+    try {
+      const { getStoredWhopSubscription } = await import('@/lib/whop')
+      const whopSub = getStoredWhopSubscription()
+      
+      if (whopSub && whopSub.status === 'active') {
+        return {
+          isActive: true,
+          isTrial: false,
+          trialDaysRemaining: 0,
+          subscriptionType: 'whop',
+          expiresAt: whopSub.expiresAt ? new Date(whopSub.expiresAt) : undefined,
+          whopSubscriptionId: whopSub.id
+        }
+      }
+    } catch (error) {
+      console.error('Error checking Whop subscription:', error)
+    }
+    
+    // Regular premium subscription
+    const subscriptionStr = localStorage.getItem('user_subscription')
+    if (subscriptionStr) {
+      try {
+        const subscription = JSON.parse(subscriptionStr)
+        return {
+          isActive: true,
+          isTrial: false,
+          trialDaysRemaining: 0,
+          subscriptionType: 'premium',
+          expiresAt: subscription.expiresAt ? new Date(subscription.expiresAt) : undefined
+        }
+      } catch {
+        // Fall through
+      }
+    }
+    
     return {
       isActive: true,
       isTrial: false,
@@ -132,9 +220,9 @@ export function getSubscriptionStatus(): SubscriptionStatus {
   }
 }
 
-// Check if user has access to a specific module
-export function checkModuleAccess(moduleId: string): ModuleAccess {
-  const status = getSubscriptionStatus()
+// Check if user has access to a specific module (async to support Whop)
+export async function checkModuleAccess(moduleId: string): Promise<ModuleAccess> {
+  const status = await getSubscriptionStatus()
   const moduleIdLower = moduleId.toLowerCase()
   
   // Free modules are always accessible during trial
