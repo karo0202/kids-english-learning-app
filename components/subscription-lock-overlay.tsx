@@ -24,10 +24,19 @@ export default function SubscriptionLockOverlay({
   const [status, setStatus] = useState<any>({ isTrial: false, trialDaysRemaining: 0 })
 
   useEffect(() => {
-    const accessData = checkModuleAccess(moduleId)
-    const statusData = getSubscriptionStatus()
-    setAccess(accessData)
-    setStatus(statusData)
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    try {
+      const accessData = checkModuleAccess(moduleId)
+      const statusData = getSubscriptionStatus()
+      setAccess(accessData)
+      setStatus(statusData)
+    } catch (error) {
+      console.error('Error checking module access:', error)
+      // Set default locked state on error
+      setAccess({ isLocked: true, hasAccess: false, requiresSubscription: true })
+    }
   }, [moduleId])
 
   if (!access.isLocked) return null

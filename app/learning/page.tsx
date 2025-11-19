@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getUserSession } from '@/lib/simple-auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -78,29 +78,44 @@ export default function LearningPage() {
   const [moduleAccess, setModuleAccess] = useState<Record<string, any>>({})
 
   useEffect(() => {
-    const status = getSubscriptionStatus()
-    setSubscriptionStatus(status)
+    // Only run on client side
+    if (typeof window === 'undefined') return
     
-    // Pre-load module access for all modules
-    const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
-    const accessMap: Record<string, any> = {}
-    for (const moduleId of modules) {
-      accessMap[moduleId] = checkModuleAccess(moduleId)
+    try {
+      const status = getSubscriptionStatus()
+      setSubscriptionStatus(status)
+      
+      // Pre-load module access for all modules
+      const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
+      const accessMap: Record<string, any> = {}
+      for (const moduleId of modules) {
+        accessMap[moduleId] = checkModuleAccess(moduleId)
+      }
+      setModuleAccess(accessMap)
+    } catch (error) {
+      console.error('Error loading subscription status:', error)
+      // Set default state on error
+      setSubscriptionStatus({ isTrial: false, isActive: false, trialDaysRemaining: 0, subscriptionType: 'free' })
     }
-    setModuleAccess(accessMap)
   }, [])
 
   // Helper function to handle module click with access check
-  const handleModuleClick = (moduleId: string, moduleName: string) => {
-    const access = checkModuleAccess(moduleId)
-    setModuleAccess(prev => ({ ...prev, [moduleId]: access }))
-    if (access.hasAccess) {
-      router.push(`/learning/${moduleId}`)
-    } else {
-      // Show lock overlay or navigate to subscription
+  const handleModuleClick = useCallback((moduleId: string, moduleName: string) => {
+    try {
+      const access = checkModuleAccess(moduleId)
+      setModuleAccess(prev => ({ ...prev, [moduleId]: access }))
+      if (access.hasAccess) {
+        router.push(`/learning/${moduleId}`)
+      } else {
+        // Show lock overlay or navigate to subscription
+        router.push(`/learning/${moduleId}`)
+      }
+    } catch (error) {
+      console.error('Error checking module access:', error)
+      // Navigate anyway, the page will show the lock overlay
       router.push(`/learning/${moduleId}`)
     }
-  }
+  }, [router])
 
   if (children.length === 0) {
     return (
