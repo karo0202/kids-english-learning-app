@@ -935,33 +935,38 @@ export default function ColoringCard({
 
   return (
     <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
-      {/* Letter and Word Header */}
-      <div className="text-center">
-        <motion.div
-          className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-700 mb-2 sm:mb-4 cursor-pointer touch-manipulation"
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onLetterClick}
-        >
-          {letter}
+      {/* Letter and Word Header with Enhanced Design */}
+      <div className="text-center mb-6">
+        <div className="bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 dark:from-purple-900/30 dark:via-pink-900/30 dark:to-blue-900/30 rounded-2xl p-6 mb-4 border border-purple-200/50 dark:border-purple-700/50 shadow-lg relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          <motion.div
+            className="text-7xl sm:text-8xl md:text-9xl font-bold text-gray-800 dark:text-white mb-2 sm:mb-4 cursor-pointer touch-manipulation relative z-10"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onLetterClick}
+          >
+            {letter}
+          </motion.div>
+          <motion.p
+            className="text-2xl sm:text-3xl font-semibold text-gray-700 dark:text-gray-200 cursor-pointer touch-manipulation relative z-10"
+            whileHover={{ scale: 1.05 }}
+            onClick={onLetterClick}
+          >
+            {word}
+          </motion.p>
+        </div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onLetterClick}
+            className="mt-2 min-h-[44px] touch-manipulation bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md"
+          >
+            <Volume2 className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Listen: {letter} for {word}</span>
+            <span className="sm:hidden">Listen</span>
+          </Button>
         </motion.div>
-        <motion.p
-          className="text-2xl sm:text-3xl font-semibold text-gray-600 cursor-pointer touch-manipulation"
-          whileHover={{ scale: 1.05 }}
-          onClick={onLetterClick}
-        >
-          {word}
-        </motion.p>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onLetterClick}
-          className="mt-2 min-h-[44px] touch-manipulation"
-        >
-          <Volume2 className="w-4 h-4 sm:mr-2" />
-          <span className="hidden sm:inline">Listen: {letter} for {word}</span>
-          <span className="sm:hidden">Listen</span>
-        </Button>
       </div>
 
       {/* Picture Coloring Area with Enhanced Design */}
