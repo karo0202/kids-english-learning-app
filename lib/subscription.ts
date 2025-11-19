@@ -149,52 +149,13 @@ export function getSubscriptionStatus(): SubscriptionStatus {
 }
 
 // Check if user has access to a specific module
+// All modules are now accessible - subscription system removed
 export function checkModuleAccess(moduleId: string): ModuleAccess {
-  const status = getSubscriptionStatus()
-  const moduleIdLower = moduleId.toLowerCase()
-  
-  // Free modules are always accessible (grammar, writing, games)
-  if (FREE_MODULES.includes(moduleIdLower as any)) {
-    return {
-      hasAccess: true,
-      isLocked: false,
-      requiresSubscription: false
-    }
-  }
-  
-  // Premium modules require subscription
-  if (PREMIUM_MODULES.includes(moduleIdLower as any)) {
-    if (status.isActive) {
-      return {
-        hasAccess: true,
-        isLocked: false,
-        requiresSubscription: true
-      }
-    }
-    
-    if (status.isTrial) {
-      return {
-        hasAccess: false,
-        isLocked: true,
-        requiresSubscription: true,
-        message: `This premium module requires a subscription. You have ${status.trialDaysRemaining} days left in your free trial.`
-      }
-    }
-    
-    return {
-      hasAccess: false,
-      isLocked: true,
-      requiresSubscription: true,
-      message: 'This premium module requires a subscription.'
-    }
-  }
-  
-  // Unknown module - default to locked
+  // All modules are always accessible
   return {
-    hasAccess: false,
-    isLocked: true,
-    requiresSubscription: true,
-    message: 'This module is not available.'
+    hasAccess: true,
+    isLocked: false,
+    requiresSubscription: false
   }
 }
 

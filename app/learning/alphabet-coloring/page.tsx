@@ -3,24 +3,17 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getUserSession } from '@/lib/simple-auth'
-import { checkModuleAccess } from '@/lib/subscription'
 import AlphabetColoringSection from '@/components/learning/alphabet-coloring-section'
-import SubscriptionLockOverlay from '@/components/subscription-lock-overlay'
 
 export default function AlphabetColoringPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [showLock, setShowLock] = useState(false)
 
   useEffect(() => {
     const user = getUserSession()
     if (!user) {
       router.push('/login')
     } else {
-      const access = checkModuleAccess('alphabet-coloring')
-      if (!access.hasAccess) {
-        setShowLock(true)
-      }
       setLoading(false)
     }
   }, [router])
@@ -34,10 +27,6 @@ export default function AlphabetColoringPage() {
         </div>
       </div>
     )
-  }
-
-  if (showLock) {
-    return <SubscriptionLockOverlay moduleId="alphabet-coloring" moduleName="Coloring" />
   }
 
   return <AlphabetColoringSection />

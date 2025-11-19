@@ -13,8 +13,6 @@ import {
 import { getCurrentChild, getChildrenSync } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
-import { checkModuleAccess, getSubscriptionStatus } from '@/lib/subscription'
-import { Lock, Crown } from 'lucide-react'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -74,47 +72,9 @@ export default function LearningPage() {
     )
   }
 
-  const [subscriptionStatus, setSubscriptionStatus] = useState<any>({ isTrial: false, isActive: false })
-  const [moduleAccess, setModuleAccess] = useState<Record<string, any>>({})
-
-  useEffect(() => {
-    // Only run on client side
-    if (typeof window === 'undefined') return
-    
-    try {
-      const status = getSubscriptionStatus()
-      setSubscriptionStatus(status)
-      
-      // Pre-load module access for all modules
-      const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
-      const accessMap: Record<string, any> = {}
-      for (const moduleId of modules) {
-        accessMap[moduleId] = checkModuleAccess(moduleId)
-      }
-      setModuleAccess(accessMap)
-    } catch (error) {
-      console.error('Error loading subscription status:', error)
-      // Set default state on error
-      setSubscriptionStatus({ isTrial: false, isActive: false, trialDaysRemaining: 0, subscriptionType: 'free' })
-    }
-  }, [])
-
-  // Helper function to handle module click with access check
+  // Helper function to handle module click
   const handleModuleClick = useCallback((moduleId: string, moduleName: string) => {
-    try {
-      const access = checkModuleAccess(moduleId)
-      setModuleAccess(prev => ({ ...prev, [moduleId]: access }))
-      if (access.hasAccess) {
-        router.push(`/learning/${moduleId}`)
-      } else {
-        // Show lock overlay or navigate to subscription
-        router.push(`/learning/${moduleId}`)
-      }
-    } catch (error) {
-      console.error('Error checking module access:', error)
-      // Navigate anyway, the page will show the lock overlay
-      router.push(`/learning/${moduleId}`)
-    }
+    router.push(`/learning/${moduleId}`)
   }, [router])
 
   if (children.length === 0) {
@@ -260,9 +220,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !moduleAccess['reading']?.hasAccess ? 'opacity-75' : ''
-                }`}
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
                 onClick={() => handleModuleClick('reading', 'Reading')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-cyan-600/0 group-hover:from-blue-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
@@ -278,16 +236,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors flex items-center justify-center gap-2">
                     📚 Reading
-                    {!moduleAccess['reading']?.hasAccess && (
-                      <Lock className="w-4 h-4 text-yellow-600" />
-                    )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!moduleAccess['reading']?.hasAccess ? (
-                      <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
-                    ) : (
-                      'Stories, vocabulary, and comprehension'
-                    )}
+                    Stories, vocabulary, and comprehension
                   </p>
                   <div className="text-sm text-blue-600 dark:text-blue-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
                     <span>Start Reading</span>
@@ -343,9 +294,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !moduleAccess['speaking']?.hasAccess ? 'opacity-75' : ''
-                }`}
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
                 onClick={() => handleModuleClick('speaking', 'Speaking')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-600/0 group-hover:from-purple-500/15 group-hover:to-pink-600/15 transition-all duration-500"></div>
@@ -361,16 +310,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors flex items-center justify-center gap-2">
                     🎤 Speaking
-                    {!moduleAccess['speaking']?.hasAccess && (
-                      <Lock className="w-4 h-4 text-yellow-600" />
-                    )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!moduleAccess['speaking']?.hasAccess ? (
-                      <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
-                    ) : (
-                      'Pronunciation and conversation'
-                    )}
+                    Pronunciation and conversation
                   </p>
                   <div className="text-sm text-purple-600 dark:text-purple-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
                     <span>Start Speaking</span>
@@ -463,9 +405,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !moduleAccess['puzzle']?.hasAccess ? 'opacity-75' : ''
-                }`}
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
                 onClick={() => handleModuleClick('puzzle', 'Puzzles')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-600/0 group-hover:from-orange-500/15 group-hover:to-orange-600/15 transition-all duration-500"></div>
@@ -481,16 +421,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors flex items-center justify-center gap-2">
                     🧩 Puzzles
-                    {!moduleAccess['puzzle']?.hasAccess && (
-                      <Lock className="w-4 h-4 text-yellow-600" />
-                    )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!moduleAccess['puzzle']?.hasAccess ? (
-                      <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
-                    ) : (
-                      'Solve word and sentence puzzles'
-                    )}
+                    Solve word and sentence puzzles
                   </p>
                   <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
                     <span>Start Solving</span>
@@ -512,9 +445,7 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !moduleAccess['alphabet-coloring']?.hasAccess ? 'opacity-75' : ''
-                }`}
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
                 onClick={() => handleModuleClick('alphabet-coloring', 'Coloring')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-600/0 group-hover:from-cyan-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
@@ -530,16 +461,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors flex items-center justify-center gap-2">
                     🎨 Coloring
-                    {!moduleAccess['alphabet-coloring']?.hasAccess && (
-                      <Lock className="w-4 h-4 text-yellow-600" />
-                    )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!moduleAccess['alphabet-coloring']?.hasAccess ? (
-                      <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
-                    ) : (
-                      'Color letters and learn alphabet'
-                    )}
+                    Color letters and learn alphabet
                   </p>
                   <div className="text-sm text-cyan-600 dark:text-cyan-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
                     <span>Start Coloring</span>
