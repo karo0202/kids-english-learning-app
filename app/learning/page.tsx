@@ -78,24 +78,21 @@ export default function LearningPage() {
   const [moduleAccess, setModuleAccess] = useState<Record<string, any>>({})
 
   useEffect(() => {
-    async function loadSubscription() {
-      const status = await getSubscriptionStatus()
-      setSubscriptionStatus(status)
-      
-      // Pre-load module access for all modules
-      const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
-      const accessMap: Record<string, any> = {}
-      for (const moduleId of modules) {
-        accessMap[moduleId] = await checkModuleAccess(moduleId)
-      }
-      setModuleAccess(accessMap)
+    const status = getSubscriptionStatus()
+    setSubscriptionStatus(status)
+    
+    // Pre-load module access for all modules
+    const modules = ['reading', 'speaking', 'puzzle', 'alphabet-coloring']
+    const accessMap: Record<string, any> = {}
+    for (const moduleId of modules) {
+      accessMap[moduleId] = checkModuleAccess(moduleId)
     }
-    loadSubscription()
+    setModuleAccess(accessMap)
   }, [])
 
   // Helper function to handle module click with access check
-  const handleModuleClick = async (moduleId: string, moduleName: string) => {
-    const access = await checkModuleAccess(moduleId)
+  const handleModuleClick = (moduleId: string, moduleName: string) => {
+    const access = checkModuleAccess(moduleId)
     setModuleAccess(prev => ({ ...prev, [moduleId]: access }))
     if (access.hasAccess) {
       router.push(`/learning/${moduleId}`)

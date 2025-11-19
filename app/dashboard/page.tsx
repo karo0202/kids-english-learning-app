@@ -12,7 +12,6 @@ import {
   Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
-import WhopPurchaseButton from '@/components/whop-purchase-button'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -370,10 +369,13 @@ const handleDeleteChild = async (childId: string) => {
                       </p>
                     </div>
                   </div>
-                  <WhopPurchaseButton
+                  <Button
+                    onClick={() => router.push('/contact')}
                     className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-6 py-2"
                     size="lg"
-                  />
+                  >
+                    Upgrade Now
+                  </Button>
                 </div>
               </CardContent>
             </Card>

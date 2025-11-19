@@ -14,19 +14,16 @@ export default function SpeakingPage() {
   const [showLock, setShowLock] = useState(false)
 
   useEffect(() => {
-    async function checkAccess() {
-      const user = getUserSession()
-      if (!user) {
-        router.push('/login')
-      } else {
-        const access = await checkModuleAccess('speaking')
-        if (!access.hasAccess) {
-          setShowLock(true)
-        }
-        setLoading(false)
+    const user = getUserSession()
+    if (!user) {
+      router.push('/login')
+    } else {
+      const access = checkModuleAccess('speaking')
+      if (!access.hasAccess) {
+        setShowLock(true)
       }
+      setLoading(false)
     }
-    checkAccess()
   }, [router])
 
   if (loading) {
