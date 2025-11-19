@@ -261,17 +261,19 @@ export default function LearningPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Card 
-                className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-blue-300/50 dark:hover:border-blue-500/30 transition-all duration-300"
                 onClick={() => handleModuleClick('reading', 'Reading')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-cyan-600/0 group-hover:from-blue-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/25 to-cyan-400/25 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg relative"
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-xl relative overflow-hidden"
                     whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
                     transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
                   >
                     <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent animate-shimmer"></div>
                     <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '0s' }}></span>
                     <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '1s' }}></span>
                   </motion.div>

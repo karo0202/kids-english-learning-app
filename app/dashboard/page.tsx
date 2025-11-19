@@ -355,27 +355,35 @@ const handleDeleteChild = async (childId: string) => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <Card className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white border-0 shadow-xl">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white border-0 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+              <CardContent className="p-6 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <motion.div 
+                      className="w-16 h-16 rounded-full bg-white/25 backdrop-blur-md flex items-center justify-center shadow-lg"
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    >
                       <Sparkles className="w-8 h-8 text-white" />
-                    </div>
+                    </motion.div>
                     <div>
                       <h3 className="text-xl font-bold mb-1">Unlock Premium Features</h3>
-                      <p className="text-white/90">
+                      <p className="text-white/95 font-medium">
                         Get unlimited access, AI personalization, offline mode, and more!
                       </p>
                     </div>
                   </div>
-                  <Button
-                    onClick={() => router.push('/contact')}
-                    className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-6 py-2"
-                    size="lg"
-                  >
-                    Upgrade Now
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      onClick={() => router.push('/contact')}
+                      className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-6 py-2 shadow-xl"
+                      size="lg"
+                    >
+                      Upgrade Now
+                    </Button>
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
@@ -500,23 +508,28 @@ const handleDeleteChild = async (childId: string) => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="card-kid text-center py-12">
-                <CardContent>
+              <Card className="card-kid text-center py-16 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-violet-500/5"></div>
+                <CardContent className="relative z-10">
                   <motion.div 
-                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-violet-500 flex items-center justify-center shadow-lg"
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-violet-500 flex items-center justify-center shadow-2xl relative"
+                    animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
                   >
-                    <User className="w-10 h-10 text-white" />
+                    <User className="w-12 h-12 text-white" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400/50 to-pink-400/50 animate-pulse"></div>
                   </motion.div>
-                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">No children added yet</h3>
-                  <p className="text-gray-600 dark:text-white/70 mb-6">Add your first child to start their learning journey!</p>
-                  <Button 
-                    onClick={() => setIsAddingChild(true)}
-                    className="btn-primary-kid"
-                  >
-                    Add Your First Child
-                  </Button>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400 mb-3">No children added yet</h3>
+                  <p className="text-gray-600 dark:text-white/70 mb-8 text-lg">Add your first child to start their amazing learning journey! 🚀</p>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button 
+                      onClick={() => setIsAddingChild(true)}
+                      className="btn-primary-kid text-lg px-8 py-6 shadow-xl"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add Your First Child
+                    </Button>
+                  </motion.div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -530,54 +543,61 @@ const handleDeleteChild = async (childId: string) => {
                   transition={{ delay: index * 0.1, duration: 0.3 }}
                   whileHover={{ y: -5 }}
                 >
-                  <Card className="card-kid relative overflow-hidden group">
+                  <Card className="card-kid relative overflow-hidden group border-2 border-transparent hover:border-purple-300/50 dark:hover:border-purple-500/30 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-pink-500/0 to-violet-500/0 group-hover:from-purple-500/10 group-hover:via-pink-500/10 group-hover:to-violet-500/10 transition-all duration-500"></div>
-                    <CardContent className="p-6 relative">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <CardContent className="p-6 relative z-10">
                       <div className="text-center">
                         <motion.div 
-                          className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-violet-500 flex items-center justify-center shadow-lg"
-                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-violet-500 flex items-center justify-center shadow-xl relative overflow-hidden"
+                          whileHover={{ scale: 1.15, rotate: [0, -10, 10, 0] }}
                           transition={{ type: "spring", stiffness: 300 }}
                         >
-                          <span className="text-2xl">👶</span>
+                          <span className="text-3xl relative z-10">👶</span>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent animate-shimmer"></div>
                         </motion.div>
-                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-1">{child.name}</h3>
-                        <p className="text-gray-600 dark:text-white/70 mb-4">{child.age} years old</p>
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1 bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">{child.name}</h3>
+                        <p className="text-gray-600 dark:text-white/70 mb-5 font-medium">{child.age} years old</p>
                         <div className="flex gap-2">
-                          <Button 
-                            className="flex-1 btn-primary-kid"
-                            onClick={() => router.push('/learning')}
-                          >
-                            Start Learning
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            size="icon"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 rounded-xl min-w-[44px] min-h-[44px] touch-manipulation relative z-10"
-                            style={{ touchAction: 'manipulation' }}
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              console.log('Delete onClick triggered for:', child.id)
-                              handleDeleteChild(child.id)
-                            }}
-                            onTouchStart={(e) => {
-                              e.stopPropagation()
-                            }}
-                            onTouchEnd={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              console.log('Delete onTouchEnd triggered for:', child.id)
-                              handleDeleteChild(child.id)
-                            }}
-                            onMouseDown={(e) => {
-                              e.stopPropagation()
-                            }}
-                            title="Delete child profile"
-                            aria-label="Delete child profile"
-                          >
-                            <Trash2 className="w-5 h-5 pointer-events-none" />
-                          </Button>
+                          <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                            <Button 
+                              className="w-full btn-primary-kid shadow-lg hover:shadow-xl"
+                              onClick={() => router.push('/learning')}
+                            >
+                              <GraduationCap className="w-4 h-4 mr-2" />
+                              Start Learning
+                            </Button>
+                          </motion.div>
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Button 
+                              variant="outline"
+                              size="icon"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 border-red-200 dark:border-red-500/30 rounded-xl min-w-[44px] min-h-[44px] touch-manipulation relative z-10 shadow-sm hover:shadow-md transition-all"
+                              style={{ touchAction: 'manipulation' }}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                console.log('Delete onClick triggered for:', child.id)
+                                handleDeleteChild(child.id)
+                              }}
+                              onTouchStart={(e) => {
+                                e.stopPropagation()
+                              }}
+                              onTouchEnd={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                console.log('Delete onTouchEnd triggered for:', child.id)
+                                handleDeleteChild(child.id)
+                              }}
+                              onMouseDown={(e) => {
+                                e.stopPropagation()
+                              }}
+                              title="Delete child profile"
+                              aria-label="Delete child profile"
+                            >
+                              <Trash2 className="w-5 h-5 pointer-events-none" />
+                            </Button>
+                          </motion.div>
                         </div>
                       </div>
                     </CardContent>
@@ -596,20 +616,22 @@ const handleDeleteChild = async (childId: string) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.05, y: -8 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Card className="card-kid cursor-pointer group relative overflow-hidden" onClick={() => router.push('/learning/reading')}>
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-600/0 group-hover:from-blue-500/10 group-hover:to-blue-600/10 transition-all duration-500"></div>
-                <CardContent className="p-6 text-center relative">
+              <Card className="card-kid cursor-pointer group relative overflow-hidden border-2 border-transparent hover:border-blue-300/50 dark:hover:border-blue-500/30 transition-all duration-300" onClick={() => router.push('/learning/reading')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-600/0 group-hover:from-blue-500/15 group-hover:to-blue-600/15 transition-all duration-500"></div>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <CardContent className="p-6 text-center relative z-10">
                   <motion.div 
-                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg"
-                    whileHover={{ rotate: 5, scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-xl relative overflow-hidden"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
                   >
-                    <BookOpen className="w-8 h-8 text-white" />
+                    <BookOpen className="w-10 h-10 text-white relative z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent animate-shimmer"></div>
                   </motion.div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Reading</h3>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Reading</h3>
                   <p className="text-gray-600 dark:text-white/70 text-sm">Stories and vocabulary</p>
                 </CardContent>
               </Card>

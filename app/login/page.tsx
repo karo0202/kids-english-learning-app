@@ -146,29 +146,43 @@ export default function LoginPage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md relative z-10"
       >
-        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl">
-          <CardHeader className="text-center pb-2">
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-purple-500/10 to-pink-500/10"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-full blur-3xl"></div>
+          <CardHeader className="text-center pb-2 relative z-10">
             <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-3xl">🎓</span>
-              </div>
+              <motion.div 
+                className="w-20 h-20 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <span className="text-3xl relative z-10">🎓</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent animate-shimmer"></div>
+              </motion.div>
             </div>
             <motion.h1 
-              className="text-3xl font-bold text-white"
+              className="text-3xl font-bold text-white bg-gradient-to-r from-white via-violet-100 to-white bg-clip-text text-transparent"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
               Welcome Back!
             </motion.h1>
-            <p className="text-white/80">Continue your learning adventure</p>
+            <p className="text-white/90 font-medium">Continue your learning adventure</p>
           </CardHeader>
 
-          <CardContent className="space-y-6 p-8">
+          <CardContent className="space-y-6 p-8 relative z-10">
             {error && (
-              <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-center">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-500/20 backdrop-blur-sm border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-center shadow-lg"
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="relative">
@@ -181,7 +195,7 @@ export default function LoginPage() {
                   placeholder="Email Address"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur text-white placeholder-white/60 focus:border-violet-400 focus:bg-white/20 transition-all duration-300"
+                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300"
                   required
                 />
               </div>
@@ -196,7 +210,7 @@ export default function LoginPage() {
                   placeholder="Password"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur text-white placeholder-white/60 focus:border-violet-400 focus:bg-white/20 transition-all duration-300"
+                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300"
                   required
                 />
               </div>
@@ -208,9 +222,10 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white py-4 text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+                  className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white py-4 text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold relative overflow-hidden group"
                 >
-                  {loading ? 'Signing In...' : 'Continue Learning! 🎓'}
+                  <span className="relative z-10">{loading ? 'Signing In...' : 'Continue Learning! 🎓'}</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/50 to-purple-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </Button>
               </motion.div>
             </form>

@@ -511,9 +511,18 @@ button,
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
     background-size: 1000px 100%;
     animation: shimmer-flow 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
   }
 
   .animate-bounce-in {
@@ -588,7 +597,29 @@ button,
   }
   .hover-lift:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(147, 51, 234, 0.2);
+  }
+
+  /* Enhanced shadow utilities */
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3), 0 0 40px rgba(236, 72, 153, 0.2);
+  }
+
+  .shadow-glow-lg {
+    box-shadow: 0 0 30px rgba(147, 51, 234, 0.4), 0 0 60px rgba(236, 72, 153, 0.3);
+  }
+
+  /* Glass morphism utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   .hover-glow {
@@ -705,6 +736,13 @@ button,
   @apply btn-kid bg-gradient-to-r from-purple-500 via-pink-500 to-violet-500 hover:from-purple-600 hover:via-pink-600 hover:to-violet-600 text-white;
   background-size: 200% 200%;
   animation: gradient-shift 3s ease infinite;
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4), 0 2px 8px rgba(236, 72, 153, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-kid:hover {
+  box-shadow: 0 8px 25px rgba(147, 51, 234, 0.5), 0 4px 12px rgba(236, 72, 153, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-secondary-kid {
@@ -728,8 +766,8 @@ button,
 /* Premium Card styles with glassmorphism and creative effects */
 .card-kid {
   @apply rounded-3xl shadow-xl border border-white/20 transform transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl backdrop-blur-md relative overflow-hidden;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%);
+  box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.12), 0 6px 20px 0 rgba(0, 0, 0, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
   position: relative;
 }
 
