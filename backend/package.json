@@ -7,7 +7,11 @@
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "jest"
+    "test": "jest",
+    "setup": "ts-node scripts/setup.ts",
+    "seed": "ts-node scripts/seedPlans.ts",
+    "create-env": "ts-node scripts/createEnv.ts",
+    "check-mongo": "ts-node scripts/checkMongoDB.ts"
   },
   "dependencies": {
     "express": "^4.18.2",
