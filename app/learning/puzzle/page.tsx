@@ -10,6 +10,8 @@ export default function PuzzlePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+
+
     const user = getUserSession()
     if (!user) {
       router.push('/login')

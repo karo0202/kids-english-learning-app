@@ -10,7 +10,7 @@ import {
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
   FileText, Palette, Puzzle, Target
 } from 'lucide-react'
-import { getCurrentChild, getChildrenSync } from '@/lib/children'
+import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
 
@@ -51,14 +51,27 @@ export default function LearningPage() {
     setChildren(storedChildren)
     
     // Try to get current child first, otherwise use first child
-    const currentChild = getCurrentChild()
-    if (currentChild) {
-      setSelectedChild(currentChild)
-    } else if (storedChildren.length > 0) {
-      setSelectedChild(storedChildren[0])
-      // Set as current child
-      const { setCurrentChild } = require('@/lib/children')
-      setCurrentChild(storedChildren[0])
+    try {
+      const currentChild = getCurrentChild()
+      if (currentChild && storedChildren.some(c => c.id === currentChild.id)) {
+        // Current child exists in the stored children list
+        setSelectedChild(currentChild)
+      } else if (storedChildren.length > 0) {
+        // Use first child and set as current
+        setSelectedChild(storedChildren[0])
+        setCurrentChild(storedChildren[0])
+      }
+    } catch (error) {
+      console.error('Error setting current child:', error)
+      // Fallback: use first child if available
+      if (storedChildren.length > 0) {
+        setSelectedChild(storedChildren[0])
+        try {
+          setCurrentChild(storedChildren[0])
+        } catch (e) {
+          console.error('Error setting current child in fallback:', e)
+        }
+      }
     }
     
     setLoading(false)
@@ -95,6 +108,15 @@ export default function LearningPage() {
             </Button>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
+
+  // Show loading if no child is selected yet
+  if (!selectedChild) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
       </div>
     )
   }
@@ -164,7 +186,7 @@ export default function LearningPage() {
       </div>
 
       <AgeAdaptiveContainer 
-        ageGroup={selectedChild?.ageGroup as AgeGroup || AgeGroup.AGE_6_8}
+        ageGroup={(selectedChild?.ageGroup as AgeGroup) || AgeGroup.AGE_6_8}
         className="container mx-auto px-4 py-8 relative z-10"
       >
         {/* Child Selector */}
