@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { getUserSession } from '@/lib/simple-auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -39,43 +39,63 @@ export default function LearningPage() {
   }, [])
 
   useEffect(() => {
-    const currentUser = getUserSession()
-    if (!currentUser) {
-      router.push('/login')
-      return
-    }
-    setUser(currentUser)
+    let mounted = true
     
-    // Load children synchronously (instant)
-    const storedChildren = getChildrenSync(currentUser.id, currentUser.email)
-    setChildren(storedChildren)
-    
-    // Try to get current child first, otherwise use first child
-    try {
-      const currentChild = getCurrentChild()
-      if (currentChild && storedChildren.some(c => c.id === currentChild.id)) {
-        // Current child exists in the stored children list
-        setSelectedChild(currentChild)
-      } else if (storedChildren.length > 0) {
-        // Use first child and set as current
-        setSelectedChild(storedChildren[0])
-        setCurrentChild(storedChildren[0])
+    const initialize = () => {
+      const currentUser = getUserSession()
+      if (!currentUser) {
+        router.push('/login')
+        return
       }
-    } catch (error) {
-      console.error('Error setting current child:', error)
-      // Fallback: use first child if available
-      if (storedChildren.length > 0) {
-        setSelectedChild(storedChildren[0])
-        try {
-          setCurrentChild(storedChildren[0])
-        } catch (e) {
-          console.error('Error setting current child in fallback:', e)
+      
+      if (!mounted) return
+      setUser(currentUser)
+      
+      // Load children synchronously (instant)
+      const storedChildren = getChildrenSync(currentUser.id, currentUser.email)
+      
+      if (!mounted) return
+      setChildren(storedChildren)
+      
+      // Try to get current child first, otherwise use first child
+      try {
+        const currentChild = getCurrentChild()
+        if (currentChild && storedChildren.some(c => c.id === currentChild.id)) {
+          // Current child exists in the stored children list
+          if (mounted) {
+            setSelectedChild(currentChild)
+          }
+        } else if (storedChildren.length > 0) {
+          // Use first child and set as current
+          if (mounted) {
+            setSelectedChild(storedChildren[0])
+            setCurrentChild(storedChildren[0])
+          }
+        }
+      } catch (error) {
+        console.error('Error setting current child:', error)
+        // Fallback: use first child if available
+        if (storedChildren.length > 0 && mounted) {
+          setSelectedChild(storedChildren[0])
+          try {
+            setCurrentChild(storedChildren[0])
+          } catch (e) {
+            console.error('Error setting current child in fallback:', e)
+          }
         }
       }
+      
+      if (mounted) {
+        setLoading(false)
+      }
     }
     
-    setLoading(false)
-  }, [router])
+    initialize()
+    
+    return () => {
+      mounted = false
+    }
+  }, []) // Empty dependency array - only run once on mount
 
   if (loading) {
     return (
@@ -86,9 +106,9 @@ export default function LearningPage() {
   }
 
   // Helper function to handle module click
-  const handleModuleClick = useCallback((moduleId: string, moduleName: string) => {
+  const handleModuleClick = (moduleId: string, moduleName: string) => {
     router.push(`/learning/${moduleId}`)
-  }, [router])
+  }
 
   if (children.length === 0) {
     return (
@@ -208,7 +228,6 @@ export default function LearningPage() {
                     variant={selectedChild?.id === child.id ? "default" : "outline"}
                     onClick={() => {
                       setSelectedChild(child)
-                      const { setCurrentChild } = require('@/lib/children')
                       setCurrentChild(child)
                     }}
                     className={`whitespace-nowrap text-sm md:text-base rounded-xl ${
