@@ -246,7 +246,7 @@ export default function LearningPage() {
             >
               <Card 
                 className={`card-kid cursor-pointer group relative overflow-hidden hover-lift ${
-                  !checkModuleAccess('reading').hasAccess ? 'opacity-75' : ''
+                  !moduleAccess['reading']?.hasAccess ? 'opacity-75' : ''
                 }`}
                 onClick={() => handleModuleClick('reading', 'Reading')}
               >
@@ -268,7 +268,7 @@ export default function LearningPage() {
                     )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!checkModuleAccess('reading').hasAccess ? (
+                    {!moduleAccess['reading']?.hasAccess ? (
                       <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
                     ) : (
                       'Stories, vocabulary, and comprehension'
@@ -351,7 +351,7 @@ export default function LearningPage() {
                     )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!checkModuleAccess('speaking').hasAccess ? (
+                    {!moduleAccess['speaking']?.hasAccess ? (
                       <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
                     ) : (
                       'Pronunciation and conversation'
@@ -471,7 +471,7 @@ export default function LearningPage() {
                     )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!checkModuleAccess('puzzle').hasAccess ? (
+                    {!moduleAccess['puzzle']?.hasAccess ? (
                       <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
                     ) : (
                       'Solve word and sentence puzzles'
@@ -520,7 +520,7 @@ export default function LearningPage() {
                     )}
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    {!checkModuleAccess('alphabet-coloring').hasAccess ? (
+                    {!moduleAccess['alphabet-coloring']?.hasAccess ? (
                       <span className="text-yellow-600 dark:text-yellow-400 font-semibold">Premium Module</span>
                     ) : (
                       'Color letters and learn alphabet'

@@ -36,8 +36,8 @@ export default function SubscriptionLockOverlay({
     if (onSubscribe) {
       onSubscribe()
     } else {
-      // Navigate to subscription page (to be created)
-      router.push('/subscription')
+      // Navigate to contact page for subscription inquiries
+      router.push('/contact')
     }
   }
 
