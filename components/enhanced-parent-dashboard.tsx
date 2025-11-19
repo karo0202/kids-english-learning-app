@@ -577,7 +577,7 @@ const handleAddChild = async () => {
                     <div className="pt-4 border-t border-purple-200/50 dark:border-purple-500/30">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-gray-400">Last active:</span>
-                        <span className="font-semibold text-gray-800 dark:text-white">{formatLastActive(analytics?.lastActive)}</span>
+                        <span className="font-semibold text-gray-800 dark:text-white">{formatLastActive(analytics?.lastActive ?? new Date().toISOString())}</span>
                       </div>
                       {analytics?.lastActivity && (
                         <div className="flex items-center justify-between text-sm mt-1">
