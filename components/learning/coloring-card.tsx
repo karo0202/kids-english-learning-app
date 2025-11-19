@@ -964,12 +964,15 @@ export default function ColoringCard({
         </Button>
       </div>
 
-      {/* Picture Coloring Area */}
+      {/* Picture Coloring Area with Enhanced Design */}
       <div className="relative">
-        <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-3 text-center">
-          🎨 Color the Picture
-        </h3>
-        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-2 md:p-4 mobile-canvas-container">
+        <div className="bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-blue-900/20 rounded-xl p-4 mb-4 border border-purple-200/50 dark:border-purple-700/50 shadow-lg">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-0 text-center flex items-center justify-center gap-2">
+            <span className="text-2xl">🎨</span>
+            Color the Picture
+          </h3>
+        </div>
+        <div className="relative bg-white dark:bg-gray-800 rounded-xl border-4 border-gray-300 dark:border-gray-600 p-2 md:p-4 mobile-canvas-container shadow-xl">
           <canvas
             ref={canvasRef}
             className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] touch-none cursor-crosshair select-none"
@@ -1049,51 +1052,65 @@ export default function ColoringCard({
         </div>
       </div>
 
-      {/* Color Palette */}
-      <div className="bg-white rounded-lg p-3 md:p-4 border-2 border-gray-200">
-        <h3 className="text-lg md:text-xl font-bold text-gray-700 mb-3 text-center">
+      {/* Color Palette with Enhanced Design */}
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 border-2 border-gray-200/50 dark:border-gray-700/50 shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5"></div>
+        <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-4 text-center relative z-10">
           Color Palette
         </h3>
-        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 overflow-x-auto pb-2">
+        <div className="grid grid-cols-5 sm:grid-cols-6 gap-3 sm:gap-4 overflow-x-auto pb-2 relative z-10">
           {colorPalette.map((color) => (
             <motion.button
               key={color}
-              className={`w-14 h-14 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-4 transition-all touch-manipulation ${
+              className={`w-16 h-16 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-4 transition-all touch-manipulation relative ${
                 selectedColor === color
-                  ? 'border-gray-800 scale-110 shadow-lg ring-4 ring-gray-300'
-                  : 'border-gray-300'
+                  ? 'border-gray-800 dark:border-gray-200 scale-110 shadow-2xl ring-4 ring-gray-400/50 dark:ring-gray-500/50'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
               }`}
               style={{ 
                 backgroundColor: color,
-                minWidth: '3.5rem',
-                minHeight: '3.5rem'
+                minWidth: '4rem',
+                minHeight: '4rem',
+                boxShadow: selectedColor === color ? `0 0 20px ${color}40` : 'none'
               }}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.15, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => {
                 setSelectedColor(color)
                 setIsErasing(false)
               }}
               aria-label={`Select color ${color}`}
-            />
+            >
+              {selectedColor === color && (
+                <motion.div
+                  className="absolute inset-0 rounded-full bg-white/30"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
 
-      {/* Pen/Brush Options */}
-      <div className="bg-white rounded-lg p-3 md:p-4 border-2 border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg md:text-xl font-bold text-gray-700">
+      {/* Pen/Brush Options with Enhanced Design */}
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 border-2 border-gray-200/50 dark:border-gray-700/50 shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-teal-500/5"></div>
+        <div className="flex items-center justify-between mb-3 relative z-10">
+          <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <PenTool className="w-5 h-5 text-blue-500" />
             Pen Options
           </h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowToolOptions(!showToolOptions)}
-            className="min-h-[36px] touch-manipulation"
-          >
-            {showToolOptions ? 'Hide' : 'Show'} Options
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowToolOptions(!showToolOptions)}
+              className="min-h-[36px] touch-manipulation hover:bg-white/50 dark:hover:bg-white/10 rounded-xl"
+            >
+              {showToolOptions ? 'Hide' : 'Show'} Options
+            </Button>
+          </motion.div>
         </div>
         
         <AnimatePresence>
@@ -1191,42 +1208,55 @@ export default function ColoringCard({
         </AnimatePresence>
       </div>
 
-      {/* Tools */}
-      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-        <Button
-          variant={isErasing ? 'default' : 'outline'}
-          size="lg"
-          onClick={() => {
-            setIsErasing(!isErasing)
-            if (!isErasing) {
-              setShowToolOptions(false)
-            }
-          }}
-          className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
-        >
-          <Eraser className="w-5 h-5 sm:mr-2" />
-          <span className="hidden sm:inline">Eraser</span>
-        </Button>
+      {/* Tools with Enhanced Design */}
+      <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-initial min-w-[120px]">
+          <Button
+            variant={isErasing ? 'default' : 'outline'}
+            size="lg"
+            onClick={() => {
+              setIsErasing(!isErasing)
+              if (!isErasing) {
+                setShowToolOptions(false)
+              }
+            }}
+            className={`text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation w-full rounded-xl font-semibold ${
+              isErasing 
+                ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-xl' 
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <Eraser className="w-5 h-5 sm:mr-2" />
+            <span className="hidden sm:inline">Eraser</span>
+            <span className="sm:hidden">Eraser</span>
+          </Button>
+        </motion.div>
         
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={handleClear}
-          className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
-        >
-          <RotateCcw className="w-5 h-5 sm:mr-2" />
-          <span className="hidden sm:inline">Clear All</span>
-        </Button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-initial min-w-[120px]">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleClear}
+            className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation w-full rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <RotateCcw className="w-5 h-5 sm:mr-2" />
+            <span className="hidden sm:inline">Clear All</span>
+            <span className="sm:hidden">Clear</span>
+          </Button>
+        </motion.div>
         
-        <Button
-          variant="default"
-          size="lg"
-          onClick={handleSave}
-          className="text-base sm:text-lg px-4 sm:px-6 py-3 bg-green-500 hover:bg-green-600 min-h-[48px] touch-manipulation flex-1 sm:flex-initial min-w-[120px]"
-        >
-          <Save className="w-5 h-5 sm:mr-2" />
-          <span className="hidden sm:inline">Save</span>
-        </Button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-initial min-w-[120px]">
+          <Button
+            variant="default"
+            size="lg"
+            onClick={handleSave}
+            className="text-base sm:text-lg px-4 sm:px-6 py-3 min-h-[48px] touch-manipulation w-full rounded-xl font-semibold bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl"
+          >
+            <Save className="w-5 h-5 sm:mr-2" />
+            <span className="hidden sm:inline">Save</span>
+            <span className="sm:hidden">Save</span>
+          </Button>
+        </motion.div>
       </div>
     </div>
   )

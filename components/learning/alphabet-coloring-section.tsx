@@ -287,35 +287,52 @@ export default function AlphabetColoringSection() {
         </AnimatePresence>
         
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2 sm:gap-0">
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedCard(null)}
-              className="text-base sm:text-lg p-2 sm:p-3 min-h-[44px] touch-manipulation w-full sm:w-auto"
-            >
-              <ArrowLeft className="w-5 h-5 sm:mr-2" />
-              <span className="hidden sm:inline">Back to Alphabet</span>
-              <span className="sm:hidden">Back</span>
-            </Button>
-            
-            <div className="flex gap-2 w-full sm:w-auto">
-              <Button
-                variant={currentMode === 'coloring' ? 'default' : 'outline'}
-                onClick={() => setCurrentMode('coloring')}
-                className="text-base sm:text-lg px-3 sm:px-4 py-2 min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
-              >
-                <span className="hidden sm:inline">🎨 Coloring</span>
-                <span className="sm:hidden">🎨</span>
-              </Button>
-              <Button
-                variant={currentMode === 'word-practice' ? 'default' : 'outline'}
-                onClick={() => setCurrentMode('word-practice')}
-                className="text-base sm:text-lg px-3 sm:px-4 py-2 min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
-              >
-                <span className="hidden sm:inline">✏️ Word Practice</span>
-                <span className="sm:hidden">✏️</span>
-              </Button>
+          {/* Header with Glassmorphism */}
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/30 dark:border-gray-700/50 rounded-2xl p-4 mb-4 shadow-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10"></div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setSelectedCard(null)}
+                  className="text-base sm:text-lg p-2 sm:p-3 min-h-[44px] touch-manipulation hover:bg-white/50 dark:hover:bg-white/10 rounded-xl"
+                >
+                  <ArrowLeft className="w-5 h-5 sm:mr-2" />
+                  <span className="hidden sm:inline">Back to Alphabet</span>
+                  <span className="sm:hidden">Back</span>
+                </Button>
+              </motion.div>
+              
+              <div className="flex gap-2 w-full sm:w-auto">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-initial">
+                  <Button
+                    variant={currentMode === 'coloring' ? 'default' : 'outline'}
+                    onClick={() => setCurrentMode('coloring')}
+                    className={`text-base sm:text-lg px-4 sm:px-6 py-2 min-h-[44px] touch-manipulation w-full sm:w-auto rounded-xl font-semibold ${
+                      currentMode === 'coloring' 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-white/50 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">🎨 Coloring</span>
+                    <span className="sm:hidden">🎨</span>
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-initial">
+                  <Button
+                    variant={currentMode === 'word-practice' ? 'default' : 'outline'}
+                    onClick={() => setCurrentMode('word-practice')}
+                    className={`text-base sm:text-lg px-4 sm:px-6 py-2 min-h-[44px] touch-manipulation w-full sm:w-auto rounded-xl font-semibold ${
+                      currentMode === 'word-practice' 
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-white/50 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">✏️ Word Practice</span>
+                    <span className="sm:hidden">✏️</span>
+                  </Button>
+                </motion.div>
+              </div>
             </div>
           </div>
 
@@ -345,48 +362,55 @@ export default function AlphabetColoringSection() {
             </CardContent>
           </Card>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-3 sm:mt-4 gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                if (selectedCard > 0) {
-                  setSelectedCard(selectedCard - 1)
-                  const prevCard = ALPHABET_DATA[selectedCard - 1]
-                  audioManager.speak(`${prevCard.letter} for ${prevCard.word}`)
-                }
-              }}
-              disabled={selectedCard === 0}
-              className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial"
-            >
-              <ArrowLeft className="w-5 h-5 sm:mr-2" />
-              <span className="hidden sm:inline">Previous</span>
-            </Button>
+          {/* Navigation Bar with Dark Theme */}
+          <div className="bg-gray-800 dark:bg-gray-900 rounded-2xl p-4 mt-4 shadow-xl border border-gray-700">
+            <div className="flex justify-between items-center gap-2">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (selectedCard > 0) {
+                      setSelectedCard(selectedCard - 1)
+                      const prevCard = ALPHABET_DATA[selectedCard - 1]
+                      audioManager.speak(`${prevCard.letter} for ${prevCard.word}`)
+                    }
+                  }}
+                  disabled={selectedCard === 0}
+                  className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial bg-gray-700 hover:bg-gray-600 text-white border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+                >
+                  <ArrowLeft className="w-5 h-5 sm:mr-2" />
+                  <span className="hidden sm:inline">← Previous</span>
+                  <span className="sm:hidden">←</span>
+                </Button>
+              </motion.div>
 
-            <div className="text-center px-2">
-              <p className="text-lg sm:text-xl font-bold text-gray-700">
-                {card.letter} - {card.word}
-              </p>
-              <p className="text-xs sm:text-sm text-gray-500">
-                {selectedCard + 1} of {ALPHABET_DATA.length}
-              </p>
+              <div className="text-center px-4">
+                <p className="text-lg sm:text-xl font-bold text-white">
+                  {card.letter} - {card.word}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-400">
+                  {selectedCard + 1} of {ALPHABET_DATA.length}
+                </p>
+              </div>
+
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (selectedCard < ALPHABET_DATA.length - 1) {
+                      setSelectedCard(selectedCard + 1)
+                      const nextCard = ALPHABET_DATA[selectedCard + 1]
+                      audioManager.speak(`${nextCard.letter} for ${nextCard.word}`)
+                    }
+                  }}
+                  disabled={selectedCard === ALPHABET_DATA.length - 1}
+                  className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial bg-gray-700 hover:bg-gray-600 text-white border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+                >
+                  <span className="hidden sm:inline">Next →</span>
+                  <ArrowRight className="w-5 h-5 sm:ml-2" />
+                </Button>
+              </motion.div>
             </div>
-
-            <Button
-              variant="outline"
-              onClick={() => {
-                if (selectedCard < ALPHABET_DATA.length - 1) {
-                  setSelectedCard(selectedCard + 1)
-                  const nextCard = ALPHABET_DATA[selectedCard + 1]
-                  audioManager.speak(`${nextCard.letter} for ${nextCard.word}`)
-                }
-              }}
-              disabled={selectedCard === ALPHABET_DATA.length - 1}
-              className="text-base sm:text-lg px-3 sm:px-6 py-3 min-h-[48px] touch-manipulation flex-1 sm:flex-initial"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <ArrowRight className="w-5 h-5 sm:ml-2" />
-            </Button>
           </div>
         </div>
       </div>
