@@ -90,3 +90,36 @@ export function hasStoredData(): boolean {
   }
   return false
 }
+
+/**
+ * Get authentication token for API requests
+ * Tries localStorage first, then Firebase ID token
+ */
+export async function getAuthToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null
+  
+  // Try localStorage first
+  const storedToken = localStorage.getItem('accessToken')
+  if (storedToken) {
+    return storedToken
+  }
+  
+  // Try Firebase ID token
+  try {
+    const { getAuthClient } = await import('@/lib/firebase')
+    const client = getAuthClient()
+    if (client?.auth?.currentUser) {
+      const { getIdToken } = await import('firebase/auth')
+      const token = await getIdToken(client.auth.currentUser)
+      if (token) {
+        // Store for future use
+        localStorage.setItem('accessToken', token)
+        return token
+      }
+    }
+  } catch (error) {
+    console.error('Error getting Firebase token:', error)
+  }
+  
+  return null
+}

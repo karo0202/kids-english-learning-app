@@ -54,8 +54,8 @@ export default function SubscribePage() {
     setSelectedPaymentMethod(paymentMethod)
 
     try {
-      const user = getUserSession()
-      const token = user?.token || localStorage.getItem('accessToken')
+      const { getAuthToken } = await import('@/lib/simple-auth')
+      const token = await getAuthToken()
       const response = await fetch('/api/subscription/create', {
         method: 'POST',
         headers: {
