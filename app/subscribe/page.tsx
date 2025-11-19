@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { authenticateToken } from '@/lib/simple-auth'
+import { getUserSession } from '@/lib/simple-auth'
 import SubscriptionPlanCard, { SubscriptionPlan } from '@/components/subscription/SubscriptionPlanCard'
 import PaymentButton from '@/components/subscription/PaymentButton'
 import CryptoInvoiceModal from '@/components/subscription/CryptoInvoiceModal'
@@ -18,7 +18,7 @@ export default function SubscribePage() {
   const [cryptoInvoice, setCryptoInvoice] = useState<any>(null)
 
   useEffect(() => {
-    const user = authenticateToken()
+    const user = getUserSession()
     if (!user) {
       router.push('/login')
       return
@@ -54,12 +54,13 @@ export default function SubscribePage() {
     setSelectedPaymentMethod(paymentMethod)
 
     try {
-      const token = localStorage.getItem('accessToken')
+      const user = getUserSession()
+      const token = user?.token || localStorage.getItem('accessToken')
       const response = await fetch('/api/subscription/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           planId: selectedPlan,

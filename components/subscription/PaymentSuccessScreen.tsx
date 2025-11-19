@@ -19,13 +19,15 @@ export default function PaymentSuccessScreen({ transactionId }: PaymentSuccessSc
     if (transactionId) {
       const verifySubscription = async () => {
         try {
-          const token = localStorage.getItem('accessToken')
-          const response = await fetch('/api/subscription/verify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
+      const { getUserSession } = await import('@/lib/simple-auth')
+      const user = getUserSession()
+      const token = user?.token || localStorage.getItem('accessToken')
+      const response = await fetch('/api/subscription/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
             body: JSON.stringify({ transactionId }),
           })
 

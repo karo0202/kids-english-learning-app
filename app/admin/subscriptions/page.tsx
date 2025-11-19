@@ -31,10 +31,12 @@ export default function AdminSubscriptionsPage() {
 
   const fetchSubscriptions = async () => {
     try {
-      const token = localStorage.getItem('accessToken')
+      const { getUserSession } = await import('@/lib/simple-auth')
+      const user = getUserSession()
+      const token = user?.token || localStorage.getItem('accessToken')
       const response = await fetch(`/api/admin/subscriptions?page=${page}&limit=50`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       })
 
