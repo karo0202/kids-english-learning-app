@@ -153,21 +153,12 @@ export function checkModuleAccess(moduleId: string): ModuleAccess {
   const status = getSubscriptionStatus()
   const moduleIdLower = moduleId.toLowerCase()
   
-  // Free modules are always accessible during trial
+  // Free modules are always accessible (grammar, writing, games)
   if (FREE_MODULES.includes(moduleIdLower as any)) {
-    if (status.isTrial || status.isActive) {
-      return {
-        hasAccess: true,
-        isLocked: false,
-        requiresSubscription: false
-      }
-    }
-    // After trial, free modules also require subscription
     return {
-      hasAccess: false,
-      isLocked: true,
-      requiresSubscription: true,
-      message: 'This module requires a subscription after your free trial ends.'
+      hasAccess: true,
+      isLocked: false,
+      requiresSubscription: false
     }
   }
   

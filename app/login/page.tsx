@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { getAuthClient, signInWithGoogle, handleGoogleRedirect } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { setUserSession } from '@/lib/simple-auth'
+import { setUserRegistrationDate, getUserRegistrationDate } from '@/lib/subscription'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -44,6 +45,10 @@ export default function LoginPage() {
             name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
             accountType: 'parent'
           })
+          // Set registration date if it doesn't exist (for 7-day free trial)
+          if (!getUserRegistrationDate()) {
+            setUserRegistrationDate()
+          }
           router.push('/dashboard')
         } else {
           console.log('No Google redirect result found')
@@ -75,6 +80,10 @@ export default function LoginPage() {
           name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
           accountType: 'parent'
         })
+        // Set registration date if it doesn't exist (for 7-day free trial)
+        if (!getUserRegistrationDate()) {
+          setUserRegistrationDate()
+        }
       }
       
       router.push('/dashboard')
