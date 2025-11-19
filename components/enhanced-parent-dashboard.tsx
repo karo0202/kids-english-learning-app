@@ -529,6 +529,67 @@ const handleAddChild = async () => {
 
             {/* 1. Overview Dashboard */}
             <TabsContent value="overview" className="space-y-6">
+              {/* User Profile Card */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
+                <Card className="bg-gradient-to-br from-purple-100 via-pink-50 to-blue-50 dark:from-slate-800 dark:via-purple-900/30 dark:to-blue-900/30 border-2 border-purple-200/50 dark:border-purple-500/30 shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-300/20 to-pink-300/20 rounded-full blur-3xl"></div>
+                  <CardContent className="p-6 relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-xl relative overflow-hidden">
+                          <span className="relative z-10">{selectedChild.name[0].toUpperCase()}</span>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent"></div>
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">{selectedChild.name}</h2>
+                          <p className="text-gray-600 dark:text-gray-300 font-medium">{getAgeGroupName(selectedChild.age)}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-white/50 dark:hover:bg-white/10 rounded-xl"
+                        onClick={() => setEditingChild(selectedChild)}
+                      >
+                        <Edit className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center gap-6 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">{progressManager.loadProgress(selectedChild.id)?.level || 1}</span>
+                        <span className="text-gray-600 dark:text-gray-400 text-sm">Level</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-green-600 dark:text-green-400 font-bold text-lg">{analytics?.wordsLearned.length ?? 0}</span>
+                        <span className="text-gray-600 dark:text-gray-400 text-sm">Words</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-purple-600 dark:text-purple-400 font-bold text-lg">{analytics?.achievements.length ?? 0}</span>
+                        <span className="text-gray-600 dark:text-gray-400 text-sm">Badges</span>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4 border-t border-purple-200/50 dark:border-purple-500/30">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">Last active:</span>
+                        <span className="font-semibold text-gray-800 dark:text-white">{formatLastActive(analytics?.lastActive)}</span>
+                      </div>
+                      {analytics?.lastActivity && (
+                        <div className="flex items-center justify-between text-sm mt-1">
+                          <span className="text-gray-600 dark:text-gray-400">Last Activity:</span>
+                          <span className="font-semibold text-gray-800 dark:text-white">{analytics.lastActivity}</span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
               {/* Key Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <motion.div
@@ -536,13 +597,13 @@ const handleAddChild = async () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <Card className="text-center border-2 border-blue-200">
+                  <Card className="text-center bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
                     <CardContent className="p-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
                         <Trophy className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{progressManager.loadProgress(selectedChild.id)?.level || 1}</h3>
-                      <p className="text-xs text-gray-600">Current Level</p>
+                      <h3 className="text-2xl font-bold text-white">{progressManager.loadProgress(selectedChild.id)?.level || 1}</h3>
+                      <p className="text-xs text-gray-400">Current Level</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -552,13 +613,13 @@ const handleAddChild = async () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <Card className="text-center border-2 border-green-200">
+                  <Card className="text-center bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
                     <CardContent className="p-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
                         <Star className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{analytics?.wordsLearned.length ?? 0}</h3>
-                      <p className="text-xs text-gray-600">Words Learned</p>
+                      <h3 className="text-2xl font-bold text-white">{analytics?.wordsLearned.length ?? 0}</h3>
+                      <p className="text-xs text-gray-400">Words Learned</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -568,13 +629,13 @@ const handleAddChild = async () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <Card className="text-center border-2 border-purple-200">
+                  <Card className="text-center bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
                     <CardContent className="p-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
                         <Target className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{analytics?.activityLogs.length ?? 0}</h3>
-                      <p className="text-xs text-gray-600">Activities Done</p>
+                      <h3 className="text-2xl font-bold text-white">{analytics?.activityLogs.length ?? 0}</h3>
+                      <p className="text-xs text-gray-400">Activities Done</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -584,13 +645,13 @@ const handleAddChild = async () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <Card className="text-center border-2 border-yellow-200">
+                  <Card className="text-center bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
                     <CardContent className="p-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
                         <Clock className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800">{Math.round(moduleProgress.time)}m</h3>
-                      <p className="text-xs text-gray-600">Total Time</p>
+                      <h3 className="text-2xl font-bold text-white">{Math.round(moduleProgress.time)}m</h3>
+                      <p className="text-xs text-gray-400">Total Time</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -598,23 +659,23 @@ const handleAddChild = async () => {
 
               {/* Progress Overview Graphs */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
+                <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-xl">
                   <CardHeader>
-                    <CardTitle>Progress by Category</CardTitle>
+                    <CardTitle className="text-white font-bold">Progress by Category</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <PenTool className="w-4 h-4 text-green-500" />
-                            <span className="font-medium">Writing</span>
+                            <PenTool className="w-4 h-4 text-green-400" />
+                            <span className="font-medium text-white">Writing</span>
                           </div>
-                          <span className="text-sm text-gray-600">{moduleProgress.writing.toFixed(0)}%</span>
+                          <span className="text-sm text-gray-400">{moduleProgress.writing.toFixed(0)}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div className="w-full bg-gray-700 rounded-full h-2">
                           <motion.div 
-                            className="bg-green-500 h-3 rounded-full"
+                            className="bg-green-500 h-2 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${moduleProgress.writing}%` }}
                             transition={{ duration: 0.5 }}
@@ -625,14 +686,14 @@ const handleAddChild = async () => {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-blue-500" />
-                            <span className="font-medium">Vocabulary</span>
+                            <BookOpen className="w-4 h-4 text-blue-400" />
+                            <span className="font-medium text-white">Vocabulary</span>
                           </div>
-                          <span className="text-sm text-gray-600">{moduleProgress.vocabulary} words</span>
+                          <span className="text-sm text-gray-400">{moduleProgress.vocabulary} words</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div className="w-full bg-gray-700 rounded-full h-2">
                           <motion.div 
-                            className="bg-blue-500 h-3 rounded-full"
+                            className="bg-blue-500 h-2 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.min(100, (moduleProgress.vocabulary / 100) * 100)}%` }}
                             transition={{ duration: 0.5 }}
@@ -643,14 +704,14 @@ const handleAddChild = async () => {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <Mic className="w-4 h-4 text-purple-500" />
-                            <span className="font-medium">Grammar/Phonics</span>
+                            <Mic className="w-4 h-4 text-purple-400" />
+                            <span className="font-medium text-white">Grammar/Phonics</span>
                           </div>
-                          <span className="text-sm text-gray-600">{moduleProgress.grammar.toFixed(0)}%</span>
+                          <span className="text-sm text-gray-400">{moduleProgress.grammar.toFixed(0)}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div className="w-full bg-gray-700 rounded-full h-2">
                           <motion.div 
-                            className="bg-purple-500 h-3 rounded-full"
+                            className="bg-purple-500 h-2 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${moduleProgress.grammar}%` }}
                             transition={{ duration: 0.5 }}
@@ -662,28 +723,28 @@ const handleAddChild = async () => {
                 </Card>
 
                 {/* Achievements Summary */}
-                <Card>
+                <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-xl">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-white font-bold">
                       <Award className="w-5 h-5 text-yellow-500" />
                       Achievements Summary
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Total Achievements</span>
-                        <span className="text-2xl font-bold text-yellow-600">{analytics?.achievements.length ?? 0}</span>
+                        <span className="text-gray-400">Total Achievements</span>
+                        <span className="text-2xl font-bold text-orange-500">{analytics?.achievements.length ?? 0}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Stars Earned</span>
-                        <span className="text-2xl font-bold text-blue-600">
-                          {(analytics?.activityLogs ?? []).reduce((sum, log) => sum + log.score, 0)}
+                        <span className="text-gray-400">Stars Earned</span>
+                        <span className="text-2xl font-bold text-blue-500">
+                          {(analytics?.activityLogs ?? []).reduce((sum, log) => sum + (log.score || 0), 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Milestones</span>
-                        <span className="text-2xl font-bold text-purple-600">
+                        <span className="text-gray-400">Milestones</span>
+                        <span className="text-2xl font-bold text-purple-500">
                           {Math.floor((analytics?.activityLogs.length ?? 0) / 10)}
                         </span>
                       </div>
@@ -711,24 +772,24 @@ const handleAddChild = async () => {
                 </Card>
               </div>
 
-              {/* Last Active Info */}
-              <Card>
+              {/* Recent Activity */}
+              <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-xl">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-blue-500" />
+                  <CardTitle className="flex items-center gap-2 text-white font-bold">
+                    <Activity className="w-5 h-5 text-blue-500" />
                     Recent Activity
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Last Active</span>
-                      <span className="font-semibold">{formatLastActive(analytics?.lastActive ?? new Date().toISOString())}</span>
+                      <span className="text-gray-400">Last Active</span>
+                      <span className="font-semibold text-white">{formatLastActive(analytics?.lastActive ?? new Date().toISOString())}</span>
                     </div>
                     {analytics?.lastActivity && (
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Last Activity</span>
-                        <span className="font-semibold text-blue-600">{analytics.lastActivity}</span>
+                        <span className="text-gray-400">Last Activity</span>
+                        <span className="font-semibold text-white">{analytics.lastActivity}</span>
                       </div>
                     )}
                     {(analytics?.activityLogs.length ?? 0) > 0 && (
