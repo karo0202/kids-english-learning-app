@@ -4,12 +4,12 @@ import { motion } from 'framer-motion'
 import { Lock, Crown, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { checkModuleAccess, refreshSubscriptionStatus } from '@/lib/subscription'
+import { checkModuleAccess, refreshSubscriptionStatus, ModuleId } from '@/lib/subscription'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 interface SubscriptionLockOverlayProps {
-  moduleId: string
+  moduleId: ModuleId
   moduleName: string
   onSubscribe?: () => void
 }
