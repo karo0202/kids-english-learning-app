@@ -9,6 +9,7 @@ interface ManualInstructions {
   walletAddress?: string
   network?: string
   qrCodeUrl?: string
+  qrCodeText?: string
   phoneNumber?: string
   accountName?: string
   note?: string
@@ -146,6 +147,16 @@ export default function ManualPaymentModal({
                   Use your banking app to scan
                 </p>
               </div>
+            </div>
+          )}
+          {!instructions.qrCodeUrl && instructions.qrCodeText && (
+            <div className="bg-white dark:bg-gray-900/60 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 text-center">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Scan or enter this code
+              </p>
+              <p className="text-2xl font-mono text-purple-600 dark:text-purple-300 tracking-widest">
+                {instructions.qrCodeText}
+              </p>
             </div>
           )}
 

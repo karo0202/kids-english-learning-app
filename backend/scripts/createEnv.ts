@@ -61,6 +61,7 @@ USE_COINGATE=true
 # MANUAL_CRYPTO_WALLET_ADDRESS=your-wallet-address
 # MANUAL_CRYPTO_NETWORK=USDT-TRC20
 # MANUAL_CRYPTO_QR_URL=https://example.com/qr.png
+# MANUAL_CRYPTO_QR_TEXT=YOUR-CODE
 # MANUAL_CRYPTO_NOTE=Extra info for customers
 # MANUAL_CRYPTO_CONTACT_PHONE=+9647xxxxxxx
 
@@ -68,6 +69,7 @@ USE_COINGATE=true
 # FIB_PHONE_NUMBER=0750xxxxxxx
 # FIB_ACCOUNT_NAME=Your Name
 # FIB_QR_IMAGE_URL=https://example.com/fib-qr.png
+# FIB_QR_TEXT=P4CD-GNCB-Q9IR
 # FIB_MANUAL_NOTE=Leave optional notes here
 `
 

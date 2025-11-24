@@ -107,6 +107,7 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
           walletAddress: manualCrypto.walletAddress,
           network: manualCrypto.network,
           qrCodeUrl: manualCrypto.qrCodeUrl,
+          qrCodeText: manualCrypto.qrCodeText,
           note: manualCrypto.note,
           contactPhone: manualCrypto.contactPhone,
           transactionId,
@@ -165,6 +166,7 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
         manualInstructions = {
           type: 'fib_manual',
           qrCodeUrl: fibManual.qrCodeUrl,
+          qrCodeText: fibManual.qrCodeText,
           phoneNumber: fibManual.phoneNumber,
           accountName: fibManual.accountName,
           note: fibManual.note,

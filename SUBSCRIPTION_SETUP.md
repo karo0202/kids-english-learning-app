@@ -188,6 +188,7 @@ If you prefer to receive crypto directly to your own wallet instead of using Coi
 MANUAL_CRYPTO_WALLET_ADDRESS=your-wallet-address
 MANUAL_CRYPTO_NETWORK=USDT-TRC20 # optional
 MANUAL_CRYPTO_QR_URL=https://your-domain.com/qr/crypto.png # optional
+MANUAL_CRYPTO_QR_TEXT=YOUR-CRYPTO-CODE # optional fallback text
 MANUAL_CRYPTO_NOTE=Any note shown to customers # optional
 MANUAL_CRYPTO_CONTACT_PHONE=WhatsApp or support number # optional
 ```
@@ -199,6 +200,7 @@ Provide your Fast Iraqi Bank details so customers can scan your QR code or pay u
 FIB_PHONE_NUMBER=0750xxxxxxx
 FIB_ACCOUNT_NAME=Your Name # optional
 FIB_QR_IMAGE_URL=https://your-domain.com/qr/fib.png # optional
+FIB_QR_TEXT=P4CD-GNCB-Q9IR # optional fallback text
 FIB_MANUAL_NOTE=Extra instructions # optional
 ```
 

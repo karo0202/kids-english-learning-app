@@ -2,6 +2,7 @@ export interface ManualCryptoConfig {
   walletAddress: string
   network?: string
   qrCodeUrl?: string
+  qrCodeText?: string
   note?: string
   contactPhone?: string
 }
@@ -10,6 +11,7 @@ export interface ManualFIBConfig {
   accountName?: string
   phoneNumber: string
   qrCodeUrl?: string
+  qrCodeText?: string
   note?: string
 }
 
@@ -24,6 +26,7 @@ export function getManualCryptoConfig(): ManualCryptoConfig {
     walletAddress,
     network: process.env.MANUAL_CRYPTO_NETWORK,
     qrCodeUrl: process.env.MANUAL_CRYPTO_QR_URL,
+    qrCodeText: process.env.MANUAL_CRYPTO_QR_TEXT,
     note: process.env.MANUAL_CRYPTO_NOTE,
     contactPhone: process.env.MANUAL_CRYPTO_CONTACT_PHONE,
   }
@@ -40,6 +43,7 @@ export function getManualFIBConfig(): ManualFIBConfig {
     accountName: process.env.FIB_ACCOUNT_NAME,
     phoneNumber,
     qrCodeUrl: process.env.FIB_QR_IMAGE_URL,
+    qrCodeText: process.env.FIB_QR_TEXT,
     note: process.env.FIB_MANUAL_NOTE,
   }
 }
