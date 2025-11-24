@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUserSession } from '@/lib/simple-auth'
 import SubscriptionPlanCard, { SubscriptionPlan } from '@/components/subscription/SubscriptionPlanCard'
-import PaymentButton from '@/components/subscription/PaymentButton'
+import PaymentButton, { PaymentMethod } from '@/components/subscription/PaymentButton'
 import CryptoInvoiceModal from '@/components/subscription/CryptoInvoiceModal'
+import ManualPaymentModal from '@/components/subscription/ManualPaymentModal'
 import { motion } from 'framer-motion'
 
 export default function SubscribePage() {
@@ -16,6 +17,15 @@ export default function SubscribePage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null)
   const [cryptoModalOpen, setCryptoModalOpen] = useState(false)
   const [cryptoInvoice, setCryptoInvoice] = useState<any>(null)
+  const [manualPaymentData, setManualPaymentData] = useState<{
+    method: 'crypto_manual' | 'fib_manual'
+    instructions: any
+    transactionId: string
+    amount: number
+    currency: string
+  } | null>(null)
+  const [manualModalOpen, setManualModalOpen] = useState(false)
+  const [confirmingManual, setConfirmingManual] = useState(false)
 
   useEffect(() => {
     const user = getUserSession()
@@ -45,7 +55,7 @@ export default function SubscribePage() {
     setSelectedPlan(planId)
   }
 
-  const handlePaymentMethodSelect = async (paymentMethod: string) => {
+  const handlePaymentMethodSelect = async (paymentMethod: PaymentMethod) => {
     if (!selectedPlan) {
       alert('Please select a plan first')
       return
@@ -71,17 +81,30 @@ export default function SubscribePage() {
       const data = await response.json()
 
       if (data.success) {
-        if (paymentMethod === 'crypto') {
+        const planInfo = plans.find((p) => p.planId === selectedPlan)
+
+        if (data.manualPayment) {
+          setManualPaymentData({
+            method: paymentMethod as 'crypto_manual' | 'fib_manual',
+            instructions: data.manualInstructions || {},
+            transactionId: data.transactionId,
+            amount: planInfo?.price || 0,
+            currency: planInfo?.currency || 'USD',
+          })
+          setManualModalOpen(true)
+        } else if (paymentMethod === 'crypto') {
           setCryptoInvoice({
             paymentUrl: data.paymentUrl,
             invoiceId: data.invoiceId || data.transactionId,
-            amount: plans.find((p) => p.planId === selectedPlan)?.price || 0,
-            currency: plans.find((p) => p.planId === selectedPlan)?.currency || 'USD',
+            amount: planInfo?.price || 0,
+            currency: planInfo?.currency || 'USD',
           })
           setCryptoModalOpen(true)
-        } else {
+        } else if (data.paymentUrl) {
           // Redirect to payment provider
           window.location.href = data.paymentUrl
+        } else {
+          alert('Payment created. Please follow the instructions provided.')
         }
       } else {
         alert(data.error || 'Failed to create payment')
@@ -89,6 +112,45 @@ export default function SubscribePage() {
     } catch (error) {
       console.error('Payment creation error:', error)
       alert('Failed to create payment. Please try again.')
+    }
+  }
+
+  const handleManualConfirmation = async (payload: {
+    transactionId: string
+    reference?: string
+    proofUrl?: string
+    contactPhone?: string
+    notes?: string
+  }) => {
+    try {
+      setConfirmingManual(true)
+      const { getAuthToken } = await import('@/lib/simple-auth')
+      const token = await getAuthToken()
+      const response = await fetch('/api/subscription/manual/confirm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          ...payload,
+          paymentMethod: manualPaymentData?.method,
+        }),
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        alert('Thank you! We will verify your payment and notify you soon.')
+        setManualModalOpen(false)
+        setManualPaymentData(null)
+      } else {
+        alert(data.error || 'Failed to submit payment proof.')
+      }
+    } catch (error) {
+      console.error('Manual confirmation error:', error)
+      alert('Failed to submit payment proof. Please try again.')
+    } finally {
+      setConfirmingManual(false)
     }
   }
 
@@ -161,6 +223,14 @@ export default function SubscribePage() {
                 paymentMethod="fib"
                 onClick={() => handlePaymentMethodSelect('fib')}
               />
+              <PaymentButton
+                paymentMethod="crypto_manual"
+                onClick={() => handlePaymentMethodSelect('crypto_manual')}
+              />
+              <PaymentButton
+                paymentMethod="fib_manual"
+                onClick={() => handlePaymentMethodSelect('fib_manual')}
+              />
             </div>
           </motion.div>
         )}
@@ -174,6 +244,24 @@ export default function SubscribePage() {
             invoiceId={cryptoInvoice.invoiceId}
             amount={cryptoInvoice.amount}
             currency={cryptoInvoice.currency}
+          />
+        )}
+
+        {/* Manual Payment Modal */}
+        {manualPaymentData && (
+          <ManualPaymentModal
+            isOpen={manualModalOpen}
+            onClose={() => {
+              setManualModalOpen(false)
+              setManualPaymentData(null)
+            }}
+            method={manualPaymentData.method}
+            instructions={manualPaymentData.instructions}
+            amount={manualPaymentData.amount}
+            currency={manualPaymentData.currency}
+            transactionId={manualPaymentData.transactionId}
+            onConfirm={handleManualConfirmation}
+            confirming={confirmingManual}
           />
         )}
       </div>

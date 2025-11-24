@@ -1,13 +1,14 @@
-import PaymentTransaction from '../models/PaymentTransaction'
+import PaymentTransaction, { PaymentMethod } from '../models/PaymentTransaction'
 import { generateTransactionId } from '../utils/paymentToken'
 
 export interface CreatePaymentParams {
   userId: string
-  paymentMethod: 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib'
+  paymentMethod: PaymentMethod
   amount: number
   currency?: string
   subscriptionId?: string
   metadata?: Record<string, any>
+  transactionId?: string
 }
 
 /**
@@ -16,7 +17,7 @@ export interface CreatePaymentParams {
 export async function createPaymentTransaction(
   params: CreatePaymentParams
 ): Promise<PaymentTransaction> {
-  const transactionId = generateTransactionId()
+  const transactionId = params.transactionId || generateTransactionId()
 
   const transaction = new PaymentTransaction({
     transactionId,

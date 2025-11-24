@@ -1,10 +1,17 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { CreditCard, Wallet, Coins, Building2 } from 'lucide-react'
+import { CreditCard, Wallet, Coins, Building2, QrCode } from 'lucide-react'
 import { useState } from 'react'
 
-export type PaymentMethod = 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib'
+export type PaymentMethod =
+  | 'crypto'
+  | 'zaincash'
+  | 'fastpay'
+  | 'nasspay'
+  | 'fib'
+  | 'crypto_manual'
+  | 'fib_manual'
 
 interface PaymentButtonProps {
   paymentMethod: PaymentMethod
@@ -39,7 +46,17 @@ const paymentMethodConfig = {
     icon: Building2,
     color: 'bg-indigo-500 hover:bg-indigo-600',
   },
-}
+  crypto_manual: {
+    label: 'Crypto Wallet (Manual)',
+    icon: Coins,
+    color: 'bg-amber-500 hover:bg-amber-600',
+  },
+  fib_manual: {
+    label: 'FIB QR / Phone',
+    icon: QrCode,
+    color: 'bg-slate-700 hover:bg-slate-800',
+  },
+} as const
 
 export default function PaymentButton({
   paymentMethod,

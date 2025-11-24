@@ -181,6 +181,29 @@ localStorage.setItem('accessToken', token)
    FIB_SECRET=your-secret
    ```
 
+### Manual Crypto Wallet Payments
+If you prefer to receive crypto directly to your own wallet instead of using CoinGate/NOWPayments, configure the manual wallet option:
+
+```
+MANUAL_CRYPTO_WALLET_ADDRESS=your-wallet-address
+MANUAL_CRYPTO_NETWORK=USDT-TRC20 # optional
+MANUAL_CRYPTO_QR_URL=https://your-domain.com/qr/crypto.png # optional
+MANUAL_CRYPTO_NOTE=Any note shown to customers # optional
+MANUAL_CRYPTO_CONTACT_PHONE=WhatsApp or support number # optional
+```
+
+### Manual FIB Payments (QR / Phone)
+Provide your Fast Iraqi Bank details so customers can scan your QR code or pay using your phone number:
+
+```
+FIB_PHONE_NUMBER=0750xxxxxxx
+FIB_ACCOUNT_NAME=Your Name # optional
+FIB_QR_IMAGE_URL=https://your-domain.com/qr/fib.png # optional
+FIB_MANUAL_NOTE=Extra instructions # optional
+```
+
+When manual methods are enabled, customers will see your wallet/QR information and can submit their payment reference directly inside the app. You will receive their transaction ID in the admin dashboard and can activate the subscription once funds are confirmed.
+
 ## 🧪 Testing
 
 ### 1. Test Subscription Creation

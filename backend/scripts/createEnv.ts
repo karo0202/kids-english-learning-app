@@ -56,6 +56,19 @@ USE_COINGATE=true
 # FIB_API_KEY=your-fib-api-key
 # FIB_SECRET=your-fib-secret
 # FIB_API_URL=https://api.fib.iq/v1
+
+# Manual Crypto Wallet (optional)
+# MANUAL_CRYPTO_WALLET_ADDRESS=your-wallet-address
+# MANUAL_CRYPTO_NETWORK=USDT-TRC20
+# MANUAL_CRYPTO_QR_URL=https://example.com/qr.png
+# MANUAL_CRYPTO_NOTE=Extra info for customers
+# MANUAL_CRYPTO_CONTACT_PHONE=+9647xxxxxxx
+
+# Manual FIB (QR / Phone) (optional)
+# FIB_PHONE_NUMBER=0750xxxxxxx
+# FIB_ACCOUNT_NAME=Your Name
+# FIB_QR_IMAGE_URL=https://example.com/fib-qr.png
+# FIB_MANUAL_NOTE=Leave optional notes here
 `
 
 try {

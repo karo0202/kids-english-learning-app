@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Lock, Crown, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { checkModuleAccess, getSubscriptionStatus } from '@/lib/subscription'
+import { checkModuleAccess, refreshSubscriptionStatus } from '@/lib/subscription'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -22,31 +22,41 @@ export default function SubscriptionLockOverlay({
   const router = useRouter()
   const [access, setAccess] = useState<any>({ isLocked: true })
   const [status, setStatus] = useState<any>({ isTrial: false, trialDaysRemaining: 0 })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Only run on client side
-    if (typeof window === 'undefined') return
-    
-    try {
-      const accessData = checkModuleAccess(moduleId)
-      const statusData = getSubscriptionStatus()
-      setAccess(accessData)
-      setStatus(statusData)
-    } catch (error) {
-      console.error('Error checking module access:', error)
-      // Set default locked state on error
-      setAccess({ isLocked: true, hasAccess: false, requiresSubscription: true })
+    let mounted = true
+
+    const loadAccess = async () => {
+      try {
+        const statusData = await refreshSubscriptionStatus()
+        if (!mounted) return
+        setStatus(statusData)
+        setAccess(checkModuleAccess(moduleId, statusData))
+      } catch (error) {
+        console.error('Error checking module access:', error)
+        if (mounted) {
+          setAccess({ isLocked: true, hasAccess: false, requiresSubscription: true })
+        }
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+
+    loadAccess()
+
+    return () => {
+      mounted = false
     }
   }, [moduleId])
 
-  if (!access.isLocked) return null
+  if (loading || !access.isLocked) return null
 
   const handleSubscribe = () => {
     if (onSubscribe) {
       onSubscribe()
     } else {
-      // Navigate to contact page for subscription inquiries
-      router.push('/contact')
+      router.push('/subscribe')
     }
   }
 

@@ -1,10 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
+export type PaymentMethod =
+  | 'crypto'
+  | 'zaincash'
+  | 'fastpay'
+  | 'nasspay'
+  | 'fib'
+  | 'crypto_manual'
+  | 'fib_manual'
+
 export interface IPaymentTransaction extends Document {
   transactionId: string
   userId: string
   subscriptionId?: string
-  paymentMethod: 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib'
+  paymentMethod: PaymentMethod
   amount: number
   currency: string
   status: 'pending' | 'completed' | 'failed' | 'cancelled'
@@ -34,7 +43,7 @@ const PaymentTransactionSchema = new Schema<IPaymentTransaction>(
     },
     paymentMethod: {
       type: String,
-      enum: ['crypto', 'zaincash', 'fastpay', 'nasspay', 'fib'],
+      enum: ['crypto', 'zaincash', 'fastpay', 'nasspay', 'fib', 'crypto_manual', 'fib_manual'],
       required: true,
     },
     amount: {

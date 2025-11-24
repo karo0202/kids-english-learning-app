@@ -1,10 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
+export type SubscriptionPaymentMethod =
+  | 'crypto'
+  | 'zaincash'
+  | 'fastpay'
+  | 'nasspay'
+  | 'fib'
+  | 'crypto_manual'
+  | 'fib_manual'
+
 export interface ISubscription extends Document {
   userId: string
   planId: string
   status: 'active' | 'pending' | 'expired' | 'cancelled'
-  paymentMethod: 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib'
+  paymentMethod: SubscriptionPaymentMethod
   transactionId: string
   providerTransactionId?: string
   amount: number
@@ -34,7 +43,7 @@ const SubscriptionSchema = new Schema<ISubscription>(
     },
     paymentMethod: {
       type: String,
-      enum: ['crypto', 'zaincash', 'fastpay', 'nasspay', 'fib'],
+      enum: ['crypto', 'zaincash', 'fastpay', 'nasspay', 'fib', 'crypto_manual', 'fib_manual'],
       required: true,
     },
     transactionId: {

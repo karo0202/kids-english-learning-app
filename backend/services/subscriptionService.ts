@@ -6,7 +6,7 @@ import { generateTransactionId } from '../utils/paymentToken'
 export interface CreateSubscriptionParams {
   userId: string
   planId: string
-  paymentMethod: 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib'
+  paymentMethod: 'crypto' | 'zaincash' | 'fastpay' | 'nasspay' | 'fib' | 'crypto_manual' | 'fib_manual'
   transactionId: string
   providerTransactionId?: string
   amount: number

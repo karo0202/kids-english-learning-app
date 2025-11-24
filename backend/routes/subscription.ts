@@ -9,6 +9,9 @@ import { createFastPayPayment } from '../services/payments/fastpayService'
 import { createNassPayPayment } from '../services/payments/nasspayService'
 import { createFIBPayment } from '../services/payments/fibService'
 import { generatePaymentToken } from '../utils/paymentToken'
+import { getManualCryptoConfig, getManualFIBConfig } from '../config/manualPayments'
+import PaymentTransaction from '../models/PaymentTransaction'
+import Subscription from '../models/Subscription'
 
 const router = Router()
 
@@ -54,6 +57,7 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
       paymentMethod,
       amount: plan.price,
       currency: plan.currency,
+      transactionId,
     })
 
     // Create subscription (pending status)
@@ -66,9 +70,15 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
       currency: plan.currency,
     })
 
+    await paymentTransaction.updateOne({
+      subscriptionId: subscription._id,
+    })
+
     // Generate payment URL based on method
     let paymentUrl = ''
     let paymentData: any = {}
+    let manualPayment = false
+    let manualInstructions: Record<string, any> | null = null
 
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
     const callbackUrl = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/webhooks/${paymentMethod}`
@@ -88,6 +98,22 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
         paymentUrl = cryptoInvoice.paymentUrl
         paymentData = { invoiceId: cryptoInvoice.invoiceId }
         break
+      case 'crypto_manual': {
+        const manualCrypto = getManualCryptoConfig()
+        manualPayment = true
+        paymentUrl = ''
+        manualInstructions = {
+          type: 'crypto_manual',
+          walletAddress: manualCrypto.walletAddress,
+          network: manualCrypto.network,
+          qrCodeUrl: manualCrypto.qrCodeUrl,
+          note: manualCrypto.note,
+          contactPhone: manualCrypto.contactPhone,
+          transactionId,
+        }
+        paymentData = { manualInstructions }
+        break
+      }
 
       case 'zaincash':
         const zainCashPayment = await createZainCashPayment({
@@ -132,6 +158,21 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
         paymentUrl = fibPayment.paymentUrl
         paymentData = { paymentLink: fibPayment.paymentLink }
         break
+      case 'fib_manual': {
+        const fibManual = getManualFIBConfig()
+        manualPayment = true
+        paymentUrl = ''
+        manualInstructions = {
+          type: 'fib_manual',
+          qrCodeUrl: fibManual.qrCodeUrl,
+          phoneNumber: fibManual.phoneNumber,
+          accountName: fibManual.accountName,
+          note: fibManual.note,
+          transactionId,
+        }
+        paymentData = { manualInstructions }
+        break
+      }
 
       default:
         return res.status(400).json({ error: 'Invalid payment method' })
@@ -147,10 +188,69 @@ router.post('/create', authenticateToken, async (req: AuthRequest, res: Response
       transactionId,
       paymentUrl,
       subscriptionId: subscription._id,
+      manualPayment,
+      manualInstructions,
+      paymentMethod,
     })
   } catch (error: any) {
     console.error('Error creating subscription:', error)
     res.status(500).json({ error: error.message || 'Failed to create subscription' })
+  }
+})
+
+/**
+ * POST /api/subscription/manual/confirm
+ * Allow users to submit proof/reference for manual payments
+ */
+router.post('/manual/confirm', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!
+    const { transactionId, reference, proofUrl, notes, paymentMethod } = req.body
+
+    if (!transactionId) {
+      return res.status(400).json({ error: 'transactionId is required' })
+    }
+
+    const transaction = await PaymentTransaction.findOne({ transactionId, userId })
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' })
+    }
+
+    if (!['crypto_manual', 'fib_manual'].includes(transaction.paymentMethod)) {
+      return res.status(400).json({ error: 'Manual confirmation is only available for manual payment methods' })
+    }
+
+    const manualConfirmation = {
+      submittedAt: new Date().toISOString(),
+      reference,
+      proofUrl,
+      notes,
+      paymentMethod: paymentMethod || transaction.paymentMethod,
+    }
+
+    const existingResponse = transaction.providerResponse || {}
+
+    await transaction.updateOne({
+      providerResponse: {
+        ...existingResponse,
+        manualConfirmation,
+      },
+      status: 'pending',
+    })
+
+    const subscription = await Subscription.findOne({ transactionId })
+    if (subscription) {
+      subscription.metadata = {
+        ...(subscription.metadata || {}),
+        manualConfirmation,
+      }
+      await subscription.save()
+    }
+
+    res.json({ success: true })
+  } catch (error: any) {
+    console.error('Error submitting manual confirmation:', error)
+    res.status(500).json({ error: 'Failed to submit manual confirmation' })
   }
 })
 

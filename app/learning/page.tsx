@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
-  FileText, Palette, Puzzle, Target
+  FileText, Palette, Puzzle, Target, Lock
 } from 'lucide-react'
 import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
+import { checkModuleAccess, refreshSubscriptionStatus, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -20,6 +21,7 @@ export default function LearningPage() {
   const [children, setChildren] = useState<any[]>([])
   const [selectedChild, setSelectedChild] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [moduleAccessMap, setModuleAccessMap] = useState<Record<string, ModuleAccess>>({})
 
   // Ensure dark mode CSS class is present when user selected dark theme
   useEffect(() => {
@@ -97,6 +99,31 @@ export default function LearningPage() {
     }
   }, []) // Empty dependency array - only run once on mount
 
+  useEffect(() => {
+    let mounted = true
+
+    const loadModuleAccess = async () => {
+      try {
+        const status = await refreshSubscriptionStatus()
+        if (!mounted) return
+        const map: Record<string, ModuleAccess> = {}
+        const modules = [...FREE_MODULES, ...PREMIUM_MODULES]
+        modules.forEach((moduleId) => {
+          map[moduleId] = checkModuleAccess(moduleId, status)
+        })
+        setModuleAccessMap(map)
+      } catch (error) {
+        console.error('Error loading module access:', error)
+      }
+    }
+
+    loadModuleAccess()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
@@ -105,9 +132,27 @@ export default function LearningPage() {
     )
   }
 
+  const moduleIsLocked = (moduleId: string): boolean => {
+    return moduleAccessMap[moduleId]?.isLocked ?? false
+  }
+
+  const renderLockBadge = (moduleId: string) => {
+    if (!moduleIsLocked(moduleId)) return null
+    return (
+      <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs font-semibold shadow-lg flex items-center gap-1 z-10">
+        <Lock className="w-3 h-3" />
+        Premium
+      </div>
+    )
+  }
+
   // Helper function to handle module click
-  const handleModuleClick = (moduleId: string, moduleName: string) => {
-    router.push(`/learning/${moduleId}`)
+  const handleModuleClick = (moduleId: string, moduleName: string, overrideRoute?: string) => {
+    if (moduleIsLocked(moduleId)) {
+      router.push('/subscribe')
+      return
+    }
+    router.push(overrideRoute || `/learning/${moduleId}`)
   }
 
   if (children.length === 0) {
@@ -265,6 +310,7 @@ export default function LearningPage() {
                 onClick={() => handleModuleClick('reading', 'Reading')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-cyan-600/0 group-hover:from-blue-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
+                {renderLockBadge('reading')}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/25 to-cyan-400/25 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
@@ -341,6 +387,7 @@ export default function LearningPage() {
                 onClick={() => handleModuleClick('speaking', 'Speaking')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-600/0 group-hover:from-purple-500/15 group-hover:to-pink-600/15 transition-all duration-500"></div>
+                {renderLockBadge('speaking')}
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
                     className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center shadow-lg relative"
@@ -452,6 +499,7 @@ export default function LearningPage() {
                 onClick={() => handleModuleClick('puzzle', 'Puzzles')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-600/0 group-hover:from-orange-500/15 group-hover:to-orange-600/15 transition-all duration-500"></div>
+                {renderLockBadge('puzzle')}
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
                     className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg relative"
@@ -492,6 +540,7 @@ export default function LearningPage() {
                 onClick={() => handleModuleClick('alphabet-coloring', 'Coloring')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-600/0 group-hover:from-cyan-500/15 group-hover:to-cyan-600/15 transition-all duration-500"></div>
+                {renderLockBadge('alphabet-coloring')}
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
                     className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-lg relative"
@@ -529,12 +578,10 @@ export default function LearningPage() {
             >
               <Card 
                 className="card-kid cursor-pointer group relative overflow-hidden hover-lift"
-                onClick={() => {
-                  // Navigate to dashboard challenges section or create challenges page
-                  router.push('/dashboard')
-                }}
+                onClick={() => handleModuleClick('challenges', 'Challenges', '/dashboard')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/0 to-rose-600/0 group-hover:from-rose-500/15 group-hover:to-rose-600/15 transition-all duration-500"></div>
+                {renderLockBadge('challenges')}
                 <CardContent className="p-4 md:p-6 text-center relative z-10">
                   <motion.div 
                     className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg relative"
