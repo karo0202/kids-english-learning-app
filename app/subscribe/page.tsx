@@ -26,6 +26,7 @@ export default function SubscribePage() {
   } | null>(null)
   const [manualModalOpen, setManualModalOpen] = useState(false)
   const [confirmingManual, setConfirmingManual] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     const user = getUserSession()
@@ -38,14 +39,21 @@ export default function SubscribePage() {
   }, [router])
 
   const fetchPlans = async () => {
+    setErrorMessage(null)
     try {
       const response = await fetch('/api/subscription/plans')
       const data = await response.json()
       if (data.success) {
         setPlans(data.plans)
+        if (!data.plans || data.plans.length === 0) {
+          setErrorMessage('No subscription plans are available yet. Please contact support to configure plans.')
+        }
+      } else {
+        setErrorMessage(data.error || 'Unable to load subscription plans.')
       }
     } catch (error) {
       console.error('Error fetching plans:', error)
+      setErrorMessage('Unable to reach the subscription server. Please ensure the backend is running and try again.')
     } finally {
       setLoading(false)
     }
@@ -178,6 +186,26 @@ export default function SubscribePage() {
           </p>
         </motion.div>
 
+        {/* Error / Empty States */}
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/70 dark:bg-gray-800/80 border border-purple-100 dark:border-purple-900 rounded-2xl shadow-lg p-6 mb-10 text-center"
+          >
+            <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">{errorMessage}</p>
+            <button
+              onClick={() => {
+                setLoading(true)
+                fetchPlans()
+              }}
+              className="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+            >
+              Try Again
+            </button>
+          </motion.div>
+        )}
+
         {/* Subscription Plans */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan, index) => (
@@ -190,6 +218,12 @@ export default function SubscribePage() {
             />
           ))}
         </div>
+
+        {plans.length === 0 && !errorMessage && (
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-12">
+            Plans will appear here once they are configured in the admin panel.
+          </p>
+        )}
 
         {/* Payment Methods */}
         {selectedPlan && (
