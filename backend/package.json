@@ -11,7 +11,8 @@
     "setup": "ts-node scripts/setup.ts",
     "seed": "ts-node scripts/seedPlans.ts",
     "create-env": "ts-node scripts/createEnv.ts",
-    "check-mongo": "ts-node scripts/checkMongoDB.ts"
+    "check-mongo": "ts-node scripts/checkMongoDB.ts",
+    "postinstall": "npm run build || true"
   },
   "dependencies": {
     "express": "^4.18.2",
