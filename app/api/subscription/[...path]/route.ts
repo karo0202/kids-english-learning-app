@@ -158,38 +158,73 @@ export async function POST(
     const body = await request.json()
     const token = request.headers.get('authorization')
     
-    const response = await fetch(`${BACKEND_URL}/api/subscription/${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: token } : {}),
-      },
-      body: JSON.stringify(body),
-    })
+    // Create timeout controller
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
     
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error(`Backend error (${response.status}):`, errorText)
-      return NextResponse.json(
-        { 
-          error: 'Failed to process subscription request',
-          details: errorText,
-          backendUrl: BACKEND_URL
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/subscription/${path}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: token } : {}),
         },
-        { status: response.status }
-      )
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`Backend error (${response.status}):`, errorText)
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Failed to process subscription request',
+            details: errorText,
+            backendUrl: BACKEND_URL
+          },
+          { status: response.status }
+        )
+      }
+      
+      const data = await response.json()
+      return NextResponse.json(data, { status: response.status })
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId)
+      
+      // Check if it's a connection error
+      if (fetchError.name === 'AbortError' || 
+          fetchError.message.includes('fetch failed') ||
+          fetchError.message.includes('ECONNREFUSED') ||
+          fetchError.message.includes('network')) {
+        console.error('Backend connection failed:', fetchError.message)
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Payment service is currently unavailable',
+            message: 'The subscription service requires a backend server to process payments. Please contact support or try again later.',
+            backendUrl: BACKEND_URL,
+            requiresBackend: true,
+            hint: 'The backend server needs to be deployed and running to process subscription payments.'
+          },
+          { status: 503 } // Service Unavailable
+        )
+      }
+      
+      throw fetchError
     }
-    
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
   } catch (error: any) {
     console.error('Subscription API error:', error)
     return NextResponse.json(
       { 
+        success: false,
         error: 'Failed to process subscription request',
-        details: error.message,
+        message: error.message || 'An unexpected error occurred',
         backendUrl: BACKEND_URL,
-        hint: 'Make sure the backend server is running on ' + BACKEND_URL
+        requiresBackend: true,
+        hint: 'The backend server needs to be deployed and running to process subscription payments.'
       },
       { status: 500 }
     )

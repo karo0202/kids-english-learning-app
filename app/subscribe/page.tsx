@@ -115,11 +115,23 @@ export default function SubscribePage() {
           alert('Payment created. Please follow the instructions provided.')
         }
       } else {
-        alert(data.error || 'Failed to create payment')
+        // Show better error message
+        const errorMsg = data.message || data.error || 'Failed to create payment'
+        if (data.requiresBackend) {
+          setErrorMessage(
+            'Payment service is currently unavailable. The subscription system requires a backend server to process payments. Please contact support or try again later.'
+          )
+        } else {
+          setErrorMessage(errorMsg)
+        }
+        setTimeout(() => setErrorMessage(null), 10000) // Clear after 10 seconds
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Payment creation error:', error)
-      alert('Failed to create payment. Please try again.')
+      setErrorMessage(
+        'Failed to create payment. The payment service may be unavailable. Please try again later or contact support.'
+      )
+      setTimeout(() => setErrorMessage(null), 10000) // Clear after 10 seconds
     }
   }
 
