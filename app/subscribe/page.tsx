@@ -86,6 +86,28 @@ export default function SubscribePage() {
         }),
       })
 
+      // Check if response is ok before parsing
+      if (!response.ok) {
+        let errorData
+        try {
+          errorData = await response.json()
+        } catch {
+          errorData = { error: 'Payment service is unavailable' }
+        }
+        
+        const errorMsg = errorData.message || errorData.error || 'Payment service is currently unavailable'
+        if (response.status === 503 || errorData.requiresBackend) {
+          setErrorMessage(
+            'Payment service is currently unavailable. The backend server needs to be deployed to process payments. Please contact support or check back later.'
+          )
+        } else {
+          setErrorMessage(errorMsg)
+        }
+        setSelectedPaymentMethod(null) // Reset loading state
+        setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
+        return
+      }
+
       const data = await response.json()
 
       if (data.success) {
@@ -119,19 +141,21 @@ export default function SubscribePage() {
         const errorMsg = data.message || data.error || 'Failed to create payment'
         if (data.requiresBackend) {
           setErrorMessage(
-            'Payment service is currently unavailable. The subscription system requires a backend server to process payments. Please contact support or try again later.'
+            'Payment service is currently unavailable. The backend server needs to be deployed to process payments. Please contact support or check back later.'
           )
         } else {
           setErrorMessage(errorMsg)
         }
-        setTimeout(() => setErrorMessage(null), 10000) // Clear after 10 seconds
+        setSelectedPaymentMethod(null) // Reset loading state
+        setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
       }
     } catch (error: any) {
       console.error('Payment creation error:', error)
+      setSelectedPaymentMethod(null) // Reset loading state
       setErrorMessage(
-        'Failed to create payment. The payment service may be unavailable. Please try again later or contact support.'
+        'Failed to create payment. The payment service is currently unavailable. This usually means the backend server needs to be deployed. Please contact support or check back later.'
       )
-      setTimeout(() => setErrorMessage(null), 10000) // Clear after 10 seconds
+      setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
     }
   }
 
@@ -203,18 +227,42 @@ export default function SubscribePage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/70 dark:bg-gray-800/80 border border-purple-100 dark:border-purple-900 rounded-2xl shadow-lg p-6 mb-10 text-center"
+            className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-2xl shadow-lg p-6 mb-10"
           >
-            <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">{errorMessage}</p>
-            <button
-              onClick={() => {
-                setLoading(true)
-                fetchPlans()
-              }}
-              className="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-md hover:shadow-lg transition-all"
-            >
-              Try Again
-            </button>
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">
+                  Payment Service Unavailable
+                </h3>
+                <p className="text-red-700 dark:text-red-400 mb-4">{errorMessage}</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setErrorMessage(null)
+                      setSelectedPaymentMethod(null)
+                    }}
+                    className="inline-flex items-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+                  >
+                    Dismiss
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLoading(true)
+                      setErrorMessage(null)
+                      fetchPlans()
+                    }}
+                    className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+                  >
+                    Refresh Plans
+                  </button>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
