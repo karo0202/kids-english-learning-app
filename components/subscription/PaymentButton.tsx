@@ -52,9 +52,9 @@ const paymentMethodConfig = {
     color: 'bg-amber-500 hover:bg-amber-600',
   },
   fib_manual: {
-    label: 'FIB QR / Phone',
+    label: 'Pay by Phone Number',
     icon: QrCode,
-    color: 'bg-slate-700 hover:bg-slate-800',
+    color: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700',
   },
 } as const
 

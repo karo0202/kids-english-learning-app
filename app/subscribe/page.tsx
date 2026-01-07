@@ -237,45 +237,30 @@ export default function SubscribePage() {
           </p>
         )}
 
-        {/* Payment Methods */}
+        {/* Payment Method - Phone Number Only */}
         {selectedPlan && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-              Select Payment Method
-            </h2>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                Complete Your Payment
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                Pay via phone number transfer
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500">
+                Send payment to our phone number and submit your transaction reference to activate your subscription
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <PaymentButton
-                paymentMethod="crypto"
-                onClick={() => handlePaymentMethodSelect('crypto')}
-              />
-              <PaymentButton
-                paymentMethod="zaincash"
-                onClick={() => handlePaymentMethodSelect('zaincash')}
-              />
-              <PaymentButton
-                paymentMethod="fastpay"
-                onClick={() => handlePaymentMethodSelect('fastpay')}
-              />
-              <PaymentButton
-                paymentMethod="nasspay"
-                onClick={() => handlePaymentMethodSelect('nasspay')}
-              />
-              <PaymentButton
-                paymentMethod="fib"
-                onClick={() => handlePaymentMethodSelect('fib')}
-              />
-              <PaymentButton
-                paymentMethod="crypto_manual"
-                onClick={() => handlePaymentMethodSelect('crypto_manual')}
-              />
+            <div className="flex justify-center">
               <PaymentButton
                 paymentMethod="fib_manual"
                 onClick={() => handlePaymentMethodSelect('fib_manual')}
+                className="min-w-[350px] text-lg py-6"
               />
             </div>
           </motion.div>
