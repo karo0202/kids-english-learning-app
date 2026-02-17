@@ -156,3 +156,6 @@ For Vercel/production:
 3. Verify all environment variables are set correctly
 4. Ensure ports 3000 (frontend) and 5000 (backend) are not in use by other apps
 
+
+
+

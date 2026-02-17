@@ -74,6 +74,7 @@ export default function SubscribePage() {
     try {
       const { getAuthToken } = await import('@/lib/simple-auth')
       const token = await getAuthToken()
+      const user = getUserSession()
       const response = await fetch('/api/subscription/create', {
         method: 'POST',
         headers: {
@@ -83,6 +84,7 @@ export default function SubscribePage() {
         body: JSON.stringify({
           planId: selectedPlan,
           paymentMethod,
+          userId: user?.id, // Fallback when token doesn't contain userId
         }),
       })
 

@@ -163,15 +163,15 @@ export async function POST(
     const timeoutId = setTimeout(() => controller.abort(), 5000)
     
     try {
-      const response = await fetch(`${BACKEND_URL}/api/subscription/${path}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: token } : {}),
-        },
-        body: JSON.stringify(body),
+    const response = await fetch(`${BACKEND_URL}/api/subscription/${path}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: token } : {}),
+      },
+      body: JSON.stringify(body),
         signal: controller.signal,
-      })
+    })
       
       clearTimeout(timeoutId)
       
@@ -188,9 +188,9 @@ export async function POST(
           { status: response.status }
         )
       }
-      
-      const data = await response.json()
-      return NextResponse.json(data, { status: response.status })
+    
+    const data = await response.json()
+    return NextResponse.json(data, { status: response.status })
     } catch (fetchError: any) {
       clearTimeout(timeoutId)
       
