@@ -276,6 +276,7 @@ export default function SubscribePage() {
               plan={plan}
               onSelect={handlePlanSelect}
               isPopular={index === 1} // Middle plan is popular
+              isSelected={selectedPlan === plan.planId}
               loading={selectedPlan === plan.planId && !!selectedPaymentMethod}
             />
           ))}

@@ -20,6 +20,7 @@ interface SubscriptionPlanCardProps {
   onSelect: (planId: string) => void
   isPopular?: boolean
   loading?: boolean
+  isSelected?: boolean
 }
 
 export default function SubscriptionPlanCard({
@@ -27,6 +28,7 @@ export default function SubscriptionPlanCard({
   onSelect,
   isPopular = false,
   loading = false,
+  isSelected = false,
 }: SubscriptionPlanCardProps) {
   const durationText =
     plan.duration === 30
@@ -43,15 +45,27 @@ export default function SubscriptionPlanCard({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
+      className="cursor-pointer"
+      onClick={() => !loading && onSelect(plan.planId)}
     >
       <Card
-        className={`relative h-full ${
-          isPopular
-            ? 'border-2 border-purple-500 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20'
-            : 'border border-gray-200 dark:border-gray-700'
+        className={`relative h-full transition-all duration-300 ${
+          isSelected
+            ? 'border-4 border-purple-500 shadow-2xl bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 ring-4 ring-purple-200 dark:ring-purple-800'
+            : isPopular
+            ? 'border-2 border-purple-500 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 hover:border-purple-600'
+            : 'border-2 border-gray-200 dark:border-gray-700 hover:border-purple-400 hover:shadow-lg'
         }`}
       >
-        {isPopular && (
+        {isSelected && (
+          <div className="absolute -top-3 right-4">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+              <Check className="w-3 h-3" />
+              Selected
+            </div>
+          </div>
+        )}
+        {isPopular && !isSelected && (
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
               Popular
@@ -85,16 +99,33 @@ export default function SubscriptionPlanCard({
           </ul>
 
           <Button
-            onClick={() => onSelect(plan.planId)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onSelect(plan.planId)
+            }}
             disabled={loading}
-            className={`w-full ${
-              isPopular
+            className={`w-full transition-all ${
+              isSelected
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg'
+                : isPopular
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
-                : ''
+                : 'bg-gray-800 hover:bg-gray-900 text-white dark:bg-gray-700 dark:hover:bg-gray-600'
             }`}
             size="lg"
           >
-            {loading ? 'Processing...' : 'Subscribe Now'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Processing...
+              </span>
+            ) : isSelected ? (
+              <span className="flex items-center justify-center gap-2">
+                <Check className="w-4 h-4" />
+                Selected - Continue Below
+              </span>
+            ) : (
+              'Subscribe Now'
+            )}
           </Button>
         </CardContent>
       </Card>
