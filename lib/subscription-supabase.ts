@@ -46,16 +46,59 @@ export async function seedPlansIfNeeded() {
 }
 
 export async function createSubscriptionPayment(userId: string, planId: string, paymentMethod: string) {
-  const plan = FALLBACK_PLANS.find(p => p.planId === planId)
-  if (!plan) throw new Error(`Plan ${planId} not found`)
+  // SECURITY: Always fetch plan from database first, fallback to hardcoded
+  let plan = null
+  
+  if (supabase) {
+    const { data: dbPlan } = await supabase
+      .from('subscription_plans')
+      .select('*')
+      .eq('plan_id', planId)
+      .eq('is_active', true)
+      .single()
+    
+    if (dbPlan) {
+      plan = {
+        planId: dbPlan.plan_id,
+        name: dbPlan.name,
+        description: dbPlan.description,
+        duration: dbPlan.duration,
+        price: parseFloat(dbPlan.price),
+        currency: dbPlan.currency,
+        features: Array.isArray(dbPlan.features) ? dbPlan.features : [],
+        isActive: dbPlan.is_active,
+      }
+    }
+  }
+
+  // Fallback to hardcoded plans if database doesn't have it
+  if (!plan) {
+    plan = FALLBACK_PLANS.find(p => p.planId === planId)
+  }
+
+  if (!plan) {
+    throw new Error(`Plan ${planId} not found or inactive`)
+  }
 
   const transactionId = generatePaymentToken()
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + plan.duration)
 
   if (supabase) {
+    // SECURITY: Check for duplicate transaction (idempotency)
+    // Note: This is basic - for production, use a unique constraint on transaction_id
+    const { data: existing } = await supabase
+      .from('payment_transactions')
+      .select('id')
+      .eq('transaction_id', transactionId)
+      .single()
+
+    if (existing) {
+      throw new Error('Transaction ID collision - please try again')
+    }
+
     // Store in Supabase
-    const { data: subscription } = await supabase
+    const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
       .insert({
         user_id: userId,
@@ -70,7 +113,11 @@ export async function createSubscriptionPayment(userId: string, planId: string, 
       .select()
       .single()
 
-    await supabase
+    if (subError) {
+      throw new Error('Failed to create subscription: ' + subError.message)
+    }
+
+    const { error: txError } = await supabase
       .from('payment_transactions')
       .insert({
         transaction_id: transactionId,
@@ -82,6 +129,10 @@ export async function createSubscriptionPayment(userId: string, planId: string, 
         status: 'pending',
         provider_response: {},
       })
+
+    if (txError) {
+      throw new Error('Failed to create transaction: ' + txError.message)
+    }
   }
 
   const manualInstructions =
@@ -109,20 +160,55 @@ export async function confirmManualPayment(userId: string, transactionId: string
     return { success: true }
   }
 
-  const manualConfirmation = {
-    submittedAt: new Date().toISOString(),
-    reference,
-    notes,
+  // SECURITY: Verify transaction exists and belongs to user
+  const { data: transaction, error: fetchError } = await supabase
+    .from('payment_transactions')
+    .select('user_id, created_at, status')
+    .eq('transaction_id', transactionId)
+    .single()
+
+  if (fetchError || !transaction) {
+    throw new Error('Transaction not found')
   }
 
-  await supabase
+  if (transaction.user_id !== userId) {
+    throw new Error('Unauthorized: Transaction does not belong to this user')
+  }
+
+  // SECURITY: Check if transaction already confirmed
+  if (transaction.status === 'completed' || transaction.status === 'approved') {
+    throw new Error('Transaction already confirmed')
+  }
+
+  // SECURITY: Check transaction expiration (24 hours)
+  const createdAt = new Date(transaction.created_at)
+  const hoursSinceCreation = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60)
+  if (hoursSinceCreation > 24) {
+    throw new Error('Transaction expired. Please create a new payment.')
+  }
+
+  // SECURITY: Sanitize user inputs (basic - consider using DOMPurify for production)
+  const sanitizedReference = reference?.trim().substring(0, 200) || undefined
+  const sanitizedNotes = notes?.trim().substring(0, 1000) || undefined
+
+  const manualConfirmation = {
+    submittedAt: new Date().toISOString(),
+    reference: sanitizedReference,
+    notes: sanitizedNotes,
+  }
+
+  const { error: updateError } = await supabase
     .from('payment_transactions')
     .update({
       provider_response: { manualConfirmation },
-      status: 'pending',
+      status: 'pending', // Still pending until admin verifies
     })
     .eq('transaction_id', transactionId)
-    .eq('user_id', userId)
+    .eq('user_id', userId) // Double-check user ownership
+
+  if (updateError) {
+    throw new Error('Failed to update transaction: ' + updateError.message)
+  }
 
   await supabase
     .from('subscriptions')
@@ -130,6 +216,7 @@ export async function confirmManualPayment(userId: string, transactionId: string
       metadata: { manualConfirmation },
     })
     .eq('transaction_id', transactionId)
+    .eq('user_id', userId) // Ensure user owns the subscription too
 
   return { success: true }
 }
