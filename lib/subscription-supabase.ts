@@ -39,9 +39,22 @@ export async function seedPlansIfNeeded() {
   if (!supabase) return
 
   for (const plan of FALLBACK_PLANS) {
+    // Map camelCase to snake_case for Supabase
     await supabase
       .from('subscription_plans')
-      .upsert(plan, { onConflict: 'planId' })
+      .upsert({
+        plan_id: plan.planId,
+        name: plan.name,
+        description: plan.description,
+        duration: plan.duration,
+        price: plan.price,
+        currency: plan.currency,
+        features: plan.features,
+        is_active: plan.isActive,
+      }, { 
+        onConflict: 'plan_id',
+        ignoreDuplicates: false // Force update existing rows
+      })
   }
 }
 
