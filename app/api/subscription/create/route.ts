@@ -125,11 +125,11 @@ export async function POST(request: NextRequest) {
 
     // Get plan price for logging and email
     const FALLBACK_PLANS = [
-      { planId: 'monthly', price: 9.99, currency: 'USD', name: 'Monthly Plan' },
-      { planId: 'yearly', price: 95.99, currency: 'USD', name: 'Yearly Plan' },
-      { planId: 'lifetime', price: 199.99, currency: 'USD', name: 'Lifetime Plan' },
+      { planId: 'monthly', price: 13000, currency: 'IQD', name: 'Monthly Plan' },
+      { planId: 'yearly', price: 125000, currency: 'IQD', name: 'Yearly Plan' },
+      { planId: 'lifetime', price: 260000, currency: 'IQD', name: 'Lifetime Plan' },
     ]
-    const plan = FALLBACK_PLANS.find(p => p.planId === planId) || { price: 0, currency: 'USD', name: planId }
+    const plan = FALLBACK_PLANS.find(p => p.planId === planId) || { price: 0, currency: 'IQD', name: planId }
 
     // Log successful payment creation
     await logPaymentAction({

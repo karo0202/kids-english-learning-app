@@ -145,7 +145,7 @@ export default function SubscribePage() {
             instructions: data.manualInstructions || {},
             transactionId: data.transactionId,
             amount: planInfo?.price || 0,
-            currency: planInfo?.currency || 'USD',
+            currency: planInfo?.currency || 'IQD',
           })
           setManualModalOpen(true)
         } else if (paymentMethod === 'crypto') {
@@ -153,7 +153,7 @@ export default function SubscribePage() {
             paymentUrl: data.paymentUrl,
             invoiceId: data.invoiceId || data.transactionId,
             amount: planInfo?.price || 0,
-            currency: planInfo?.currency || 'USD',
+            currency: planInfo?.currency || 'IQD',
           })
           setCryptoModalOpen(true)
         } else if (data.paymentUrl) {

@@ -14,9 +14,9 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
 
 const FALLBACK_PLANS = [
-  { planId: 'monthly', name: 'Monthly Plan', description: 'Full access for 30 days', duration: 30, price: 9.99, currency: 'USD', features: ['Access to all learning modules', 'Unlimited child profiles', 'Progress tracking', 'Email support'], isActive: true },
-  { planId: 'yearly', name: 'Yearly Plan', description: 'Full access for 365 days (Save 20%)', duration: 365, price: 95.99, currency: 'USD', features: ['Access to all learning modules', 'Unlimited child profiles', 'Progress tracking', 'Priority email support', 'Early access to new features'], isActive: true },
-  { planId: 'lifetime', name: 'Lifetime Plan', description: 'One-time payment, lifetime access', duration: 9999, price: 199.99, currency: 'USD', features: ['Lifetime access to all modules', 'Unlimited child profiles', 'Advanced progress tracking', 'Priority support', 'Early access to new features', 'Exclusive content'], isActive: true },
+  { planId: 'monthly', name: 'Monthly Plan', description: 'Full access for 30 days', duration: 30, price: 13000, currency: 'IQD', features: ['Access to all learning modules', 'Unlimited child profiles', 'Progress tracking', 'Email support'], isActive: true },
+  { planId: 'yearly', name: 'Yearly Plan', description: 'Full access for 365 days (Save 20%)', duration: 365, price: 125000, currency: 'IQD', features: ['Access to all learning modules', 'Unlimited child profiles', 'Progress tracking', 'Priority email support', 'Early access to new features'], isActive: true },
+  { planId: 'lifetime', name: 'Lifetime Plan', description: 'One-time payment, lifetime access', duration: 9999, price: 260000, currency: 'IQD', features: ['Lifetime access to all modules', 'Unlimited child profiles', 'Advanced progress tracking', 'Priority support', 'Early access to new features', 'Exclusive content'], isActive: true },
 ]
 
 function generatePaymentToken(): string {

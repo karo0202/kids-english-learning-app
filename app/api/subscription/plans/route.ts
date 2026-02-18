@@ -14,8 +14,8 @@ const FALLBACK_PLANS = [
     name: 'Monthly Plan',
     description: 'Full access for 30 days',
     duration: 30,
-    price: 9.99,
-    currency: 'USD',
+    price: 13000,
+    currency: 'IQD',
     features: [
       'Access to all learning modules',
       'Unlimited child profiles',
@@ -30,8 +30,8 @@ const FALLBACK_PLANS = [
     name: 'Yearly Plan',
     description: 'Full access for 365 days (Save 20%)',
     duration: 365,
-    price: 95.99,
-    currency: 'USD',
+    price: 125000,
+    currency: 'IQD',
     features: [
       'Access to all learning modules',
       'Unlimited child profiles',
@@ -47,8 +47,8 @@ const FALLBACK_PLANS = [
     name: 'Lifetime Plan',
     description: 'One-time payment, lifetime access',
     duration: 9999,
-    price: 199.99,
-    currency: 'USD',
+    price: 260000,
+    currency: 'IQD',
     features: [
       'Lifetime access to all modules',
       'Unlimited child profiles',
