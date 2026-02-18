@@ -123,14 +123,22 @@ export async function POST(request: NextRequest) {
     await seedPlansIfNeeded()
     const result = await createSubscriptionPayment(userId, planId, paymentMethod)
 
+    // Get plan price for logging and email
+    const FALLBACK_PLANS = [
+      { planId: 'monthly', price: 9.99, currency: 'USD', name: 'Monthly Plan' },
+      { planId: 'yearly', price: 95.99, currency: 'USD', name: 'Yearly Plan' },
+      { planId: 'lifetime', price: 199.99, currency: 'USD', name: 'Lifetime Plan' },
+    ]
+    const plan = FALLBACK_PLANS.find(p => p.planId === planId) || { price: 0, currency: 'USD', name: planId }
+
     // Log successful payment creation
     await logPaymentAction({
       user_id: userId,
       action: 'create_payment',
       transaction_id: result.transactionId,
       plan_id: planId,
-      amount: result.manualInstructions ? undefined : undefined, // Will be fetched from plan
-      currency: 'USD',
+      amount: plan.price,
+      currency: plan.currency,
       payment_method: paymentMethod,
       ip_address: requestMetadata.ip_address,
       user_agent: requestMetadata.user_agent,
@@ -148,9 +156,9 @@ export async function POST(request: NextRequest) {
           to: userEmail,
           userName: body.userName || 'User',
           transactionId: result.transactionId,
-          amount: result.manualInstructions.amount || 0,
-          currency: 'USD',
-          planName: planId,
+          amount: plan.price,
+          currency: plan.currency,
+          planName: plan.name,
           paymentMethod: paymentMethod,
           phoneNumber: result.manualInstructions.phoneNumber,
           accountName: result.manualInstructions.accountName,
