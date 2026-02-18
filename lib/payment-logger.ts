@@ -18,8 +18,8 @@ export interface PaymentLogEntry {
   amount?: number
   currency?: string
   payment_method?: string
-  ip_address?: string
-  user_agent?: string
+  ip_address?: string | null
+  user_agent?: string | null
   error_message?: string
   metadata?: Record<string, any>
 }
