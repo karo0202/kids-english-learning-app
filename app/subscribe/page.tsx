@@ -69,12 +69,29 @@ export default function SubscribePage() {
       return
     }
 
+    const user = getUserSession()
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    const { getAuthToken } = await import('@/lib/simple-auth')
+    // Force refresh token so payment API gets a valid token
+    let token = await getAuthToken(true)
+    // If no token, wait for Firebase auth state (e.g. just logged in) and retry once
+    if (!token && user) {
+      await new Promise((r) => setTimeout(r, 1500))
+      token = await getAuthToken(true)
+    }
+    if (!token) {
+      setErrorMessage('Your session has expired. Please log in again to continue.')
+      setTimeout(() => router.push('/login'), 3000)
+      return
+    }
+
     setSelectedPaymentMethod(paymentMethod)
 
     try {
-      const { getAuthToken } = await import('@/lib/simple-auth')
-      const token = await getAuthToken()
-      const user = getUserSession()
       const response = await fetch('/api/subscription/create', {
         method: 'POST',
         headers: {
@@ -84,7 +101,9 @@ export default function SubscribePage() {
         body: JSON.stringify({
           planId: selectedPlan,
           paymentMethod,
-          userId: user?.id, // Fallback when token doesn't contain userId
+          userId: user.id, // Must match token for server verification
+          userEmail: user.email,
+          userName: user.name,
         }),
       })
 
@@ -98,7 +117,12 @@ export default function SubscribePage() {
         }
         
         const errorMsg = errorData.message || errorData.error || 'Payment service is currently unavailable'
-        if (response.status === 503 || errorData.requiresBackend) {
+        if (response.status === 401) {
+          setErrorMessage(
+            'Your session has expired or you are not logged in. Please log in again to continue.'
+          )
+          setTimeout(() => router.push('/login'), 4000)
+        } else if (response.status === 503 || errorData.requiresBackend) {
           setErrorMessage(
             'Payment service is currently unavailable. The backend server needs to be deployed to process payments. Please contact support or check back later.'
           )
@@ -239,10 +263,10 @@ export default function SubscribePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">
-                  Payment Service Unavailable
+                  {errorMessage?.toLowerCase().includes('log in') ? 'Log in required' : 'Payment Service Unavailable'}
                 </h3>
                 <p className="text-red-700 dark:text-red-400 mb-4">{errorMessage}</p>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => {
                       setErrorMessage(null)
@@ -252,6 +276,14 @@ export default function SubscribePage() {
                   >
                     Dismiss
                   </button>
+                  {errorMessage?.toLowerCase().includes('log in') && (
+                    <button
+                      onClick={() => router.push('/login')}
+                      className="inline-flex items-center px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+                    >
+                      Log in again
+                    </button>
+                  )}
                   <button
                     onClick={() => {
                       setLoading(true)

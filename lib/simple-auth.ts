@@ -93,32 +93,32 @@ export function hasStoredData(): boolean {
 
 /**
  * Get authentication token for API requests
- * Tries localStorage first, then Firebase ID token
+ * Tries Firebase ID token first (fresh), then localStorage
+ * @param forceRefresh - If true, force Firebase to issue a new token (use for payments)
  */
-export async function getAuthToken(): Promise<string | null> {
+export async function getAuthToken(forceRefresh = false): Promise<string | null> {
   if (typeof window === 'undefined') return null
   
-  // Try localStorage first
-  const storedToken = localStorage.getItem('accessToken')
-  if (storedToken) {
-    return storedToken
-  }
-  
-  // Try Firebase ID token
+  // Try Firebase ID token first (so we get a fresh token when needed)
   try {
     const { getAuthClient } = await import('@/lib/firebase')
     const client = getAuthClient()
     if (client?.auth?.currentUser) {
       const { getIdToken } = await import('firebase/auth')
-      const token = await getIdToken(client.auth.currentUser)
+      const token = await getIdToken(client.auth.currentUser, forceRefresh)
       if (token) {
-        // Store for future use
         localStorage.setItem('accessToken', token)
         return token
       }
     }
   } catch (error) {
     console.error('Error getting Firebase token:', error)
+  }
+  
+  // Fallback: use stored token (e.g. if Firebase not used)
+  const storedToken = localStorage.getItem('accessToken')
+  if (storedToken) {
+    return storedToken
   }
   
   return null

@@ -3,6 +3,7 @@
  * SECURITY: Never trust userId from body - always verify from token
  */
 import jwt from 'jsonwebtoken'
+import { verifyFirebaseToken } from './firebase-admin'
 
 export async function getUserIdFromToken(
   authHeader: string | null,
@@ -37,35 +38,45 @@ export async function getUserIdFromToken(
     }
   }
 
-  // Firebase token: decode (contains 'sub')
-  // NOTE: For production, use Firebase Admin SDK to verify tokens properly
+  // Firebase token: Use Firebase Admin SDK for proper verification
+  try {
+    const firebaseUser = await verifyFirebaseToken(token)
+    
+    if (firebaseUser) {
+      const userId = firebaseUser.uid
+      if (userIdFromBody && userId !== userIdFromBody) {
+        console.warn('Security: userIdFromBody does not match Firebase token userId')
+      } else {
+        return userId
+      }
+    }
+  } catch (error) {
+    console.warn('Firebase token verification error:', error instanceof Error ? error.message : error)
+  }
+
+  // Final fallback: decode token without verification (Firebase ID tokens are JWTs)
+  // Used when Firebase Admin SDK is not configured (e.g. on Vercel without FIREBASE_SERVICE_ACCOUNT_KEY)
   try {
     const decoded = jwt.decode(token) as { sub?: string; user_id?: string; uid?: string; exp?: number } | null
-    
-    if (!decoded) {
-      return null
-    }
+    if (!decoded) return null
 
-    // Check expiration manually (since we're not verifying)
+    const uid = decoded.sub || decoded.uid || decoded.user_id
+    if (!uid) return null
+
+    // Reject if token is expired (exp is in seconds)
     if (decoded.exp && decoded.exp < Date.now() / 1000) {
-      console.warn('Token expired')
+      console.warn('Token expired (decode fallback)')
       return null
     }
 
-    const userId = decoded.sub || decoded.user_id || decoded.uid
-    
-    // SECURITY: If userIdFromBody is provided, verify it matches token
-    if (userIdFromBody && userId !== userIdFromBody) {
-      console.warn('Security: userIdFromBody does not match Firebase token userId')
-      return null // Reject mismatched userId
+    // If client sent userId in body, it must match the token (prevents impersonation)
+    if (userIdFromBody && uid !== userIdFromBody) {
+      console.warn('Security: userIdFromBody does not match decoded token')
+      return null
     }
-    
-    return userId || null
+
+    return uid
   } catch {
     return null
   }
-
-  // SECURITY FIX: Removed unsafe fallback that trusted userIdFromBody without verification
-  // Old code: if (userIdFromBody && authHeader) return userIdFromBody
-  // This was a security vulnerability - users could impersonate others
 }
