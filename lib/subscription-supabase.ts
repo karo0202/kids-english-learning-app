@@ -233,3 +233,59 @@ export async function confirmManualPayment(userId: string, transactionId: string
 
   return { success: true }
 }
+
+export async function getUserSubscriptionStatus(userId: string) {
+  if (!supabase) {
+    return {
+      hasActiveSubscription: false,
+      subscription: null,
+      isTrial: false,
+      trialDaysRemaining: 0,
+    }
+  }
+
+  // Check for active subscription
+  const { data: subscription, error } = await supabase
+    .from('subscriptions')
+    .select('*, subscription_plans(*)')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error || !subscription) {
+    return {
+      hasActiveSubscription: false,
+      subscription: null,
+      isTrial: false,
+      trialDaysRemaining: 0,
+    }
+  }
+
+  // Check if subscription is expired
+  const expiresAt = subscription.expires_at ? new Date(subscription.expires_at) : null
+  const isExpired = expiresAt && expiresAt < new Date()
+
+  if (isExpired) {
+    return {
+      hasActiveSubscription: false,
+      subscription: null,
+      isTrial: false,
+      trialDaysRemaining: 0,
+    }
+  }
+
+  return {
+    hasActiveSubscription: true,
+    subscription: {
+      id: subscription.id,
+      planId: subscription.plan_id,
+      status: subscription.status,
+      expiresAt: subscription.expires_at,
+      createdAt: subscription.created_at,
+    },
+    isTrial: false,
+    trialDaysRemaining: 0,
+  }
+}

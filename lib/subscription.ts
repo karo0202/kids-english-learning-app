@@ -1,4 +1,4 @@
-import { getAuthToken } from './simple-auth'
+import { getAuthToken, getUserSession } from './simple-auth'
 
 // Subscription management system
 export interface SubscriptionStatus {
@@ -130,12 +130,25 @@ function getStoredSubscription(): SubscriptionStatus | null {
 
 // Check if user has active subscription based on cached/local data
 export function hasActiveSubscription(): boolean {
+  // Dev admin always has active subscription
+  if (isDevAdmin()) return true
+  
   const stored = cachedStatus || getStoredSubscription()
   return !!(stored && stored.isActive && !stored.isTrial)
 }
 
 // Get subscription status
 export function getSubscriptionStatus(): SubscriptionStatus {
+  // Dev admin always has premium subscription
+  if (isDevAdmin()) {
+    return {
+      isActive: true,
+      isTrial: false,
+      trialDaysRemaining: 0,
+      subscriptionType: 'premium',
+    }
+  }
+
   if (cachedStatus) return cachedStatus
 
   const stored = getStoredSubscription()
@@ -153,6 +166,18 @@ export function getSubscriptionStatus(): SubscriptionStatus {
 export async function refreshSubscriptionStatus(force = false): Promise<SubscriptionStatus> {
   if (typeof window === 'undefined') {
     return getSubscriptionStatus()
+  }
+
+  // Dev admin always has premium access - skip API call
+  if (isDevAdmin()) {
+    const devStatus: SubscriptionStatus = {
+      isActive: true,
+      isTrial: false,
+      trialDaysRemaining: 0,
+      subscriptionType: 'premium',
+    }
+    cachedStatus = devStatus
+    return devStatus
   }
 
   const now = Date.now()
@@ -212,8 +237,27 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
   }
 }
 
+// Development admin email - grants full access to all modules
+const DEV_ADMIN_EMAIL = 'karolatef143@gmail.com'
+
+// Check if current user is a dev admin
+function isDevAdmin(): boolean {
+  if (typeof window === 'undefined') return false
+  const user = getUserSession()
+  return user?.email === DEV_ADMIN_EMAIL
+}
+
 // Check if user has access to a specific module
 export function checkModuleAccess(moduleId: ModuleId, statusOverride?: SubscriptionStatus): ModuleAccess {
+  // Dev admin gets full access to all modules
+  if (isDevAdmin()) {
+    return {
+      hasAccess: true,
+      isLocked: false,
+      requiresSubscription: false,
+    }
+  }
+
   const status = statusOverride || getSubscriptionStatus()
 
   if (FREE_MODULES.includes(moduleId as any)) {
