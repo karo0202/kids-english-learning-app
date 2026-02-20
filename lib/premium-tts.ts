@@ -218,8 +218,23 @@ class PremiumTTSService {
     text: string,
     options: TTSOptions = {}
   ): Promise<void> {
+    // Calculate rate and voice preference for clarity
+    let rate = options.rate
+    if (options.slowMode) {
+      rate = 0.5 // Very slow for difficult words
+    } else if (options.voice === 'slow') {
+      rate = 0.6
+    } else if (options.voice === 'fast') {
+      rate = 1.0
+    } else if (options.voice === 'clear') {
+      rate = 0.75 // Slower for maximum clarity
+    }
+
+    // Default to 'clear' voice for best clarity
+    const voicePreference = options.voice || 'clear'
+
     // Check cache first
-    const cacheKey = `${text}-${options.voice || 'default'}-${options.rate || 0.9}`
+    const cacheKey = `${text}-${voicePreference}-${rate || 0.75}`
     const cached = this.audioCache.get(cacheKey)
     if (cached) {
       options.onStart?.()
@@ -232,7 +247,7 @@ class PremiumTTSService {
           reject(new Error('Audio playback error'))
         }
         cached.currentTime = 0
-        cached.volume = options.volume ?? 0.9
+        cached.volume = options.volume ?? 1.0
         cached.play().catch(reject)
       })
       return
