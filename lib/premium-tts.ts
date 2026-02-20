@@ -319,7 +319,7 @@ class PremiumTTSService {
   public async speakWithSpeed(
     text: string,
     speed: 'very-slow' | 'slow' | 'normal' | 'fast' | 'very-fast',
-    options: Omit<TTSOptions, 'rate' | 'voice'> = {}
+    options: Omit<TTSOptions, 'rate'> = {}
   ): Promise<void> {
     const rateMap: Record<string, number> = {
       'very-slow': 0.4,
