@@ -5684,42 +5684,67 @@ export default function GrammarModule() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
-      {/* Header */}
-      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-b border-purple-100/50 dark:border-white/10 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+      {/* Header - Premium Enhanced */}
+      <div className="bg-gradient-to-r from-white/90 via-purple-50/50 to-pink-50/50 dark:from-gray-900/90 dark:via-purple-900/30 dark:to-pink-900/30 backdrop-blur-xl border-b-2 border-purple-200/50 dark:border-purple-800/50 sticky top-0 z-50 shadow-lg">
+        <div className="container mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/dashboard')}
-                className="hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl"
+                className="hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-all hover:scale-110"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  English Grammar
-                </h1>
-                <p className="text-gray-600 dark:text-white/70 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-md">
+                    <BookOpen className="w-5 h-5 text-white" />
+                  </div>
+                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    English Grammar
+                  </h1>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-purple-500" />
                   Learn grammar from A to Z! ✨
                 </p>
               </div>
             </div>
             {selectedTopic && (
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <div className="text-sm text-gray-600 dark:text-white/70">Score</div>
-                  <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                    {score} / {totalExercises}
+              <div className="flex items-center gap-6">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="px-4 py-2 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 rounded-xl border-2 border-purple-200 dark:border-purple-700 shadow-md"
+                >
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-yellow-500" />
+                    <div>
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-semibold">Score</div>
+                      <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        {score} / {totalExercises}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-600 dark:text-white/70">Progress</div>
-                  <div className="text-xl font-bold text-pink-600 dark:text-pink-400">
-                    {currentExercise + 1} / {totalExercises}
+                </motion.div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="px-4 py-2 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 rounded-xl border-2 border-blue-200 dark:border-blue-700 shadow-md"
+                >
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-blue-500" />
+                    <div>
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-semibold">Progress</div>
+                      <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        {currentExercise + 1} / {totalExercises}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             )}
           </div>
@@ -5729,88 +5754,147 @@ export default function GrammarModule() {
       <div className="container mx-auto px-4 py-8">
         {!selectedTopic ? (
           <>
-            {/* Topic Selection */}
-            <div className="mb-6">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Button
-                  variant={filter === 'all' ? 'default' : 'outline'}
+            {/* Topic Selection - Premium Enhanced */}
+            <div className="mb-8">
+              <div className="flex flex-wrap gap-3 mb-6">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter('all')}
-                  className="rounded-full"
+                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 shadow-md ${
+                    filter === 'all'
+                      ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white shadow-lg scale-105'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-purple-200 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-500'
+                  }`}
                 >
                   All Topics
-                </Button>
-                <Button
-                  variant={filter === 'beginner' ? 'default' : 'outline'}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter('beginner')}
-                  className="rounded-full"
+                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 shadow-md ${
+                    filter === 'beginner'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg scale-105'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-green-200 dark:border-green-700 hover:border-green-400 dark:hover:border-green-500'
+                  }`}
                 >
                   Beginner
-                </Button>
-                <Button
-                  variant={filter === 'intermediate' ? 'default' : 'outline'}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter('intermediate')}
-                  className="rounded-full"
+                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 shadow-md ${
+                    filter === 'intermediate'
+                      ? 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-lg scale-105'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-yellow-200 dark:border-yellow-700 hover:border-yellow-400 dark:hover:border-yellow-500'
+                  }`}
                 >
                   Intermediate
-                </Button>
-                <Button
-                  variant={filter === 'advanced' ? 'default' : 'outline'}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter('advanced')}
-                  className="rounded-full"
+                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 shadow-md ${
+                    filter === 'advanced'
+                      ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg scale-105'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-red-200 dark:border-red-700 hover:border-red-400 dark:hover:border-red-500'
+                  }`}
                 >
                   Advanced
-                </Button>
+                </motion.button>
               </div>
             </div>
 
-            {/* Topics Grid */}
+            {/* Topics Grid - Premium Enhanced */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTopics.map((topic, index) => (
                 <motion.div
                   key={topic.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: index * 0.08, type: "spring", stiffness: 100 }}
+                  whileHover={{ scale: 1.03, y: -8 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   <Card
-                    className={`card-kid cursor-pointer group relative overflow-hidden ${
-                      completedTopics.has(topic.id) ? 'ring-2 ring-green-500' : ''
+                    className={`cursor-pointer group relative overflow-hidden border-2 transition-all duration-300 shadow-lg hover:shadow-2xl ${
+                      completedTopics.has(topic.id) 
+                        ? 'ring-4 ring-green-400/50 border-green-300 dark:border-green-600 bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-green-900/20 dark:via-gray-800 dark:to-emerald-900/20' 
+                        : 'border-purple-200 dark:border-purple-800/50 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 dark:from-gray-800 dark:via-purple-900/10 dark:to-pink-900/10 hover:border-purple-400 dark:hover:border-purple-600'
                     }`}
                     onClick={() => handleTopicSelect(topic)}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500"></div>
-                    <CardContent className="p-6 relative">
+                    {/* Animated background gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-pink-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:via-pink-500/10 group-hover:to-blue-500/10 transition-all duration-500"></div>
+                    
+                    {/* Decorative corner accent */}
+                    {completedTopics.has(topic.id) && (
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-bl-full opacity-20"></div>
+                    )}
+                    
+                    <CardContent className="p-6 relative z-10">
                       <div className="flex items-start gap-4 mb-4">
-                        <div className="text-4xl">{topic.icon}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                        <motion.div
+                          whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                          transition={{ duration: 0.5 }}
+                          className="text-5xl bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-2xl shadow-lg"
+                        >
+                          {topic.icon}
+                        </motion.div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <h3 className="text-xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                               {topic.title}
                             </h3>
                             {completedTopics.has(topic.id) && (
-                              <CheckCircle className="w-5 h-5 text-green-500" />
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/40 rounded-full"
+                              >
+                                <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                <span className="text-xs font-bold text-green-700 dark:text-green-300">Done</span>
+                              </motion.div>
                             )}
                           </div>
-                          <p className="text-sm text-purple-600 dark:text-purple-400 mb-1">
-                            {topic.category}
-                          </p>
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                            topic.difficulty === 'beginner' ? 'bg-green-100 text-green-700' :
-                            topic.difficulty === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
-                            {topic.difficulty}
-                          </span>
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <div className="flex items-center gap-1">
+                              <Sparkles className="w-3 h-3 text-purple-500" />
+                              <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                                {topic.category}
+                              </p>
+                            </div>
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${
+                              topic.difficulty === 'beginner' 
+                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' :
+                                topic.difficulty === 'intermediate' 
+                                ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
+                                'bg-gradient-to-r from-red-400 to-pink-500 text-white'
+                            }`}>
+                              {topic.difficulty}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-white/70 text-sm mb-3">
+                      
+                      <p className="text-gray-700 dark:text-gray-200 text-sm mb-4 leading-relaxed line-clamp-2">
                         {topic.description}
                       </p>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <BookOpen className="w-4 h-4" />
-                        <span>{topic.exercises.length} exercises</span>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-purple-100 dark:border-purple-800/50">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400">
+                          <BookOpen className="w-4 h-4" />
+                          <span>{topic.exercises.length} exercises</span>
+                        </div>
+                        <motion.div
+                          whileHover={{ x: 5 }}
+                          className="text-purple-500 dark:text-purple-400"
+                        >
+                          <ArrowLeft className="w-5 h-5 rotate-180" />
+                        </motion.div>
                       </div>
                     </CardContent>
                   </Card>
@@ -5820,58 +5904,149 @@ export default function GrammarModule() {
           </>
         ) : (
           <>
-            {/* Topic Content */}
+            {/* Topic Content - Premium Enhanced */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
               className="mb-6"
             >
-              <Card className="card-kid mb-6">
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <div className="text-5xl">{selectedTopic.icon}</div>
-                    <div>
-                      <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-                        {selectedTopic.title}
-                      </h2>
-                      <p className="text-purple-600 dark:text-purple-400 font-semibold">
-                        {selectedTopic.category}
+              <Card className="mb-6 border-0 shadow-2xl bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 dark:from-gray-800 dark:via-purple-900/20 dark:to-pink-900/20 overflow-hidden relative">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-200/20 to-pink-200/20 dark:from-purple-800/10 dark:to-pink-800/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/20 to-purple-200/20 dark:from-blue-800/10 dark:to-purple-800/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
+                
+                <CardHeader className="relative z-10 pb-6 border-b-2 border-purple-100 dark:border-purple-800/50">
+                  <div className="flex items-start gap-6">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                      className="text-6xl bg-gradient-to-br from-purple-500 to-pink-500 p-4 rounded-2xl shadow-lg"
+                    >
+                      {selectedTopic.icon}
+                    </motion.div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                          {selectedTopic.title}
+                        </h2>
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.2 }}
+                          className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-md"
+                        >
+                          {selectedTopic.difficulty.toUpperCase()}
+                        </motion.span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-purple-500" />
+                        <p className="text-purple-600 dark:text-purple-400 font-semibold text-lg">
+                          {selectedTopic.category}
+                        </p>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
+                        {selectedTopic.description}
                       </p>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="mb-6">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">
-                      What is {selectedTopic.title}?
-                    </h3>
-                    <p className="text-gray-700 dark:text-white/80 text-lg mb-4">
+                
+                <CardContent className="relative z-10 pt-8">
+                  {/* Explanation Section - Premium */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="mb-8 p-6 bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-purple-900/20 dark:via-gray-800 dark:to-pink-900/20 rounded-2xl border-2 border-purple-100 dark:border-purple-800/50 shadow-lg"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-md">
+                        <BookOpen className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        What is {selectedTopic.title}?
+                      </h3>
+                    </div>
+                    <p className="text-gray-800 dark:text-gray-100 text-lg leading-relaxed">
                       {selectedTopic.explanation}
                     </p>
-                  </div>
+                  </motion.div>
 
-                  <div className="mb-6">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">
-                      Examples:
-                    </h3>
-                    <ul className="space-y-2">
-                      {selectedTopic.examples.map((example, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <Star className="w-5 h-5 text-yellow-500 mt-1 flex-shrink-0" />
-                          <span className="text-gray-700 dark:text-white/80">{example}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <Button
-                    onClick={() => setSelectedTopic(null)}
-                    variant="outline"
-                    className="w-full"
+                  {/* Examples Section - Premium with Animation */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="mb-8"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Topics
-                  </Button>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-md">
+                        <Star className="w-5 h-5 text-white fill-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                        Examples
+                      </h3>
+                      <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-sm font-semibold rounded-full">
+                        {selectedTopic.examples.length} examples
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedTopic.examples.map((example, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ delay: 0.3 + idx * 0.05, type: "spring", stiffness: 100 }}
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          className="group relative p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-purple-100 dark:border-purple-800/50 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-xl transition-all duration-300"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                <Star className="w-4 h-4 text-white fill-white" />
+                              </div>
+                            </div>
+                            <p className="text-gray-800 dark:text-gray-100 text-base font-medium leading-relaxed flex-1">
+                              {example}
+                            </p>
+                          </div>
+                          {/* Hover effect overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/5 group-hover:to-pink-500/5 rounded-xl transition-all duration-300 pointer-events-none"></div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={() => {
+                        if (selectedTopic.exercises.length > 0) {
+                          setCurrentExercise(0)
+                          setScore(0)
+                          setTotalExercises(selectedTopic.exercises.length)
+                          setSelectedAnswer(null)
+                          setShowResult(false)
+                        }
+                      }}
+                      className="flex-1 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 hover:from-purple-700 hover:via-pink-700 hover:to-purple-700 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                      disabled={selectedTopic.exercises.length === 0}
+                    >
+                      <Play className="w-5 h-5 mr-2" />
+                      Start Exercises ({selectedTopic.exercises.length})
+                    </Button>
+                    <Button
+                      onClick={() => setSelectedTopic(null)}
+                      variant="outline"
+                      className="px-6 border-2 border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 rounded-xl font-semibold transition-all"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
