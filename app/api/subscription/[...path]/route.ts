@@ -43,7 +43,7 @@ const FALLBACK_PLANS = [
     name: 'Lifetime Plan',
     description: 'One-time payment, lifetime access',
     duration: 9999,
-    price: 260000,
+    price: 200000,
     currency: 'IQD',
     features: [
       'Lifetime access to all modules',

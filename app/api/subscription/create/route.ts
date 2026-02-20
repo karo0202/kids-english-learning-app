@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     const FALLBACK_PLANS = [
       { planId: 'monthly', price: 13000, currency: 'IQD', name: 'Monthly Plan' },
       { planId: 'yearly', price: 125000, currency: 'IQD', name: 'Yearly Plan' },
-      { planId: 'lifetime', price: 260000, currency: 'IQD', name: 'Lifetime Plan' },
+      { planId: 'lifetime', price: 200000, currency: 'IQD', name: 'Lifetime Plan' },
     ]
     const plan = FALLBACK_PLANS.find(p => p.planId === planId) || { price: 0, currency: 'IQD', name: planId }
 
