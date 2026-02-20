@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { audioManager as enhancedAudioManager } from '@/lib/audio-manager'
+import { premiumTTS } from '@/lib/premium-tts'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
 import { personalizationManager } from '@/lib/personalization'
@@ -447,6 +448,9 @@ export default function SpeakingModule() {
       setSongLineIndex(0)
     }
     loadSongs()
+
+    // Initialize premium TTS voices
+    premiumTTS.loadVoices()
   }, [])
 
   const startListening = useCallback(() => {
@@ -867,29 +871,34 @@ export default function SpeakingModule() {
     nextWordRef.current = nextWord
   }, [nextWord])
 
-  const speakWord = () => {
+  const speakWord = async () => {
     if (currentWord) {
-      enhancedAudioManager.speak(currentWord.word, { rate: 0.8, pitch: 1.1 })
+      await enhancedAudioManager.speak(currentWord.word, { 
+        rate: 0.85, 
+        pitch: 2,
+        voice: 'child-friendly'
+      })
     }
   }
 
-  const speakText = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.95
-      utterance.pitch = 1
-      window.speechSynthesis.speak(utterance)
-    }
+  const speakText = async (text: string) => {
+    await premiumTTS.speak(text, {
+      rate: 0.9,
+      pitch: 2,
+      voice: 'child-friendly',
+      volume: 0.9
+    })
   }
 
   // Sing & Speak helpers
-  const speakSongLine = (line: string, onEnd?: () => void) => {
-    if (!('speechSynthesis' in window)) return
-    const utterance = new SpeechSynthesisUtterance(line)
-    utterance.rate = 0.85
-    utterance.pitch = 1.05
-    if (onEnd) utterance.onend = onEnd
-    window.speechSynthesis.speak(utterance)
+  const speakSongLine = async (line: string, onEnd?: () => void) => {
+    await premiumTTS.speak(line, {
+      rate: 0.85,
+      pitch: 2,
+      voice: 'child-friendly',
+      volume: 0.9,
+      onEnd
+    })
   }
 
   const playSong = () => {
@@ -905,9 +914,7 @@ export default function SpeakingModule() {
   }
 
   const stopSong = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-    }
+    premiumTTS.stop()
     setIsSinging(false)
   }
 

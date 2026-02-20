@@ -171,28 +171,40 @@ export class AudioManager {
     }
   }
 
-  public speak(text: string, options: { rate?: number; pitch?: number; voice?: string } = {}): void {
+  public async speak(text: string, options: { rate?: number; pitch?: number; voice?: string } = {}): Promise<void> {
     if (!this.settings.voiceEnabled || !this.settings.masterVolume) return
 
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = options.rate || 0.8
-      utterance.pitch = options.pitch || 1.1
-      utterance.volume = this.settings.voiceVolume * this.settings.masterVolume
+    // Use premium TTS service for best quality
+    try {
+      const { premiumTTS } = await import('./premium-tts')
+      await premiumTTS.speak(text, {
+        rate: options.rate || 0.85,
+        pitch: options.pitch || 2,
+        volume: this.settings.voiceVolume * this.settings.masterVolume,
+        voice: (options.voice as any) || 'child-friendly',
+      })
+    } catch (error) {
+      console.warn('Premium TTS failed, using fallback:', error)
+      // Fallback to basic Web Speech API
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.rate = options.rate || 0.8
+        utterance.pitch = options.pitch || 1.1
+        utterance.volume = this.settings.voiceVolume * this.settings.masterVolume
 
-      // Try to use a child-friendly voice
-      const voices = speechSynthesis.getVoices()
-      const childVoice = voices.find(voice => 
-        voice.name.includes('child') || 
-        voice.name.includes('young') ||
-        voice.name.includes('female')
-      )
-      
-      if (childVoice) {
-        utterance.voice = childVoice
+        const voices = speechSynthesis.getVoices()
+        const childVoice = voices.find(voice => 
+          voice.name.includes('child') || 
+          voice.name.includes('young') ||
+          voice.name.includes('female')
+        )
+        
+        if (childVoice) {
+          utterance.voice = childVoice
+        }
+
+        speechSynthesis.speak(utterance)
       }
-
-      speechSynthesis.speak(utterance)
     }
   }
 
