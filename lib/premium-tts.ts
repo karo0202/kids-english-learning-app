@@ -8,11 +8,14 @@ export interface TTSOptions {
   rate?: number // 0.1 to 1.0 (default: 0.85 for kids)
   pitch?: number // -20 to 20 semitones (default: 2 for friendly)
   volume?: number // 0.0 to 1.0
-  voice?: 'child-friendly' | 'clear' | 'friendly' | 'natural'
+  voice?: 'child-friendly' | 'clear' | 'friendly' | 'natural' | 'slow' | 'fast'
   language?: string // Default: 'en-US'
   onStart?: () => void
   onEnd?: () => void
   onError?: (error: Error) => void
+  onWordStart?: (word: string, index: number) => void // Word-by-word callback
+  highlightWords?: boolean // Enable word highlighting
+  slowMode?: boolean // Extra slow for difficult words
 }
 
 export interface TTSVoice {
@@ -112,10 +115,35 @@ class PremiumTTSService {
       const voice = this.getBestVoice()
 
       // Optimized settings for kids' English learning
-      utterance.rate = options.rate ?? 0.85 // Slightly slower for clarity
+      // Handle slow mode and voice-specific rates
+      let rate = options.rate
+      if (options.slowMode) {
+        rate = 0.5 // Very slow for difficult words
+      } else if (options.voice === 'slow') {
+        rate = 0.6
+      } else if (options.voice === 'fast') {
+        rate = 1.0
+      }
+      
+      utterance.rate = rate ?? 0.85 // Slightly slower for clarity
       utterance.pitch = options.pitch ?? 2 // Slightly higher pitch (friendly)
       utterance.volume = options.volume ?? 0.9
       utterance.lang = options.language || 'en-US'
+
+      // Word-by-word highlighting support
+      if (options.highlightWords && options.onWordStart) {
+        const words = text.split(/\s+/)
+        let currentWordIndex = 0
+        
+        // Use SSML-like word boundaries (Web Speech API doesn't support SSML, but we can simulate)
+        // For now, we'll trigger word callbacks at intervals
+        const wordDuration = (utterance.rate ?? 0.85) * 200 // Approximate ms per word
+        words.forEach((word, index) => {
+          setTimeout(() => {
+            options.onWordStart?.(word, index)
+          }, index * wordDuration)
+        })
+      }
 
       if (voice) {
         utterance.voice = voice
@@ -235,9 +263,89 @@ class PremiumTTSService {
       clear: 'en-US-Standard-E', // Clear, professional
       friendly: 'en-US-Neural2-D', // Warm, friendly
       natural: 'en-US-Neural2-J', // Very natural sounding
+      slow: 'en-US-Neural2-F', // Same as child-friendly but slower rate
+      fast: 'en-US-Neural2-D', // Faster rate
     }
 
     return voices[preference] || voices['child-friendly']
+  }
+
+  /**
+   * Get available voices for Web Speech API
+   */
+  public getAvailableVoices(): SpeechSynthesisVoice[] {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return []
+    }
+    return speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'))
+  }
+
+  /**
+   * Get recommended voice for kids
+   */
+  public getRecommendedVoice(): SpeechSynthesisVoice | null {
+    return this.getBestVoice()
+  }
+
+  /**
+   * Speak text with word-by-word highlighting
+   */
+  public async speakWithHighlighting(
+    text: string,
+    onWordStart: (word: string, index: number) => void,
+    options: Omit<TTSOptions, 'onWordStart' | 'highlightWords'> = {}
+  ): Promise<void> {
+    return this.speak(text, {
+      ...options,
+      highlightWords: true,
+      onWordStart,
+    })
+  }
+
+  /**
+   * Speak text in slow mode (for difficult words)
+   */
+  public async speakSlow(text: string, options: Omit<TTSOptions, 'slowMode'> = {}): Promise<void> {
+    return this.speak(text, {
+      ...options,
+      slowMode: true,
+      rate: 0.5,
+    })
+  }
+
+  /**
+   * Speak text with custom speed
+   */
+  public async speakWithSpeed(
+    text: string,
+    speed: 'very-slow' | 'slow' | 'normal' | 'fast' | 'very-fast',
+    options: Omit<TTSOptions, 'rate' | 'voice'> = {}
+  ): Promise<void> {
+    const rateMap: Record<string, number> = {
+      'very-slow': 0.4,
+      'slow': 0.6,
+      'normal': 0.85,
+      'fast': 1.0,
+      'very-fast': 1.2,
+    }
+
+    return this.speak(text, {
+      ...options,
+      rate: rateMap[speed] || 0.85,
+    })
+  }
+
+  /**
+   * Repeat last spoken text
+   */
+  private lastSpokenText: string = ''
+  private lastSpokenOptions: TTSOptions = {}
+
+  public async repeat(options?: Partial<TTSOptions>): Promise<void> {
+    if (!this.lastSpokenText) {
+      throw new Error('No text to repeat')
+    }
+    return this.speak(this.lastSpokenText, { ...this.lastSpokenOptions, ...options })
   }
 
   /**
@@ -247,6 +355,10 @@ class PremiumTTSService {
     if (!text || text.trim().length === 0) {
       return Promise.resolve()
     }
+
+    // Store for repeat functionality
+    this.lastSpokenText = text
+    this.lastSpokenOptions = options
 
     // Use Google TTS if available, otherwise use Web Speech API
     if (this.googleTTSEnabled) {

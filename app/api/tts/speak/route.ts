@@ -8,7 +8,14 @@ const GOOGLE_TTS_API_KEY = process.env.GOOGLE_TTS_API_KEY || process.env.NEXT_PU
 
 export async function POST(request: NextRequest) {
   try {
-    const { text, rate = 0.9, pitch = 2, voice = 'child-friendly', language = 'en-US' } = await request.json()
+    const { 
+      text, 
+      rate = 0.9, 
+      pitch = 2, 
+      voice = 'child-friendly', 
+      language = 'en-US',
+      slowMode = false 
+    } = await request.json()
 
     if (!text || typeof text !== 'string') {
       return NextResponse.json(
@@ -31,9 +38,21 @@ export async function POST(request: NextRequest) {
       clear: 'en-US-Standard-E',
       friendly: 'en-US-Neural2-D',
       natural: 'en-US-Neural2-J',
+      slow: 'en-US-Neural2-F',
+      fast: 'en-US-Neural2-D',
     }
 
     const voiceName = voiceMap[voice] || voiceMap['child-friendly']
+    
+    // Adjust rate for slow mode
+    let finalRate = rate
+    if (slowMode) {
+      finalRate = 0.5 // Very slow for difficult words
+    } else if (voice === 'slow') {
+      finalRate = Math.min(rate, 0.6)
+    } else if (voice === 'fast') {
+      finalRate = Math.max(rate, 1.0)
+    }
 
     // Call Google Cloud TTS API
     const response = await fetch(
@@ -52,7 +71,7 @@ export async function POST(request: NextRequest) {
           },
           audioConfig: {
             audioEncoding: 'MP3',
-            speakingRate: rate,
+            speakingRate: finalRate,
             pitch: pitch,
             volumeGainDb: 0, // Neutral volume
             effectsProfileId: ['headphone-class-device'],

@@ -10,12 +10,13 @@ import { ProgressRing } from '@/components/ui/progress-ring'
 import { 
   Mic, MicOff, Volume2, RefreshCw, CheckCircle, 
   ArrowLeft, Star, Trophy, Play, Pause, Award, 
-  Zap, Target, Heart, Crown, Sparkles
+  Zap, Target, Heart, Crown, Sparkles, RotateCcw, Settings
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
 import { audioManager as enhancedAudioManager } from '@/lib/audio-manager'
 import { premiumTTS } from '@/lib/premium-tts'
+import VoiceControls from '@/components/voice-controls'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
 import { personalizationManager } from '@/lib/personalization'
@@ -50,6 +51,15 @@ export default function SpeakingModule() {
   const advancingRef = useRef<boolean>(false)
   const checkPronunciationRef = useRef<((transcript: string) => void) | null>(null)
   const nextWordRef = useRef<(() => void) | null>(null)
+  
+  // Voice enhancements
+  const [highlightedWord, setHighlightedWord] = useState<string | null>(null)
+  const [voiceSettings, setVoiceSettings] = useState({
+    voice: 'child-friendly' as 'child-friendly' | 'clear' | 'friendly' | 'natural',
+    speed: 'normal' as 'very-slow' | 'slow' | 'normal' | 'fast' | 'very-fast',
+    volume: 0.9,
+  })
+  const [showVoiceControls, setShowVoiceControls] = useState(false)
   
   // Achievement system
   const [achievements, setAchievements] = useState<string[]>([])
@@ -871,13 +881,46 @@ export default function SpeakingModule() {
     nextWordRef.current = nextWord
   }, [nextWord])
 
-  const speakWord = async () => {
+  const speedMap: Record<string, number> = {
+    'very-slow': 0.4,
+    'slow': 0.6,
+    'normal': 0.85,
+    'fast': 1.0,
+    'very-fast': 1.2,
+  }
+
+  const speakWord = async (slowMode = false) => {
     if (currentWord) {
-      await enhancedAudioManager.speak(currentWord.word, { 
-        rate: 0.85, 
+      setHighlightedWord(currentWord.word)
+      
+      await premiumTTS.speak(currentWord.word, {
+        rate: slowMode ? 0.5 : speedMap[voiceSettings.speed] || 0.85,
         pitch: 2,
-        voice: 'child-friendly'
+        voice: voiceSettings.voice,
+        volume: voiceSettings.volume,
+        highlightWords: true,
+        onWordStart: (word, index) => {
+          setHighlightedWord(word)
+        },
+        onEnd: () => {
+          setTimeout(() => setHighlightedWord(null), 300)
+        },
       })
+    }
+  }
+
+  const repeatWord = async () => {
+    if (currentWord) {
+      try {
+        await premiumTTS.repeat({
+          voice: voiceSettings.voice,
+          volume: voiceSettings.volume,
+          rate: speedMap[voiceSettings.speed] || 0.85,
+        })
+      } catch {
+        // If no previous, just speak normally
+        await speakWord()
+      }
     }
   }
 
@@ -1264,15 +1307,76 @@ export default function SpeakingModule() {
                       </div>
                     )}
 
-                    {/* Listen Button */}
-                    <Button
-                      onClick={speakWord}
-                      className="btn-secondary-kid mb-2 md:mb-4 text-sm md:text-base"
-                      size="lg"
-                    >
-                      <Volume2 className="w-4 h-4 md:w-6 md:h-6 mr-2" />
-                      Listen to Word
-                    </Button>
+                    {/* Word Display with Highlighting */}
+                    <div className="mb-4">
+                      <h2 className={`text-3xl md:text-5xl font-bold text-center mb-2 transition-all duration-300 ${
+                        highlightedWord === currentWord?.word
+                          ? 'text-purple-600 scale-110 drop-shadow-lg'
+                          : 'text-gray-800 dark:text-white'
+                      }`}>
+                        {currentWord?.word}
+                      </h2>
+                      {currentWord?.pronunciation && (
+                        <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 text-center">
+                          {currentWord.pronunciation}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Voice Control Buttons */}
+                    <div className="flex flex-wrap gap-2 mb-2 md:mb-4 justify-center">
+                      <Button
+                        onClick={() => speakWord()}
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                        size="lg"
+                      >
+                        <Volume2 className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                        Listen
+                      </Button>
+                      <Button
+                        onClick={() => speakWord(true)}
+                        variant="outline"
+                        className="border-blue-400 hover:bg-blue-50"
+                        size="lg"
+                      >
+                        <Zap className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                        Slow
+                      </Button>
+                      <Button
+                        onClick={repeatWord}
+                        variant="outline"
+                        className="border-green-400 hover:bg-green-50"
+                        size="lg"
+                      >
+                        <RotateCcw className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                        Repeat
+                      </Button>
+                      <Button
+                        onClick={() => setShowVoiceControls(!showVoiceControls)}
+                        variant="outline"
+                        className="border-gray-400 hover:bg-gray-50"
+                        size="lg"
+                      >
+                        <Settings className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                        Settings
+                      </Button>
+                    </div>
+
+                    {/* Voice Controls Panel */}
+                    {showVoiceControls && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-4"
+                      >
+                        <VoiceControls
+                          testText={currentWord?.word || "Hello"}
+                          onVoiceChange={(voice) => setVoiceSettings({ ...voiceSettings, voice: voice as any })}
+                          onSpeedChange={(speed) => setVoiceSettings({ ...voiceSettings, speed: speed as any })}
+                        />
+                      </motion.div>
+                    )}
                   </>
                 )}
               </CardContent>
