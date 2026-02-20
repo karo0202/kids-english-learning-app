@@ -32,19 +32,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Select voice
+    // Select voice - DEFAULT TO CLEAREST VOICE
     const voiceMap: Record<string, string> = {
       'child-friendly': 'en-US-Neural2-F',
-      clear: 'en-US-Standard-E',
+      clear: 'en-US-Standard-E', // CLEAREST VOICE
       friendly: 'en-US-Neural2-D',
       natural: 'en-US-Neural2-J',
-      slow: 'en-US-Neural2-F',
+      slow: 'en-US-Standard-E', // Use clear voice for slow mode
       fast: 'en-US-Neural2-D',
     }
 
-    const voiceName = voiceMap[voice] || voiceMap['child-friendly']
+    // Default to 'clear' for maximum clarity
+    const voiceName = voiceMap[voice] || voiceMap['clear']
     
-    // Adjust rate for slow mode
+    // Adjust rate for slow mode and clarity
     let finalRate = rate
     if (slowMode) {
       finalRate = 0.5 // Very slow for difficult words
@@ -52,6 +53,9 @@ export async function POST(request: NextRequest) {
       finalRate = Math.min(rate, 0.6)
     } else if (voice === 'fast') {
       finalRate = Math.max(rate, 1.0)
+    } else if (voice === 'clear' || !voice || voice === 'child-friendly') {
+      // For clear voice, use slower rate for better clarity
+      finalRate = Math.min(rate || 0.75, 0.8)
     }
 
     // Call Google Cloud TTS API
@@ -72,9 +76,9 @@ export async function POST(request: NextRequest) {
           audioConfig: {
             audioEncoding: 'MP3',
             speakingRate: finalRate,
-            pitch: pitch,
-            volumeGainDb: 0, // Neutral volume
-            effectsProfileId: ['headphone-class-device'],
+            pitch: Math.max(pitch, 0.5), // Lower pitch for clarity (min 0.5)
+            volumeGainDb: 2, // Slightly louder for clarity
+            effectsProfileId: ['headphone-class-device'], // Optimized for clarity
           },
         }),
       }

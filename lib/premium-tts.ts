@@ -50,7 +50,8 @@ class PremiumTTSService {
   }
 
   /**
-   * Get the best child-friendly voice for Web Speech API
+   * Get the best CLEAR voice for Web Speech API
+   * Prioritizes clarity and naturalness over child-friendliness
    */
   private getBestVoice(): SpeechSynthesisVoice | null {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -60,33 +61,61 @@ class PremiumTTSService {
     const voices = speechSynthesis.getVoices()
     if (voices.length === 0) return null
 
-    // Priority order for child-friendly voices
+    // Priority order for CLEAR, high-quality voices (most clear first)
     const preferredNames = [
+      // Google voices (usually clearest)
       'Google UK English Female',
       'Google US English Female',
+      'Google UK English Male',
+      'Google US English Male',
+      // Microsoft voices (very clear)
       'Microsoft Zira - English (United States)',
       'Microsoft Hazel - English (Great Britain)',
-      'Samantha', // macOS
-      'Karen', // macOS
-      'Victoria', // macOS
-      'Alex', // macOS
+      'Microsoft Mark - English (United States)',
+      'Microsoft David - English (United States)',
+      // macOS voices (high quality)
+      'Samantha', // Very clear female
+      'Alex', // Very clear male
+      'Victoria', // Clear female
+      'Karen', // Clear female
+      'Daniel', // Clear male (UK)
+      'Moira', // Clear female (UK)
+      'Tessa', // Clear female (South Africa)
     ]
 
-    // Try to find preferred voice
+    // Try to find preferred CLEAR voice
     for (const name of preferredNames) {
-      const voice = voices.find(v => v.name.includes(name))
-      if (voice && voice.lang.startsWith('en')) {
+      const voice = voices.find(v => 
+        v.name.includes(name) && v.lang.startsWith('en')
+      )
+      if (voice) {
         return voice
       }
     }
 
-    // Fallback: Find any English female voice
+    // Fallback: Find any high-quality English voice (prefer neural/enhanced)
+    const qualityVoice = voices.find(
+      v =>
+        v.lang.startsWith('en') &&
+        (v.name.toLowerCase().includes('neural') ||
+          v.name.toLowerCase().includes('enhanced') ||
+          v.name.toLowerCase().includes('premium') ||
+          v.name.toLowerCase().includes('google') ||
+          v.name.toLowerCase().includes('microsoft'))
+    )
+
+    if (qualityVoice) return qualityVoice
+
+    // Fallback: Find any English female voice (usually clearer)
     const femaleVoice = voices.find(
       v =>
         v.lang.startsWith('en') &&
         (v.name.toLowerCase().includes('female') ||
           v.name.toLowerCase().includes('woman') ||
-          v.name.toLowerCase().includes('girl'))
+          v.name.toLowerCase().includes('girl') ||
+          v.name.toLowerCase().includes('samantha') ||
+          v.name.toLowerCase().includes('zira') ||
+          v.name.toLowerCase().includes('hazel'))
     )
 
     if (femaleVoice) return femaleVoice
@@ -114,7 +143,7 @@ class PremiumTTSService {
       const utterance = new SpeechSynthesisUtterance(text)
       const voice = this.getBestVoice()
 
-      // Optimized settings for kids' English learning
+      // Optimized settings for MAXIMUM CLARITY
       // Handle slow mode and voice-specific rates
       let rate = options.rate
       if (options.slowMode) {
@@ -123,12 +152,21 @@ class PremiumTTSService {
         rate = 0.6
       } else if (options.voice === 'fast') {
         rate = 1.0
+      } else if (options.voice === 'clear') {
+        rate = 0.75 // Slower for maximum clarity
       }
       
-      utterance.rate = rate ?? 0.85 // Slightly slower for clarity
-      utterance.pitch = options.pitch ?? 2 // Slightly higher pitch (friendly)
-      utterance.volume = options.volume ?? 0.9
+      // Slower rate = clearer pronunciation (default 0.75 for clarity)
+      utterance.rate = rate ?? 0.75 // Slower for better clarity
+      // Lower pitch = clearer (default 1.0 instead of 2.0)
+      utterance.pitch = options.pitch ?? 1.0 // Lower pitch for clarity
+      utterance.volume = options.volume ?? 1.0 // Full volume for clarity
       utterance.lang = options.language || 'en-US'
+      
+      // Set voice for maximum clarity
+      if (voice) {
+        utterance.voice = voice
+      }
 
       // Word-by-word highlighting support
       if (options.highlightWords && options.onWordStart) {
@@ -209,9 +247,9 @@ class PremiumTTSService {
         },
         body: JSON.stringify({
           text,
-          rate: options.rate ?? 0.9,
-          pitch: options.pitch ?? 2,
-          voice: options.voice || 'child-friendly',
+          rate: rate ?? 0.75, // Slower for clarity
+          pitch: options.pitch ?? 1.0, // Lower pitch for clarity
+          voice: voicePreference,
           language: options.language || 'en-US',
         }),
       })
@@ -256,18 +294,20 @@ class PremiumTTSService {
 
   /**
    * Get Google Cloud TTS voice name based on preference
+   * Prioritizes clarity
    */
   private getGoogleVoiceName(preference: string): string {
     const voices: Record<string, string> = {
       'child-friendly': 'en-US-Neural2-F', // Natural, friendly female voice
-      clear: 'en-US-Standard-E', // Clear, professional
+      clear: 'en-US-Standard-E', // CLEAREST - professional, very clear
       friendly: 'en-US-Neural2-D', // Warm, friendly
       natural: 'en-US-Neural2-J', // Very natural sounding
-      slow: 'en-US-Neural2-F', // Same as child-friendly but slower rate
+      slow: 'en-US-Standard-E', // Use clear voice for slow mode
       fast: 'en-US-Neural2-D', // Faster rate
     }
 
-    return voices[preference] || voices['child-friendly']
+    // Default to 'clear' for maximum clarity
+    return voices[preference] || voices['clear']
   }
 
   /**

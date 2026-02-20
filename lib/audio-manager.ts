@@ -178,10 +178,10 @@ export class AudioManager {
     try {
       const { premiumTTS } = await import('./premium-tts')
       await premiumTTS.speak(text, {
-        rate: options.rate || 0.85,
-        pitch: options.pitch || 2,
+        rate: options.rate || 0.75, // Slower for clarity
+        pitch: options.pitch || 1.0, // Lower pitch for clarity
         volume: this.settings.voiceVolume * this.settings.masterVolume,
-        voice: (options.voice as any) || 'child-friendly',
+        voice: (options.voice as any) || 'clear', // Default to 'clear' for best clarity
       })
     } catch (error) {
       console.warn('Premium TTS failed, using fallback:', error)

@@ -52,12 +52,12 @@ export default function SpeakingModule() {
   const checkPronunciationRef = useRef<((transcript: string) => void) | null>(null)
   const nextWordRef = useRef<(() => void) | null>(null)
   
-  // Voice enhancements
+  // Voice enhancements - DEFAULT TO CLEAR VOICE for best clarity
   const [highlightedWord, setHighlightedWord] = useState<string | null>(null)
   const [voiceSettings, setVoiceSettings] = useState({
-    voice: 'child-friendly' as 'child-friendly' | 'clear' | 'friendly' | 'natural',
-    speed: 'normal' as 'very-slow' | 'slow' | 'normal' | 'fast' | 'very-fast',
-    volume: 0.9,
+    voice: 'clear' as 'child-friendly' | 'clear' | 'friendly' | 'natural', // Default to 'clear' for best clarity
+    speed: 'slow' as 'very-slow' | 'slow' | 'normal' | 'fast' | 'very-fast', // Default to 'slow' for clarity
+    volume: 1.0, // Full volume for clarity
   })
   const [showVoiceControls, setShowVoiceControls] = useState(false)
   
@@ -894,8 +894,8 @@ export default function SpeakingModule() {
       setHighlightedWord(currentWord.word)
       
       await premiumTTS.speak(currentWord.word, {
-        rate: slowMode ? 0.5 : speedMap[voiceSettings.speed] || 0.85,
-        pitch: 2,
+        rate: slowMode ? 0.5 : speedMap[voiceSettings.speed] || 0.75, // Slower for clarity
+        pitch: 1.0, // Lower pitch for clarity
         voice: voiceSettings.voice,
         volume: voiceSettings.volume,
         highlightWords: true,
@@ -915,7 +915,8 @@ export default function SpeakingModule() {
         await premiumTTS.repeat({
           voice: voiceSettings.voice,
           volume: voiceSettings.volume,
-          rate: speedMap[voiceSettings.speed] || 0.85,
+          rate: speedMap[voiceSettings.speed] || 0.75, // Slower for clarity
+          pitch: 1.0, // Lower pitch for clarity
         })
       } catch {
         // If no previous, just speak normally
@@ -926,20 +927,20 @@ export default function SpeakingModule() {
 
   const speakText = async (text: string) => {
     await premiumTTS.speak(text, {
-      rate: 0.9,
-      pitch: 2,
-      voice: 'child-friendly',
-      volume: 0.9
+      rate: 0.75, // Slower for clarity
+      pitch: 1.0, // Lower pitch for clarity
+      voice: 'clear', // Use clear voice
+      volume: 1.0 // Full volume
     })
   }
 
   // Sing & Speak helpers
   const speakSongLine = async (line: string, onEnd?: () => void) => {
     await premiumTTS.speak(line, {
-      rate: 0.85,
-      pitch: 2,
-      voice: 'child-friendly',
-      volume: 0.9,
+      rate: 0.75, // Slower for clarity
+      pitch: 1.0, // Lower pitch for clarity
+      voice: 'clear', // Use clear voice
+      volume: 1.0, // Full volume
       onEnd
     })
   }
