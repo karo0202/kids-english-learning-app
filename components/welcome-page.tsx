@@ -225,12 +225,11 @@ export default function WelcomePage() {
             
 						<Button 
 							size="lg"
-							variant="outline"
-							className="group relative overflow-hidden text-xl px-8 py-6 bg-white/90 dark:bg-white/10 backdrop-blur-md border-2 border-white/60 dark:border-white/20 text-slate-800 dark:text-white hover:bg-white dark:hover:bg-white/20 hover:scale-105 hover:shadow-xl transition-all duration-300 rounded-2xl"
+							className="group relative overflow-hidden text-xl px-8 py-6 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 text-white border-2 border-blue-400/50 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 transition-all duration-300 rounded-2xl font-semibold"
 							onClick={() => router.push('/login')}
 						>
 							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-								<span className="absolute -inset-8 rounded-full blur-2xl bg-white/50" />
+								<span className="absolute -inset-8 rounded-full blur-2xl bg-blue-500/30 animate-pulse" />
 							</span>
 							<span className="relative z-10">I Already Have an Account</span>
 						</Button>
