@@ -108,12 +108,11 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Manual confirm error:', error)
     
-    // Log error
+    // Log error (don't try to read body again - already read above)
     if (userId) {
       await logPaymentAction({
         user_id: userId,
         action: 'payment_failed',
-        transaction_id: (await request.json()).transactionId,
         ip_address: requestMetadata.ip_address,
         user_agent: requestMetadata.user_agent,
         error_message: error.message || 'Unknown error',
