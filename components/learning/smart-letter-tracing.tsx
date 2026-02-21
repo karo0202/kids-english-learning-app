@@ -298,6 +298,9 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const guideAnimationRef = useRef<number | null>(null)
   const currentStrokeRef = useRef<number>(0)
   const isAnimatingGuideRef = useRef<boolean>(false)
+  useEffect(() => {
+    currentStrokeRef.current = currentStroke
+  }, [currentStroke])
   
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState(0)
@@ -388,14 +391,19 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       ctx.stroke()
     }
 
-    // Draw letter guide paths (faint)
+    // Draw letter guide paths: completed = green, current = bold blue, rest = faint
+    const curStroke = currentStrokeRef.current
     letterPath.strokes.forEach((stroke, strokeIndex) => {
       if (stroke.length < 2) return
       
-      ctx.strokeStyle = completedStrokesRef.current.has(strokeIndex) 
-        ? '#10B981' 
-        : 'rgba(59, 130, 246, 0.2)'
-      ctx.lineWidth = 3
+      const isCompleted = completedStrokesRef.current.has(strokeIndex)
+      const isCurrent = strokeIndex === curStroke
+      ctx.strokeStyle = isCompleted
+        ? '#10B981'
+        : isCurrent
+          ? 'rgba(59, 130, 246, 0.55)'
+          : 'rgba(59, 130, 246, 0.2)'
+      ctx.lineWidth = isCurrent ? 5 : 3
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
       
@@ -415,6 +423,23 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       }
       ctx.stroke()
     })
+
+    // Draw "start here" dot for current stroke
+    if (curStroke < letterPath.strokes.length) {
+      const stroke = letterPath.strokes[curStroke]
+      if (stroke.length > 0) {
+        const p = stroke[0]
+        const sx = offsetX + (p.x - letterPath.bounds.minX) * scale
+        const sy = offsetY + (p.y - letterPath.bounds.minY) * scale
+        ctx.fillStyle = '#10B981'
+        ctx.strokeStyle = '#059669'
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.arc(sx, sy, 8, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.stroke()
+      }
+    }
   }, [letter, letterPath])
 
   // Animate guide stroke order
@@ -590,7 +615,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     // Calculate average distance from drawn path to guide points
     let totalDistance = 0
     let matchedPoints = 0
-    const MAX_DISTANCE = 15 // Stricter threshold
+    const MAX_DISTANCE = 20 // Forgiving threshold for kids
 
     normalizedDrawn.forEach(drawnPoint => {
       let minDist = Infinity
@@ -606,7 +631,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       }
     })
 
-    // Require at least 70% of drawn points to be close to guide points
+    // Require at least 60% of drawn points to be close to guide points (forgiving for kids)
     const matchRatio = matchedPoints / normalizedDrawn.length
     const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
 
@@ -1056,10 +1081,10 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     }
 
     // Final validation: match ratio and average distance
-    return matchRatio >= 0.7 && avgDistance < MAX_DISTANCE
+    return matchRatio >= 0.6 && avgDistance < MAX_DISTANCE
   }
 
-  // Check if drawing path is correct
+  // Check if drawing path is correct (scale-aware, forgiving for kids)
   const checkPathCorrectness = (x: number, y: number) => {
     const size = canvasRef.current?.width ? canvasRef.current.width / (window.devicePixelRatio || 1) : 500
     const scale = size / 100
@@ -1082,8 +1107,10 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       })
     })
 
-    // Stricter threshold: If within 15px of guide (reduced from 20px)
-    if (minDistance < 15) {
+    // Scale-aware thresholds: ~6% of canvas for hit, ~14% for "too far" (forgiving for kids)
+    const hitThreshold = Math.max(18, size * 0.06)
+    const tooFarThreshold = Math.max(35, size * 0.14)
+    if (minDistance < hitThreshold) {
       if (closestStroke === currentStroke && !completedStrokesRef.current.has(closestStroke)) {
         completedStrokesRef.current.add(closestStroke)
         setCurrentStroke(prev => prev + 1)
@@ -1105,8 +1132,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
         }
       }
       setIsCorrect(true)
-    } else if (minDistance > 30) {
-      // Too far from guide - red highlight (stricter threshold)
+    } else if (minDistance > tooFarThreshold) {
+      // Only show "too far" when clearly off the path
       setIsCorrect(false)
       const canvas = canvasRef.current
       if (canvas) {
@@ -1271,6 +1298,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     
     setIsDrawing(false)
     setCurrentStroke(0)
+    currentStrokeRef.current = 0
     startTimeRef.current = 0
     setDrawingPath([])
     setIsCorrect(null)
@@ -1280,6 +1308,11 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     lastPointRef.current = null
     drawGuide()
   }
+
+  // Redraw guide when current stroke changes (start dot + bold stroke)
+  useEffect(() => {
+    drawGuide()
+  }, [currentStroke, drawGuide])
 
   // Show guide animation on mount
   useEffect(() => {
@@ -1403,6 +1436,11 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
         {/* Canvas Container */}
         <Card className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl shadow-xl overflow-hidden">
           <CardContent className="p-6">
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-sm font-semibold text-gray-600">
+                Stroke {Math.min(currentStroke + 1, letterPath.strokes.length)} of {letterPath.strokes.length}
+                <span className="ml-2 text-gray-400">· Start at the green dot</span>
+              </p>
             <div className="relative flex justify-center">
               <canvas
                 ref={canvasRef}
@@ -1447,11 +1485,20 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
                 )}
               </AnimatePresence>
             </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mt-6">
+        <div className="flex flex-wrap justify-center gap-3 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => animateGuide()}
+            className="rounded-full px-6 py-5 border-2 border-purple-300 text-purple-700 hover:bg-purple-100 font-semibold"
+          >
+            <Sparkles className="w-5 h-5 mr-2" />
+            Show me how
+          </Button>
           <Button
             onClick={resetTracing}
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full px-8 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
