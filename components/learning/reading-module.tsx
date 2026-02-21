@@ -344,81 +344,78 @@ export default function ReadingModule() {
           </div>
         </div>
 
-        <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="container mx-auto px-3 md:px-6 lg:px-8 py-4 md:py-8">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               key={currentPage}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8"
+              className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 md:gap-10"
             >
-              {/* Book Page Content */}
-              <Card className="card-reading h-full">
-                <CardContent className="p-4 md:p-8 overflow-y-auto max-h-[calc(100vh-200px)]">
-                  <div className="space-y-4 md:space-y-6">
+              {/* Book Page - looks like an open book */}
+              <Card className="card-reading relative h-full overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-amber-50/90 via-stone-50/95 to-amber-50/90 dark:from-stone-900/95 dark:via-amber-950/20 dark:to-stone-900/95">
+                {/* Book spine effect (left edge) */}
+                <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-amber-200/80 via-amber-300/60 to-amber-200/80 dark:from-amber-900/50 dark:via-amber-800/40 dark:to-amber-900/50 rounded-l-lg z-0" aria-hidden />
+                <CardContent className="relative p-6 md:p-10 lg:p-14 overflow-y-auto max-h-[calc(100vh-180px)] min-h-[420px]">
+                  <div className="max-w-2xl mx-auto">
+                    {/* Illustration - larger, book-style */}
                     {currentPageData.imageUrl && (
-                      <div className="w-full h-48 md:h-64 rounded-xl md:rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                      <div className="w-full aspect-[4/3] max-h-80 md:max-h-96 rounded-lg md:rounded-xl overflow-hidden shadow-xl border border-amber-200/50 dark:border-amber-800/30 bg-amber-100/50 dark:bg-stone-800 mb-8">
                         <img 
                           src={currentPageData.imageUrl} 
                           alt={`Illustration for ${selectedBook.title} page ${currentPageData.pageNumber}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            // Hide broken images on mobile
                             (e.target as HTMLImageElement).style.display = 'none'
                           }}
                         />
                       </div>
                     )}
 
-                    <div className="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg space-y-4 md:space-y-6">
-                      {/* Listen to story - Voice for this page */}
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <Button
-                          onClick={async () => {
-                            if (isReadingAloud) {
-                              premiumTTS.stop()
-                              setIsReadingAloud(false)
-                              return
-                            }
-                            setIsReadingAloud(true)
-                            try {
-                              await premiumTTS.speak(currentPageData.text, {
-                                voice: 'clear',
-                                rate: 0.75,
-                                volume: 1.0,
-                                onEnd: () => setIsReadingAloud(false),
-                                onError: () => setIsReadingAloud(false),
-                              })
-                            } catch {
-                              setIsReadingAloud(false)
-                            }
-                          }}
-                          variant={isReadingAloud ? 'destructive' : 'default'}
-                          className={isReadingAloud ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white'}
-                          size="sm"
-                        >
-                          {isReadingAloud ? (
-                            <>
-                              <VolumeX className="w-4 h-4 mr-2" />
-                              Stop
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-4 h-4 mr-2" />
-                              Listen to this page
-                            </>
-                          )}
-                        </Button>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          Hear the story read aloud
-                        </span>
-                      </div>
-                      <p className="text-base md:text-lg text-gray-900 dark:text-gray-100 leading-relaxed" role="main" aria-label="Story text">
-                        {currentPageData.text}
-                      </p>
+                    {/* Listen button - compact above text */}
+                    <div className="flex flex-wrap items-center gap-2 mb-6">
+                      <Button
+                        onClick={async () => {
+                          if (isReadingAloud) {
+                            premiumTTS.stop()
+                            setIsReadingAloud(false)
+                            return
+                          }
+                          setIsReadingAloud(true)
+                          try {
+                            await premiumTTS.speak(currentPageData.text, {
+                              voice: 'clear',
+                              rate: 0.75,
+                              volume: 1.0,
+                              onEnd: () => setIsReadingAloud(false),
+                              onError: () => setIsReadingAloud(false),
+                            })
+                          } catch {
+                            setIsReadingAloud(false)
+                          }
+                        }}
+                        variant={isReadingAloud ? 'destructive' : 'default'}
+                        className={isReadingAloud ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white'}
+                        size="sm"
+                      >
+                        {isReadingAloud ? <VolumeX className="w-4 h-4 mr-2" /> : <Volume2 className="w-4 h-4 mr-2" />}
+                        {isReadingAloud ? 'Stop' : 'Listen to this page'}
+                      </Button>
+                      <span className="text-xs text-amber-800/70 dark:text-amber-200/70">Hear the story read aloud</span>
+                    </div>
+
+                    {/* Story text - book-like typography */}
+                    <p 
+                      className="text-lg md:text-xl lg:text-2xl text-gray-900 dark:text-gray-100 leading-relaxed md:leading-loose font-serif max-w-prose" 
+                      role="main" 
+                      aria-label="Story text"
+                      style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+                    >
+                      {currentPageData.text}
+                    </p>
 
                       {Array.isArray(currentPageData.vocabulary) && currentPageData.vocabulary.length > 0 && (
-                        <div>
+                        <div className="mt-10 pt-8 border-t border-amber-200/60 dark:border-amber-800/40">
                           <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3">🧠 Vocabulary</h4>
                           <div className="overflow-x-auto rounded-xl border-2 border-gray-300 dark:border-gray-600">
                             <table className="w-full text-left min-w-[600px]" role="table" aria-label="Vocabulary words and definitions">
@@ -444,7 +441,7 @@ export default function ReadingModule() {
                       )}
 
                       {Array.isArray(currentPageData.questions) && currentPageData.questions.length > 0 && (
-                        <div>
+                        <div className="mt-10 pt-8 border-t border-amber-200/60 dark:border-amber-800/40">
                           <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3">💬 Practice Questions</h4>
 
                           <ol className="list-decimal pl-5 md:pl-6 space-y-2 text-sm md:text-base text-gray-800 dark:text-gray-200">
