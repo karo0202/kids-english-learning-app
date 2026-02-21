@@ -569,7 +569,6 @@ export default function ReadingModule() {
                           </div>
                         </div>
                       )}
-                    </div>
                   </div>
 
                   {/* Reading Controls */}
