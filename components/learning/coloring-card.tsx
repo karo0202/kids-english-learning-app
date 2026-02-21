@@ -31,7 +31,9 @@ export default function ColoringCard({
   onLetterClick
 }: ColoringCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const drawLayerRef = useRef<HTMLCanvasElement>(null)
   const wordCanvasRef = useRef<HTMLCanvasElement>(null)
+  const wordDrawLayerRef = useRef<HTMLCanvasElement>(null)
   const [selectedColor, setSelectedColor] = useState(colorPalette[0])
   const [isDrawing, setIsDrawing] = useState(false)
   const [isErasing, setIsErasing] = useState(false)
@@ -44,19 +46,28 @@ export default function ColoringCard({
   const [toolType, setToolType] = useState<'pen' | 'marker' | 'paintbrush'>('pen')
   const [showToolOptions, setShowToolOptions] = useState(false)
 
-  // Check if image exists and load it
+  // Check if image exists and load it — outline layer only; draw layer is separate
   useEffect(() => {
     const canvas = canvasRef.current
+    const drawLayer = drawLayerRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas size
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
+    // Set canvas size (both outline and draw layer)
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+    canvas.width = w
+    canvas.height = h
+    if (drawLayer) {
+      drawLayer.width = w
+      drawLayer.height = h
+      const drawCtx = drawLayer.getContext('2d')
+      if (drawCtx) drawCtx.clearRect(0, 0, w, h)
+    }
 
-    // Load saved data if available
+    // Load saved data if available (draw full image on outline layer; draw layer stays empty for new strokes)
     if (savedData?.imageData) {
       const img = new Image()
       img.onload = () => {
@@ -76,7 +87,7 @@ export default function ColoringCard({
       setImageLoaded(true)
       imageRef.current = img
       
-      // Draw the image on canvas
+      // Draw the image on canvas (outline layer only)
       ctx.fillStyle = '#ffffff'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
@@ -122,15 +133,24 @@ export default function ColoringCard({
 
   useEffect(() => {
     const canvas = wordCanvasRef.current
+    const wordDrawLayer = wordDrawLayerRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+    canvas.width = w
+    canvas.height = h
+    if (wordDrawLayer) {
+      wordDrawLayer.width = w
+      wordDrawLayer.height = h
+      const drawCtx = wordDrawLayer.getContext('2d')
+      if (drawCtx) drawCtx.clearRect(0, 0, w, h)
+    }
 
-    // Draw word outline
+    // Draw word outline (outline layer only)
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     
@@ -140,16 +160,22 @@ export default function ColoringCard({
     ctx.strokeStyle = '#000000'
     ctx.lineWidth = 3
     
-    // Draw bubble letter outline
     ctx.strokeText(word.toUpperCase(), canvas.width / 2, canvas.height / 2)
     
-    // Load saved word coloring if available
-    if (savedData?.wordData) {
-      const img = new Image()
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    // Word draw layer: outline only (so source-atop restricts new strokes), or saved image so user can erase it
+    if (wordDrawLayer) {
+      const drawCtx = wordDrawLayer.getContext('2d')
+      if (drawCtx) {
+        if (savedData?.wordData) {
+          const img = new Image()
+          img.onload = () => {
+            drawCtx.drawImage(img, 0, 0, wordDrawLayer!.width, wordDrawLayer!.height)
+          }
+          img.src = savedData.wordData
+        } else {
+          drawCtx.drawImage(canvas, 0, 0)
+        }
       }
-      img.src = savedData.wordData
     }
   }, [word, savedData])
 
@@ -772,7 +798,7 @@ export default function ColoringCard({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>, isWord = false) => {
     setIsDrawing(true)
-    const canvas = isWord ? wordCanvasRef.current : canvasRef.current
+    const canvas = isWord ? wordDrawLayerRef.current : drawLayerRef.current
     if (canvas) {
       draw(e, canvas, isWord)
     }
@@ -781,7 +807,7 @@ export default function ColoringCard({
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>, isWord = false) => {
     if (!isDrawing) return
     
-    const canvas = isWord ? wordCanvasRef.current : canvasRef.current
+    const canvas = isWord ? wordDrawLayerRef.current : drawLayerRef.current
     if (canvas) {
       const ctx = canvas.getContext('2d')
       if (!ctx) return
@@ -863,25 +889,23 @@ export default function ColoringCard({
 
   const handleClear = () => {
     const canvas = canvasRef.current
+    const drawLayer = drawLayerRef.current
     const wordCanvas = wordCanvasRef.current
-    
+    const wordDrawLayer = wordDrawLayerRef.current
+
     if (canvas) {
       const ctx = canvas.getContext('2d')
       if (ctx) {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
-        
-        // Redraw the base image (either from file or canvas)
         if (useImage && imageRef.current) {
           const img = imageRef.current
           const imgAspect = img.width / img.height
           const canvasAspect = canvas.width / canvas.height
-          
           let drawWidth = canvas.width
           let drawHeight = canvas.height
           let drawX = 0
           let drawY = 0
-          
           if (imgAspect > canvasAspect) {
             drawHeight = canvas.width / imgAspect
             drawY = (canvas.height - drawHeight) / 2
@@ -889,7 +913,6 @@ export default function ColoringCard({
             drawWidth = canvas.height * imgAspect
             drawX = (canvas.width - drawWidth) / 2
           }
-          
           ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
         } else {
           ctx.strokeStyle = '#000000'
@@ -900,7 +923,11 @@ export default function ColoringCard({
         }
       }
     }
-    
+    if (drawLayer) {
+      const ctx = drawLayer.getContext('2d')
+      if (ctx) ctx.clearRect(0, 0, drawLayer.width, drawLayer.height)
+    }
+
     if (wordCanvas) {
       const ctx = wordCanvas.getContext('2d')
       if (ctx) {
@@ -914,16 +941,37 @@ export default function ColoringCard({
         ctx.strokeText(word.toUpperCase(), wordCanvas.width / 2, wordCanvas.height / 2)
       }
     }
+    if (wordDrawLayer && wordCanvas) {
+      const ctx = wordDrawLayer.getContext('2d')
+      if (ctx) ctx.drawImage(wordCanvas, 0, 0)
+    }
   }
 
   const handleSave = () => {
     const canvas = canvasRef.current
+    const drawLayer = drawLayerRef.current
     const wordCanvas = wordCanvasRef.current
-    
-    if (canvas && wordCanvas) {
-      const imageData = canvas.toDataURL('image/png')
-      const wordData = wordCanvas.toDataURL('image/png')
-      
+    const wordDrawLayer = wordDrawLayerRef.current
+
+    if (canvas && drawLayer && wordCanvas && wordDrawLayer) {
+      const composite = document.createElement('canvas')
+      composite.width = canvas.width
+      composite.height = canvas.height
+      const compCtx = composite.getContext('2d')
+      if (!compCtx) return
+      compCtx.drawImage(canvas, 0, 0)
+      compCtx.drawImage(drawLayer, 0, 0)
+      const imageData = composite.toDataURL('image/png')
+
+      const wordComposite = document.createElement('canvas')
+      wordComposite.width = wordCanvas.width
+      wordComposite.height = wordCanvas.height
+      const wordCompCtx = wordComposite.getContext('2d')
+      if (!wordCompCtx) return
+      wordCompCtx.drawImage(wordCanvas, 0, 0)
+      wordCompCtx.drawImage(wordDrawLayer, 0, 0)
+      const wordData = wordComposite.toDataURL('image/png')
+
       onSave({
         imageData,
         wordData,
@@ -978,40 +1026,47 @@ export default function ColoringCard({
           </h3>
         </div>
         <div className="relative bg-white dark:bg-gray-800 rounded-xl border-4 border-gray-300 dark:border-gray-600 p-2 md:p-4 mobile-canvas-container shadow-xl">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] touch-none cursor-crosshair select-none"
-            style={{ 
-              touchAction: 'none',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-              WebkitTouchCallout: 'none',
-              maxHeight: '70vh'
-            }}
-            onMouseDown={(e) => handleMouseDown(e, false)}
-            onMouseMove={(e) => handleMouseMove(e, false)}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchStart(e, false)
-            }}
-            onTouchMove={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchMove(e, false)
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchEnd(e)
-            }}
-            onTouchCancel={(e) => {
-              e.preventDefault()
-              handleMouseUp()
-            }}
-          />
+          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px]" style={{ maxHeight: '70vh' }}>
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full touch-none select-none pointer-events-none"
+              style={{ touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              aria-hidden
+            />
+            <canvas
+              ref={drawLayerRef}
+              className="absolute inset-0 w-full h-full touch-none cursor-crosshair select-none"
+              style={{ 
+                touchAction: 'none',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none'
+              }}
+              onMouseDown={(e) => handleMouseDown(e, false)}
+              onMouseMove={(e) => handleMouseMove(e, false)}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchStart(e, false)
+              }}
+              onTouchMove={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchMove(e, false)
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchEnd(e)
+              }}
+              onTouchCancel={(e) => {
+                e.preventDefault()
+                handleMouseUp()
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -1021,39 +1076,47 @@ export default function ColoringCard({
           ✏️ Color the Word
         </h3>
         <div className="relative bg-white rounded-lg border-4 border-gray-300 p-2 md:p-4">
-          <canvas
-            ref={wordCanvasRef}
-            className="w-full h-24 sm:h-28 md:h-32 touch-none cursor-crosshair select-none"
-            style={{ 
-              touchAction: 'none',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-              WebkitTouchCallout: 'none'
-            }}
-            onMouseDown={(e) => handleMouseDown(e, true)}
-            onMouseMove={(e) => handleMouseMove(e, true)}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchStart(e, true)
-            }}
-            onTouchMove={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchMove(e, true)
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleTouchEnd(e)
-            }}
-            onTouchCancel={(e) => {
-              e.preventDefault()
-              handleMouseUp()
-            }}
-          />
+          <div className="relative w-full h-24 sm:h-28 md:h-32">
+            <canvas
+              ref={wordCanvasRef}
+              className="absolute inset-0 w-full h-full touch-none select-none pointer-events-none"
+              style={{ touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              aria-hidden
+            />
+            <canvas
+              ref={wordDrawLayerRef}
+              className="absolute inset-0 w-full h-full touch-none cursor-crosshair select-none"
+              style={{ 
+                touchAction: 'none',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none'
+              }}
+              onMouseDown={(e) => handleMouseDown(e, true)}
+              onMouseMove={(e) => handleMouseMove(e, true)}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchStart(e, true)
+              }}
+              onTouchMove={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchMove(e, true)
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleTouchEnd(e)
+              }}
+              onTouchCancel={(e) => {
+                e.preventDefault()
+                handleMouseUp()
+              }}
+            />
+          </div>
         </div>
       </div>
 
