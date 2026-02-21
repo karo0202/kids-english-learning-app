@@ -1204,6 +1204,15 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
             accuracy,
             timeSpent
           )
+          parentAnalytics.recordActivity(
+            currentChild.parentId,
+            currentChild.id,
+            'writing',
+            `Traced letter ${letter}`,
+            Math.round(accuracy),
+            Math.round((timeSpent / 60) * 10) / 10, // minutes
+            { letter, accuracy }
+          )
         }
       } catch (error) {
         console.error('Error recording analytics:', error)

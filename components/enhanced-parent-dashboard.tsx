@@ -60,6 +60,7 @@ export default function EnhancedParentDashboard() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'all'>('week')
+  const [activityPeriod, setActivityPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily')
   const [showAddChild, setShowAddChild] = useState(false)
   const [editingChild, setEditingChild] = useState<Child | null>(null)
   
@@ -216,6 +217,53 @@ const weeklyUsage = useMemo(() => {
     .filter(day => new Date(day.date) >= weekAgo)
     .sort((a, b) => a.date.localeCompare(b.date))
 }, [analytics])
+
+// Activity logs filtered and grouped for Daily / Weekly / Monthly
+const activityByPeriod = useMemo(() => {
+  const logs = analytics?.activityLogs ?? []
+  const now = new Date()
+  const todayStr = now.toISOString().split('T')[0]
+  const dayMs = 24 * 60 * 60 * 1000
+
+  const dailyLogs = logs.filter(l => l.timestamp.startsWith(todayStr))
+  const weeklyLogs = logs.filter(l => {
+    const t = new Date(l.timestamp).getTime()
+    return t >= now.getTime() - 7 * dayMs
+  })
+  const monthlyLogs = logs.filter(l => {
+    const t = new Date(l.timestamp).getTime()
+    return t >= now.getTime() - 30 * dayMs
+  })
+
+  const groupByDay = (items: typeof logs) => {
+    const byDay: Record<string, typeof logs> = {}
+    items.forEach(log => {
+      const day = log.timestamp.split('T')[0]
+      if (!byDay[day]) byDay[day] = []
+      byDay[day].push(log)
+    })
+    return Object.entries(byDay)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([date, dayLogs]) => ({ date, logs: dayLogs }))
+  }
+
+  return {
+    daily: { logs: dailyLogs, byDay: groupByDay(dailyLogs) },
+    weekly: { logs: weeklyLogs, byDay: groupByDay(weeklyLogs) },
+    monthly: { logs: monthlyLogs, byDay: groupByDay(monthlyLogs) },
+  }
+}, [analytics])
+
+const activitySummary = useMemo(() => {
+  const key = activityPeriod
+  const data = activityByPeriod[key]
+  const totalMinutes = data.logs.reduce((s, l) => s + (l.timeSpent || 0), 0)
+  const byModule = data.logs.reduce((acc, l) => {
+    acc[l.module] = (acc[l.module] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  return { totalMinutes, totalActivities: data.logs.length, byModule }
+}, [activityByPeriod, activityPeriod])
 
   // Module progress
   const moduleProgress = useMemo(() => {
@@ -495,7 +543,7 @@ const handleAddChild = async () => {
         {selectedChild && (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 min-w-max sm:min-w-0">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 min-w-max sm:min-w-0">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
                 <span className="hidden sm:inline">Overview</span>
@@ -515,6 +563,10 @@ const handleAddChild = async () => {
               <TabsTrigger value="usage" className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Usage</span>
+              </TabsTrigger>
+              <TabsTrigger value="activity" className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span className="hidden sm:inline">Activity</span>
               </TabsTrigger>
               <TabsTrigger value="controls" className="flex items-center gap-2">
                 <Shield className="w-4 h-4" />
@@ -1236,6 +1288,126 @@ const handleAddChild = async () => {
                       checked={parentControls.breakReminders}
                       onCheckedChange={(checked) => updateParentControls({ breakReminders: checked })}
                     />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Activity: Everything your child did — Daily / Weekly / Monthly */}
+            <TabsContent value="activity" className="space-y-6">
+              <Card className="bg-white dark:bg-gray-800 border-2 border-purple-100 dark:border-purple-800/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
+                    <Calendar className="w-5 h-5 text-purple-500" />
+                    What {selectedChild?.name} has done
+                  </CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    View all activities by day, week, or month.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Period selector */}
+                  <div className="flex flex-wrap gap-2">
+                    {(['daily', 'weekly', 'monthly'] as const).map((period) => (
+                      <Button
+                        key={period}
+                        variant={activityPeriod === period ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setActivityPeriod(period)}
+                        className="capitalize"
+                      >
+                        {period === 'daily' && 'Today'}
+                        {period === 'weekly' && 'Last 7 days'}
+                        {period === 'monthly' && 'Last 30 days'}
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Summary for selected period */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700">
+                      <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{activitySummary.totalActivities}</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">Activities</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{Math.round(activitySummary.totalMinutes)}m</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">Total time</div>
+                    </div>
+                    {Object.entries(activitySummary.byModule).slice(0, 2).map(([module, count]) => {
+                      const icons: Record<string, React.ReactNode> = {
+                        writing: <PenTool className="w-4 h-4" />,
+                        speaking: <Mic className="w-4 h-4" />,
+                        reading: <BookOpen className="w-4 h-4" />,
+                        games: <Gamepad2 className="w-4 h-4" />,
+                        puzzle: <Puzzle className="w-4 h-4" />,
+                      }
+                      return (
+                        <div key={module} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                          <span className="text-gray-600 dark:text-gray-300">{icons[module] ?? null}</span>
+                          <div>
+                            <div className="font-bold text-gray-800 dark:text-white">{count}</div>
+                            <div className="text-xs text-gray-500 capitalize">{module}</div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Activity list by day */}
+                  <div className="space-y-6">
+                    {activityByPeriod[activityPeriod].byDay.length === 0 ? (
+                      <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                        No activities recorded for this period yet.
+                      </p>
+                    ) : (
+                      activityByPeriod[activityPeriod].byDay.map(({ date, logs }) => (
+                        <motion.div
+                          key={date}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="rounded-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden"
+                        >
+                          <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700/50 font-semibold text-gray-800 dark:text-white flex items-center justify-between">
+                            <span>
+                              {new Date(date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                month: 'short',
+                                day: 'numeric',
+                                year: date.slice(0, 4) !== new Date().toISOString().slice(0, 4) ? 'numeric' : undefined,
+                              })}
+                            </span>
+                            <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
+                              {logs.length} activities · {Math.round(logs.reduce((s, l) => s + (l.timeSpent || 0), 0))}m
+                            </span>
+                          </div>
+                          <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {logs.map((log) => {
+                              const moduleIcons: Record<string, React.ReactNode> = {
+                                writing: <PenTool className="w-4 h-4 text-green-500" />,
+                                speaking: <Mic className="w-4 h-4 text-purple-500" />,
+                                reading: <BookOpen className="w-4 h-4 text-blue-500" />,
+                                games: <Gamepad2 className="w-4 h-4 text-orange-500" />,
+                                puzzle: <Puzzle className="w-4 h-4 text-yellow-500" />,
+                              }
+                              return (
+                                <li key={log.id} className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                  <span className="flex-shrink-0">{moduleIcons[log.module] ?? null}</span>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-gray-800 dark:text-white">{log.activity}</div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                      {new Date(log.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      {log.timeSpent ? ` · ${log.timeSpent}m` : ''}
+                                      {log.score != null ? ` · Score ${log.score}` : ''}
+                                    </div>
+                                  </div>
+                                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize flex-shrink-0">{log.module}</span>
+                                </li>
+                              )
+                            })}
+                          </ul>
+                        </motion.div>
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
