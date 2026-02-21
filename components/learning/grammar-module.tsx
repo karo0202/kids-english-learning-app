@@ -5616,6 +5616,11 @@ export default function GrammarModule() {
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set())
   const [filter, setFilter] = useState<'all' | 'beginner' | 'intermediate' | 'advanced'>('all')
 
+  // Preload TTS voices so "Listen" uses the clear voice without delay
+  useEffect(() => {
+    premiumTTS.loadVoices()
+  }, [])
+
   const filteredTopics = useMemo(() => {
     if (filter === 'all') return GRAMMAR_TOPICS
     return GRAMMAR_TOPICS.filter(topic => topic.difficulty === filter)

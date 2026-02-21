@@ -50,6 +50,33 @@ class PremiumTTSService {
   }
 
   /**
+   * Wait for Web Speech voices to be loaded (required on first use / some browsers).
+   * Ensures getBestVoice() can return the clear voice instead of default.
+   */
+  private ensureVoicesLoaded(): Promise<void> {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+        resolve()
+        return
+      }
+      const voices = speechSynthesis.getVoices()
+      if (voices.length > 0) {
+        resolve()
+        return
+      }
+      const onVoices = () => {
+        speechSynthesis.onvoiceschanged = null
+        resolve()
+      }
+      speechSynthesis.onvoiceschanged = onVoices
+      setTimeout(() => {
+        speechSynthesis.onvoiceschanged = null
+        resolve()
+      }, 1500)
+    })
+  }
+
+  /**
    * Get the best CLEAR voice for Web Speech API
    * Prioritizes clarity and naturalness over child-friendliness
    */
@@ -125,18 +152,20 @@ class PremiumTTSService {
   }
 
   /**
-   * Speak text using Web Speech API with optimized settings
+   * Speak text using Web Speech API with optimized settings.
+   * Waits for voices to load so the clear voice is used (not default).
    */
-  private speakWithWebAPI(
+  private async speakWithWebAPI(
     text: string,
     options: TTSOptions = {}
   ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-        reject(new Error('Speech synthesis not supported'))
-        return
-      }
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      throw new Error('Speech synthesis not supported')
+    }
 
+    await this.ensureVoicesLoaded()
+
+    return new Promise((resolve, reject) => {
       // Cancel any ongoing speech
       this.stop()
 
