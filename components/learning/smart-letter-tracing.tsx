@@ -298,9 +298,6 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const guideAnimationRef = useRef<number | null>(null)
   const currentStrokeRef = useRef<number>(0)
   const isAnimatingGuideRef = useRef<boolean>(false)
-  useEffect(() => {
-    currentStrokeRef.current = currentStroke
-  }, [currentStroke])
   
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState(0)
@@ -326,6 +323,10 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const completedStrokesRef = useRef<Set<number>>(new Set())
   const startTimeRef = useRef<number>(0)
+
+  useEffect(() => {
+    currentStrokeRef.current = currentStroke
+  }, [currentStroke])
 
   const penColors = [
     '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
