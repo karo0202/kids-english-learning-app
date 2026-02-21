@@ -11,6 +11,7 @@ import {
   Play, Pause, RotateCcw, Volume2, VolumeX, FileText
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { premiumTTS } from '@/lib/premium-tts'
 import OptimizedImage from '../common/optimized-image'
 import { useImagePreload, useDebounce } from '@/hooks/use-performance'
 import { jsPDF } from 'jspdf'
@@ -48,6 +49,15 @@ export default function ReadingModule() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [books, setBooks] = useState<Book[] | null>(null)
+  const [isReadingAloud, setIsReadingAloud] = useState(false)
+
+  // Stop voice when changing page or closing book
+  useEffect(() => {
+    return () => {
+      premiumTTS.stop()
+      setIsReadingAloud(false)
+    }
+  }, [currentPage, selectedBook])
 
   const getDefaultBooks = (): Book[] => {
     const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
@@ -361,6 +371,48 @@ export default function ReadingModule() {
                     )}
 
                     <div className="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg space-y-4 md:space-y-6">
+                      {/* Listen to story - Voice for this page */}
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <Button
+                          onClick={async () => {
+                            if (isReadingAloud) {
+                              premiumTTS.stop()
+                              setIsReadingAloud(false)
+                              return
+                            }
+                            setIsReadingAloud(true)
+                            try {
+                              await premiumTTS.speak(currentPageData.text, {
+                                voice: 'clear',
+                                rate: 0.75,
+                                volume: 1.0,
+                                onEnd: () => setIsReadingAloud(false),
+                                onError: () => setIsReadingAloud(false),
+                              })
+                            } catch {
+                              setIsReadingAloud(false)
+                            }
+                          }}
+                          variant={isReadingAloud ? 'destructive' : 'default'}
+                          className={isReadingAloud ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white'}
+                          size="sm"
+                        >
+                          {isReadingAloud ? (
+                            <>
+                              <VolumeX className="w-4 h-4 mr-2" />
+                              Stop
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-4 h-4 mr-2" />
+                              Listen to this page
+                            </>
+                          )}
+                        </Button>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Hear the story read aloud
+                        </span>
+                      </div>
                       <p className="text-base md:text-lg text-gray-900 dark:text-gray-100 leading-relaxed" role="main" aria-label="Story text">
                         {currentPageData.text}
                       </p>
@@ -551,10 +603,41 @@ export default function ReadingModule() {
                   </h3>
                   
                   <div className="space-y-3 md:space-y-4">
-                    <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-blue-50 rounded-xl">
-                      <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-blue-500 flex-shrink-0" />
-                      <p className="text-sm md:text-base text-gray-700">Listen to the story</p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!selectedBook?.pages[currentPage]) return
+                        if (isReadingAloud) {
+                          premiumTTS.stop()
+                          setIsReadingAloud(false)
+                          return
+                        }
+                        setIsReadingAloud(true)
+                        try {
+                          await premiumTTS.speak(selectedBook.pages[currentPage].text, {
+                            voice: 'clear',
+                            rate: 0.75,
+                            volume: 1.0,
+                            onEnd: () => setIsReadingAloud(false),
+                            onError: () => setIsReadingAloud(false),
+                          })
+                        } catch {
+                          setIsReadingAloud(false)
+                        }
+                      }}
+                      className={`w-full flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-xl text-left transition-all ${
+                        isReadingAloud ? 'bg-red-100 dark:bg-red-900/30 ring-2 ring-red-400' : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30'
+                      }`}
+                    >
+                      {isReadingAloud ? (
+                        <VolumeX className="w-5 h-5 md:w-6 md:h-6 text-red-500 flex-shrink-0" />
+                      ) : (
+                        <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-blue-500 flex-shrink-0" />
+                      )}
+                      <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 font-medium">
+                        {isReadingAloud ? 'Stop listening' : 'Listen to the story'}
+                      </p>
+                    </button>
                     
                     <div className="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-green-50 rounded-xl">
                       <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
