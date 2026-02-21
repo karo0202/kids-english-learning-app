@@ -635,9 +635,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     // Require at least 60% of drawn points to be close to guide points (forgiving for kids)
     const matchRatio = matchedPoints / normalizedDrawn.length
     const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
+    const letterUpper = letter.toUpperCase()
+    // Letter A is strict in shape check; allow slightly looser distance/ratio so a good trace passes
+    const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_DISTANCE
+    const relaxedMinRatio = letterUpper === 'A' ? 0.5 : 0.6
 
     // Additional validation: Check letter-specific characteristics
-    const letterUpper = letter.toUpperCase()
     
     // Helper function to check for vertical line
     const hasVerticalLine = (xPos: number, threshold: number = 10, minRatio: number = 0.15) => {
@@ -653,15 +656,15 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     
     switch (letterUpper) {
       case 'A': {
-        // A: Two diagonals meeting at top, crossbar in middle
-        const topPoint = normalizedDrawn.filter(p => p.y < 30)
-        const crossbar = hasHorizontalLine(50, 8, 0.1)
-        const leftDiagonal = normalizedDrawn.filter(p => p.x < 50 && p.y > 30 && p.y < 80).length
-        const rightDiagonal = normalizedDrawn.filter(p => p.x > 50 && p.y > 30 && p.y < 80).length
+        // A: Two diagonals meeting at top, crossbar in middle (forgiving for kids)
+        const topPoint = normalizedDrawn.filter(p => p.y < 35)
+        const crossbar = hasHorizontalLine(50, 15, 0.06) // wider y band, lower ratio
+        const leftDiagonal = normalizedDrawn.filter(p => p.x < 52 && p.y > 25 && p.y < 85).length
+        const rightDiagonal = normalizedDrawn.filter(p => p.x > 48 && p.y > 25 && p.y < 85).length
         
-        if (!crossbar || topPoint.length < normalizedDrawn.length * 0.1) return false
-        if (leftDiagonal < normalizedDrawn.length * 0.2 || rightDiagonal < normalizedDrawn.length * 0.2) return false
-        // Reject if looks like H (two verticals) or V (no crossbar)
+        if (!crossbar || topPoint.length < normalizedDrawn.length * 0.06) return false
+        if (leftDiagonal < normalizedDrawn.length * 0.12 || rightDiagonal < normalizedDrawn.length * 0.12) return false
+        // Reject only if clearly H (two verticals, no crossbar)
         if (hasVerticalLine(30) && hasVerticalLine(70) && !crossbar) return false
         break
       }
@@ -1082,7 +1085,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     }
 
     // Final validation: match ratio and average distance
-    return matchRatio >= 0.6 && avgDistance < MAX_DISTANCE
+    return matchRatio >= relaxedMinRatio && avgDistance < relaxedMaxDistance
   }
 
   // Check if drawing path is correct (scale-aware, forgiving for kids)
@@ -1094,6 +1097,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
 
     let minDistance = Infinity
     let closestStroke = -1
+    let distanceToCurrentStroke = Infinity
 
     letterPath.strokes.forEach((stroke, strokeIndex) => {
       stroke.forEach(point => {
@@ -1105,15 +1109,21 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
           minDistance = distance
           closestStroke = strokeIndex
         }
+        // Also track min distance to current stroke (for letters like A where strokes share a point)
+        if (strokeIndex === currentStrokeRef.current) {
+          if (distance < distanceToCurrentStroke) distanceToCurrentStroke = distance
+        }
       })
     })
 
     // Scale-aware thresholds: ~6% of canvas for hit, ~14% for "too far" (forgiving for kids)
     const hitThreshold = Math.max(18, size * 0.06)
     const tooFarThreshold = Math.max(35, size * 0.14)
-    if (minDistance < hitThreshold) {
-      if (closestStroke === currentStroke && !completedStrokesRef.current.has(closestStroke)) {
-        completedStrokesRef.current.add(closestStroke)
+    const onCurrentStroke = distanceToCurrentStroke < hitThreshold
+    const strokeToMark = closestStroke === currentStrokeRef.current ? closestStroke : (onCurrentStroke ? currentStrokeRef.current : -1)
+    if (minDistance < hitThreshold && strokeToMark >= 0) {
+      if (!completedStrokesRef.current.has(strokeToMark)) {
+        completedStrokesRef.current.add(strokeToMark)
         setCurrentStroke(prev => prev + 1)
         setProgress(prev => Math.min(prev + (100 / letterPath.strokes.length), 100))
         
