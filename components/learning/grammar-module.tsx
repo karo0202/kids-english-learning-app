@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
   ArrowLeft, Star, Trophy, CheckCircle, XCircle, 
-  BookOpen, Play, RotateCcw, Award, Sparkles
+  BookOpen, Play, RotateCcw, Award, Sparkles, Volume2
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { premiumTTS } from '@/lib/premium-tts'
 
 interface GrammarTopic {
   id: string
@@ -5968,6 +5969,15 @@ export default function GrammarModule() {
                       <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                         What is {selectedTopic.title}?
                       </h3>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => premiumTTS.speak(selectedTopic.explanation, { voice: 'clear', rate: 0.75, volume: 1 })}
+                        className="flex-shrink-0 rounded-full border-2 border-purple-200 dark:border-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+                        title="Listen to definition"
+                      >
+                        <Volume2 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      </Button>
                     </div>
                     <p className="text-gray-800 dark:text-gray-100 text-lg leading-relaxed">
                       {selectedTopic.explanation}
@@ -6012,6 +6022,15 @@ export default function GrammarModule() {
                             <p className="text-gray-800 dark:text-gray-100 text-base font-medium leading-relaxed flex-1">
                               {example}
                             </p>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => premiumTTS.speak(example, { voice: 'clear', rate: 0.75, volume: 1 })}
+                              className="flex-shrink-0 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
+                              title="Listen to example"
+                            >
+                              <Volume2 className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                            </Button>
                           </div>
                           {/* Hover effect overlay */}
                           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/5 group-hover:to-pink-500/5 rounded-xl transition-all duration-300 pointer-events-none"></div>
