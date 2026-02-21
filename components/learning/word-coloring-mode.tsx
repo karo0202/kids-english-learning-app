@@ -44,15 +44,14 @@ export default function WordColoringMode({
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    // Draw bubble letter outline for current letter
-    const currentLetter = letters[currentLetterIndex]
+    // Draw bubble letter outline for current letter (use word/currentLetterIndex so this effect doesn't run every render and wipe paint)
+    const currentLetter = word.toUpperCase()[currentLetterIndex] ?? ''
     ctx.font = 'bold 120px Arial'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.strokeStyle = '#000000'
     ctx.lineWidth = 5
     
-    // Draw bubble letter
     ctx.strokeText(currentLetter, canvas.width / 2, canvas.height / 2)
     
     // Load saved coloring if available
@@ -63,7 +62,7 @@ export default function WordColoringMode({
       }
       img.src = savedData.wordTracingData[currentLetterIndex]
     }
-  }, [currentLetterIndex, letters, savedData])
+  }, [currentLetterIndex, word, savedData])
 
   const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = e.currentTarget
