@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Copy, CheckCircle, Phone, Image, QrCode, Sparkles, Shield, Clock } from 'lucide-react'
+import { Copy, CheckCircle, Phone, Image, QrCode, Sparkles, Shield, Clock, Upload } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 interface ManualInstructions {
@@ -48,9 +48,12 @@ export default function ManualPaymentModal({
 }: ManualPaymentModalProps) {
   const [reference, setReference] = useState('')
   const [proofUrl, setProofUrl] = useState('')
+  const [proofFile, setProofFile] = useState<File | null>(null)
   const [contactPhone, setContactPhone] = useState('')
   const [notes, setNotes] = useState('')
   const [copied, setCopied] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const copyToClipboard = (value?: string) => {
     if (!value || typeof navigator === 'undefined' || !navigator.clipboard) return
@@ -59,7 +62,35 @@ export default function ManualPaymentModal({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleProofFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setSubmitError('Please select an image file (e.g. PNG, JPG)')
+      return
+    }
+    setSubmitError('')
+    setProofFile(file)
+    const reader = new FileReader()
+    reader.onload = () => setProofUrl(String(reader.result))
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = async () => {
+    setSubmitError('')
+    const hasReference = reference.trim().length > 0
+    const hasProof = proofUrl.trim().length > 0
+    if (method === 'fib_manual') {
+      if (!hasReference && !hasProof) {
+        setSubmitError('Please provide a receipt reference or attach your transaction screenshot.')
+        return
+      }
+    } else {
+      if (!hasReference) {
+        setSubmitError('Please enter the transaction hash / reference.')
+        return
+      }
+    }
     await onConfirm({
       transactionId,
       reference: reference.trim() || undefined,
@@ -256,33 +287,61 @@ export default function ManualPaymentModal({
                 <CheckCircle className="w-5 h-5 text-white" />
               </div>
               <p className="text-base font-bold text-gray-800 dark:text-gray-200">
-                Already paid? Submit your reference so we can activate your subscription faster.
+                Already paid? {method === 'fib_manual' ? 'Attach your transaction screenshot so we can activate your subscription faster.' : 'Submit your reference so we can activate your subscription faster.'}
               </p>
             </div>
+            {submitError && (
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-4 py-2 rounded-xl border border-red-200 dark:border-red-800 mb-4">
+                {submitError}
+              </p>
+            )}
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {method === 'crypto_manual' ? 'Transaction hash / reference' : 'Receipt reference'} <span className="text-red-500">*</span>
+                  {method === 'crypto_manual' ? 'Transaction hash / reference' : 'Receipt reference'}
+                  {method === 'crypto_manual' ? <span className="text-red-500"> *</span> : <span className="text-gray-400 text-xs"> (optional for FIB)</span>}
                 </label>
                 <input
                   type="text"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
-                  placeholder={method === 'crypto_manual' ? 'Enter transaction hash' : 'Enter receipt reference'}
+                  placeholder={method === 'crypto_manual' ? 'Enter transaction hash' : 'Enter if you have a reference'}
                   className="w-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:focus:border-purple-500 transition-all shadow-sm hover:shadow-md"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Link to payment screenshot <span className="text-gray-400 text-xs">(optional)</span>
+                  {method === 'fib_manual' ? 'Transaction screenshot' : 'Link to payment screenshot'}
+                  {method === 'fib_manual' ? <span className="text-red-500"> *</span> : <span className="text-gray-400 text-xs"> (optional)</span>}
+                  <span className="block text-xs font-normal text-gray-500 dark:text-gray-400 mt-1">
+                    {method === 'fib_manual' ? 'FIB doesn’t provide a receipt reference — attach a screenshot of your transaction.' : 'Paste a link or attach an image below.'}
+                  </span>
                 </label>
                 <input
-                  type="text"
-                  value={proofUrl}
-                  onChange={(e) => setProofUrl(e.target.value)}
-                  placeholder="Paste screenshot URL here"
-                  className="w-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:focus:border-purple-500 transition-all shadow-sm hover:shadow-md"
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleProofFileChange}
+                  className="hidden"
                 />
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {proofFile ? proofFile.name : 'Attach screenshot image'}
+                  </Button>
+                  <input
+                    type="text"
+                    value={proofFile ? '' : proofUrl}
+                    onChange={(e) => { setProofUrl(e.target.value); setProofFile(null) }}
+                    placeholder="Or paste screenshot URL here"
+                    className="flex-1 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:focus:border-purple-500 transition-all shadow-sm hover:shadow-md"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">

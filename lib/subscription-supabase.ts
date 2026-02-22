@@ -168,10 +168,16 @@ export async function createSubscriptionPayment(userId: string, planId: string, 
   }
 }
 
-export async function confirmManualPayment(userId: string, transactionId: string, reference?: string, notes?: string) {
+export async function confirmManualPayment(
+  userId: string,
+  transactionId: string,
+  payload: { reference?: string; proofUrl?: string; contactPhone?: string; notes?: string }
+) {
   if (!supabase) {
     return { success: true }
   }
+
+  const { reference, proofUrl, contactPhone, notes } = payload
 
   // SECURITY: Verify transaction exists and belongs to user
   const { data: transaction, error: fetchError } = await supabase
@@ -200,13 +206,17 @@ export async function confirmManualPayment(userId: string, transactionId: string
     throw new Error('Transaction expired. Please create a new payment.')
   }
 
-  // SECURITY: Sanitize user inputs (basic - consider using DOMPurify for production)
+  // SECURITY: Sanitize user inputs
   const sanitizedReference = reference?.trim().substring(0, 200) || undefined
   const sanitizedNotes = notes?.trim().substring(0, 1000) || undefined
+  const sanitizedProofUrl = proofUrl?.trim().substring(0, 2000) || undefined
+  const sanitizedContactPhone = contactPhone?.trim().substring(0, 50) || undefined
 
   const manualConfirmation = {
     submittedAt: new Date().toISOString(),
     reference: sanitizedReference,
+    proofUrl: sanitizedProofUrl,
+    contactPhone: sanitizedContactPhone,
     notes: sanitizedNotes,
   }
 
@@ -230,6 +240,48 @@ export async function confirmManualPayment(userId: string, transactionId: string
     })
     .eq('transaction_id', transactionId)
     .eq('user_id', userId) // Ensure user owns the subscription too
+
+  return { success: true }
+}
+
+/**
+ * Activate a manual payment subscription (admin only).
+ * Sets subscription and payment_transactions status to active/completed so the user gets access.
+ */
+export async function activateManualSubscription(transactionId: string): Promise<{ success: boolean; error?: string }> {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' }
+  }
+
+  const { data: sub, error: subFetchError } = await supabase
+    .from('subscriptions')
+    .select('id, user_id, plan_id, expires_at')
+    .eq('transaction_id', transactionId)
+    .single()
+
+  if (subFetchError || !sub) {
+    return { success: false, error: 'Subscription not found for this transaction' }
+  }
+
+  const { error: subUpdateError } = await supabase
+    .from('subscriptions')
+    .update({ status: 'active' })
+    .eq('transaction_id', transactionId)
+    .eq('user_id', sub.user_id)
+
+  if (subUpdateError) {
+    return { success: false, error: 'Failed to activate subscription: ' + subUpdateError.message }
+  }
+
+  const { error: txUpdateError } = await supabase
+    .from('payment_transactions')
+    .update({ status: 'completed' })
+    .eq('transaction_id', transactionId)
+    .eq('user_id', sub.user_id)
+
+  if (txUpdateError) {
+    return { success: false, error: 'Failed to update transaction: ' + txUpdateError.message }
+  }
 
   return { success: true }
 }

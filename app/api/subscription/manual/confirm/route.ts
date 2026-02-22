@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { transactionId, reference, notes } = body
+    const { transactionId, reference, proofUrl, contactPhone, notes } = body
 
     if (!transactionId) {
       await logPaymentAction({
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await confirmManualPayment(userId, transactionId, reference, notes)
+    await confirmManualPayment(userId, transactionId, { reference, proofUrl, contactPhone, notes })
 
     // Log successful confirmation
     await logPaymentAction({
@@ -95,6 +95,8 @@ export async function POST(request: NextRequest) {
       user_agent: requestMetadata.user_agent,
       metadata: {
         reference: reference || null,
+        proofUrl: proofUrl || null,
+        contactPhone: contactPhone || null,
         hasNotes: !!notes,
       },
     })
