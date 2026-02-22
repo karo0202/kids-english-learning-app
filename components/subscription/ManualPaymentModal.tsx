@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { Copy, CheckCircle, Phone, Image, QrCode, Sparkles, Shield, Clock, Upload } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { QRCodeSVG } from 'qrcode.react'
 
 interface ManualInstructions {
   walletAddress?: string
@@ -207,8 +208,8 @@ export default function ManualPaymentModal({
             </motion.div>
           </div>
 
-          {/* QR Code Section */}
-          {instructions.qrCodeUrl && (
+          {/* QR Code Section - generate from text for reliable scanning, or show image */}
+          {(instructions.qrCodeUrl || instructions.qrCodeText) && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -226,13 +227,25 @@ export default function ManualPaymentModal({
                   </p>
                 </div>
                 <div className="flex flex-col items-center gap-4">
-                  <div className="relative p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-4 border-emerald-200 dark:border-emerald-700/50">
+                  <div className="relative p-5 bg-white rounded-2xl shadow-2xl border-4 border-emerald-200 dark:border-emerald-700/50">
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full shadow-lg animate-pulse"></div>
-                    <img
-                      src={instructions.qrCodeUrl}
-                      alt="Payment QR"
-                      className="w-48 h-48 object-contain rounded-xl"
-                    />
+                    {instructions.qrCodeText ? (
+                      <QRCodeSVG
+                        value={instructions.qrCodeText}
+                        size={300}
+                        level="H"
+                        bgColor="#ffffff"
+                        fgColor="#000000"
+                        marginSize={2}
+                        className="rounded-lg"
+                      />
+                    ) : instructions.qrCodeUrl ? (
+                      <img
+                        src={instructions.qrCodeUrl}
+                        alt="Payment QR"
+                        className="w-[300px] h-[300px] min-w-[280px] min-h-[280px] object-contain rounded-xl bg-white"
+                      />
+                    ) : null}
                   </div>
                   {instructions.qrCodeText && (
                     <div className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl border border-emerald-200 dark:border-emerald-700/50 shadow-md">
@@ -249,32 +262,6 @@ export default function ManualPaymentModal({
               </div>
             </motion.div>
           )}
-          {!instructions.qrCodeUrl && instructions.qrCodeText && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="relative bg-gradient-to-br from-white via-purple-50/50 to-indigo-50/50 dark:from-gray-800 dark:via-purple-900/10 dark:to-indigo-900/10 border-2 border-dashed border-purple-300 dark:border-purple-700/50 rounded-2xl p-8 text-center shadow-xl overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-100/20 to-indigo-100/20 dark:from-purple-900/10 dark:to-indigo-900/10"></div>
-              <div className="relative">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg">
-                    <QrCode className="w-6 h-6 text-white" />
-                  </div>
-                  <p className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    Scan or enter this code
-                  </p>
-                </div>
-                <div className="px-6 py-4 bg-white dark:bg-gray-900 rounded-xl border-2 border-purple-200 dark:border-purple-700/50 shadow-lg">
-                  <p className="text-3xl font-mono font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent tracking-widest">
-                    {instructions.qrCodeText}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
           {/* Payment Proof Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
