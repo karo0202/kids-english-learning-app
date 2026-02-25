@@ -14,7 +14,8 @@ import {
   ArrowLeft,
   Sparkles,
   Shield,
-  Zap
+  Zap,
+  Building2
 } from 'lucide-react'
 import { getUserSession } from '@/lib/simple-auth'
 import { 
@@ -28,6 +29,19 @@ import {
   PaymentTransaction
 } from '@/lib/crypto-payment'
 import { QRCodeSVG } from 'qrcode.react'
+import ManualPaymentModal from '@/components/subscription/ManualPaymentModal'
+
+const PLAN_TO_SUBSCRIPTION: Record<string, string> = {
+  'premium-monthly': 'monthly',
+  'premium-yearly': 'yearly',
+  'premium-lifetime': 'lifetime',
+}
+
+const PLAN_IQD: Record<string, { amount: number; currency: string }> = {
+  'premium-monthly': { amount: 13000, currency: 'IQD' },
+  'premium-yearly': { amount: 125000, currency: 'IQD' },
+  'premium-lifetime': { amount: 200000, currency: 'IQD' },
+}
 
 export default function PaymentPage() {
   const router = useRouter()
@@ -39,6 +53,18 @@ export default function PaymentPage() {
   const [transaction, setTransaction] = useState<PaymentTransaction | null>(null)
   const [copied, setCopied] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState<'BTC' | 'ETH' | 'USDT' | 'USDC'>('BTC')
+  const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'fib'>('crypto')
+  const [manualPaymentData, setManualPaymentData] = useState<{
+    method: 'fib_manual'
+    instructions: any
+    transactionId: string
+    amount: number
+    currency: string
+  } | null>(null)
+  const [manualModalOpen, setManualModalOpen] = useState(false)
+  const [fibLoading, setFibLoading] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [confirmingManual, setConfirmingManual] = useState(false)
 
   useEffect(() => {
     const currentUser = getUserSession()
@@ -53,11 +79,11 @@ export default function PaymentPage() {
   }, [planId, router])
 
   useEffect(() => {
-    if (user && selectedPlan) {
+    if (user && selectedPlan && paymentMethod === 'crypto') {
       const newTransaction = createPaymentTransaction(user.id, selectedPlan.id)
       setTransaction(newTransaction)
     }
-  }, [user, selectedPlan])
+  }, [user, selectedPlan, paymentMethod])
 
   const handleCopyAddress = () => {
     if (transaction?.walletAddress) {
@@ -79,11 +105,102 @@ export default function PaymentPage() {
     }
   }
 
-  const qrData = transaction && selectedPlan 
+  const handlePayWithFIB = async () => {
+    if (!user || !selectedPlan) return
+    setPaymentError(null)
+    setFibLoading(true)
+    try {
+      const { getAuthToken } = await import('@/lib/simple-auth')
+      const token = await getAuthToken(true)
+      if (!token) {
+        setPaymentError('Session expired. Please log in again.')
+        return
+      }
+      const subscriptionPlanId = PLAN_TO_SUBSCRIPTION[selectedPlan.id] || 'monthly'
+      const res = await fetch('/api/subscription/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          planId: subscriptionPlanId,
+          paymentMethod: 'fib_manual',
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setPaymentError(data.error || data.message || 'Failed to create payment')
+        return
+      }
+      if (data.success && data.manualPayment && data.manualInstructions) {
+        const iqd = PLAN_IQD[selectedPlan.id] || { amount: 13000, currency: 'IQD' }
+        setManualPaymentData({
+          method: 'fib_manual',
+          instructions: data.manualInstructions,
+          transactionId: data.transactionId,
+          amount: iqd.amount,
+          currency: iqd.currency,
+        })
+        setManualModalOpen(true)
+      } else {
+        setPaymentError('FIB payment is not configured. Please try crypto or contact support.')
+      }
+    } catch (e: any) {
+      setPaymentError(e.message || 'Request failed')
+    } finally {
+      setFibLoading(false)
+    }
+  }
+
+  const handleManualConfirm = async (payload: {
+    transactionId: string
+    reference?: string
+    proofUrl?: string
+    contactPhone?: string
+    notes?: string
+  }) => {
+    setConfirmingManual(true)
+    try {
+      const { getAuthToken } = await import('@/lib/simple-auth')
+      const token = await getAuthToken()
+      const res = await fetch('/api/subscription/manual/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ ...payload, paymentMethod: 'fib_manual' }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setManualModalOpen(false)
+        setManualPaymentData(null)
+        alert('Thank you! We will verify your payment and activate your subscription soon.')
+        router.push('/dashboard')
+      } else {
+        alert(data.error || 'Failed to submit payment proof.')
+      }
+    } catch (e: any) {
+      alert('Request failed. Please try again.')
+    } finally {
+      setConfirmingManual(false)
+    }
+  }
+
+  const qrData = transaction && selectedPlan && paymentMethod === 'crypto'
     ? generatePaymentQR(transaction.amount, selectedCurrency, `Kids English App - ${selectedPlan.name}`)
     : ''
 
-  if (!user || !selectedPlan || !transaction) {
+  if (!user || !selectedPlan) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading payment...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (paymentMethod === 'crypto' && !transaction) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -192,7 +309,53 @@ export default function PaymentPage() {
                   </p>
                 </div>
 
-                {/* Currency Selection */}
+                {/* Payment method: Crypto or FIB */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Payment method
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant={paymentMethod === 'crypto' ? 'default' : 'outline'}
+                      onClick={() => setPaymentMethod('crypto')}
+                      className="flex items-center gap-2"
+                    >
+                      <Zap className="w-4 h-4" />
+                      Crypto (BTC, ETH, USDT, USDC)
+                    </Button>
+                    <Button
+                      variant={paymentMethod === 'fib' ? 'default' : 'outline'}
+                      onClick={() => setPaymentMethod('fib')}
+                      className="flex items-center gap-2"
+                    >
+                      <Building2 className="w-4 h-4" />
+                      FIB Bank
+                    </Button>
+                  </div>
+                </div>
+
+                {/* FIB: single button to get instructions */}
+                {paymentMethod === 'fib' && (
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Pay via FIB (First Iraqi Bank). You will get payment details and can submit your screenshot after paying.
+                    </p>
+                    {paymentError && (
+                      <p className="text-sm text-red-600">{paymentError}</p>
+                    )}
+                    <Button
+                      onClick={handlePayWithFIB}
+                      disabled={fibLoading}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                      size="lg"
+                    >
+                      {fibLoading ? 'Loading...' : 'Get FIB payment details'}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Crypto: Currency Selection */}
+                {paymentMethod === 'crypto' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select Payment Currency
@@ -210,9 +373,10 @@ export default function PaymentPage() {
                     ))}
                   </div>
                 </div>
+                )}
 
                 {/* QR Code */}
-                {qrData && (
+                {paymentMethod === 'crypto' && qrData && (
                   <div className="flex flex-col items-center space-y-4">
                     <div className="bg-white p-4 rounded-lg shadow-md">
                       <QRCodeSVG value={qrData} size={200} />
@@ -224,6 +388,7 @@ export default function PaymentPage() {
                 )}
 
                 {/* Wallet Address */}
+                {paymentMethod === 'crypto' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Wallet Address ({selectedCurrency})
@@ -232,7 +397,7 @@ export default function PaymentPage() {
                     <input
                       type="text"
                       readOnly
-                      value={transaction.walletAddress || ''}
+                      value={transaction?.walletAddress || ''}
                       className="flex-1 px-4 py-2 border rounded-lg bg-gray-50 font-mono text-sm"
                     />
                     <Button
@@ -251,8 +416,10 @@ export default function PaymentPage() {
                     <p className="text-sm text-green-600 mt-2">Copied to clipboard!</p>
                   )}
                 </div>
+                )}
 
                 {/* Amount */}
+                {paymentMethod === 'crypto' && transaction && (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Amount to Pay:</span>
@@ -264,9 +431,10 @@ export default function PaymentPage() {
                     ≈ ${selectedPlan.priceUSD} USD
                   </p>
                 </div>
+                )}
 
                 {/* Status */}
-                {isExpired && (
+                {paymentMethod === 'crypto' && isExpired && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <p className="text-sm text-red-600">
                       ⚠️ This payment request has expired. Please create a new one.
@@ -274,7 +442,7 @@ export default function PaymentPage() {
                   </div>
                 )}
 
-                {transaction.status === 'pending' && !isExpired && (
+                {paymentMethod === 'crypto' && transaction && transaction.status === 'pending' && !isExpired && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Clock className="w-4 h-4 text-yellow-600" />
@@ -289,6 +457,7 @@ export default function PaymentPage() {
                 )}
 
                 {/* Instructions */}
+                {paymentMethod === 'crypto' && transaction && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
                   <h4 className="font-semibold text-blue-800 flex items-center gap-2">
                     <Shield className="w-4 h-4" />
@@ -298,12 +467,14 @@ export default function PaymentPage() {
                     <li>Copy the wallet address above</li>
                     <li>Send exactly {transaction.amount} {selectedCurrency} to this address</li>
                     <li>Wait for blockchain confirmation (usually 1-10 minutes)</li>
-                    <li>Click "Verify Payment" and enter your transaction hash</li>
+                    <li>Click &quot;Verify Payment&quot; and enter your transaction hash</li>
                     <li>Your premium subscription will be activated immediately</li>
                   </ol>
                 </div>
+                )}
 
                 {/* Action Buttons */}
+                {paymentMethod === 'crypto' && (
                 <div className="space-y-2">
                   <Button
                     onClick={handleVerifyPayment}
@@ -321,13 +492,15 @@ export default function PaymentPage() {
                     Continue Later
                   </Button>
                 </div>
+                )}
 
                 {/* Security Note */}
                 <div className="flex items-start gap-2 text-xs text-gray-500">
                   <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <p>
-                    Your payment is processed securely on the blockchain. 
-                    We never store your private keys or wallet information.
+                    {paymentMethod === 'crypto'
+                      ? 'Your payment is processed securely on the blockchain. We never store your private keys or wallet information.'
+                      : 'FIB payments are verified manually. After you pay, submit your screenshot so we can activate your subscription.'}
                   </p>
                 </div>
               </CardContent>
@@ -335,6 +508,20 @@ export default function PaymentPage() {
           </div>
         </div>
       </div>
+
+      {manualPaymentData && (
+        <ManualPaymentModal
+          isOpen={manualModalOpen}
+          onClose={() => setManualModalOpen(false)}
+          method="fib_manual"
+          instructions={manualPaymentData.instructions}
+          transactionId={manualPaymentData.transactionId}
+          amount={manualPaymentData.amount}
+          currency={manualPaymentData.currency}
+          onConfirm={handleManualConfirm}
+          confirming={confirmingManual}
+        />
+      )}
     </div>
   )
 }
