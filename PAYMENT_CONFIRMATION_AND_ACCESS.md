@@ -10,60 +10,155 @@
 
 ---
 
-## Step-by-step
+## Detailed step-by-step guide
 
-### 1. User submits proof
+### Part 1: User submits proof (what the customer does)
 
 - On the subscribe page, after choosing a plan and payment method (e.g. FIB), the user sees instructions and the **“Already paid?”** form.
 - They fill in:
   - **Receipt reference** (optional for FIB; FIB often has no reference, so they can leave it blank).
   - **Transaction screenshot** (required for FIB if no reference): they can **attach an image** or **paste a link**.
   - Optional: WhatsApp/phone, notes.
-- On **Submit Payment Proof**, the app sends this to the server and it is stored in Supabase (`subscriptions.metadata`, `payment_transactions.provider_response`) with status still **pending**.
+- When they click **Submit Payment Proof**, the app saves this in Supabase. The subscription stays **pending** until you activate it.
 
-### 2. Where to see pending payments
+### Part 2: Where you see pending payments (Supabase — click by click)
 
-- **Supabase Dashboard**  
-  - Table: `subscriptions`  
-  - Filter: `status = 'pending'` and `payment_method` = `fib_manual` (or your manual method).  
-  - Check `metadata->manualConfirmation` for:
-    - `reference`
-    - `proofUrl` (screenshot link or base64 data URL)
-    - `contactPhone`
-    - `notes`
-- Optionally you can build a small admin UI that lists these rows and shows the screenshot (e.g. open `proofUrl` in a new tab).
+1. **Open Supabase**  
+   Go to [supabase.com](https://supabase.com) → sign in → select your **project**.
 
-### 3. How you confirm and grant access
+2. **Open the subscriptions table**  
+   Left sidebar → **Table Editor** → click the **subscriptions** table.
 
-After you verify the payment (reference or screenshot), activate the subscription in one of these ways.
+3. **Filter to pending payments**  
+   Use the table filters so you only see pending manual payments:
+   - **status** → equals → `pending`
+   - **payment_method** → equals → `fib_manual` (or your manual method name).
+
+4. **Find the proof and the transaction ID**  
+   Each row has:
+   - **transaction_id** — use this later to activate (e.g. `pay_1738xxxxx_abc...`). This column already exists; do not add a new one.
+   - **metadata** — expand or click it. Look for `manualConfirmation` with:
+     - `reference` — receipt reference if the user entered one
+     - `proofUrl` — screenshot: either a link or a long string starting with `data:image/...`. Copy `proofUrl`, paste in a new browser tab, and open the image to verify the payment
+     - `contactPhone`, `notes` — optional
+
+5. **Verify the payment**  
+   Open the screenshot (from `proofUrl`) or check the reference against your bank/crypto records. When satisfied, copy the **transaction_id** for that row — you need it for Part 4.
+
+**Or use the admin payments page (no Supabase needed):**  
+Open **Pending payments** in your app: `https://your-app.vercel.app/admin/payments`. Enter your admin secret (same as in Vercel), click **Load pending**, then verify each row and click **Activate**. You don’t need to open Supabase for this.
+
+### Part 3: One-time setup — Admin secret in Vercel
+
+Do this once so you can call the admin activate API securely.
+
+1. **Open Vercel**  
+   Go to [vercel.com](https://vercel.com) → sign in → open your **project** (e.g. kids-english-learning-app).
+
+2. **Open environment variables**  
+   At the top of the project: **Settings** → left sidebar → **Environment Variables**.
+
+3. **Add the secret**
+   - Click **Add New** (or **Add**).
+   - **Key:** type exactly: `SUBSCRIPTION_ADMIN_SECRET`
+   - **Value:** long random string. Either run `openssl rand -hex 32` in a terminal and paste the output, or use a password generator (32+ characters).
+   - **Environments:** tick **Production** (and **Preview** if you use it). Click **Save**.
+
+4. **Redeploy**  
+   **Deployments** tab → **...** on latest deployment → **Redeploy**. The new variable is only available after redeploy.
+
+5. **Keep the secret safe**  
+   Store the value in a password manager or similar. You will paste it into the `curl` command in Part 4.
+
+---
+
+### Part 4: Activate a subscription (after you verified the payment)
+
+You need the **transaction_id** from the `subscriptions` row you verified in Part 2. Then use Option A (API) or Option B (Supabase only).
 
 #### Option A: Admin API (recommended)
 
-Call the admin activate endpoint with the **transaction ID** (same one the user saw on the subscribe page and that is stored in `subscriptions.transaction_id`).
+**What you need:**
 
-```bash
-curl -X POST https://your-app.vercel.app/api/subscription/admin/activate \
-  -H "Content-Type: application/json" \
-  -H "X-Admin-Secret: YOUR_SUBSCRIPTION_ADMIN_SECRET" \
-  -d '{"transactionId":"pay_1234567890_abc..."}'
+- **App URL** — e.g. `https://kids-english-learning-app.vercel.app` (no trailing slash).
+- **Admin secret** — the value of `SUBSCRIPTION_ADMIN_SECRET` from Vercel (Part 3).
+- **Transaction ID** — from the **transaction_id** column of that row in Supabase (e.g. `pay_1738123456_abcxyz`).
+
+**Run in a terminal** (PowerShell, CMD, or Git Bash on Windows; Terminal on Mac). Replace `YOUR_APP_URL`, `YOUR_ADMIN_SECRET`, and `THE_TRANSACTION_ID`.
+
+**Windows (CMD) — one line:**
+
+```cmd
+curl -X POST YOUR_APP_URL/api/subscription/admin/activate -H "Content-Type: application/json" -H "X-Admin-Secret: YOUR_ADMIN_SECRET" -d "{\"transactionId\":\"THE_TRANSACTION_ID\"}"
 ```
 
-- Set **SUBSCRIPTION_ADMIN_SECRET** in Vercel (Environment Variables). Use a long random string; this is the only protection for this endpoint.
-- Use the **transaction ID** for that specific payment (from Supabase `subscriptions.transaction_id` or from your records).
+**Example (use your own URL, secret, and transaction ID):**
 
-The API will:
+```cmd
+curl -X POST https://kids-english-learning-app.vercel.app/api/subscription/admin/activate -H "Content-Type: application/json" -H "X-Admin-Secret: 9f3c7a4e2b8d1f6a5c0e9b7d3a1f4c8e" -d "{\"transactionId\":\"pay_1738123456_abcxyz\"}"
+```
 
-- Set `subscriptions.status` to **active** for that transaction.
-- Set `payment_transactions.status` to **completed** for that transaction.
-- `expires_at` is already set when the subscription was created, so the user stays active until that date.
+**Windows (PowerShell)** — avoids quote escaping; replace the three placeholders:
 
-#### Option B: Supabase Dashboard
+```powershell
+Invoke-RestMethod -Uri "YOUR_APP_URL/api/subscription/admin/activate" -Method Post -Headers @{"Content-Type"="application/json"; "X-Admin-Secret"="YOUR_ADMIN_SECRET"} -Body '{"transactionId":"THE_TRANSACTION_ID"}'
+```
 
-1. Open **Supabase** → your project → **Table Editor**.
-2. **subscriptions**: find the row with the correct `transaction_id`, set `status` to **active**.
-3. **payment_transactions**: find the row with the same `transaction_id`, set `status` to **completed**.
+**Mac / Linux / Git Bash:**
 
-Same effect as Option A, but manual.
+```bash
+curl -X POST YOUR_APP_URL/api/subscription/admin/activate \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Secret: YOUR_ADMIN_SECRET" \
+  -d '{"transactionId":"THE_TRANSACTION_ID"}'
+```
+
+**Or use the script (Option A in one command):**
+
+From the `app` folder, set your app URL and admin secret once, then run with the transaction ID from Supabase:
+
+**PowerShell (Windows):**
+
+```powershell
+cd "c:\path\to\kids_english_app\app"
+$env:ACTIVATE_APP_URL = "https://your-app.vercel.app"
+$env:SUBSCRIPTION_ADMIN_SECRET = "paste_your_secret_here"
+node scripts/activate-subscription.js "PASTE_TRANSACTION_ID_FROM_SUPABASE"
+```
+
+**CMD (Windows):**
+
+```cmd
+cd c:\path\to\kids_english_app\app
+set ACTIVATE_APP_URL=https://your-app.vercel.app
+set SUBSCRIPTION_ADMIN_SECRET=paste_your_secret_here
+node scripts/activate-subscription.js PASTE_TRANSACTION_ID_FROM_SUPABASE
+```
+
+Replace `your-app.vercel.app` with your real Vercel URL, `paste_your_secret_here` with the value of `SUBSCRIPTION_ADMIN_SECRET` from Vercel, and `PASTE_TRANSACTION_ID_FROM_SUPABASE` with the **transaction_id** from the pending row in the `subscriptions` table. The script will call the API and print success or error.
+
+**Result:**
+
+- **Success:** JSON like `{"ok":true}`. In Supabase, that subscription is **active** and the matching **payment_transactions** row is **completed**.
+- **401:** Wrong or missing `X-Admin-Secret` — check Vercel and redeploy.
+- **404:** Wrong URL or path.
+- **Other:** Ensure `transactionId` matches **transaction_id** in Supabase exactly (no extra spaces).
+
+**Then:** Ask the user to **refresh the page** or **reopen the app** so the app refetches status and unlocks all modules.
+
+The API sets `subscriptions.status` to **active** and `payment_transactions.status` to **completed** for that transaction; `expires_at` is already set when the subscription was created.
+
+#### Option B: Supabase Dashboard (manual)
+
+1. **Supabase** → **Table Editor** → **subscriptions**. Find the row with the **transaction_id** you verified. Change **status** from `pending` to **active**. Save.
+2. Open **payment_transactions**. Find the row with the same **transaction_id**. Set **status** to **completed**. Save.
+
+Same result as Option A; good for one-off activations.
+
+**Admin payments page (easiest — no Supabase, no script):**  
+Go to **https://your-app.vercel.app/admin/payments**. Enter your **SUBSCRIPTION_ADMIN_SECRET**, click **Load pending**. You’ll see a table of pending manual payments with reference, proof link (screenshot), and contact. Verify each, then click **Activate** for that row. No need to open Supabase or run the script.
+
+---
 
 ### 4. How the user gets access to all modules
 

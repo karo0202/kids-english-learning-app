@@ -244,6 +244,40 @@ export async function confirmManualPayment(
   return { success: true }
 }
 
+const MANUAL_PAYMENT_METHODS = ['fib_manual', 'manual']
+
+/**
+ * List pending manual subscriptions (admin only). Used by the admin payments page.
+ */
+export async function listPendingManualSubscriptions(): Promise<{
+  success: boolean
+  error?: string
+  list?: Array<{
+    id: string
+    user_id: string
+    transaction_id: string
+    plan_id: string
+    created_at: string
+    metadata: { manualConfirmation?: { reference?: string; proofUrl?: string; contactPhone?: string; notes?: string } } | null
+  }>
+}> {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' }
+  }
+
+  const { data: rows, error } = await supabase
+    .from('subscriptions')
+    .select('id, user_id, transaction_id, plan_id, created_at, metadata')
+    .eq('status', 'pending')
+    .in('payment_method', MANUAL_PAYMENT_METHODS)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+  return { success: true, list: rows || [] }
+}
+
 /**
  * Activate a manual payment subscription (admin only).
  * Sets subscription and payment_transactions status to active/completed so the user gets access.
