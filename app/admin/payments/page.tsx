@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Shield, RefreshCw, CheckCircle, ExternalLink, Loader2 } from 'lucide-react'
+import { getUserSession } from '@/lib/simple-auth'
+
+const ADMIN_EMAIL = 'karolate143@gmail.com'
 
 interface PendingItem {
   id: string
@@ -27,11 +30,23 @@ interface PendingItem {
 
 export default function AdminPaymentsPage() {
   const router = useRouter()
+  const [user, setUser] = useState<{ email: string } | null>(null)
+  const [authChecked, setAuthChecked] = useState(false)
   const [secret, setSecret] = useState('')
   const [list, setList] = useState<PendingItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activatingId, setActivatingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const currentUser = getUserSession()
+    if (!currentUser) {
+      router.replace('/login')
+      return
+    }
+    setUser(currentUser)
+    setAuthChecked(true)
+  }, [router])
 
   const headers = () => ({
     'Content-Type': 'application/json',
@@ -83,6 +98,37 @@ export default function AdminPaymentsPage() {
     } finally {
       setActivatingId(null)
     }
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+      </div>
+    )
+  }
+
+  if (user && user.email !== ADMIN_EMAIL) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
+              <Shield className="w-6 h-6" />
+              Access denied
+            </CardTitle>
+            <p className="text-gray-600 dark:text-gray-400">
+              This page is only available to the account administrator.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => router.push('/dashboard')} className="w-full">
+              Back to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 
@@ -272,6 +272,15 @@ const handleDeleteChild = async (childId: string) => {
             {/* Right side - Buttons and Icons */}
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {/* Desktop buttons - hidden on mobile */}
+              {user?.email === 'karolate143@gmail.com' && (
+                <Button 
+                  onClick={() => router.push('/admin/payments')}
+                  className="hidden md:flex bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 font-semibold px-3 sm:px-4 text-sm"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  Admin payments
+                </Button>
+              )}
               <Button 
                 onClick={() => router.push('/parent-dashboard')}
                 className="hidden md:flex bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 font-semibold px-3 sm:px-4 text-sm"
@@ -290,6 +299,17 @@ const handleDeleteChild = async (childId: string) => {
               )}
               
               {/* Mobile icon buttons - show icons only on mobile */}
+              {user?.email === 'karolate143@gmail.com' && (
+                <Button 
+                  onClick={() => router.push('/admin/payments')}
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-xl"
+                  title="Admin payments"
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              )}
               <Button 
                 onClick={() => router.push('/parent-dashboard')}
                 variant="ghost"
