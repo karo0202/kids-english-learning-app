@@ -397,7 +397,7 @@ const handleDeleteChild = async (childId: string) => {
                   </div>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button
-                      onClick={() => router.push('/contact')}
+                      onClick={() => router.push('/payment')}
                       className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-6 py-2 shadow-xl"
                       size="lg"
                     >
