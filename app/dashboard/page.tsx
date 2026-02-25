@@ -272,7 +272,7 @@ const handleDeleteChild = async (childId: string) => {
             {/* Right side - Buttons and Icons */}
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {/* Desktop buttons - hidden on mobile */}
-              {user?.email === 'karolate143@gmail.com' && (
+              {user?.email === 'karolatef143@gmail.com' && (
                 <Button 
                   onClick={() => router.push('/admin/payments')}
                   className="hidden md:flex bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 font-semibold px-3 sm:px-4 text-sm"
@@ -299,7 +299,7 @@ const handleDeleteChild = async (childId: string) => {
               )}
               
               {/* Mobile icon buttons - show icons only on mobile */}
-              {user?.email === 'karolate143@gmail.com' && (
+              {user?.email === 'karolatef143@gmail.com' && (
                 <Button 
                   onClick={() => router.push('/admin/payments')}
                   variant="ghost"

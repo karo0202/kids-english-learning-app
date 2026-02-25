@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Shield, RefreshCw, CheckCircle, ExternalLink, Loader2 } from 'lucide-react'
 import { getUserSession } from '@/lib/simple-auth'
 
-const ADMIN_EMAIL = 'karolate143@gmail.com'
+const ADMIN_EMAIL = 'karolatef143@gmail.com'
 
 interface PendingItem {
   id: string
