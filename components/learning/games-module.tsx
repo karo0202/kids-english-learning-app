@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
@@ -90,6 +90,7 @@ export default function GamesModule() {
   const [animationIndex, setAnimationIndex] = useState(0)
   const [animationPlaying, setAnimationPlaying] = useState(false)
   const [animationKey, setAnimationKey] = useState(0)
+  const [animationRunId, setAnimationRunId] = useState(0)
 
   // Performance monitoring
   const { renderCount } = usePerformanceMonitor('GamesModule')
@@ -1101,7 +1102,7 @@ export default function GamesModule() {
                     <AnimationCharacter
                       key={`${animationKey}-${animationIndex}`}
                       action={ANIMATION_ACTIONS[animationIndex].key}
-                      playing={animationPlaying}
+                      runId={animationRunId}
                       onComplete={() => setAnimationPlaying(false)}
                     />
                   </div>
@@ -1111,6 +1112,7 @@ export default function GamesModule() {
                       size="lg"
                       onClick={() => {
                         setAnimationPlaying(true)
+                        setAnimationRunId(id => id + 1)
                         setScore(s => s + 5)
                       }}
                       disabled={animationPlaying}
@@ -1151,34 +1153,46 @@ export default function GamesModule() {
 
 const REST_STYLE = { y: 0, rotate: 0, scale: 1, x: 0, scaleY: 1, scaleX: 1 }
 
+const ANIMATION_VARIANTS: Record<string, object> = {
+  jump: { y: [0, -90, 0] },
+  spin: { rotate: [0, 360] },
+  wave: { rotate: [0, 25, -25, 0] },
+  dance: { x: [0, 20, -20, 0], rotate: [0, 15, -15, 0] },
+  clap: { scale: [1, 1.25, 1] },
+  stretch: { scaleY: [1, 1.35, 1], scaleX: [1, 0.85, 1] },
+  bounce: { y: [0, -40, 0, -20, 0] },
+  wiggle: { rotate: [0, 20, -20, 15, -15, 0] }
+}
+
 function AnimationCharacter({
   action,
-  playing,
+  runId,
   onComplete
 }: {
   action: string
-  playing: boolean
+  runId: number
   onComplete: () => void
 }) {
-  const duration = 0.9
-  const variants: Record<string, object> = {
-    jump: { y: [0, -90, 0] },
-    spin: { rotate: [0, 360] },
-    wave: { rotate: [0, 25, -25, 0] },
-    dance: { x: [0, 20, -20, 0], rotate: [0, 15, -15, 0] },
-    clap: { scale: [1, 1.25, 1] },
-    stretch: { scaleY: [1, 1.35, 1], scaleX: [1, 0.85, 1] },
-    bounce: { y: [0, -40, 0, -20, 0] },
-    wiggle: { rotate: [0, 20, -20, 15, -15, 0] }
-  }
-  const animateStyle = playing ? (variants[action] || REST_STYLE) : REST_STYLE
+  const controls = useAnimation()
+  const durationMs = 1000
+  const transition = { duration: durationMs / 1000, type: 'spring' as const, stiffness: 260, damping: 16 }
+
+  useEffect(() => {
+    if (runId === 0) return
+    const variant = ANIMATION_VARIANTS[action] || REST_STYLE
+    const run = async () => {
+      await controls.start({ ...variant, transition })
+      await controls.start({ ...REST_STYLE, transition: { duration: 0.2 } })
+      onComplete()
+    }
+    run()
+  }, [runId, action, controls, onComplete])
+
   return (
     <motion.div
       className="text-8xl sm:text-9xl select-none"
       initial={REST_STYLE}
-      animate={animateStyle}
-      transition={{ duration, type: 'spring', stiffness: 260, damping: 16 }}
-      onAnimationComplete={() => playing && onComplete()}
+      animate={controls}
     >
       {action === 'jump' && '🦘'}
       {action === 'spin' && '🦋'}
