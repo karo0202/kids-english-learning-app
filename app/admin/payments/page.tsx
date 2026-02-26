@@ -7,6 +7,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Shield, RefreshCw, CheckCircle, ExternalLink, Loader2 } from 'lucide-react'
 import { getUserSession } from '@/lib/simple-auth'
 
@@ -37,6 +43,7 @@ export default function AdminPaymentsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activatingId, setActivatingId] = useState<string | null>(null)
+  const [proofViewUrl, setProofViewUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const currentUser = getUserSession()
@@ -228,14 +235,13 @@ export default function AdminPaymentsPage() {
                           </td>
                           <td className="p-3">
                             {proof?.proofUrl ? (
-                              <a
-                                href={proof.proofUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1"
+                              <button
+                                type="button"
+                                onClick={() => setProofViewUrl(proof.proofUrl!)}
+                                className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1 hover:underline font-medium"
                               >
                                 View <ExternalLink className="w-3 h-3" />
-                              </a>
+                              </button>
                             ) : (
                               '—'
                             )}
@@ -273,6 +279,37 @@ export default function AdminPaymentsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={!!proofViewUrl} onOpenChange={(open) => !open && setProofViewUrl(null)}>
+        <DialogContent className="max-w-[95vw] max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Payment proof (screenshot)</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 min-h-0 overflow-auto flex items-center justify-center p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            {proofViewUrl && (
+              proofViewUrl.startsWith('data:') || /\.(jpe?g|png|gif|webp)(\?|$)/i.test(proofViewUrl) ? (
+                <img
+                  src={proofViewUrl}
+                  alt="Payment proof"
+                  className="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded"
+                />
+              ) : (
+                <a
+                  href={proofViewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-600 dark:text-emerald-400 underline"
+                >
+                  Open proof in new tab
+                </a>
+              )
+            )}
+          </div>
+          <Button variant="outline" onClick={() => setProofViewUrl(null)} className="mt-2">
+            Close
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
