@@ -90,7 +90,6 @@ export default function GamesModule() {
   const [animationIndex, setAnimationIndex] = useState(0)
   const [animationPlaying, setAnimationPlaying] = useState(false)
   const [animationKey, setAnimationKey] = useState(0)
-  const [animationPlayKey, setAnimationPlayKey] = useState(0)
 
   // Performance monitoring
   const { renderCount } = usePerformanceMonitor('GamesModule')
@@ -450,7 +449,6 @@ export default function GamesModule() {
       setAnimationIndex(0)
       setAnimationPlaying(false)
       setAnimationKey(k => k + 1)
-      setAnimationPlayKey(0)
     }
   }
 
@@ -1101,7 +1099,7 @@ export default function GamesModule() {
                   </div>
                   <div className="min-h-[220px] flex items-center justify-center my-6">
                     <AnimationCharacter
-                      key={`${animationKey}-${animationPlayKey}`}
+                      key={`${animationKey}-${animationIndex}`}
                       action={ANIMATION_ACTIONS[animationIndex].key}
                       playing={animationPlaying}
                       onComplete={() => setAnimationPlaying(false)}
@@ -1112,7 +1110,6 @@ export default function GamesModule() {
                       className="bg-gradient-to-r from-fuchsia-500 to-pink-500 hover:from-fuchsia-600 hover:to-pink-600 text-white shadow-lg"
                       size="lg"
                       onClick={() => {
-                        setAnimationPlayKey(k => k + 1)
                         setAnimationPlaying(true)
                         setScore(s => s + 5)
                       }}
@@ -1152,6 +1149,8 @@ export default function GamesModule() {
   )
 }
 
+const REST_STYLE = { y: 0, rotate: 0, scale: 1, x: 0, scaleY: 1, scaleX: 1 }
+
 function AnimationCharacter({
   action,
   playing,
@@ -1161,24 +1160,25 @@ function AnimationCharacter({
   playing: boolean
   onComplete: () => void
 }) {
-  const duration = 0.8
-  const common = {
-    transition: { type: 'spring', stiffness: 300, damping: 15 },
-    onAnimationComplete: onComplete
+  const duration = 0.9
+  const variants: Record<string, object> = {
+    jump: { y: [0, -90, 0] },
+    spin: { rotate: [0, 360] },
+    wave: { rotate: [0, 25, -25, 0] },
+    dance: { x: [0, 20, -20, 0], rotate: [0, 15, -15, 0] },
+    clap: { scale: [1, 1.25, 1] },
+    stretch: { scaleY: [1, 1.35, 1], scaleX: [1, 0.85, 1] },
+    bounce: { y: [0, -40, 0, -20, 0] },
+    wiggle: { rotate: [0, 20, -20, 15, -15, 0] }
   }
+  const animateStyle = playing ? (variants[action] || REST_STYLE) : REST_STYLE
   return (
     <motion.div
       className="text-8xl sm:text-9xl select-none"
-      animate={playing ? (action === 'jump' ? { y: [0, -80, 0] } :
-        action === 'spin' ? { rotate: 360 } :
-        action === 'wave' ? { rotate: [0, 20, -20, 0] } :
-        action === 'dance' ? { x: [0, 15, -15, 0], rotate: [0, 10, -10, 0] } :
-        action === 'clap' ? { scale: [1, 1.2, 1] } :
-        action === 'stretch' ? { scaleY: [1, 1.3, 1], scaleX: [1, 0.9, 1] } :
-        action === 'bounce' ? { y: [0, -30, 0, -15, 0] } :
-        action === 'wiggle' ? { rotate: [0, 15, -15, 10, -10, 0] } : {}) : {}}
-      transition={{ duration, ...common.transition }}
-      onAnimationComplete={playing ? common.onAnimationComplete : undefined}
+      initial={REST_STYLE}
+      animate={animateStyle}
+      transition={{ duration, type: 'spring', stiffness: 260, damping: 16 }}
+      onAnimationComplete={() => playing && onComplete()}
     >
       {action === 'jump' && '🦘'}
       {action === 'spin' && '🦋'}
