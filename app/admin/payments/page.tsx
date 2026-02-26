@@ -44,6 +44,7 @@ export default function AdminPaymentsPage() {
   const [error, setError] = useState<string | null>(null)
   const [activatingId, setActivatingId] = useState<string | null>(null)
   const [proofViewUrl, setProofViewUrl] = useState<string | null>(null)
+  const [proofImageError, setProofImageError] = useState(false)
 
   useEffect(() => {
     const currentUser = getUserSession()
@@ -237,7 +238,10 @@ export default function AdminPaymentsPage() {
                             {proof?.proofUrl ? (
                               <button
                                 type="button"
-                                onClick={() => setProofViewUrl(proof.proofUrl!)}
+                                onClick={() => {
+                                  setProofViewUrl(proof.proofUrl!)
+                                  setProofImageError(false)
+                                }}
                                 className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1 hover:underline font-medium"
                               >
                                 View <ExternalLink className="w-3 h-3" />
@@ -280,27 +284,42 @@ export default function AdminPaymentsPage() {
         </Card>
       </div>
 
-      <Dialog open={!!proofViewUrl} onOpenChange={(open) => !open && setProofViewUrl(null)}>
+      <Dialog open={!!proofViewUrl} onOpenChange={(open) => !open && (setProofViewUrl(null), setProofImageError(false))}>
         <DialogContent className="max-w-[95vw] max-h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Payment proof (screenshot)</DialogTitle>
           </DialogHeader>
-          <div className="flex-1 min-h-0 overflow-auto flex items-center justify-center p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <div className="flex-1 min-h-[200px] overflow-auto flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
             {proofViewUrl && (
-              proofViewUrl.startsWith('data:') || /\.(jpe?g|png|gif|webp)(\?|$)/i.test(proofViewUrl) ? (
+              proofImageError ? (
+                <div className="text-center space-y-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Image could not be displayed (e.g. file too large or invalid).
+                  </p>
+                  <a
+                    href={proofViewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 underline font-medium"
+                  >
+                    Open in new tab <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              ) : proofViewUrl.startsWith('data:') || /\.(jpe?g|png|gif|webp)(\?|$)/i.test(proofViewUrl) ? (
                 <img
                   src={proofViewUrl}
                   alt="Payment proof"
                   className="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded"
+                  onError={() => setProofImageError(true)}
                 />
               ) : (
                 <a
                   href={proofViewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-emerald-600 dark:text-emerald-400 underline"
+                  className="text-emerald-600 dark:text-emerald-400 underline flex items-center gap-2"
                 >
-                  Open proof in new tab
+                  Open proof in new tab <ExternalLink className="w-4 h-4" />
                 </a>
               )
             )}
