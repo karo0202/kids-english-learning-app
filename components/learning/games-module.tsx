@@ -9,7 +9,7 @@ import { Mascot } from '@/components/ui/mascot'
 import { ProgressRing } from '@/components/ui/progress-ring'
 import { 
   Gamepad2, ArrowLeft, Star, Trophy, Clock, Shuffle,
-  Brain, BookOpen, Target, Search, Zap, Heart
+  Brain, BookOpen, Target, Search, Zap, Heart, Sparkles
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import OptimizedImage from '../common/optimized-image'
@@ -75,6 +75,23 @@ export default function GamesModule() {
   const [spellingCorrect, setSpellingCorrect] = useState<boolean | null>(null)
   const [spellingAttempts, setSpellingAttempts] = useState(0)
 
+  // Animation Fun: action words + character animations
+  type ActionWord = { word: string; key: string }
+  const ANIMATION_ACTIONS: ActionWord[] = [
+    { word: 'JUMP', key: 'jump' },
+    { word: 'SPIN', key: 'spin' },
+    { word: 'WAVE', key: 'wave' },
+    { word: 'DANCE', key: 'dance' },
+    { word: 'CLAP', key: 'clap' },
+    { word: 'STRETCH', key: 'stretch' },
+    { word: 'BOUNCE', key: 'bounce' },
+    { word: 'WIGGLE', key: 'wiggle' }
+  ]
+  const [animationIndex, setAnimationIndex] = useState(0)
+  const [animationPlaying, setAnimationPlaying] = useState(false)
+  const [animationKey, setAnimationKey] = useState(0)
+  const [animationPlayKey, setAnimationPlayKey] = useState(0)
+
   // Performance monitoring
   const { renderCount } = usePerformanceMonitor('GamesModule')
 
@@ -131,6 +148,14 @@ export default function GamesModule() {
       icon: <Search className="w-8 h-8" />,
       color: 'from-green-400 to-emerald-500',
       bgColor: 'bg-green-50'
+    },
+    {
+      id: 'animation',
+      name: 'Animation Fun',
+      description: 'Watch words come to life with animations',
+      icon: <Sparkles className="w-8 h-8" />,
+      color: 'from-fuchsia-400 to-pink-500',
+      bgColor: 'bg-fuchsia-50'
     }
   ]
 
@@ -421,6 +446,11 @@ export default function GamesModule() {
       setSpellingAttempts(0)
     } else if (gameId === 'hunt') {
       generateHunt(huntWords.length ? huntWords : ['CAT','DOG','SUN','TREE'], huntSize)
+    } else if (gameId === 'animation') {
+      setAnimationIndex(0)
+      setAnimationPlaying(false)
+      setAnimationKey(k => k + 1)
+      setAnimationPlayKey(0)
     }
   }
 
@@ -1050,7 +1080,115 @@ export default function GamesModule() {
             </Card>
           </motion.div>
         )}
+
+        {/* Animation Fun */}
+        {selectedGame === 'animation' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto">
+            <Card className="card-kid border-2 border-fuchsia-200 bg-gradient-to-b from-fuchsia-50 to-white">
+              <CardHeader>
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-800">Animation Fun</h3>
+                  <p className="text-gray-600">Tap &quot;Do it!&quot; to see the word come to life!</p>
+                  <div className="text-sm text-gray-500 mt-1">
+                    Action {animationIndex + 1} of {ANIMATION_ACTIONS.length}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="text-4xl sm:text-5xl font-black text-fuchsia-600 mb-6 tracking-wide">
+                    {ANIMATION_ACTIONS[animationIndex].word}
+                  </div>
+                  <div className="min-h-[220px] flex items-center justify-center my-6">
+                    <AnimationCharacter
+                      key={`${animationKey}-${animationPlayKey}`}
+                      action={ANIMATION_ACTIONS[animationIndex].key}
+                      playing={animationPlaying}
+                      onComplete={() => setAnimationPlaying(false)}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-4 justify-center">
+                    <Button
+                      className="bg-gradient-to-r from-fuchsia-500 to-pink-500 hover:from-fuchsia-600 hover:to-pink-600 text-white shadow-lg"
+                      size="lg"
+                      onClick={() => {
+                        setAnimationPlayKey(k => k + 1)
+                        setAnimationPlaying(true)
+                        setScore(s => s + 5)
+                      }}
+                      disabled={animationPlaying}
+                    >
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Do it!
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => {
+                        const next = (animationIndex + 1) % ANIMATION_ACTIONS.length
+                        setAnimationIndex(next)
+                        setAnimationKey(k => k + 1)
+                      }}
+                    >
+                      Next word
+                    </Button>
+                  </div>
+                </div>
+                {animationIndex === ANIMATION_ACTIONS.length - 1 && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center text-sm text-gray-500 mt-4"
+                  >
+                    You did them all! Tap &quot;Next word&quot; to play again.
+                  </motion.p>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </div>
     </div>
+  )
+}
+
+function AnimationCharacter({
+  action,
+  playing,
+  onComplete
+}: {
+  action: string
+  playing: boolean
+  onComplete: () => void
+}) {
+  const duration = 0.8
+  const common = {
+    transition: { type: 'spring', stiffness: 300, damping: 15 },
+    onAnimationComplete: onComplete
+  }
+  return (
+    <motion.div
+      className="text-8xl sm:text-9xl select-none"
+      animate={playing ? (action === 'jump' ? { y: [0, -80, 0] } :
+        action === 'spin' ? { rotate: 360 } :
+        action === 'wave' ? { rotate: [0, 20, -20, 0] } :
+        action === 'dance' ? { x: [0, 15, -15, 0], rotate: [0, 10, -10, 0] } :
+        action === 'clap' ? { scale: [1, 1.2, 1] } :
+        action === 'stretch' ? { scaleY: [1, 1.3, 1], scaleX: [1, 0.9, 1] } :
+        action === 'bounce' ? { y: [0, -30, 0, -15, 0] } :
+        action === 'wiggle' ? { rotate: [0, 15, -15, 10, -10, 0] } : {}) : {}}
+      transition={{ duration, ...common.transition }}
+      onAnimationComplete={playing ? common.onAnimationComplete : undefined}
+    >
+      {action === 'jump' && '🦘'}
+      {action === 'spin' && '🦋'}
+      {action === 'wave' && '👋'}
+      {action === 'dance' && '🕺'}
+      {action === 'clap' && '👏'}
+      {action === 'stretch' && '🙆'}
+      {action === 'bounce' && '⚽'}
+      {action === 'wiggle' && '🐛'}
+      {!['jump','spin','wave','dance','clap','stretch','bounce','wiggle'].includes(action) && '✨'}
+    </motion.div>
   )
 }
