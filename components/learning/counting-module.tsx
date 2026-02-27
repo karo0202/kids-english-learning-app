@@ -79,7 +79,7 @@ export default function CountingModule() {
                 Levels: {completed}/{COUNT_LEVELS.length}
               </span>
             </div>
-            <ProgressRing value={progress} size={52} strokeWidth={6} className="bg-white rounded-full shadow-sm" />
+            <ProgressRing progress={progress} size={52} strokeWidth={6} className="bg-white rounded-full shadow-sm" />
           </div>
         </div>
 
