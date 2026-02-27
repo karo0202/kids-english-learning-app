@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -130,11 +130,6 @@ export default function CountingModule() {
     }
   }
 
-  if (!mathQuestion && typeof window !== 'undefined') {
-    // Lazy-init math question on first render in the browser
-    setupMathQuestion()
-  }
-
   const setupMathQuestion = () => {
     // Mix of small addition and subtraction within 1–20
     const isAddition = Math.random() < 0.6
@@ -165,6 +160,12 @@ export default function CountingModule() {
     setMathOptions(Array.from(opts).sort(() => Math.random() - 0.5))
     setMathFeedback(null)
   }
+
+  useEffect(() => {
+    if (activity === 'math' && !mathQuestion && typeof window !== 'undefined') {
+      setupMathQuestion()
+    }
+  }, [activity, mathQuestion])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100 flex items-center justify-center px-4 py-8">
