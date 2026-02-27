@@ -23,6 +23,9 @@ export default function CountingModule() {
   const [currentNumber, setCurrentNumber] = useState(1)
   const [score, setScore] = useState(0)
   const [completed, setCompleted] = useState(0)
+  const [attempts, setAttempts] = useState(0)
+  const [correctAnswers, setCorrectAnswers] = useState(0)
+  const [feedback, setFeedback] = useState<string | null>(null)
 
   const level = COUNT_LEVELS[levelIndex]
   const progress = (completed / COUNT_LEVELS.length) * 100
@@ -51,10 +54,29 @@ export default function CountingModule() {
     setCurrentNumber(1)
     setScore(0)
     setCompleted(0)
+    setAttempts(0)
+    setCorrectAnswers(0)
+    setFeedback(null)
     setLevelIndex(0)
   }
 
   const shownObjects = objects.slice(0, currentNumber)
+  const accuracy = attempts > 0 ? Math.round((correctAnswers / attempts) * 100) : 0
+
+  const buildOptions = (target: number, max: number): number[] => {
+    const opts = new Set<number>([target])
+    while (opts.size < 3) {
+      const direction = Math.random() < 0.5 ? -1 : 1
+      const step = 1 + Math.floor(Math.random() * 3)
+      let candidate = target + direction * step
+      if (candidate < 1) candidate = 1
+      if (candidate > max) candidate = max
+      opts.add(candidate)
+    }
+    return Array.from(opts).sort(() => Math.random() - 0.5)
+  }
+
+  const quizOptions = buildOptions(currentNumber, level.max)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100 flex items-center justify-center px-4 py-8">
@@ -77,6 +99,11 @@ export default function CountingModule() {
               <Trophy className="w-4 h-4 text-blue-500" />
               <span className="text-sm font-medium text-blue-700">
                 Levels: {completed}/{COUNT_LEVELS.length}
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm">
+              <span className="text-xs font-medium text-emerald-700">
+                Accuracy: {attempts > 0 ? `${accuracy}%` : '—'}
               </span>
             </div>
             <ProgressRing progress={progress} size={52} strokeWidth={6} className="bg-white rounded-full shadow-sm" />
@@ -187,6 +214,48 @@ export default function CountingModule() {
                     <div className="col-span-4 sm:col-span-5 text-center text-gray-400 text-sm">
                       Tap &quot;Bigger&quot; to start counting.
                     </div>
+                  )}
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-semibold text-gray-800">
+                    How many objects do you see?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {quizOptions.map((option) => (
+                      <Button
+                        key={option}
+                        size="sm"
+                        variant="outline"
+                        className="rounded-2xl"
+                        onClick={() => {
+                          setAttempts(a => a + 1)
+                          if (option === currentNumber) {
+                            setCorrectAnswers(c => c + 1)
+                            setScore(s => s + 2)
+                            setFeedback('correct')
+                            setTimeout(() => {
+                              setFeedback(null)
+                              handleNext()
+                            }, 700)
+                          } else {
+                            setFeedback('try-again')
+                          }
+                        }}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  {feedback === 'correct' && (
+                    <p className="text-sm text-emerald-700 font-medium">
+                      Yes! There are {currentNumber} objects.
+                    </p>
+                  )}
+                  {feedback === 'try-again' && (
+                    <p className="text-sm text-amber-700 font-medium">
+                      Not quite. Try counting each object out loud and choose again.
+                    </p>
                   )}
                 </div>
               </div>
