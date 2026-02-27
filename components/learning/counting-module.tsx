@@ -304,6 +304,7 @@ export default function CountingModule({ activityOnly }: { activityOnly?: 'count
                 </div>
               </div>
             ) : (
+            <>
             <div className="grid md:grid-cols-[2fr,3fr] gap-6 items-center">
               {/* Number display */}
               <div className="space-y-4">
@@ -650,6 +651,7 @@ export default function CountingModule({ activityOnly }: { activityOnly?: 'count
                 Goal: Reach {level.max} together 🎯
               </div>
             </div>
+            </>
             )}
           </CardContent>
         </Card>
