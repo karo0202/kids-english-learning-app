@@ -44,7 +44,14 @@ const NUMBER_WORDS: Record<number, string> = {
 const randomInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min
 
-export default function CountingModule() {
+const ACTIVITY_TITLES: Record<'count' | 'add' | 'compare' | 'math', string> = {
+  count: 'Counting',
+  add: 'Number sentence',
+  compare: 'More / less',
+  math: 'Math facts',
+}
+
+export default function CountingModule({ activityOnly }: { activityOnly?: 'count' | 'add' | 'compare' | 'math' }) {
   const router = useRouter()
   const [levelIndex, setLevelIndex] = useState(0)
   const [currentNumber, setCurrentNumber] = useState(1)
@@ -55,7 +62,7 @@ export default function CountingModule() {
   const [countFeedback, setCountFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [addFeedback, setAddFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [compareFeedback, setCompareFeedback] = useState<'correct' | 'try-again' | null>(null)
-  const [activity, setActivity] = useState<'count' | 'add' | 'compare' | 'math'>('count')
+  const [activity, setActivity] = useState<'count' | 'add' | 'compare' | 'math'>(activityOnly ?? 'count')
 
   type MathQuestion = { a: number; b: number; op: '+' | '-'; answer: number }
   const [mathQuestion, setMathQuestion] = useState<MathQuestion | null>(null)
@@ -167,6 +174,19 @@ export default function CountingModule() {
     }
   }, [activity, mathQuestion])
 
+  const isSingleActivity = activityOnly != null
+  const isMathOnly = activityOnly === 'math'
+  const pageTitle = isSingleActivity ? ACTIVITY_TITLES[activityOnly] : 'Counting Fun'
+  const pageSubtitle = isSingleActivity
+    ? (activityOnly === 'count'
+      ? 'Tap the buttons and count the objects together out loud!'
+      : activityOnly === 'add'
+      ? 'What is one more? Practice number sentences.'
+      : activityOnly === 'compare'
+      ? 'Which group has more? Compare and choose.'
+      : 'Addition and subtraction within 20.')
+    : 'Tap the buttons and count the objects together out loud!'
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-5xl space-y-6">
@@ -184,18 +204,22 @@ export default function CountingModule() {
               <Star className="w-4 h-4 text-yellow-500" />
               <span className="text-sm font-medium text-yellow-700">Score: {score}</span>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 shadow-sm">
-              <Trophy className="w-4 h-4 text-blue-500" />
-              <span className="text-sm font-medium text-blue-700">
-                Levels: {completed}/{COUNT_LEVELS.length}
-              </span>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm">
-              <span className="text-xs font-medium text-emerald-700">
-                Accuracy: {attempts > 0 ? `${accuracy}%` : '—'}
-              </span>
-            </div>
-            <ProgressRing progress={progress} size={52} strokeWidth={6} className="bg-white rounded-full shadow-sm" />
+            {!isMathOnly && (
+              <>
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 shadow-sm">
+                  <Trophy className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-medium text-blue-700">
+                    Levels: {completed}/{COUNT_LEVELS.length}
+                  </span>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm">
+                  <span className="text-xs font-medium text-emerald-700">
+                    Accuracy: {attempts > 0 ? `${accuracy}%` : '—'}
+                  </span>
+                </div>
+              </>
+            )}
+            <ProgressRing progress={isMathOnly ? Math.min(100, score * 5) : progress} size={52} strokeWidth={6} className="bg-white rounded-full shadow-sm" />
           </div>
         </div>
 
@@ -204,33 +228,82 @@ export default function CountingModule() {
             <div className="flex items-center gap-3">
               <Mascot emotion="excited" size="medium" />
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Counting Fun</h2>
-                <p className="text-sm text-gray-600">
-                  Tap the buttons and count the objects together out loud!
-                </p>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{pageTitle}</h2>
+                <p className="text-sm text-gray-600">{pageSubtitle}</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 justify-end">
-              {COUNT_LEVELS.map((lvl, idx) => (
-                <button
-                  key={lvl.id}
-                  onClick={() => {
-                    setLevelIndex(idx)
-                    setCurrentNumber(1)
-                  }}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
-                    idx === levelIndex
-                      ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
-                      : 'bg-white text-gray-700 border-orange-200 hover:bg-orange-50'
-                  }`}
-                >
-                  {lvl.label}
-                </button>
-              ))}
-            </div>
+            {!isMathOnly && (
+              <div className="flex flex-wrap gap-2 justify-end">
+                {COUNT_LEVELS.map((lvl, idx) => (
+                  <button
+                    key={lvl.id}
+                    onClick={() => {
+                      setLevelIndex(idx)
+                      setCurrentNumber(1)
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                      idx === levelIndex
+                        ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                        : 'bg-white text-gray-700 border-orange-200 hover:bg-orange-50'
+                    }`}
+                  >
+                    {lvl.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </CardHeader>
 
           <CardContent className="p-4 sm:p-6 space-y-6">
+            {isMathOnly ? (
+              /* Math-only: single column with just the quiz */
+              <div className="space-y-4">
+                {mathQuestion && (
+                  <div className="space-y-3">
+                    <p className="text-base font-semibold text-gray-800">
+                      What is {mathQuestion.a} {mathQuestion.op} {mathQuestion.b}?
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {mathOptions.map((opt) => (
+                        <Button
+                          key={opt}
+                          size="sm"
+                          variant="outline"
+                          className="rounded-2xl"
+                          onClick={() => {
+                            if (opt === mathQuestion.answer) {
+                              setMathFeedback('correct')
+                              setScore(s => s + 4)
+                              setTimeout(() => {
+                                setupMathQuestion()
+                              }, 600)
+                            } else {
+                              setMathFeedback('wrong')
+                            }
+                          }}
+                        >
+                          {opt}
+                        </Button>
+                      ))}
+                    </div>
+                    {mathFeedback === 'correct' && (
+                      <p className="text-sm text-emerald-700 font-medium">
+                        Nice work! {mathQuestion.a} {mathQuestion.op} {mathQuestion.b} equals {mathQuestion.answer}.
+                      </p>
+                    )}
+                    {mathFeedback === 'wrong' && (
+                      <p className="text-sm text-amber-700 font-medium">
+                        Try using counting to help: say the numbers out loud and think again.
+                      </p>
+                    )}
+                  </div>
+                )}
+                <div className="rounded-2xl bg-white/70 p-4 border border-orange-100 flex items-center justify-between gap-3">
+                  <Mascot emotion="happy" size="small" />
+                  <p className="text-sm text-gray-700">Addition and subtraction within 1–20. Keep going!</p>
+                </div>
+              </div>
+            ) : (
             <div className="grid md:grid-cols-[2fr,3fr] gap-6 items-center">
               {/* Number display */}
               <div className="space-y-4">
@@ -292,7 +365,11 @@ export default function CountingModule() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-700">
-                    Count the objects: tap and say the number together.
+                    {isSingleActivity && activity === 'add'
+                      ? 'What is one more? Tap the number.'
+                      : isSingleActivity && activity === 'compare'
+                      ? 'Which group has more?'
+                      : 'Count the objects: tap and say the number together.'}
                   </p>
                 </div>
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 bg-white/70 rounded-3xl p-4 sm:p-5 shadow-inner">
@@ -313,38 +390,40 @@ export default function CountingModule() {
                   )}
                 </div>
 
-                {/* Activity selector pills */}
-                <div className="mt-4">
-                  <div className="inline-flex flex-wrap gap-2 rounded-full bg-white/80 border border-orange-100 px-2 py-1 text-xs">
-                    {[
-                      { id: 'count', label: 'Counting' },
-                      { id: 'add', label: 'Number sentence' },
-                      { id: 'compare', label: 'More / less' },
-                      { id: 'math', label: 'Math facts' },
-                    ].map((a) => (
-                      <button
-                        key={a.id}
-                        type="button"
-                        onClick={() => {
-                          setActivity(a.id as 'count' | 'add' | 'compare' | 'math')
-                          setCountFeedback(null)
-                          setAddFeedback(null)
-                          setCompareFeedback(null)
-                          if (a.id === 'math') {
-                            setupMathQuestion()
-                          }
-                        }}
-                        className={`px-3 py-1 rounded-full font-semibold transition ${
-                          activity === a.id
-                            ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-sm'
-                            : 'bg-white text-gray-800 hover:bg-orange-50'
-                        }`}
-                      >
-                        {a.label}
-                      </button>
-                    ))}
+                {/* Activity selector pills (only when all activities on one page) */}
+                {!isSingleActivity && (
+                  <div className="mt-4">
+                    <div className="inline-flex flex-wrap gap-2 rounded-full bg-white/80 border border-orange-100 px-2 py-1 text-xs">
+                      {[
+                        { id: 'count', label: 'Counting' },
+                        { id: 'add', label: 'Number sentence' },
+                        { id: 'compare', label: 'More / less' },
+                        { id: 'math', label: 'Math facts' },
+                      ].map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => {
+                            setActivity(a.id as 'count' | 'add' | 'compare' | 'math')
+                            setCountFeedback(null)
+                            setAddFeedback(null)
+                            setCompareFeedback(null)
+                            if (a.id === 'math') {
+                              setupMathQuestion()
+                            }
+                          }}
+                          className={`px-3 py-1 rounded-full font-semibold transition ${
+                            activity === a.id
+                              ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-sm'
+                              : 'bg-white text-gray-800 hover:bg-orange-50'
+                          }`}
+                        >
+                          {a.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Activity 1: count how many */}
                 {activity === 'count' && (
@@ -393,7 +472,7 @@ export default function CountingModule() {
                 )}
 
                 {/* Activity 2: number sentence */}
-                {activity === 'add' && currentNumber > 1 && (
+                {activity === 'add' && currentNumber >= 1 && (
                   <div className="mt-6 space-y-2 border-t border-orange-100 pt-4">
                     <p className="text-sm font-semibold text-gray-800">
                       Number sentence: what is {currentNumber - 1} + 1?
@@ -571,6 +650,7 @@ export default function CountingModule() {
                 Goal: Reach {level.max} together 🎯
               </div>
             </div>
+            )}
           </CardContent>
         </Card>
       </div>

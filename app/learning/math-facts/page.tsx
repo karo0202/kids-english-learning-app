@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { getUserSession } from '@/lib/simple-auth'
 import CountingModule from '@/components/learning/counting-module'
 
-export default function CountingPage() {
+export default function MathFactsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
 
@@ -26,12 +26,11 @@ export default function CountingPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
-          <p className="mt-4 text-gray-600">Loading counting activities...</p>
+          <p className="mt-4 text-gray-600">Loading math facts...</p>
         </div>
       </div>
     )
   }
 
-  return <CountingModule activityOnly="count" />
+  return <CountingModule activityOnly="math" />
 }
-
