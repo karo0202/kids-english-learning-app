@@ -41,6 +41,9 @@ const NUMBER_WORDS: Record<number, string> = {
   20: 'twenty'
 }
 
+const randomInt = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min
+
 export default function CountingModule() {
   const router = useRouter()
   const [levelIndex, setLevelIndex] = useState(0)
@@ -52,7 +55,12 @@ export default function CountingModule() {
   const [countFeedback, setCountFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [addFeedback, setAddFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [compareFeedback, setCompareFeedback] = useState<'correct' | 'try-again' | null>(null)
-  const [activity, setActivity] = useState<'count' | 'add' | 'compare'>('count')
+  const [activity, setActivity] = useState<'count' | 'add' | 'compare' | 'math'>('count')
+
+  type MathQuestion = { a: number; b: number; op: '+' | '-'; answer: number }
+  const [mathQuestion, setMathQuestion] = useState<MathQuestion | null>(null)
+  const [mathOptions, setMathOptions] = useState<number[]>([])
+  const [mathFeedback, setMathFeedback] = useState<'correct' | 'wrong' | null>(null)
 
   const level = COUNT_LEVELS[levelIndex]
   const progress = (completed / COUNT_LEVELS.length) * 100
@@ -87,6 +95,7 @@ export default function CountingModule() {
     setAddFeedback(null)
     setCompareFeedback(null)
     setLevelIndex(0)
+    setupMathQuestion()
   }
 
   const shownObjects = objects.slice(0, currentNumber)
@@ -119,6 +128,42 @@ export default function CountingModule() {
     } catch {
       // fail silently if TTS is not available
     }
+  }
+
+  if (!mathQuestion && typeof window !== 'undefined') {
+    // Lazy-init math question on first render in the browser
+    setupMathQuestion()
+  }
+
+  const setupMathQuestion = () => {
+    // Mix of small addition and subtraction within 1–20
+    const isAddition = Math.random() < 0.6
+    let a: number, b: number, answer: number, op: '+' | '-'
+
+    if (isAddition) {
+      const sum = randomInt(3, 20)
+      a = randomInt(1, sum - 1)
+      b = sum - a
+      answer = sum
+      op = '+'
+    } else {
+      a = randomInt(3, 20)
+      b = randomInt(1, a - 1)
+      answer = a - b
+      op = '-'
+    }
+
+    const opts = new Set<number>([answer])
+    while (opts.size < 3) {
+      let candidate = answer + randomInt(-3, 3)
+      if (candidate < 0) candidate = 0
+      if (candidate > 20) candidate = 20
+      opts.add(candidate)
+    }
+
+    setMathQuestion({ a, b, op, answer })
+    setMathOptions(Array.from(opts).sort(() => Math.random() - 0.5))
+    setMathFeedback(null)
   }
 
   return (
@@ -274,15 +319,19 @@ export default function CountingModule() {
                       { id: 'count', label: 'Counting' },
                       { id: 'add', label: 'Number sentence' },
                       { id: 'compare', label: 'More / less' },
+                      { id: 'math', label: 'Math facts' },
                     ].map((a) => (
                       <button
                         key={a.id}
                         type="button"
                         onClick={() => {
-                          setActivity(a.id as 'count' | 'add' | 'compare')
+                          setActivity(a.id as 'count' | 'add' | 'compare' | 'math')
                           setCountFeedback(null)
                           setAddFeedback(null)
                           setCompareFeedback(null)
+                          if (a.id === 'math') {
+                            setupMathQuestion()
+                          }
                         }}
                         className={`px-3 py-1 rounded-full font-semibold transition ${
                           activity === a.id
@@ -463,6 +512,48 @@ export default function CountingModule() {
                       </>
                     )
                   })()}
+                  </div>
+                )}
+
+                {/* Activity 4: math facts (separate section) */}
+                {activity === 'math' && mathQuestion && (
+                  <div className="mt-6 space-y-3 border-t border-orange-100 pt-4">
+                    <p className="text-sm font-semibold text-gray-800">
+                      Math time: what is {mathQuestion.a} {mathQuestion.op} {mathQuestion.b}?
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {mathOptions.map((opt) => (
+                        <Button
+                          key={opt}
+                          size="sm"
+                          variant="outline"
+                          className="rounded-2xl"
+                          onClick={() => {
+                            if (opt === mathQuestion.answer) {
+                              setMathFeedback('correct')
+                              setScore(s => s + 4)
+                              setTimeout(() => {
+                                setupMathQuestion()
+                              }, 600)
+                            } else {
+                              setMathFeedback('wrong')
+                            }
+                          }}
+                        >
+                          {opt}
+                        </Button>
+                      ))}
+                    </div>
+                    {mathFeedback === 'correct' && (
+                      <p className="text-sm text-emerald-700 font-medium">
+                        Nice work! {mathQuestion.a} {mathQuestion.op} {mathQuestion.b} equals {mathQuestion.answer}.
+                      </p>
+                    )}
+                    {mathFeedback === 'wrong' && (
+                      <p className="text-sm text-amber-700 font-medium">
+                        Try using counting to help: say the numbers out loud and think again.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
