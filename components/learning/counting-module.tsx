@@ -25,7 +25,9 @@ export default function CountingModule() {
   const [completed, setCompleted] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const [correctAnswers, setCorrectAnswers] = useState(0)
-  const [feedback, setFeedback] = useState<string | null>(null)
+  const [countFeedback, setCountFeedback] = useState<'correct' | 'try-again' | null>(null)
+  const [addFeedback, setAddFeedback] = useState<'correct' | 'try-again' | null>(null)
+  const [compareFeedback, setCompareFeedback] = useState<'correct' | 'try-again' | null>(null)
 
   const level = COUNT_LEVELS[levelIndex]
   const progress = (completed / COUNT_LEVELS.length) * 100
@@ -56,7 +58,9 @@ export default function CountingModule() {
     setCompleted(0)
     setAttempts(0)
     setCorrectAnswers(0)
-    setFeedback(null)
+    setCountFeedback(null)
+    setAddFeedback(null)
+    setCompareFeedback(null)
     setLevelIndex(0)
   }
 
@@ -233,13 +237,13 @@ export default function CountingModule() {
                           if (option === currentNumber) {
                             setCorrectAnswers(c => c + 1)
                             setScore(s => s + 2)
-                            setFeedback('correct')
+                            setCountFeedback('correct')
                             setTimeout(() => {
-                              setFeedback(null)
+                              setCountFeedback(null)
                               handleNext()
                             }, 700)
                           } else {
-                            setFeedback('try-again')
+                            setCountFeedback('try-again')
                           }
                         }}
                       >
@@ -247,16 +251,140 @@ export default function CountingModule() {
                       </Button>
                     ))}
                   </div>
-                  {feedback === 'correct' && (
+                  {countFeedback === 'correct' && (
                     <p className="text-sm text-emerald-700 font-medium">
                       Yes! There are {currentNumber} objects.
                     </p>
                   )}
-                  {feedback === 'try-again' && (
+                  {countFeedback === 'try-again' && (
                     <p className="text-sm text-amber-700 font-medium">
                       Not quite. Try counting each object out loud and choose again.
                     </p>
                   )}
+                </div>
+
+                {/* Simple addition practice */}
+                <div className="mt-6 space-y-2 border-t border-orange-100 pt-4">
+                  {currentNumber > 1 && (
+                    <>
+                      <p className="text-sm font-semibold text-gray-800">
+                        Number sentence: what is {currentNumber - 1} + 1?
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {buildOptions(currentNumber, level.max).map(option => (
+                          <Button
+                            key={`add-${option}`}
+                            size="sm"
+                            variant="outline"
+                            className="rounded-2xl"
+                            onClick={() => {
+                              if (option === currentNumber) {
+                                setScore(s => s + 3)
+                                setAddFeedback('correct')
+                              } else {
+                                setAddFeedback('try-again')
+                              }
+                            }}
+                          >
+                            {option}
+                          </Button>
+                        ))}
+                      </div>
+                      {addFeedback === 'correct' && (
+                        <p className="text-sm text-emerald-700 font-medium">
+                          Great! {currentNumber - 1} plus 1 makes {currentNumber}.
+                        </p>
+                      )}
+                      {addFeedback === 'try-again' && (
+                        <p className="text-sm text-amber-700 font-medium">
+                          Think about counting on one more: {currentNumber - 1}, then {currentNumber}.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Compare groups: more / less */}
+                <div className="mt-6 space-y-3 border-t border-orange-100 pt-4">
+                  <p className="text-sm font-semibold text-gray-800">
+                    Which group has more?
+                  </p>
+                  {(() => {
+                    const leftCount = currentNumber
+                    const rightCount =
+                      currentNumber === level.max ? Math.max(1, currentNumber - 1) : currentNumber + 1
+                    const leftArray = Array.from({ length: leftCount })
+                    const rightArray = Array.from({ length: rightCount })
+                    const correctSide = leftCount > rightCount ? 'left' : 'right'
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-2xl bg-orange-50/70 p-3 border border-orange-100">
+                            <p className="text-xs font-medium text-gray-700 mb-1">Left</p>
+                            <div className="grid grid-cols-4 gap-1">
+                              {leftArray.map((_, i) => (
+                                <span key={i} className="text-lg sm:text-xl">
+                                  {objects[i % objects.length]}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="rounded-2xl bg-sky-50/70 p-3 border border-sky-100">
+                            <p className="text-xs font-medium text-gray-700 mb-1">Right</p>
+                            <div className="grid grid-cols-4 gap-1">
+                              {rightArray.map((_, i) => (
+                                <span key={i} className="text-lg sm:text-xl">
+                                  {objects[(i + 5) % objects.length]}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-2xl flex-1"
+                            onClick={() => {
+                              if (correctSide === 'left') {
+                                setCompareFeedback('correct')
+                                setScore(s => s + 2)
+                              } else {
+                                setCompareFeedback('try-again')
+                              }
+                            }}
+                          >
+                            Left has more
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-2xl flex-1"
+                            onClick={() => {
+                              if (correctSide === 'right') {
+                                setCompareFeedback('correct')
+                                setScore(s => s + 2)
+                              } else {
+                                setCompareFeedback('try-again')
+                              }
+                            }}
+                          >
+                            Right has more
+                          </Button>
+                        </div>
+                        {compareFeedback === 'correct' && (
+                          <p className="text-sm text-emerald-700 font-medium">
+                            Well done! You found the bigger group.
+                          </p>
+                        )}
+                        {compareFeedback === 'try-again' && (
+                          <p className="text-sm text-amber-700 font-medium">
+                            Try pointing and counting each side, then choose again.
+                          </p>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
               </div>
             </div>
