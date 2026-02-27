@@ -1153,15 +1153,47 @@ export default function GamesModule() {
 
 const REST_STYLE = { y: 0, rotate: 0, scale: 1, x: 0, scaleY: 1, scaleX: 1 }
 
+// Extra-expressive, easy-to-see motions so each action
+// looks clearly different on phones and tablets.
 const ANIMATION_VARIANTS: Record<string, object> = {
-  jump: { y: [0, -90, 0] },
-  spin: { rotate: [0, 360] },
-  wave: { rotate: [0, 25, -25, 0] },
-  dance: { x: [0, 20, -20, 0], rotate: [0, 15, -15, 0] },
-  clap: { scale: [1, 1.25, 1] },
-  stretch: { scaleY: [1, 1.35, 1], scaleX: [1, 0.85, 1] },
-  bounce: { y: [0, -40, 0, -20, 0] },
-  wiggle: { rotate: [0, 20, -20, 15, -15, 0] }
+  // Big jump up with a little squash & stretch
+  jump: {
+    y: [0, -140, 0],
+    scale: [1, 1.2, 1]
+  },
+  // Full spin all the way around
+  spin: {
+    rotate: [0, 360]
+  },
+  // Strong waving left and right
+  wave: {
+    rotate: [0, -35, 35, -35, 35, 0]
+  },
+  // Side-to-side dance with head tilt
+  dance: {
+    x: [0, -30, 30, -30, 30, 0],
+    rotate: [0, -20, 20, -20, 20, 0]
+  },
+  // Big claps in and out
+  clap: {
+    scale: [1, 1.4, 0.9, 1.4, 1],
+    rotate: [0, -10, 10, -10, 0]
+  },
+  // Reach up tall, then relax
+  stretch: {
+    scaleY: [1, 1.5, 1],
+    scaleX: [1, 0.85, 1]
+  },
+  // Strong bouncing ball
+  bounce: {
+    y: [0, -90, 0, -60, 0, -30, 0],
+    scale: [1, 1.1, 1, 1.05, 1]
+  },
+  // Silly wiggle side-to-side
+  wiggle: {
+    rotate: [0, -25, 25, -25, 25, -25, 0],
+    x: [0, -12, 12, -12, 12, 0]
+  }
 }
 
 function AnimationCharacter({
@@ -1173,7 +1205,7 @@ function AnimationCharacter({
   runId: number
   onComplete: () => void
 }) {
-  const durationMs = 1000
+  const durationMs = 1_200
   const variant = ANIMATION_VARIANTS[action] || REST_STYLE
   const isIdle = runId === 0
 
