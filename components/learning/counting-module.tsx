@@ -86,7 +86,7 @@ export default function CountingModule() {
         <Card className="card-kid border-2 border-orange-200/70 shadow-xl">
           <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4">
             <div className="flex items-center gap-3">
-              <Mascot mood="excited" size="md" />
+              <Mascot emotion="excited" size="medium" />
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Counting Fun</h2>
                 <p className="text-sm text-gray-600">
@@ -194,7 +194,7 @@ export default function CountingModule() {
 
             <div className="rounded-2xl bg-white/70 p-4 sm:p-5 border border-orange-100 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <Mascot mood="helpful" size="sm" />
+                <Mascot emotion="happy" size="small" />
                 <p className="text-sm text-gray-700">
                   Tip: Ask your child to point and say each number out loud: &quot;one, two, three…&quot;
                 </p>
