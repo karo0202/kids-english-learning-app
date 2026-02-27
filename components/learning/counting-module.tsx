@@ -18,6 +18,29 @@ const COUNT_LEVELS = [
 
 const objects = ['🍎','🐶','⭐','🚗','🌸','🧸','🎈','🍪','🐱','⚽','🐠','🦋','🌟','📚','🎵','🍓','🦄','🚀','🍰','🧃']
 
+const NUMBER_WORDS: Record<number, string> = {
+  1: 'one',
+  2: 'two',
+  3: 'three',
+  4: 'four',
+  5: 'five',
+  6: 'six',
+  7: 'seven',
+  8: 'eight',
+  9: 'nine',
+  10: 'ten',
+  11: 'eleven',
+  12: 'twelve',
+  13: 'thirteen',
+  14: 'fourteen',
+  15: 'fifteen',
+  16: 'sixteen',
+  17: 'seventeen',
+  18: 'eighteen',
+  19: 'nineteen',
+  20: 'twenty'
+}
+
 export default function CountingModule() {
   const router = useRouter()
   const [levelIndex, setLevelIndex] = useState(0)
@@ -87,7 +110,8 @@ export default function CountingModule() {
   const speakCount = async () => {
     try {
       const sequence = Array.from({ length: currentNumber }, (_, i) => i + 1).join(', ')
-      await premiumTTS.speak(`Let's count together: ${sequence}`, {
+      const label = NUMBER_WORDS[currentNumber] ?? currentNumber
+      await premiumTTS.speak(`Let's count together to ${label}: ${sequence}`, {
         rate: 0.7,
         pitch: 1.0,
         voice: 'clear',
@@ -179,7 +203,7 @@ export default function CountingModule() {
                     {currentNumber}
                   </div>
                   <div className="mt-2 text-lg sm:text-xl font-semibold">
-                    {currentNumber === 1 ? 'one' : `${currentNumber}`}
+                    {NUMBER_WORDS[currentNumber] ?? currentNumber}
                   </div>
                   <div className="mt-3 text-xs sm:text-sm opacity-90">
                     Let&apos;s clap and count: {Array.from({ length: currentNumber }).map((_, i) => '👏').join(' ')}
@@ -452,7 +476,7 @@ export default function CountingModule() {
                 </p>
               </div>
               <div className="text-xs sm:text-sm text-orange-700 font-medium bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
-                Goal: Reach {COUNT_LEVELS[COUNT_LEVELS.length - 1].max} together 🎯
+                Goal: Reach {level.max} together 🎯
               </div>
             </div>
           </CardContent>
