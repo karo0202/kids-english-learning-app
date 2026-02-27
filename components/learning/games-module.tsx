@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence, useAnimation } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
@@ -1173,26 +1173,22 @@ function AnimationCharacter({
   runId: number
   onComplete: () => void
 }) {
-  const controls = useAnimation()
   const durationMs = 1000
-  const transition = { duration: durationMs / 1000, type: 'spring' as const, stiffness: 260, damping: 16 }
-
-  useEffect(() => {
-    if (runId === 0) return
-    const variant = ANIMATION_VARIANTS[action] || REST_STYLE
-    const run = async () => {
-      await controls.start({ ...variant, transition })
-      await controls.start({ ...REST_STYLE, transition: { duration: 0.2 } })
-      onComplete()
-    }
-    run()
-  }, [runId, action, controls, onComplete])
+  const variant = ANIMATION_VARIANTS[action] || REST_STYLE
+  const isIdle = runId === 0
 
   return (
     <motion.div
+      key={`${action}-${runId}`}
       className="text-8xl sm:text-9xl select-none"
       initial={REST_STYLE}
-      animate={controls}
+      animate={isIdle ? REST_STYLE : variant}
+      transition={{ duration: durationMs / 1000, type: 'tween', ease: 'easeInOut' }}
+      onAnimationComplete={() => {
+        if (!isIdle) {
+          onComplete()
+        }
+      }}
     >
       {action === 'jump' && '🦘'}
       {action === 'spin' && '🦋'}
