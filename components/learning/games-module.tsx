@@ -92,39 +92,49 @@ export default function GamesModule() {
   const [animationKey, setAnimationKey] = useState(0)
   const [animationRunId, setAnimationRunId] = useState(0)
 
-  // Counting Game (within Games module)
-  const COUNTING_OBJECTS = ['🍎','🧸','⭐','🚗','⚽','🦋','🎈','🍪','🐱','🐶']
-  const [countingTarget, setCountingTarget] = useState<number | null>(null)
-  const [countingOptions, setCountingOptions] = useState<number[]>([])
-  const [countingStreak, setCountingStreak] = useState(0)
-  const [countingHearts, setCountingHearts] = useState(3)
-  const [countingFeedback, setCountingFeedback] = useState<'correct' | 'wrong' | null>(null)
+  // Number Trail game (within Games module) – missing number sequences
+  const [sequenceMax, setSequenceMax] = useState(10)
+  const [missingNumber, setMissingNumber] = useState<number | null>(null)
+  const [sequenceOptions, setSequenceOptions] = useState<number[]>([])
+  const [sequenceStreak, setSequenceStreak] = useState(0)
+  const [sequenceHearts, setSequenceHearts] = useState(3)
+  const [sequenceFeedback, setSequenceFeedback] = useState<'correct' | 'wrong' | null>(null)
 
   // Performance monitoring
   const { renderCount } = usePerformanceMonitor('GamesModule')
 
-  // Initialize a new round for the counting game
-  const setupCountingRound = () => {
-    const max = 10
-    const target = randomInt(1, max)
-    const opts = new Set<number>([target])
+  // Initialize a new round for the Number Trail sequence game
+  const setupSequenceRound = (currentStreak = sequenceStreak) => {
+    // Gradually increase difficulty based on streak
+    const nextMax =
+      currentStreak > 12 ? 20 :
+      currentStreak > 6 ? 15 :
+      10
+    setSequenceMax(nextMax)
+
+    const minMissing = 2
+    const maxMissing = Math.max(nextMax - 1, 2)
+    const missing = randomInt(minMissing, maxMissing)
+
+    const opts = new Set<number>([missing])
     while (opts.size < 3) {
-      const delta = randomInt(1, 3)
-      const sign = Math.random() < 0.5 ? -1 : 1
-      let candidate = target + sign * delta
-      if (candidate < 1) candidate = 1
-      if (candidate > max) candidate = max
-      opts.add(candidate)
+      const candidate = randomInt(1, nextMax)
+      if (candidate !== missing) {
+        opts.add(candidate)
+      }
     }
-    setCountingTarget(target)
-    setCountingOptions(Array.from(opts).sort(() => Math.random() - 0.5))
-    setCountingFeedback(null)
+
+    setMissingNumber(missing)
+    setSequenceOptions(Array.from(opts).sort(() => Math.random() - 0.5))
+    setSequenceFeedback(null)
   }
 
   useEffect(() => {
     if (selectedGame === 'counting-game') {
       setGameActive(true)
-      setupCountingRound()
+      setSequenceHearts(3)
+      setSequenceStreak(0)
+      setupSequenceRound(0)
     }
   }, [selectedGame])
 
@@ -168,8 +178,8 @@ export default function GamesModule() {
     },
     {
       id: 'counting-game',
-      name: 'Number Quest',
-      description: 'Practice counting, number sentences, and more/less',
+      name: 'Number Trail',
+      description: 'Find the missing number in the sequence',
       icon: <Gamepad2 className="w-8 h-8" />,
       color: 'from-emerald-400 to-teal-500',
       bgColor: 'bg-emerald-50'
@@ -857,70 +867,74 @@ export default function GamesModule() {
           </motion.div>
         )}
 
-        {/* Number Quest – Counting game */}
-        {selectedGame === 'counting-game' && countingTarget !== null && (
+        {/* Number Trail – sequence game */}
+        {selectedGame === 'counting-game' && missingNumber !== null && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
             <Card className="card-kid">
               <CardHeader>
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-800">Number Quest</h3>
+                  <h3 className="text-2xl font-bold text-gray-800">Number Trail</h3>
                   <p className="text-gray-600">
-                    Look, count, and choose the correct number. Then compare which group has more!
+                    Look at the number trail and tap the missing number.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2 justify-center text-sm">
                     <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Streak: {countingStreak}
+                      Streak: {sequenceStreak}
                     </span>
                     <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
-                      Hearts: {'❤️'.repeat(countingHearts)}{' '}
+                      Hearts: {'❤️'.repeat(sequenceHearts)}{' '}
                       <span className="text-red-400">
-                        {Array.from({ length: Math.max(0, 3 - countingHearts) }).map((_, i) => '♡')}
+                        {Array.from({ length: Math.max(0, 3 - sequenceHearts) }).map((_, i) => '♡')}
                       </span>
                     </span>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
-                {/* Objects to count */}
+                {/* Number sequence */}
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-2">
-                    Count the objects: tap and say the number together.
+                    Follow the number trail and find the missing number.
                   </p>
-                  <div className="flex flex-wrap gap-3 justify-center bg-white/70 rounded-3xl p-4 shadow-inner">
-                    {Array.from({ length: countingTarget }).map((_, i) => (
+                  <div className="flex flex-wrap gap-2 justify-center bg-white/70 rounded-3xl p-4 shadow-inner">
+                    {Array.from({ length: sequenceMax }, (_, i) => i + 1).map((n) => (
                       <div
-                        key={i}
-                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center text-2xl sm:text-3xl shadow-sm border border-orange-100"
+                        key={n}
+                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-sm sm:text-base font-bold border ${
+                          n === missingNumber
+                            ? 'bg-orange-50 text-orange-700 border-orange-400 border-dashed'
+                            : 'bg-blue-50 text-blue-800 border-blue-200'
+                        }`}
                       >
-                        {COUNTING_OBJECTS[i % COUNTING_OBJECTS.length]}
+                        {n === missingNumber ? '?' : n}
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* How many? */}
+                {/* Choose the missing number */}
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-gray-800">
-                    How many objects do you see?
+                    Which number is missing from the trail?
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center">
-                    {countingOptions.map((option) => (
+                    {sequenceOptions.map((option) => (
                       <Button
                         key={option}
                         size="sm"
                         variant="outline"
                         className="rounded-2xl min-w-[3rem]"
                         onClick={() => {
-                          if (option === countingTarget) {
-                            setCountingFeedback('correct')
-                            setCountingStreak(s => s + 1)
+                          if (option === missingNumber) {
+                            setSequenceFeedback('correct')
+                            setSequenceStreak(s => s + 1)
                             setScore(s => s + 5)
-                            setupCountingRound()
+                            setupSequenceRound(sequenceStreak + 1)
                           } else {
-                            setCountingFeedback('wrong')
-                            setCountingStreak(0)
-                            setCountingHearts(h => Math.max(0, h - 1))
-                            if (countingHearts - 1 <= 0) {
+                            setSequenceFeedback('wrong')
+                            setSequenceStreak(0)
+                            setSequenceHearts(h => Math.max(0, h - 1))
+                            if (sequenceHearts - 1 <= 0) {
                               setGameActive(false)
                             }
                           }
@@ -930,91 +944,16 @@ export default function GamesModule() {
                       </Button>
                     ))}
                   </div>
-                  {countingFeedback === 'correct' && (
+                  {sequenceFeedback === 'correct' && (
                     <p className="text-sm text-emerald-700 font-medium text-center">
-                      Great counting! A new set is ready.
+                      Great job! You fixed the number trail.
                     </p>
                   )}
-                  {countingFeedback === 'wrong' && (
+                  {sequenceFeedback === 'wrong' && (
                     <p className="text-sm text-amber-700 font-medium text-center">
-                      Not quite. Try pointing and counting each object out loud.
+                      Not quite. Try saying the numbers in order and look again.
                     </p>
                   )}
-                </div>
-
-                {/* More / less mini-challenge */}
-                <div className="border-t border-orange-100 pt-4 space-y-3">
-                  {(() => {
-                    const leftCount = countingTarget
-                    const rightCount =
-                      countingTarget === 10 ? 9 : countingTarget + 1
-                    const leftArray = Array.from({ length: leftCount })
-                    const rightArray = Array.from({ length: rightCount })
-                    const correctSide = leftCount > rightCount ? 'left' : 'right'
-                    return (
-                      <>
-                        <p className="text-sm font-semibold text-gray-800">
-                          Which group has more?
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="rounded-2xl bg-orange-50/70 p-3 border border-orange-100">
-                            <p className="text-xs font-medium text-gray-700 mb-1">Left</p>
-                            <div className="grid grid-cols-4 gap-1">
-                              {leftArray.map((_, i) => (
-                                <span key={i} className="text-lg sm:text-xl">
-                                  {COUNTING_OBJECTS[i % COUNTING_OBJECTS.length]}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="rounded-2xl bg-sky-50/70 p-3 border border-sky-100">
-                            <p className="text-xs font-medium text-gray-700 mb-1">Right</p>
-                            <div className="grid grid-cols-4 gap-1">
-                              {rightArray.map((_, i) => (
-                                <span key={i} className="text-lg sm:text-xl">
-                                  {COUNTING_OBJECTS[(i + 3) % COUNTING_OBJECTS.length]}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="rounded-2xl flex-1"
-                            onClick={() => {
-                              if (correctSide === 'left') {
-                                setScore(s => s + 3)
-                                setCountingFeedback('correct')
-                                setupCountingRound()
-                              } else {
-                                setCountingFeedback('wrong')
-                              }
-                            }}
-                          >
-                            Left has more
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="rounded-2xl flex-1"
-                            onClick={() => {
-                              if (correctSide === 'right') {
-                                setScore(s => s + 3)
-                                setCountingFeedback('correct')
-                                setupCountingRound()
-                              } else {
-                                setCountingFeedback('wrong')
-                              }
-                            }}
-                          >
-                            Right has more
-                          </Button>
-                        </div>
-                      </>
-                    )
-                  })()}
                 </div>
               </CardContent>
             </Card>
