@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import { ProgressRing } from '@/components/ui/progress-ring'
 import { ArrowLeft, Star, Trophy } from 'lucide-react'
+import { premiumTTS } from '@/lib/premium-tts'
 
 const COUNT_LEVELS = [
   { id: '1-5', label: '1 to 5', max: 5, color: 'from-emerald-400 to-emerald-600' },
@@ -82,6 +83,19 @@ export default function CountingModule() {
   }
 
   const quizOptions = buildOptions(currentNumber, level.max)
+
+  const speakCount = async () => {
+    try {
+      const sequence = Array.from({ length: currentNumber }, (_, i) => i + 1).join(', ')
+      await premiumTTS.speak(`Let's count together: ${sequence}`, {
+        rate: 0.7,
+        pitch: 1.0,
+        voice: 'clear',
+      })
+    } catch {
+      // fail silently if TTS is not available
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100 flex items-center justify-center px-4 py-8">
@@ -186,6 +200,13 @@ export default function CountingModule() {
                     onClick={handleNext}
                   >
                     Bigger
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={speakCount}
+                    className="rounded-2xl"
+                  >
+                    Listen &amp; count
                   </Button>
                   <Button
                     variant="ghost"
