@@ -28,6 +28,7 @@ export default function CountingModule() {
   const [countFeedback, setCountFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [addFeedback, setAddFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [compareFeedback, setCompareFeedback] = useState<'correct' | 'try-again' | null>(null)
+  const [activity, setActivity] = useState<'count' | 'add' | 'compare'>('count')
 
   const level = COUNT_LEVELS[levelIndex]
   const progress = (completed / COUNT_LEVELS.length) * 100
@@ -196,7 +197,7 @@ export default function CountingModule() {
                 </div>
               </div>
 
-              {/* Objects grid */}
+              {/* Objects grid + activity selector */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-700">
@@ -221,95 +222,122 @@ export default function CountingModule() {
                   )}
                 </div>
 
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm font-semibold text-gray-800">
-                    Activity 1 – How many objects do you see?
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {quizOptions.map((option) => (
-                      <Button
-                        key={option}
-                        size="sm"
-                        variant="outline"
-                        className="rounded-2xl"
+                {/* Activity selector pills */}
+                <div className="mt-4">
+                  <div className="inline-flex flex-wrap gap-2 rounded-full bg-white/80 border border-orange-100 px-2 py-1 text-xs">
+                    {[
+                      { id: 'count', label: 'Counting' },
+                      { id: 'add', label: 'Number sentence' },
+                      { id: 'compare', label: 'More / less' },
+                    ].map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
                         onClick={() => {
-                          setAttempts(a => a + 1)
-                          if (option === currentNumber) {
-                            setCorrectAnswers(c => c + 1)
-                            setScore(s => s + 2)
-                            setCountFeedback('correct')
-                            setTimeout(() => {
-                              setCountFeedback(null)
-                              handleNext()
-                            }, 700)
-                          } else {
-                            setCountFeedback('try-again')
-                          }
+                          setActivity(a.id as 'count' | 'add' | 'compare')
+                          setCountFeedback(null)
+                          setAddFeedback(null)
+                          setCompareFeedback(null)
                         }}
+                        className={`px-3 py-1 rounded-full font-semibold transition ${
+                          activity === a.id
+                            ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-sm'
+                            : 'bg-white text-gray-800 hover:bg-orange-50'
+                        }`}
                       >
-                        {option}
-                      </Button>
+                        {a.label}
+                      </button>
                     ))}
                   </div>
-                  {countFeedback === 'correct' && (
-                    <p className="text-sm text-emerald-700 font-medium">
-                      Yes! There are {currentNumber} objects.
-                    </p>
-                  )}
-                  {countFeedback === 'try-again' && (
-                    <p className="text-sm text-amber-700 font-medium">
-                      Not quite. Try counting each object out loud and choose again.
-                    </p>
-                  )}
                 </div>
 
-                {/* Simple addition practice */}
-                <div className="mt-6 space-y-2 border-t border-orange-100 pt-4">
-                  {currentNumber > 1 && (
-                    <>
-                      <p className="text-sm font-semibold text-gray-800">
-                        Activity 2 – Number sentence: what is {currentNumber - 1} + 1?
+                {/* Activity 1: count how many */}
+                {activity === 'count' && (
+                  <div className="mt-4 space-y-2">
+                    <p className="text-sm font-semibold text-gray-800">
+                      How many objects do you see?
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {quizOptions.map((option) => (
+                        <Button
+                          key={option}
+                          size="sm"
+                          variant="outline"
+                          className="rounded-2xl"
+                          onClick={() => {
+                            setAttempts(a => a + 1)
+                            if (option === currentNumber) {
+                              setCorrectAnswers(c => c + 1)
+                              setScore(s => s + 2)
+                              setCountFeedback('correct')
+                            } else {
+                              setCountFeedback('try-again')
+                            }
+                          }}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                    {countFeedback === 'correct' && (
+                      <p className="text-sm text-emerald-700 font-medium">
+                        Yes! There are {currentNumber} objects.
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        {buildOptions(currentNumber, level.max).map(option => (
-                          <Button
-                            key={`add-${option}`}
-                            size="sm"
-                            variant="outline"
-                            className="rounded-2xl"
-                            onClick={() => {
-                              if (option === currentNumber) {
-                                setScore(s => s + 3)
-                                setAddFeedback('correct')
-                              } else {
-                                setAddFeedback('try-again')
-                              }
-                            }}
-                          >
-                            {option}
-                          </Button>
-                        ))}
-                      </div>
-                      {addFeedback === 'correct' && (
-                        <p className="text-sm text-emerald-700 font-medium">
-                          Great! {currentNumber - 1} plus 1 makes {currentNumber}.
-                        </p>
-                      )}
-                      {addFeedback === 'try-again' && (
-                        <p className="text-sm text-amber-700 font-medium">
-                          Think about counting on one more: {currentNumber - 1}, then {currentNumber}.
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
+                    )}
+                    {countFeedback === 'try-again' && (
+                      <p className="text-sm text-amber-700 font-medium">
+                        Not quite. Try counting each object out loud and choose again.
+                      </p>
+                    )}
+                  </div>
+                )}
 
-                {/* Compare groups: more / less */}
-                <div className="mt-6 space-y-3 border-t border-orange-100 pt-4">
-                  <p className="text-sm font-semibold text-gray-800">
-                    Activity 3 – Which group has more?
-                  </p>
-                  {(() => {
+                {/* Activity 2: number sentence */}
+                {activity === 'add' && currentNumber > 1 && (
+                  <div className="mt-6 space-y-2 border-t border-orange-100 pt-4">
+                    <p className="text-sm font-semibold text-gray-800">
+                      Number sentence: what is {currentNumber - 1} + 1?
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {buildOptions(currentNumber, level.max).map(option => (
+                        <Button
+                          key={`add-${option}`}
+                          size="sm"
+                          variant="outline"
+                          className="rounded-2xl"
+                          onClick={() => {
+                            if (option === currentNumber) {
+                              setScore(s => s + 3)
+                              setAddFeedback('correct')
+                            } else {
+                              setAddFeedback('try-again')
+                            }
+                          }}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                    {addFeedback === 'correct' && (
+                      <p className="text-sm text-emerald-700 font-medium">
+                        Great! {currentNumber - 1} plus 1 makes {currentNumber}.
+                      </p>
+                    )}
+                    {addFeedback === 'try-again' && (
+                      <p className="text-sm text-amber-700 font-medium">
+                        Think about counting on one more: {currentNumber - 1}, then {currentNumber}.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Activity 3: compare groups */}
+                {activity === 'compare' && (
+                  <div className="mt-6 space-y-3 border-t border-orange-100 pt-4">
+                    <p className="text-sm font-semibold text-gray-800">
+                      Which group has more?
+                    </p>
+                    {(() => {
                     const leftCount = currentNumber
                     const rightCount =
                       currentNumber === level.max ? Math.max(1, currentNumber - 1) : currentNumber + 1
@@ -385,7 +413,8 @@ export default function CountingModule() {
                       </>
                     )
                   })()}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
