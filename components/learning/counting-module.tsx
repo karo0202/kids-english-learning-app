@@ -223,7 +223,7 @@ export default function CountingModule() {
 
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-semibold text-gray-800">
-                    How many objects do you see?
+                    Activity 1 – How many objects do you see?
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {quizOptions.map((option) => (
@@ -268,7 +268,7 @@ export default function CountingModule() {
                   {currentNumber > 1 && (
                     <>
                       <p className="text-sm font-semibold text-gray-800">
-                        Number sentence: what is {currentNumber - 1} + 1?
+                        Activity 2 – Number sentence: what is {currentNumber - 1} + 1?
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {buildOptions(currentNumber, level.max).map(option => (
@@ -307,7 +307,7 @@ export default function CountingModule() {
                 {/* Compare groups: more / less */}
                 <div className="mt-6 space-y-3 border-t border-orange-100 pt-4">
                   <p className="text-sm font-semibold text-gray-800">
-                    Which group has more?
+                    Activity 3 – Which group has more?
                   </p>
                   {(() => {
                     const leftCount = currentNumber
