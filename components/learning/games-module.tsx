@@ -92,8 +92,41 @@ export default function GamesModule() {
   const [animationKey, setAnimationKey] = useState(0)
   const [animationRunId, setAnimationRunId] = useState(0)
 
+  // Counting Game (within Games module)
+  const COUNTING_OBJECTS = ['🍎','🧸','⭐','🚗','⚽','🦋','🎈','🍪','🐱','🐶']
+  const [countingTarget, setCountingTarget] = useState<number | null>(null)
+  const [countingOptions, setCountingOptions] = useState<number[]>([])
+  const [countingStreak, setCountingStreak] = useState(0)
+  const [countingHearts, setCountingHearts] = useState(3)
+  const [countingFeedback, setCountingFeedback] = useState<'correct' | 'wrong' | null>(null)
+
   // Performance monitoring
   const { renderCount } = usePerformanceMonitor('GamesModule')
+
+  // Initialize a new round for the counting game
+  const setupCountingRound = () => {
+    const max = 10
+    const target = randomInt(1, max)
+    const opts = new Set<number>([target])
+    while (opts.size < 3) {
+      const delta = randomInt(1, 3)
+      const sign = Math.random() < 0.5 ? -1 : 1
+      let candidate = target + sign * delta
+      if (candidate < 1) candidate = 1
+      if (candidate > max) candidate = max
+      opts.add(candidate)
+    }
+    setCountingTarget(target)
+    setCountingOptions(Array.from(opts).sort(() => Math.random() - 0.5))
+    setCountingFeedback(null)
+  }
+
+  useEffect(() => {
+    if (selectedGame === 'counting-game') {
+      setGameActive(true)
+      setupCountingRound()
+    }
+  }, [selectedGame])
 
   const defaultQuiz: QuizQuestion[] = [
     { question: 'What sound does a cat make?', options: ['Woof', 'Meow', 'Moo', 'Chirp'], correct: 1, explanation: "Cats say 'meow'!" },
@@ -132,6 +165,14 @@ export default function GamesModule() {
       icon: <Target className="w-8 h-8" />,
       color: 'from-blue-400 to-cyan-500',
       bgColor: 'bg-blue-50'
+    },
+    {
+      id: 'counting-game',
+      name: 'Number Quest',
+      description: 'Practice counting, number sentences, and more/less',
+      icon: <Gamepad2 className="w-8 h-8" />,
+      color: 'from-emerald-400 to-teal-500',
+      bgColor: 'bg-emerald-50'
     },
     {
       id: 'quiz',
@@ -813,6 +854,170 @@ export default function GamesModule() {
                 </Card>
               </motion.div>
             )}
+          </motion.div>
+        )}
+
+        {/* Number Quest – Counting game */}
+        {selectedGame === 'counting-game' && countingTarget !== null && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
+            <Card className="card-kid">
+              <CardHeader>
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-800">Number Quest</h3>
+                  <p className="text-gray-600">
+                    Look, count, and choose the correct number. Then compare which group has more!
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 justify-center text-sm">
+                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Streak: {countingStreak}
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+                      Hearts: {'❤️'.repeat(countingHearts)}{' '}
+                      <span className="text-red-400">
+                        {Array.from({ length: Math.max(0, 3 - countingHearts) }).map((_, i) => '♡')}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                {/* Objects to count */}
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Count the objects: tap and say the number together.
+                  </p>
+                  <div className="flex flex-wrap gap-3 justify-center bg-white/70 rounded-3xl p-4 shadow-inner">
+                    {Array.from({ length: countingTarget }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center text-2xl sm:text-3xl shadow-sm border border-orange-100"
+                      >
+                        {COUNTING_OBJECTS[i % COUNTING_OBJECTS.length]}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* How many? */}
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-gray-800">
+                    How many objects do you see?
+                  </p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {countingOptions.map((option) => (
+                      <Button
+                        key={option}
+                        size="sm"
+                        variant="outline"
+                        className="rounded-2xl min-w-[3rem]"
+                        onClick={() => {
+                          if (option === countingTarget) {
+                            setCountingFeedback('correct')
+                            setCountingStreak(s => s + 1)
+                            setScore(s => s + 5)
+                            setupCountingRound()
+                          } else {
+                            setCountingFeedback('wrong')
+                            setCountingStreak(0)
+                            setCountingHearts(h => Math.max(0, h - 1))
+                            if (countingHearts - 1 <= 0) {
+                              setGameActive(false)
+                            }
+                          }
+                        }}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  {countingFeedback === 'correct' && (
+                    <p className="text-sm text-emerald-700 font-medium text-center">
+                      Great counting! A new set is ready.
+                    </p>
+                  )}
+                  {countingFeedback === 'wrong' && (
+                    <p className="text-sm text-amber-700 font-medium text-center">
+                      Not quite. Try pointing and counting each object out loud.
+                    </p>
+                  )}
+                </div>
+
+                {/* More / less mini-challenge */}
+                <div className="border-t border-orange-100 pt-4 space-y-3">
+                  {(() => {
+                    const leftCount = countingTarget
+                    const rightCount =
+                      countingTarget === 10 ? 9 : countingTarget + 1
+                    const leftArray = Array.from({ length: leftCount })
+                    const rightArray = Array.from({ length: rightCount })
+                    const correctSide = leftCount > rightCount ? 'left' : 'right'
+                    return (
+                      <>
+                        <p className="text-sm font-semibold text-gray-800">
+                          Which group has more?
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-2xl bg-orange-50/70 p-3 border border-orange-100">
+                            <p className="text-xs font-medium text-gray-700 mb-1">Left</p>
+                            <div className="grid grid-cols-4 gap-1">
+                              {leftArray.map((_, i) => (
+                                <span key={i} className="text-lg sm:text-xl">
+                                  {COUNTING_OBJECTS[i % COUNTING_OBJECTS.length]}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="rounded-2xl bg-sky-50/70 p-3 border border-sky-100">
+                            <p className="text-xs font-medium text-gray-700 mb-1">Right</p>
+                            <div className="grid grid-cols-4 gap-1">
+                              {rightArray.map((_, i) => (
+                                <span key={i} className="text-lg sm:text-xl">
+                                  {COUNTING_OBJECTS[(i + 3) % COUNTING_OBJECTS.length]}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-2xl flex-1"
+                            onClick={() => {
+                              if (correctSide === 'left') {
+                                setScore(s => s + 3)
+                                setCountingFeedback('correct')
+                                setupCountingRound()
+                              } else {
+                                setCountingFeedback('wrong')
+                              }
+                            }}
+                          >
+                            Left has more
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-2xl flex-1"
+                            onClick={() => {
+                              if (correctSide === 'right') {
+                                setScore(s => s + 3)
+                                setCountingFeedback('correct')
+                                setupCountingRound()
+                              } else {
+                                setCountingFeedback('wrong')
+                              }
+                            }}
+                          >
+                            Right has more
+                          </Button>
+                        </div>
+                      </>
+                    )
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
         )}
 
