@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
-  FileText, Palette, Puzzle, Target, Lock
+  FileText, Palette, Puzzle, Target, Lock, Calculator
 } from 'lucide-react'
 import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
@@ -334,6 +334,50 @@ export default function LearningPage() {
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
+                    >→</motion.span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Counting / Numbers */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card 
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/30 transition-all duration-300"
+                onClick={() => handleModuleClick('counting', 'Counting')}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-amber-500/0 group-hover:from-orange-500/15 group-hover:to-amber-500/15 transition-all duration-500"></div>
+                {renderLockBadge('counting')}
+                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                  <motion.div 
+                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg relative overflow-hidden"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
+                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
+                  >
+                    <Calculator className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
+                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: '0.1s' }}></span>
+                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: '0.9s' }}></span>
+                    <div className="absolute inset-0 flex items-center justify-center text-white/80 text-xl font-extrabold tracking-widest">
+                      1·2·3
+                    </div>
+                  </motion.div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors flex items-center justify-center gap-2">
+                    🔢 Counting
+                  </h3>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
+                    Fun games to practice numbers and counting
+                  </p>
+                  <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
+                    <span>Start Counting</span>
+                    <motion.span
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
                     >→</motion.span>
                   </div>
                 </CardContent>

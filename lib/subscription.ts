@@ -17,7 +17,7 @@ export interface ModuleAccess {
 }
 
 // Free modules available during 7-day trial
-export const FREE_MODULES = ['grammar', 'writing', 'games'] as const
+export const FREE_MODULES = ['grammar', 'writing', 'games', 'counting'] as const
 
 // Premium modules requiring subscription
 export const PREMIUM_MODULES = [
