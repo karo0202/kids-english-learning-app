@@ -291,6 +291,11 @@ export default function CountingModule() {
                               setCorrectAnswers(c => c + 1)
                               setScore(s => s + 2)
                               setCountFeedback('correct')
+                              // Auto-move to the next number so more objects appear
+                              setTimeout(() => {
+                                setCountFeedback(null)
+                                handleNext()
+                              }, 700)
                             } else {
                               setCountFeedback('try-again')
                             }
