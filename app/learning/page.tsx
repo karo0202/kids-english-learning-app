@@ -384,7 +384,7 @@ export default function LearningPage() {
               </Card>
             </motion.div>
 
-            {/* Counting */}
+            {/* Math (curriculum: Foundation 3–5, Elementary 6–8, Intermediate 9–12) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -394,7 +394,7 @@ export default function LearningPage() {
             >
               <Card 
                 className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/30 transition-all duration-300"
-                onClick={() => handleModuleClick('counting', 'Counting', '/learning/counting')}
+                onClick={() => handleModuleClick('counting', 'Math', '/learning/math')}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-amber-500/0 group-hover:from-orange-500/15 group-hover:to-amber-500/15 transition-all duration-500"></div>
                 {renderLockBadge('counting')}
@@ -412,133 +412,16 @@ export default function LearningPage() {
                     </div>
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors flex items-center justify-center gap-2">
-                    🔢 Counting
+                    🧮 Math in English
                   </h3>
                   <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    Count objects and say the number out loud
+                    Foundation, Elementary & Intermediate — numbers, shapes, operations, fractions
                   </p>
                   <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
                     <span>Start</span>
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-                    >→</motion.span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Number sentence */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.26 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Card 
-                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/30 transition-all duration-300"
-                onClick={() => handleModuleClick('counting', 'Number sentence', '/learning/number-sentence')}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/15 group-hover:to-orange-500/15 transition-all duration-500"></div>
-                {renderLockBadge('counting')}
-                <CardContent className="p-4 md:p-6 text-center relative z-10">
-                  <motion.div 
-                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg relative overflow-hidden"
-                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
-                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
-                  >
-                    <span className="text-2xl md:text-3xl">➕</span>
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">
-                    Number sentence
-                  </h3>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    What is one more? Practice number sentences
-                  </p>
-                  <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
-                    <span>Start</span>
-                    <motion.span
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.35 }}
-                    >→</motion.span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* More / less */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.27 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Card 
-                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/30 transition-all duration-300"
-                onClick={() => handleModuleClick('counting', 'More / less', '/learning/more-less')}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-rose-500/0 group-hover:from-orange-500/15 group-hover:to-rose-500/15 transition-all duration-500"></div>
-                {renderLockBadge('counting')}
-                <CardContent className="p-4 md:p-6 text-center relative z-10">
-                  <motion.div 
-                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg relative overflow-hidden"
-                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
-                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
-                  >
-                    <span className="text-2xl md:text-3xl">⚖️</span>
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">
-                    More / less
-                  </h3>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    Which group has more? Compare and choose
-                  </p>
-                  <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
-                    <span>Start</span>
-                    <motion.span
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                    >→</motion.span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Math facts */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.28 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Card 
-                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/30 transition-all duration-300"
-                onClick={() => handleModuleClick('counting', 'Math facts', '/learning/math-facts')}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/0 to-pink-500/0 group-hover:from-rose-500/15 group-hover:to-pink-500/15 transition-all duration-500"></div>
-                {renderLockBadge('counting')}
-                <CardContent className="p-4 md:p-6 text-center relative z-10">
-                  <motion.div 
-                    className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center shadow-lg relative overflow-hidden"
-                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.15 }}
-                    transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
-                  >
-                    <span className="text-2xl md:text-3xl">🧮</span>
-                  </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 md:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">
-                    Math facts
-                  </h3>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-white/80 mb-3 md:mb-4">
-                    Addition and subtraction within 20
-                  </p>
-                  <div className="text-sm text-orange-600 dark:text-orange-300 font-medium group-hover:translate-x-2 transition-transform flex items-center justify-center gap-1">
-                    <span>Start</span>
-                    <motion.span
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.45 }}
                     >→</motion.span>
                   </div>
                 </CardContent>
