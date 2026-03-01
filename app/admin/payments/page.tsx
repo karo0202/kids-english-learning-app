@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -45,6 +45,46 @@ export default function AdminPaymentsPage() {
   const [activatingId, setActivatingId] = useState<string | null>(null)
   const [proofViewUrl, setProofViewUrl] = useState<string | null>(null)
   const [proofImageError, setProofImageError] = useState(false)
+  const [proofDisplayUrl, setProofDisplayUrl] = useState<string | null>(null)
+  const proofObjectUrlRef = useRef<string | null>(null)
+
+  // Convert data URLs to blob object URL so the image renders reliably (long data URLs can fail in img src)
+  const proofViewUrlRef = useRef(proofViewUrl)
+  proofViewUrlRef.current = proofViewUrl
+  useEffect(() => {
+    if (!proofViewUrl) {
+      if (proofObjectUrlRef.current) {
+        URL.revokeObjectURL(proofObjectUrlRef.current)
+        proofObjectUrlRef.current = null
+      }
+      setProofDisplayUrl(null)
+      return
+    }
+    if (proofViewUrl.startsWith('data:')) {
+      const urlForThisEffect = proofViewUrl
+      fetch(proofViewUrl)
+        .then((res) => res.blob())
+        .then((blob) => {
+          if (proofViewUrlRef.current !== urlForThisEffect) return
+          if (proofObjectUrlRef.current) URL.revokeObjectURL(proofObjectUrlRef.current)
+          const objUrl = URL.createObjectURL(blob)
+          proofObjectUrlRef.current = objUrl
+          setProofDisplayUrl(objUrl)
+          setProofImageError(false)
+        })
+        .catch(() => {
+          if (proofViewUrlRef.current === urlForThisEffect) setProofImageError(true)
+        })
+    } else {
+      setProofDisplayUrl(proofViewUrl)
+    }
+    return () => {
+      if (proofObjectUrlRef.current) {
+        URL.revokeObjectURL(proofObjectUrlRef.current)
+        proofObjectUrlRef.current = null
+      }
+    }
+  }, [proofViewUrl])
 
   useEffect(() => {
     const currentUser = getUserSession()
@@ -294,20 +334,29 @@ export default function AdminPaymentsPage() {
               proofImageError ? (
                 <div className="text-center space-y-3">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Image could not be displayed (e.g. file too large or invalid).
+                    Image could not be displayed (e.g. file too large, invalid, or proof was submitted before we fixed storage).
                   </p>
-                  <a
-                    href={proofViewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 underline font-medium"
-                  >
-                    Open in new tab <ExternalLink className="w-4 h-4" />
-                  </a>
+                  {proofViewUrl.startsWith('data:') ? (
+                    <p className="text-sm text-amber-600 dark:text-amber-400">Ask the user to resubmit the screenshot.</p>
+                  ) : (
+                    <a
+                      href={proofViewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 underline font-medium"
+                    >
+                      Open in new tab <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
-              ) : proofViewUrl.startsWith('data:') || /\.(jpe?g|png|gif|webp)(\?|$)/i.test(proofViewUrl) ? (
+              ) : proofViewUrl.startsWith('data:') && !proofDisplayUrl ? (
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span className="text-sm">Loading image…</span>
+                </div>
+              ) : (proofViewUrl.startsWith('data:') ? proofDisplayUrl : proofViewUrl) && (proofViewUrl.startsWith('data:') || /\.(jpe?g|png|gif|webp)(\?|$)/i.test(proofViewUrl)) ? (
                 <img
-                  src={proofViewUrl}
+                  src={proofViewUrl.startsWith('data:') ? proofDisplayUrl! : proofViewUrl}
                   alt="Payment proof"
                   className="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded"
                   onError={() => setProofImageError(true)}
