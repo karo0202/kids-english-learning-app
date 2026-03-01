@@ -54,7 +54,7 @@ export default function DashboardPage() {
     // Set user immediately
     setUser(currentUser)
 
-    // Load children synchronously from localStorage (instant)
+    // Load children synchronously from localStorage (and recover by email if needed after re-login)
     const userChildren = getChildrenSync(currentUser.id, currentUser.email)
     console.log(`Loaded ${userChildren.length} children instantly for parentId: ${currentUser.id}, email: ${currentUser.email}`)
     
@@ -69,35 +69,44 @@ export default function DashboardPage() {
       setChildren(updatedChildren)
     }, currentUser.email)
     
-    // Force migration after a short delay to ensure everything is loaded
-    // This helps consolidate children that might be in different locations
-    setTimeout(async () => {
-      if (mounted && currentUser.email) {
-        console.log('🔄 Running forced migration to consolidate all children...')
+    // Run migration immediately when 0 children (so re-login restores from Firestore/email quickly)
+    if (userChildren.length === 0 && currentUser.email) {
+      void (async () => {
         const { forceMigrateChildrenByEmail } = await import('@/lib/children')
         try {
           const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
-          console.log(`📊 Migration complete: ${migrated.length} children (was ${userChildren.length})`)
-          if (migrated.length !== userChildren.length) {
-            console.log('✅ Children list updated after migration')
+          if (mounted && migrated.length > 0) {
+            console.log(`✅ Migration found ${migrated.length} children after re-login`)
+            setChildren(migrated)
+          }
+        } catch (error) {
+          console.error('❌ Migration error:', error)
+        }
+      })()
+    }
+    
+    // Force migration after a short delay to consolidate (Firestore may take a moment)
+    setTimeout(async () => {
+      if (mounted && currentUser.email) {
+        const { forceMigrateChildrenByEmail } = await import('@/lib/children')
+        try {
+          const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
+          if (mounted && migrated.length > 0) {
             setChildren(migrated)
           }
         } catch (error) {
           console.error('❌ Migration error:', error)
         }
       }
-    }, 2000) // Wait 2 seconds for Firestore to initialize
+    }, 2000)
     
-    // Also run migration again after 5 seconds (in case Firestore takes longer)
+    // Second migration pass in case Firestore takes longer
     setTimeout(async () => {
       if (mounted && currentUser.email) {
-        console.log('🔄 Running second migration pass...')
         const { forceMigrateChildrenByEmail } = await import('@/lib/children')
         try {
           const migrated = await forceMigrateChildrenByEmail(currentUser.id, currentUser.email)
-          const currentCount = children.length
-          if (migrated.length !== currentCount) {
-            console.log(`✅ Second pass found ${migrated.length} children (was ${currentCount})`)
+          if (mounted && migrated.length > 0) {
             setChildren(migrated)
           }
         } catch (error) {

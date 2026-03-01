@@ -330,7 +330,7 @@ export async function getUserSubscriptionStatus(userId: string) {
     }
   }
 
-  // Check for active subscription
+  // Check for active subscription (maybeSingle: no error when 0 rows)
   const { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*, subscription_plans(*)')
@@ -338,7 +338,7 @@ export async function getUserSubscriptionStatus(userId: string) {
     .eq('status', 'active')
     .order('created_at', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (error || !subscription) {
     return {

@@ -28,7 +28,7 @@ export default function SpeakingPage() {
       setLoading(false)
 
       try {
-        const status = await refreshSubscriptionStatus()
+        const status = await refreshSubscriptionStatus(true)
         if (!mounted) return
         const access = checkModuleAccess('speaking', status)
         setIsLocked(access.isLocked)

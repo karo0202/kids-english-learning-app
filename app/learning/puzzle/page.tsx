@@ -27,7 +27,7 @@ export default function PuzzlePage() {
       setLoading(false)
 
       try {
-        const status = await refreshSubscriptionStatus()
+        const status = await refreshSubscriptionStatus(true)
         if (!mounted) return
         const access = checkModuleAccess('puzzle', status)
         setIsLocked(access.isLocked)

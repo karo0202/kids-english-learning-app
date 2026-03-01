@@ -75,10 +75,10 @@ export async function clearUserSession() {
       console.error('Error signing out from Firebase:', error)
     }
     
-    // Clear localStorage session
+    // Clear localStorage session only - do NOT clear 'children' or progress
+    // Children are keyed by parentId (and recovered by email on re-login); clearing would force users to re-add after every logout
     localStorage.removeItem('user')
     localStorage.removeItem('currentChild')
-    // Don't clear children and progress - they should persist across sessions
   }
 }
 

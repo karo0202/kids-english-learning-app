@@ -49,6 +49,12 @@ export default function LoginPage() {
           if (!getUserRegistrationDate()) {
             setUserRegistrationDate()
           }
+          // Merge children from Firestore/localStorage by email so they’re available right after re-login
+          if (result.user.email) {
+            import('@/lib/children').then(({ forceMigrateChildrenByEmail }) => {
+              forceMigrateChildrenByEmail(result.user.uid, result.user.email || '').catch(() => {})
+            })
+          }
           router.push('/dashboard')
         } else {
           console.log('No Google redirect result found')
@@ -108,6 +114,12 @@ export default function LoginPage() {
           name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
           accountType: 'parent'
         })
+        // Merge children from Firestore/localStorage by email so they’re available right after re-login
+        if (result.user.email) {
+          import('@/lib/children').then(({ forceMigrateChildrenByEmail }) => {
+            forceMigrateChildrenByEmail(result.user.uid, result.user.email || '').catch(() => {})
+          })
+        }
         console.log('User session saved, redirecting to dashboard...')
         router.push('/dashboard')
       }

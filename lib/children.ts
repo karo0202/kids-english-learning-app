@@ -56,7 +56,19 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
     return cloneChildren(local)
   }
 
-  // No local data found - start Firestore sync immediately
+  // No local data by parentId - try recovering by email (e.g. after Google re-login, children may exist under same email)
+  if (userEmail) {
+    const byEmail = findChildrenByEmail(userEmail, parentId)
+    if (byEmail.length > 0) {
+      childCache.set(parentId, byEmail)
+      if (typeof window !== 'undefined') {
+        void refreshChildrenFromFirestore(parentId, userEmail)
+      }
+      return cloneChildren(byEmail)
+    }
+  }
+
+  // No local data found - start Firestore sync immediately (will notify subscribers when done)
   if (typeof window !== 'undefined') {
     void refreshChildrenFromFirestore(parentId, userEmail)
   }

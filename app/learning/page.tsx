@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { 
   Mic, PenTool, Gamepad2, BookOpen, ArrowLeft, Star, Trophy,
-  FileText, Palette, Puzzle, Target, Lock, Calculator
+  FileText, Palette, Puzzle, Target, Lock, Calculator, RefreshCw
 } from 'lucide-react'
 import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
@@ -22,6 +22,8 @@ export default function LearningPage() {
   const [selectedChild, setSelectedChild] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [moduleAccessMap, setModuleAccessMap] = useState<Record<string, ModuleAccess>>({})
+  const [refreshingAccess, setRefreshingAccess] = useState(false)
+  const [accessRefreshedMessage, setAccessRefreshedMessage] = useState(false)
 
   // Ensure dark mode CSS class is present when user selected dark theme
   useEffect(() => {
@@ -104,7 +106,8 @@ export default function LearningPage() {
 
     const loadModuleAccess = async () => {
       try {
-        const status = await refreshSubscriptionStatus()
+        // Force refresh so paid users see access right after admin activates (no stale cache)
+        const status = await refreshSubscriptionStatus(true)
         if (!mounted) return
         const map: Record<string, ModuleAccess> = {}
         const modules = [...FREE_MODULES, ...PREMIUM_MODULES]
@@ -134,6 +137,26 @@ export default function LearningPage() {
 
   const moduleIsLocked = (moduleId: string): boolean => {
     return moduleAccessMap[moduleId]?.isLocked ?? false
+  }
+
+  const handleRefreshAccess = async () => {
+    setRefreshingAccess(true)
+    setAccessRefreshedMessage(false)
+    try {
+      const status = await refreshSubscriptionStatus(true)
+      const map: Record<string, ModuleAccess> = {}
+      const modules = [...FREE_MODULES, ...PREMIUM_MODULES]
+      modules.forEach((moduleId) => {
+        map[moduleId] = checkModuleAccess(moduleId, status)
+      })
+      setModuleAccessMap(map)
+      setAccessRefreshedMessage(true)
+      setTimeout(() => setAccessRefreshedMessage(false), 4000)
+    } catch (error) {
+      console.error('Error refreshing access:', error)
+    } finally {
+      setRefreshingAccess(false)
+    }
   }
 
   const renderLockBadge = (moduleId: string) => {
@@ -296,7 +319,28 @@ export default function LearningPage() {
 
         {/* Learning Modules */}
         <div className="mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-fun-gradient mb-4 md:mb-6 animate-scale-in-bounce">Choose Your Learning Adventure! ✨</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-fun-gradient animate-scale-in-bounce">Choose Your Learning Adventure! ✨</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefreshAccess}
+              disabled={refreshingAccess}
+              className="rounded-xl border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 shrink-0"
+            >
+              {refreshingAccess ? (
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              {refreshingAccess ? 'Refreshing…' : 'Refresh access'}
+            </Button>
+          </div>
+          {accessRefreshedMessage && (
+            <p className="text-sm text-emerald-600 dark:text-emerald-400 mb-4 font-medium">
+              Subscription updated. Your access has been refreshed.
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

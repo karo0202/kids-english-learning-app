@@ -29,7 +29,7 @@ export default function SubscriptionLockOverlay({
 
     const loadAccess = async () => {
       try {
-        const statusData = await refreshSubscriptionStatus()
+        const statusData = await refreshSubscriptionStatus(true)
         if (!mounted) return
         setStatus(statusData)
         setAccess(checkModuleAccess(moduleId, statusData))
