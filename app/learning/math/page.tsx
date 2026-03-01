@@ -99,21 +99,24 @@ export default function MathHubPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Link href={phase.href} className="block">
-                    <Card className="cursor-pointer overflow-hidden border-2 border-transparent hover:border-orange-300 transition-all hover:shadow-lg h-full">
-                      <div className={`h-2 bg-gradient-to-r ${phase.color}`} />
-                      <CardContent className="p-4">
-                        <div className={`inline-flex p-2 rounded-xl bg-gradient-to-r ${phase.color} mb-3`}>
-                          <phase.icon className="w-6 h-6 text-white" />
-                        </div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{phase.ages}</p>
-                        <h2 className="text-lg font-bold text-gray-900">{phase.title}</h2>
-                        <p className="text-xs text-gray-500 mb-2">{phase.subtitle}</p>
-                        <p className="text-sm text-gray-600">{phase.description}</p>
-                        <span className="inline-block text-sm text-orange-600 font-medium mt-2">Start →</span>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                  <Card className="overflow-hidden border-2 border-transparent hover:border-orange-300 transition-all hover:shadow-lg h-full">
+                    <div className={`h-2 bg-gradient-to-r ${phase.color}`} />
+                    <CardContent className="p-4">
+                      <div className={`inline-flex p-2 rounded-xl bg-gradient-to-r ${phase.color} mb-3`}>
+                        <phase.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{phase.ages}</p>
+                      <h2 className="text-lg font-bold text-gray-900">{phase.title}</h2>
+                      <p className="text-xs text-gray-500 mb-2">{phase.subtitle}</p>
+                      <p className="text-sm text-gray-600">{phase.description}</p>
+                      <Button
+                        asChild
+                        className="mt-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-medium"
+                      >
+                        <Link href={phase.href}>Start →</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               ))}
             </div>
