@@ -3,10 +3,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Mascot } from '@/components/ui/mascot'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Volume2 } from 'lucide-react'
 import { premiumTTS } from '@/lib/premium-tts'
 
 const NUMBER_WORDS: Record<number, string> = {
@@ -104,76 +102,78 @@ export default function MathFoundationModule() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-sky-100 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-4xl space-y-4">
-        <Button variant="ghost" onClick={() => router.push('/learning/math')} className="rounded-2xl bg-white/70">
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Math
-        </Button>
+    <div className="min-h-screen bg-slate-50/80 dark:bg-gray-900/95">
+      <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
+        <header className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" size="sm" onClick={() => router.push('/learning/math')} className="rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 -ml-1">
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
+          </Button>
+          <div>
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-white">Foundation</h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Ages 3–5 · Number sense, shapes & colors</p>
+          </div>
+        </header>
 
-        <Card className="card-kid border-2 border-orange-200/70 shadow-xl">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <Mascot emotion="excited" size="medium" />
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">Foundation (Ages 3–5)</h2>
-                <p className="text-sm text-gray-600">Number sense, counting, shapes & colors in English</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 pt-2">
-              {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => { setTab(t.id); setCountFeedback(null); setCompareFeedback(null); setSameFeedback(null); setOrderFeedback(null); setMatchShapeFeedback(null); }}
-                  className={`px-3 py-1 rounded-full text-sm font-semibold border transition ${
-                    tab === t.id ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-orange-200 hover:bg-orange-50'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <nav className="flex gap-1 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide border-b border-slate-200/80 dark:border-slate-700/80">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => { setTab(t.id); setCountFeedback(null); setCompareFeedback(null); setSameFeedback(null); setOrderFeedback(null); setMatchShapeFeedback(null); }}
+              className={`shrink-0 px-3 py-2 rounded-t-lg text-sm font-medium transition whitespace-nowrap ${
+                tab === t.id
+                  ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </nav>
+
+        <main className="mt-6 rounded-2xl bg-white dark:bg-slate-800/60 shadow-sm border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+          <div className="p-6 md:p-8">
             {tab === 'numbers' && (
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
                 <motion.div
                   key={currentNumber}
-                  initial={{ scale: 0.9, opacity: 0 }}
+                  initial={{ scale: 0.96, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className={`rounded-3xl p-8 text-center text-white shadow-lg bg-gradient-to-br ${level.color}`}
+                  className="rounded-2xl bg-gradient-to-br from-emerald-500/90 to-teal-600/90 p-8 md:p-10 text-center text-white shadow-lg"
                 >
-                  <div className="text-sm opacity-90">Number</div>
-                  <div className="text-6xl font-black">{currentNumber}</div>
-                  <div className="text-xl font-semibold mt-2">{NUMBER_WORDS[currentNumber] ?? currentNumber}</div>
+                  <p className="text-sm font-medium opacity-90 uppercase tracking-wider">Number</p>
+                  <p className="text-7xl md:text-8xl font-bold mt-1 tabular-nums">{currentNumber}</p>
+                  <p className="text-xl md:text-2xl font-semibold mt-3 opacity-95">{NUMBER_WORDS[currentNumber] ?? currentNumber}</p>
                 </motion.div>
-                <div className="flex flex-col justify-center gap-3">
-                  <p className="text-sm text-gray-700">Say the number in English. Tap Smaller or Bigger.</p>
+                <div className="space-y-4">
+                  <p className="text-slate-600 dark:text-slate-300 text-sm">Say the number in English. Tap Smaller or Bigger.</p>
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" onClick={() => setCurrentNumber((n) => Math.max(1, n - 1))} disabled={currentNumber === 1} className="rounded-2xl">Smaller</Button>
-                    <Button onClick={() => setCurrentNumber((n) => Math.min(20, n + 1))} className="rounded-2xl bg-orange-500 hover:bg-orange-600">Bigger</Button>
-                    <Button variant="outline" onClick={speakCount} className="rounded-2xl">Listen</Button>
+                    <Button variant="outline" size="lg" onClick={() => setCurrentNumber((n) => Math.max(1, n - 1))} disabled={currentNumber === 1} className="rounded-xl border-slate-200 dark:border-slate-600">Smaller</Button>
+                    <Button size="lg" onClick={() => setCurrentNumber((n) => Math.min(20, n + 1))} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white">Bigger</Button>
+                    <Button variant="outline" size="lg" onClick={speakCount} className="rounded-xl border-slate-200 dark:border-slate-600">
+                      <Volume2 className="w-4 h-4 mr-2" /> Listen
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
 
             {tab === 'counting' && (
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-700">Count the objects. How many? Say the number in English.</p>
-                <div className="grid grid-cols-5 gap-2 max-w-md">
+              <div className="space-y-6">
+                <p className="text-slate-600 dark:text-slate-300 text-sm">Count the objects. How many? Say the number in English.</p>
+                <div className="grid grid-cols-5 gap-2 max-w-sm">
                   {shownObjects.map((obj, i) => (
-                    <motion.span key={i} className="text-3xl p-2 rounded-xl bg-orange-100 border border-orange-200 text-center" whileTap={{ scale: 0.9 }}>
+                    <motion.span key={i} className="text-3xl p-3 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-center border border-slate-200/60 dark:border-slate-600/60" whileTap={{ scale: 0.92 }}>
                       {obj}
                     </motion.span>
                   ))}
                 </div>
-                <p className="text-lg font-semibold text-gray-800">How many objects?</p>
+                <p className="text-base font-semibold text-slate-800 dark:text-white">How many objects?</p>
                 <div className="flex flex-wrap gap-2">
                   {buildOptions(currentNumber, level.max).map((opt) => (
                     <Button
                       key={opt}
                       variant="outline"
-                      className="rounded-2xl"
+                      className="rounded-xl border-slate-200 dark:border-slate-600"
                       onClick={() => {
                         if (opt === currentNumber) {
                           setCountFeedback('correct')
@@ -185,29 +185,29 @@ export default function MathFoundationModule() {
                     </Button>
                   ))}
                 </div>
-                {countFeedback === 'correct' && <p className="text-emerald-700 font-medium">Yes! There are {currentNumber} objects.</p>}
-                {countFeedback === 'try-again' && <p className="text-amber-700 font-medium">Count each object and try again.</p>}
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentNumber((n) => Math.max(1, n - 1))} className="rounded-2xl">Fewer</Button>
-                  <Button size="sm" onClick={() => setCurrentNumber((n) => Math.min(20, n + 1))} className="rounded-2xl bg-orange-500">More</Button>
+                {countFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Yes! There are {currentNumber} objects.</p>}
+                {countFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Count each object and try again.</p>}
+                <div className="flex gap-2 pt-2">
+                  <Button variant="outline" size="sm" onClick={() => setCurrentNumber((n) => Math.max(1, n - 1))} className="rounded-xl">Fewer</Button>
+                  <Button size="sm" onClick={() => setCurrentNumber((n) => Math.min(20, n + 1))} className="rounded-xl bg-emerald-600 hover:bg-emerald-700">More</Button>
                 </div>
               </div>
             )}
 
             {tab === 'moreless' && (
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-gray-800">Which group has more?</p>
+              <div className="space-y-6">
+                <p className="text-slate-800 dark:text-white font-medium">Which group has more?</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-orange-50 p-4 border border-orange-200">
-                    <p className="text-xs font-medium text-gray-600 mb-2">Left</p>
+                  <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-4 border border-slate-200/60 dark:border-slate-600/60">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Left</p>
                     <div className="flex flex-wrap gap-1">
                       {Array.from({ length: leftCount }).map((_, i) => (
                         <span key={i} className="text-2xl">{OBJECTS[i % OBJECTS.length]}</span>
                       ))}
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-sky-50 p-4 border border-sky-200">
-                    <p className="text-xs font-medium text-gray-600 mb-2">Right</p>
+                  <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-4 border border-slate-200/60 dark:border-slate-600/60">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Right</p>
                     <div className="flex flex-wrap gap-1">
                       {Array.from({ length: rightCount }).map((_, i) => (
                         <span key={i} className="text-2xl">{OBJECTS[(i + 5) % OBJECTS.length]}</span>
@@ -216,29 +216,29 @@ export default function MathFoundationModule() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="rounded-2xl flex-1" onClick={() => setCompareFeedback(correctSide === 'left' ? 'correct' : 'try-again')}>Left has more</Button>
-                  <Button variant="outline" className="rounded-2xl flex-1" onClick={() => setCompareFeedback(correctSide === 'right' ? 'correct' : 'try-again')}>Right has more</Button>
+                  <Button variant="outline" className="rounded-xl flex-1 border-slate-200 dark:border-slate-600" onClick={() => setCompareFeedback(correctSide === 'left' ? 'correct' : 'try-again')}>Left has more</Button>
+                  <Button variant="outline" className="rounded-xl flex-1 border-slate-200 dark:border-slate-600" onClick={() => setCompareFeedback(correctSide === 'right' ? 'correct' : 'try-again')}>Right has more</Button>
                 </div>
-                {compareFeedback === 'correct' && <p className="text-emerald-700 font-medium">Well done! You found the group with more.</p>}
-                {compareFeedback === 'try-again' && <p className="text-amber-700 font-medium">Count each side. Which has more?</p>}
-                <Button variant="outline" size="sm" onClick={() => { setCurrentNumber((n) => (n >= 20 ? 1 : n + 1)); setCompareFeedback(null); }} className="rounded-2xl">Next</Button>
+                {compareFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Well done! You found the group with more.</p>}
+                {compareFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Count each side. Which has more?</p>}
+                <Button variant="outline" size="sm" onClick={() => { setCurrentNumber((n) => (n >= 20 ? 1 : n + 1)); setCompareFeedback(null); }} className="rounded-xl mt-2">Next</Button>
               </div>
             )}
 
             {tab === 'same' && (
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-gray-800">Do the two groups have the <strong>same</strong> number? Say &quot;Same&quot; or &quot;Not the same&quot; in English.</p>
+              <div className="space-y-6">
+                <p className="text-slate-800 dark:text-white font-medium">Do the two groups have the <strong>same</strong> number?</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-orange-50 p-4 border border-orange-200">
-                    <p className="text-xs font-medium text-gray-600 mb-2">Group 1</p>
+                  <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-4 border border-slate-200/60 dark:border-slate-600/60">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Group 1</p>
                     <div className="flex flex-wrap gap-1">
                       {Array.from({ length: sameLeft }).map((_, i) => (
                         <span key={i} className="text-2xl">{OBJECTS[i % OBJECTS.length]}</span>
                       ))}
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-sky-50 p-4 border border-sky-200">
-                    <p className="text-xs font-medium text-gray-600 mb-2">Group 2</p>
+                  <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-4 border border-slate-200/60 dark:border-slate-600/60">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Group 2</p>
                     <div className="flex flex-wrap gap-1">
                       {Array.from({ length: sameRightCount }).map((_, i) => (
                         <span key={i} className="text-2xl">{OBJECTS[(i + 3) % OBJECTS.length]}</span>
@@ -247,27 +247,27 @@ export default function MathFoundationModule() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="rounded-2xl flex-1" onClick={() => { setSameFeedback(sameIsSame ? 'correct' : 'try-again'); }}>Same</Button>
-                  <Button variant="outline" className="rounded-2xl flex-1" onClick={() => { setSameFeedback(!sameIsSame ? 'correct' : 'try-again'); }}>Not the same</Button>
+                  <Button variant="outline" className="rounded-xl flex-1 border-slate-200 dark:border-slate-600" onClick={() => { setSameFeedback(sameIsSame ? 'correct' : 'try-again'); }}>Same</Button>
+                  <Button variant="outline" className="rounded-xl flex-1 border-slate-200 dark:border-slate-600" onClick={() => { setSameFeedback(!sameIsSame ? 'correct' : 'try-again'); }}>Not the same</Button>
                 </div>
-                {sameFeedback === 'correct' && <p className="text-emerald-700 font-medium">Yes! {sameIsSame ? 'They have the same number.' : 'They do not have the same number.'}</p>}
-                {sameFeedback === 'try-again' && <p className="text-amber-700 font-medium">Count each group. Are they the same?</p>}
-                <Button variant="outline" size="sm" onClick={() => { setSameRound((r) => r + 1); setSameFeedback(null); }} className="rounded-2xl">Next</Button>
+                {sameFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Yes! {sameIsSame ? 'They have the same number.' : 'They do not have the same number.'}</p>}
+                {sameFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Count each group. Are they the same?</p>}
+                <Button variant="outline" size="sm" onClick={() => { setSameRound((r) => r + 1); setSameFeedback(null); }} className="rounded-xl mt-2">Next</Button>
               </div>
             )}
 
             {tab === 'order' && (
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-700">What number comes next? Say it in English.</p>
-                <div className="rounded-2xl bg-amber-50 p-6 border border-amber-200 text-center">
-                  <p className="text-2xl font-bold text-gray-900">{orderSeqDisplay.join(', ')} , ?</p>
+              <div className="space-y-6">
+                <p className="text-slate-600 dark:text-slate-300 text-sm">What number comes next? Say it in English.</p>
+                <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-6 border border-slate-200/60 dark:border-slate-600/60 text-center">
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white tabular-nums">{orderSeqDisplay.join(', ')} , ?</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {orderOptions.map((opt) => (
                     <Button
                       key={opt}
                       variant="outline"
-                      className="rounded-2xl"
+                      className="rounded-xl border-slate-200 dark:border-slate-600"
                       onClick={() => {
                         if (opt === orderNext) {
                           setOrderFeedback('correct')
@@ -279,57 +279,57 @@ export default function MathFoundationModule() {
                     </Button>
                   ))}
                 </div>
-                {orderFeedback === 'correct' && <p className="text-emerald-700 font-medium">Yes! {orderNext} comes next. {NUMBER_WORDS[orderNext]}.</p>}
-                {orderFeedback === 'try-again' && <p className="text-amber-700 font-medium">Count on: {orderSeqDisplay.join(', ')}, then …?</p>}
-                <Button variant="outline" size="sm" onClick={() => { setSameRound((r) => r + 1); setOrderFeedback(null); }} className="rounded-2xl">Next question</Button>
+                {orderFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Yes! {orderNext} comes next. {NUMBER_WORDS[orderNext]}.</p>}
+                {orderFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Count on: {orderSeqDisplay.join(', ')}, then …?</p>}
+                <Button variant="outline" size="sm" onClick={() => { setSameRound((r) => r + 1); setOrderFeedback(null); }} className="rounded-xl mt-2">Next question</Button>
               </div>
             )}
 
             {tab === 'shapes' && (
-              <div className="space-y-4">
-                <p className="text-sm text-gray-700">Learn shape names in English.</p>
+              <div className="space-y-6">
+                <p className="text-slate-600 dark:text-slate-300 text-sm">Learn shape names in English.</p>
                 <motion.div
                   key={shapeIndex}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`rounded-3xl p-8 border-4 text-center ${SHAPES[shapeIndex].color}`}
+                  className={`rounded-2xl p-8 border-2 text-center ${SHAPES[shapeIndex].color} dark:border-slate-600/60`}
                 >
-                  <div className="text-6xl mb-2">{SHAPES[shapeIndex].emoji}</div>
-                  <div className="text-2xl font-bold text-gray-900">{SHAPES[shapeIndex].word}</div>
+                  <div className="text-6xl mb-3">{SHAPES[shapeIndex].emoji}</div>
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">{SHAPES[shapeIndex].word}</div>
                 </motion.div>
-                <div className="flex justify-between">
-                  <Button variant="outline" onClick={() => setShapeIndex((i) => (i === 0 ? SHAPES.length - 1 : i - 1))} className="rounded-2xl">← Previous</Button>
-                  <Button onClick={() => setShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1))} className="rounded-2xl bg-orange-500">Next →</Button>
+                <div className="flex justify-between gap-2">
+                  <Button variant="outline" onClick={() => setShapeIndex((i) => (i === 0 ? SHAPES.length - 1 : i - 1))} className="rounded-xl border-slate-200 dark:border-slate-600">← Previous</Button>
+                  <Button onClick={() => setShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1))} className="rounded-xl bg-emerald-600 hover:bg-emerald-700">Next →</Button>
                 </div>
               </div>
             )}
 
             {tab === 'colors' && (
-              <div className="space-y-4">
-                <p className="text-sm text-gray-700">Learn color names in English.</p>
+              <div className="space-y-6">
+                <p className="text-slate-600 dark:text-slate-300 text-sm">Learn color names in English.</p>
                 <motion.div
                   key={colorIndex}
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className={`rounded-3xl p-8 ${COLORS[colorIndex].hex} border-4 border-gray-200 text-center`}
+                  className={`rounded-2xl p-8 ${COLORS[colorIndex].hex} border-2 border-slate-200/60 dark:border-slate-600/60 text-center shadow-inner`}
                 >
-                  <div className="text-2xl font-bold text-white drop-shadow">{COLORS[colorIndex].word}</div>
+                  <div className="text-2xl font-bold text-white drop-shadow-md">{COLORS[colorIndex].word}</div>
                 </motion.div>
-                <div className="flex justify-between">
-                  <Button variant="outline" onClick={() => setColorIndex((i) => (i === 0 ? COLORS.length - 1 : i - 1))} className="rounded-2xl">← Previous</Button>
-                  <Button onClick={() => setColorIndex((i) => (i === COLORS.length - 1 ? 0 : i + 1))} className="rounded-2xl bg-orange-500">Next →</Button>
+                <div className="flex justify-between gap-2">
+                  <Button variant="outline" onClick={() => setColorIndex((i) => (i === 0 ? COLORS.length - 1 : i - 1))} className="rounded-xl border-slate-200 dark:border-slate-600">← Previous</Button>
+                  <Button onClick={() => setColorIndex((i) => (i === COLORS.length - 1 ? 0 : i + 1))} className="rounded-xl bg-emerald-600 hover:bg-emerald-700">Next →</Button>
                 </div>
               </div>
             )}
 
             {tab === 'matchshape' && (
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-700">What shape is this? Choose the name in English.</p>
+              <div className="space-y-6">
+                <p className="text-slate-800 dark:text-white font-medium">What shape is this? Choose the name in English.</p>
                 <motion.div
                   key={matchShapeIndex}
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className={`rounded-3xl p-8 border-4 text-center ${SHAPES[matchShapeIndex].color}`}
+                  className={`rounded-2xl p-8 border-2 text-center ${SHAPES[matchShapeIndex].color} dark:border-slate-600/60`}
                 >
                   <div className="text-6xl mb-2">{SHAPES[matchShapeIndex].emoji}</div>
                 </motion.div>
@@ -338,7 +338,7 @@ export default function MathFoundationModule() {
                     <Button
                       key={s.id}
                       variant="outline"
-                      className="rounded-2xl"
+                      className="rounded-xl border-slate-200 dark:border-slate-600"
                       onClick={() => {
                         const correct = s.id === SHAPES[matchShapeIndex].id
                         setMatchShapeFeedback(correct ? 'correct' : 'try-again')
@@ -349,13 +349,13 @@ export default function MathFoundationModule() {
                     </Button>
                   ))}
                 </div>
-                {matchShapeFeedback === 'correct' && <p className="text-emerald-700 font-medium">Yes! It is a {SHAPES[matchShapeIndex].word}.</p>}
-                {matchShapeFeedback === 'try-again' && <p className="text-amber-700 font-medium">Look at the shape. How many sides? Try again.</p>}
-                <Button variant="outline" size="sm" onClick={() => { setMatchShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1)); setMatchShapeFeedback(null); }} className="rounded-2xl">Next shape</Button>
+                {matchShapeFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Yes! It is a {SHAPES[matchShapeIndex].word}.</p>}
+                {matchShapeFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Look at the shape. How many sides? Try again.</p>}
+                <Button variant="outline" size="sm" onClick={() => { setMatchShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1)); setMatchShapeFeedback(null); }} className="rounded-xl mt-2">Next shape</Button>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </main>
       </div>
     </div>
   )
