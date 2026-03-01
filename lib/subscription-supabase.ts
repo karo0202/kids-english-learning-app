@@ -206,10 +206,10 @@ export async function confirmManualPayment(
     throw new Error('Transaction expired. Please create a new payment.')
   }
 
-  // SECURITY: Sanitize user inputs
+  // SECURITY: Sanitize user inputs (proofUrl can be a long data: URL for uploaded screenshots)
   const sanitizedReference = reference?.trim().substring(0, 200) || undefined
   const sanitizedNotes = notes?.trim().substring(0, 1000) || undefined
-  const sanitizedProofUrl = proofUrl?.trim().substring(0, 2000) || undefined
+  const sanitizedProofUrl = proofUrl?.trim().substring(0, 800000) || undefined
   const sanitizedContactPhone = contactPhone?.trim().substring(0, 50) || undefined
 
   const manualConfirmation = {
