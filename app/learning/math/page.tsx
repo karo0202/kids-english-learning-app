@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
-import { ArrowLeft, Calculator, Shapes, Ruler, Fraction } from 'lucide-react'
+import { ArrowLeft, Calculator, Shapes, Ruler, Divide } from 'lucide-react'
 
 const PHASES = [
   {
@@ -38,7 +38,7 @@ const PHASES = [
     description: 'Fractions, decimals, geometry, multi-step word problems',
     href: '/learning/math/intermediate',
     color: 'from-violet-500 to-purple-600',
-    icon: Fraction,
+    icon: Divide,
   },
 ]
 
