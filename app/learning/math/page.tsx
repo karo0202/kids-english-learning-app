@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { getUserSession } from '@/lib/simple-auth'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -99,7 +98,13 @@ export default function MathHubPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Card className="overflow-hidden border-2 border-transparent hover:border-orange-300 transition-all hover:shadow-lg h-full">
+                  <Card
+                    className="overflow-hidden border-2 border-transparent hover:border-orange-300 transition-all hover:shadow-lg h-full cursor-pointer"
+                    onClick={() => router.push(phase.href)}
+                    onKeyDown={(e) => e.key === 'Enter' && router.push(phase.href)}
+                    role="button"
+                    tabIndex={0}
+                  >
                     <div className={`h-2 bg-gradient-to-r ${phase.color}`} />
                     <CardContent className="p-4">
                       <div className={`inline-flex p-2 rounded-xl bg-gradient-to-r ${phase.color} mb-3`}>
@@ -110,10 +115,11 @@ export default function MathHubPage() {
                       <p className="text-xs text-gray-500 mb-2">{phase.subtitle}</p>
                       <p className="text-sm text-gray-600">{phase.description}</p>
                       <Button
-                        asChild
+                        type="button"
                         className="mt-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-medium"
+                        onClick={(e) => { e.stopPropagation(); router.push(phase.href); }}
                       >
-                        <Link href={phase.href}>Start →</Link>
+                        Start →
                       </Button>
                     </CardContent>
                   </Card>
