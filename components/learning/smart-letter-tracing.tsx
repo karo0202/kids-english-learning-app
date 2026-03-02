@@ -632,11 +632,26 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       }
     })
 
-    // Require at least 60% of drawn points to be close to guide points (forgiving for kids)
+    // Overall similarity to the guide
     const matchRatio = matchedPoints / normalizedDrawn.length
     const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
+
+    // Simple, consistent rule for all letters:
+    // - child must keep most of their path near the guide
+    // - and not wander too far on average
+    const SIMPLE_MIN_MATCH = 0.55
+    const SIMPLE_MAX_AVG_DISTANCE = 10
+
+    if (matchRatio < SIMPLE_MIN_MATCH) return false
+    if (avgDistance > SIMPLE_MAX_AVG_DISTANCE) return false
+
+    // If we pass the simple distance-based check, treat it as correct.
+    // (Letter-specific shape checks below are currently disabled to avoid
+    //  marking good traces as wrong for some letters.)
+    return true
+
+    // --- Legacy letter-specific logic below (kept for potential future tuning) ---
     const letterUpper = letter.toUpperCase()
-    // Letter A is strict in shape check; allow slightly looser distance/ratio so a good trace passes
     const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_DISTANCE
     const relaxedMinRatio = letterUpper === 'A' ? 0.5 : 0.6
 
