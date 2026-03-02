@@ -85,25 +85,30 @@ export default function MathIntermediateModule() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/80 dark:bg-gray-900/95">
+    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-purple-50/30 dark:from-violet-950/20 dark:via-gray-900 dark:to-purple-950/20">
       <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
         <header className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" onClick={() => router.push('/learning/math')} className="rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 -ml-1">
+          <Button variant="ghost" size="sm" onClick={() => router.push('/learning/math')} className="rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
             <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
           </Button>
-          <div>
-            <h1 className="text-lg font-semibold text-slate-800 dark:text-white">Intermediate</h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Ages 9–12 · Fractions, geometry & word problems</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-1.5 h-8 rounded-full bg-gradient-to-b from-violet-500 to-purple-600" />
+              <div>
+                <h1 className="text-xl font-bold text-slate-800 dark:text-white">Intermediate</h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Ages 9–12 · Fractions, geometry & word problems</p>
+              </div>
+            </div>
           </div>
         </header>
 
-        <nav className="flex gap-1 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide border-b border-slate-200/80 dark:border-slate-700/80">
+        <nav className="flex gap-1.5 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
           {tabsList.map((t) => (
             <button
               key={t}
               onClick={() => { setTab(t); setFracFeedback(null); setWpFeedback(null); setPerimFeedback(null); }}
-              className={`shrink-0 px-3 py-2 rounded-t-lg text-sm font-medium transition whitespace-nowrap ${
-                tab === t ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition whitespace-nowrap ${
+                tab === t ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25 dark:bg-violet-500 dark:text-slate-900' : 'text-slate-600 dark:text-slate-400 bg-white/80 dark:bg-slate-800/60 hover:bg-violet-50 dark:hover:bg-violet-900/20 border border-slate-200/60 dark:border-slate-700/60'
               }`}
             >
               {tabLabels[t]}
@@ -111,12 +116,12 @@ export default function MathIntermediateModule() {
           ))}
         </nav>
 
-        <main className="mt-6 rounded-2xl bg-white dark:bg-slate-800/60 shadow-sm border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+        <main className="mt-6 rounded-2xl bg-white dark:bg-slate-800/80 shadow-xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden border-l-4 border-l-violet-500">
           <div className="p-6 md:p-8">
             {tab === 'fractions' && (
               <div className="space-y-6">
                 <p className="text-slate-600 dark:text-slate-300 text-sm">Vocabulary: fraction, numerator, denominator, half, quarter.</p>
-                <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-6 border border-slate-200/60 dark:border-slate-600/60">
+                <div className="rounded-xl bg-violet-50 dark:bg-violet-900/20 p-6 border-2 border-violet-200/80 dark:border-violet-700/60">
                   <p className="text-lg text-slate-800 dark:text-white">{fractionQ.q}</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">One half = ½. So ½ of 8 = ?</p>
                 </div>
@@ -187,6 +192,9 @@ export default function MathIntermediateModule() {
                 <Button variant="outline" size="sm" onClick={() => { setWpIndex((i) => i + 1); setWpAnswer(''); setWpFeedback(null); }} className="rounded-xl mt-2">Next problem</Button>
               </div>
             )}
+            <p className="mt-8 pt-4 border-t border-slate-200/60 dark:border-slate-600/60 text-xs text-slate-500 dark:text-slate-400">
+              <strong className="text-slate-600 dark:text-slate-300">Tip for grown-ups:</strong> Encourage your child to say each step in English: &quot;First I…, then I…&quot; for word problems. This builds math and language together.
+            </p>
           </div>
         </main>
       </div>

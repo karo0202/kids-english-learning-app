@@ -47,12 +47,6 @@ const PHASES = [
   },
 ]
 
-const accentColors: Record<string, { text: string; dark: string }> = {
-  emerald: { text: 'text-emerald-600', dark: 'dark:text-emerald-300' },
-  sky: { text: 'text-sky-600', dark: 'dark:text-sky-300' },
-  violet: { text: 'text-violet-600', dark: 'dark:text-violet-300' },
-}
-
 export default function MathHubPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -78,77 +72,82 @@ export default function MathHubPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 px-4 py-6 md:py-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#f8fafc_0%,_#fef3c7_30%,_#e0f2fe_70%,_#f0f9ff_100%)] dark:bg-[linear-gradient(135deg,_#0f172a_0%,_#1e1b4b_50%,_#0f172a_100%)] px-4 py-6 md:py-8 relative overflow-hidden">
+      {/* Subtle math pattern */}
+      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} aria-hidden />
+      <div className="max-w-4xl mx-auto space-y-6 relative z-10">
         <Button
           variant="ghost"
           onClick={() => router.push('/learning')}
-          className="rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-800"
+          className="rounded-xl text-slate-700 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-slate-800/80 shadow-sm border border-slate-200/60 dark:border-slate-700/60"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to learning
         </Button>
 
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 dark:from-orange-400 dark:to-amber-400 bg-clip-text text-transparent">
-            Math in English
+        <div className="mb-8 md:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-sm font-medium mb-4">
+            <span className="text-lg">🧮</span>
+            <span>Learn math vocabulary in English</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+            <span className="bg-gradient-to-r from-amber-600 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent">
+              Math in English
+            </span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Choose your phase: Foundation, Elementary, or Intermediate
+          <p className="text-slate-600 dark:text-slate-400 mt-2 text-base max-w-xl">
+            Start with Foundation, then grow into Elementary and Intermediate. Each phase builds on the last.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {PHASES.map((phase, i) => (
             <motion.div
               key={phase.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ delay: i * 0.12, type: 'spring', stiffness: 200 }}
+              whileHover={{ scale: 1.02, y: -6 }}
               whileTap={{ scale: 0.98 }}
             >
               <Card
-                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300"
+                className="card-kid cursor-pointer group relative overflow-hidden hover-lift border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm"
                 onClick={() => router.push(phase.href)}
                 onKeyDown={(e) => e.key === 'Enter' && router.push(phase.href)}
                 role="button"
                 tabIndex={0}
               >
+                {/* Phase-colored left accent */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b ${phase.gradient} opacity-90 group-hover:opacity-100 transition-opacity`} aria-hidden />
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${phase.hoverGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                   aria-hidden
                 />
-                <CardContent className="p-4 md:p-6 text-center relative z-10">
+                <CardContent className="p-5 md:p-6 text-center relative z-10 pl-6">
                   <motion.div
-                    className={`w-16 h-16 md:w-20 md:h-20 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br ${phase.gradient} flex items-center justify-center shadow-lg relative overflow-hidden`}
-                    whileHover={{ rotate: [0, -4, 4, 0], scale: 1.1 }}
+                    className={`w-14 h-14 md:w-16 md:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${phase.gradient} flex items-center justify-center shadow-lg ring-4 ring-white/50 dark:ring-slate-800/50 relative overflow-hidden`}
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 300, duration: 0.5 }}
                   >
-                    <phase.icon className="w-8 h-8 md:w-10 md:h-10 text-white relative z-10" />
-                    <span className="sparkle-dot top-2 right-2" style={{ animationDelay: `${i * 0.2}s` }} aria-hidden />
-                    <span className="sparkle-dot bottom-2 left-2" style={{ animationDelay: `${i * 0.2 + 0.8}s` }} aria-hidden />
+                    <phase.icon className="w-7 h-7 md:w-8 md:h-8 text-white relative z-10" />
+                    <span className="sparkle-dot top-1 right-1" style={{ animationDelay: `${i * 0.2}s` }} aria-hidden />
+                    <span className="sparkle-dot bottom-1 left-1" style={{ animationDelay: `${i * 0.2 + 0.8}s` }} aria-hidden />
                   </motion.div>
-                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
+                  <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">
                     {phase.ages}
                   </p>
-                  <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white mb-1 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  <h2 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-0.5">
                     {phase.title}
                   </h2>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{phase.subtitle}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{phase.subtitle}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-snug">
                     {phase.description}
                   </p>
                   <div
-                    className={`text-sm font-medium ${accentColors[phase.accent].text} ${accentColors[phase.accent].dark} group-hover:translate-x-1 transition-transform flex items-center justify-center gap-1`}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold ${phase.id === 'foundation' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : phase.id === 'elementary' ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300' : 'bg-violet-500/15 text-violet-700 dark:text-violet-300'} group-hover:scale-105 transition-transform`}
                   >
                     <span>Start</span>
-                    <motion.span
-                      animate={{ x: [0, 4, 0] }}
-                      transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
-                    >
-                      →
-                    </motion.span>
+                    <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}>→</motion.span>
                   </div>
                 </CardContent>
               </Card>

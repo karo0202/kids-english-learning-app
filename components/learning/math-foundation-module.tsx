@@ -102,27 +102,32 @@ export default function MathFoundationModule() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50/80 dark:bg-gray-900/95">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-teal-50/30 dark:from-emerald-950/20 dark:via-gray-900 dark:to-teal-950/20">
       <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
         <header className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" onClick={() => router.push('/learning/math')} className="rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 -ml-1">
+          <Button variant="ghost" size="sm" onClick={() => router.push('/learning/math')} className="rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
             <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
           </Button>
-          <div>
-            <h1 className="text-lg font-semibold text-slate-800 dark:text-white">Foundation</h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Ages 3–5 · Number sense, shapes & colors</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-1.5 h-8 rounded-full bg-gradient-to-b from-emerald-500 to-teal-600" />
+              <div>
+                <h1 className="text-xl font-bold text-slate-800 dark:text-white">Foundation</h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Ages 3–5 · Number sense, shapes & colors</p>
+              </div>
+            </div>
           </div>
         </header>
 
-        <nav className="flex gap-1 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide border-b border-slate-200/80 dark:border-slate-700/80">
+        <nav className="flex gap-1.5 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => { setTab(t.id); setCountFeedback(null); setCompareFeedback(null); setSameFeedback(null); setOrderFeedback(null); setMatchShapeFeedback(null); }}
-              className={`shrink-0 px-3 py-2 rounded-t-lg text-sm font-medium transition whitespace-nowrap ${
+              className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition whitespace-nowrap ${
                 tab === t.id
-                  ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 dark:bg-emerald-500 dark:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-400 bg-white/80 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-slate-200/60 dark:border-slate-700/60'
               }`}
             >
               {t.label}
@@ -130,7 +135,7 @@ export default function MathFoundationModule() {
           ))}
         </nav>
 
-        <main className="mt-6 rounded-2xl bg-white dark:bg-slate-800/60 shadow-sm border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+        <main className="mt-6 rounded-2xl bg-white dark:bg-slate-800/80 shadow-xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden border-l-4 border-l-emerald-500">
           <div className="p-6 md:p-8">
             {tab === 'numbers' && (
               <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -138,10 +143,10 @@ export default function MathFoundationModule() {
                   key={currentNumber}
                   initial={{ scale: 0.96, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="rounded-2xl bg-gradient-to-br from-emerald-500/90 to-teal-600/90 p-8 md:p-10 text-center text-white shadow-lg"
+                  className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 md:p-10 text-center text-white shadow-xl ring-4 ring-emerald-400/20 dark:ring-emerald-500/30"
                 >
                   <p className="text-sm font-medium opacity-90 uppercase tracking-wider">Number</p>
-                  <p className="text-7xl md:text-8xl font-bold mt-1 tabular-nums">{currentNumber}</p>
+                  <p className="text-7xl md:text-8xl font-bold mt-1 tabular-nums drop-shadow-sm">{currentNumber}</p>
                   <p className="text-xl md:text-2xl font-semibold mt-3 opacity-95">{NUMBER_WORDS[currentNumber] ?? currentNumber}</p>
                 </motion.div>
                 <div className="space-y-4">
@@ -354,6 +359,9 @@ export default function MathFoundationModule() {
                 <Button variant="outline" size="sm" onClick={() => { setMatchShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1)); setMatchShapeFeedback(null); }} className="rounded-xl mt-2">Next shape</Button>
               </div>
             )}
+            <p className="mt-8 pt-4 border-t border-slate-200/60 dark:border-slate-600/60 text-xs text-slate-500 dark:text-slate-400">
+              <strong className="text-slate-600 dark:text-slate-300">Tip for grown-ups:</strong> Let your child point to the screen and say the words with you. Repeat the number or shape name in English together.
+            </p>
           </div>
         </main>
       </div>
