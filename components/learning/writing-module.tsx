@@ -474,39 +474,14 @@ export default function WritingModule() {
           console.error('No tracing letters available!')
           return
         }
-        
-        // Only reset to first letter if we don't already have a current letter
-        // This allows Next/Previous buttons to work without being overridden
-        if (!currentLetter) {
-          setLetterIndex(0)
-          const firstLetter = tracingLetters[0]
-          console.log('No current letter, setting first letter:', firstLetter)
-          setCurrentLetter(firstLetter)
-          // No longer tracking strokes - using shape recognition instead
-        } else {
-          // We already have a letter (from Next/Previous button), just ensure canvas is ready
-          console.log('Current letter already set:', currentLetter.letter, 'index:', letterIndex, '- NOT resetting')
-          // No longer tracking strokes - using shape recognition instead
-          // Don't reset letterIndex or currentLetter - they're already correct
-          return // Exit early to prevent any reset
-        }
-        
+
+        // Always ensure we have a valid current letter when tracing starts
+        const safeIndex = letterIndex >= 0 && letterIndex < tracingLetters.length ? letterIndex : 0
+        setLetterIndex(safeIndex)
+        const letter = tracingLetters[safeIndex]
+        console.log('Tracing initialized with letter:', letter)
+        setCurrentLetter(letter)
         setIsInitialized(true)
-        setTimeout(() => {
-          if (canvasRef.current) {
-            console.log('Clearing canvas')
-            const canvas = canvasRef.current
-            const ctx = canvas.getContext('2d')
-            if (ctx) {
-              ctx.clearRect(0, 0, canvas.width, canvas.height)
-              if (currentLetter && activityType === 'tracing') {
-                drawLetterGuide()
-              }
-            }
-          } else {
-            console.warn('Canvas ref not available')
-          }
-        }, 300)
       } else if (activityType === 'wordbuilder') {
         const source = wordBank && wordBank.length ? wordBank : getDefaultWordBuildingWords()
         console.log('Word builder source:', source?.length, 'words')
