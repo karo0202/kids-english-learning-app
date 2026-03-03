@@ -1153,46 +1153,26 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     if (!isDrawing) return
     setIsDrawing(false)
 
-    // Validate the overall shape matches the target letter
+    // Check if all strokes for this letter are completed.
+    // We already require the child to stay close to each stroke via
+    // checkPathCorrectness. As a safety net for letters like A / E / F
+    // that may be traced in one continuous path, we also run a simple
+    // shape validation and accept if the overall shape matches.
     const shapeIsValid = validateLetterShape(drawingPath)
-    
-    // Check if all strokes are completed AND shape is valid
     const allStrokesCompleted = completedStrokesRef.current.size === letterPath.strokes.length
     
-    if (allStrokesCompleted && shapeIsValid) {
+    if (allStrokesCompleted || shapeIsValid) {
       handleComplete()
     } else {
-      // If strokes are completed but shape doesn't match, show error
-      if (allStrokesCompleted && !shapeIsValid) {
-        setIsCorrect(false)
-        setShowFeedback(true)
-        // Reset completed strokes to allow retry
-        completedStrokesRef.current.clear()
-        setCurrentStroke(0)
-        setProgress(0)
-        
-        if (soundEnabled) {
-          audioManager.playError()
-        }
-        
-        setTimeout(() => {
-          setShowFeedback(false)
-        }, 2000)
-      } else {
-        // Show feedback for incomplete strokes
-        setShowFeedback(true)
-        if (soundEnabled) {
-          if (isCorrect) {
-            audioManager.playSuccess()
-          } else {
-            audioManager.playError()
-          }
-        }
-        
-        setTimeout(() => {
-          setShowFeedback(false)
-        }, 1500)
+      // Show feedback for incomplete strokes
+      setShowFeedback(true)
+      if (soundEnabled) {
+        audioManager.playError()
       }
+      
+      setTimeout(() => {
+        setShowFeedback(false)
+      }, 1500)
     }
 
     lastPointRef.current = null
