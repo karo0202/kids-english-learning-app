@@ -1137,13 +1137,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     const onCurrentStroke = distanceToCurrentStroke < hitThreshold
     const strokeToMark = closestStroke === currentStrokeRef.current ? closestStroke : (onCurrentStroke ? currentStrokeRef.current : -1)
     if (minDistance < hitThreshold && strokeToMark >= 0) {
-      // Mark stroke as completed and update progress, but do NOT
-      // mark the whole letter correct/incorrect yet. We only decide
-      // correct/wrong after the child finishes the letter (on lift).
+      // Mark stroke as completed while the child is drawing, but do NOT
+      // update React state yet. Updating state here triggers a guide redraw
+      // that clears the visible line mid-stroke (when they reach the green dot),
+      // which feels like the line is "disappearing". We only update state on lift.
       if (!completedStrokesRef.current.has(strokeToMark)) {
         completedStrokesRef.current.add(strokeToMark)
-        setCurrentStroke(prev => prev + 1)
-        setProgress(prev => Math.min(prev + (100 / letterPath.strokes.length), 100))
       }
     }
   }
@@ -1152,6 +1151,27 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const stopDrawing = () => {
     if (!isDrawing) return
     setIsDrawing(false)
+
+    // After the child lifts their finger, sync React state with the
+    // completed strokes we tracked during drawing. This avoids the
+    // guide redraw (and canvas clear) happening in the middle of the
+    // stroke right as they reach the green dot.
+    const totalStrokes = letterPath.strokes.length
+    const completedCount = completedStrokesRef.current.size
+
+    // Progress based on how many guide strokes have been completed
+    const newProgress = totalStrokes > 0 ? (completedCount / totalStrokes) * 100 : 0
+    setProgress(Math.min(newProgress, 100))
+
+    // Advance currentStroke to the next uncompleted guide stroke
+    let nextStroke = totalStrokes
+    for (let i = 0; i < totalStrokes; i++) {
+      if (!completedStrokesRef.current.has(i)) {
+        nextStroke = i
+        break
+      }
+    }
+    setCurrentStroke(nextStroke)
 
     // Check if all strokes for this letter are completed.
     // We already require the child to stay close to each stroke via
