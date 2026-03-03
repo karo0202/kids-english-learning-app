@@ -73,7 +73,11 @@ export default function AdminPaymentsPage() {
           setProofImageError(false)
         })
         .catch(() => {
-          if (proofViewUrlRef.current === urlForThisEffect) setProofImageError(true)
+          // Fallback: try to render the original data URL directly
+          if (proofViewUrlRef.current === urlForThisEffect) {
+            setProofDisplayUrl(urlForThisEffect)
+            setProofImageError(false)
+          }
         })
     } else {
       setProofDisplayUrl(proofViewUrl)
@@ -336,18 +340,15 @@ export default function AdminPaymentsPage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Image could not be displayed (e.g. file too large, invalid, or proof was submitted before we fixed storage).
                   </p>
-                  {proofViewUrl.startsWith('data:') ? (
-                    <p className="text-sm text-amber-600 dark:text-amber-400">Ask the user to resubmit the screenshot.</p>
-                  ) : (
-                    <a
-                      href={proofViewUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 underline font-medium"
-                    >
-                      Open in new tab <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
+                  <a
+                    href={proofViewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download="payment-proof"
+                    className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 underline font-medium"
+                  >
+                    Open / download original image <ExternalLink className="w-4 h-4" />
+                  </a>
                 </div>
               ) : proofViewUrl.startsWith('data:') && !proofDisplayUrl ? (
                 <div className="flex items-center gap-2 text-gray-500">
