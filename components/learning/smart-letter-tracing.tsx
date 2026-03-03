@@ -1137,42 +1137,13 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     const onCurrentStroke = distanceToCurrentStroke < hitThreshold
     const strokeToMark = closestStroke === currentStrokeRef.current ? closestStroke : (onCurrentStroke ? currentStrokeRef.current : -1)
     if (minDistance < hitThreshold && strokeToMark >= 0) {
+      // Mark stroke as completed and update progress, but do NOT
+      // mark the whole letter correct/incorrect yet. We only decide
+      // correct/wrong after the child finishes the letter (on lift).
       if (!completedStrokesRef.current.has(strokeToMark)) {
         completedStrokesRef.current.add(strokeToMark)
         setCurrentStroke(prev => prev + 1)
         setProgress(prev => Math.min(prev + (100 / letterPath.strokes.length), 100))
-        
-        // Visual feedback - green glow
-        const canvas = canvasRef.current
-        if (canvas) {
-          const ctx = canvas.getContext('2d')
-          if (ctx) {
-            ctx.shadowColor = '#10B981'
-            ctx.shadowBlur = 15
-            setTimeout(() => {
-              if (ctx) {
-                ctx.shadowBlur = 0
-              }
-            }, 200)
-          }
-        }
-      }
-      setIsCorrect(true)
-    } else if (minDistance > tooFarThreshold) {
-      // Only show "too far" when clearly off the path
-      setIsCorrect(false)
-      const canvas = canvasRef.current
-      if (canvas) {
-        const ctx = canvas.getContext('2d')
-        if (ctx) {
-          ctx.shadowColor = '#EF4444'
-          ctx.shadowBlur = 10
-          setTimeout(() => {
-            if (ctx) {
-              ctx.shadowBlur = 0
-            }
-          }, 100)
-        }
       }
     }
   }
