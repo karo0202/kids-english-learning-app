@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Eraser, RotateCcw, Save, Volume2, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Eraser, RotateCcw, Save, Volume2, ArrowLeft, ArrowRight, Palette, Minus, Plus } from 'lucide-react'
 
 interface WordColoringModeProps {
   letter: string
@@ -24,9 +24,11 @@ export default function WordColoringMode({
 }: WordColoringModeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [selectedColor, setSelectedColor] = useState(colorPalette[0])
+  const [penSize, setPenSize] = useState(20)
   const [isDrawing, setIsDrawing] = useState(false)
   const [isErasing, setIsErasing] = useState(false)
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0)
+  const [showPenOptions, setShowPenOptions] = useState(true)
 
   const letters = word.toUpperCase().split('')
 
@@ -92,18 +94,21 @@ export default function WordColoringMode({
 
     const { x, y } = getCoordinates(e)
     
+    const size = isErasing ? Math.max(20, penSize + 8) : penSize
+    const half = size / 2
+
     if (isErasing) {
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.lineWidth = 25
+      ctx.lineWidth = size
     } else {
       ctx.globalCompositeOperation = 'source-atop'
       ctx.fillStyle = selectedColor
-      ctx.lineWidth = 20
+      ctx.lineWidth = size
     }
 
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
-    ctx.fillRect(x - 10, y - 10, 20, 20)
+    ctx.fillRect(x - half, y - half, size, size)
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -244,10 +249,75 @@ export default function WordColoringMode({
 
       {/* Letter Tracing Area */}
       <div className="relative">
-        <h3 className="text-xl font-bold text-gray-700 mb-3 text-center">
-          ✏️ Trace and Color Letter: {letters[currentLetterIndex]}
-        </h3>
-        <div className="relative bg-white rounded-lg border-4 border-gray-300 p-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-3">
+          <h3 className="text-xl font-bold text-gray-700 text-center">
+            ✏️ Trace and Color Letter: {letters[currentLetterIndex]}
+          </h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPenOptions(!showPenOptions)}
+            className="shrink-0"
+          >
+            <Palette className="w-4 h-4 mr-1" />
+            {showPenOptions ? 'Hide' : 'Show'} pen options
+          </Button>
+        </div>
+
+        {/* Pen options: color palette + pen size */}
+        {showPenOptions && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4"
+          >
+            <div>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Pen color</p>
+              <div className="flex flex-wrap gap-2">
+                {colorPalette.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`w-10 h-10 rounded-full border-2 transition-all ${
+                      selectedColor === color ? 'border-gray-800 dark:border-white scale-110 shadow-md' : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => {
+                      setSelectedColor(color)
+                      setIsErasing(false)
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Pen size</p>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPenSize((s) => Math.max(6, s - 4))}
+                  className="h-9 w-9 p-0"
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="w-10 text-center text-sm font-medium tabular-nums">{penSize}</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPenSize((s) => Math.min(40, s + 4))}
+                  className="h-9 w-9 p-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        <div className="relative bg-white dark:bg-gray-900 rounded-lg border-4 border-gray-300 dark:border-gray-600 p-4">
           <canvas
             ref={canvasRef}
             className="w-full h-96 touch-none cursor-crosshair"
@@ -292,32 +362,6 @@ export default function WordColoringMode({
           Next
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
-      </div>
-
-      {/* Color Palette */}
-      <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-        <h3 className="text-lg font-bold text-gray-700 mb-3 text-center">
-          Color Palette
-        </h3>
-        <div className="grid grid-cols-6 gap-3">
-          {colorPalette.map((color) => (
-            <motion.button
-              key={color}
-              className={`w-12 h-12 rounded-full border-4 transition-all ${
-                selectedColor === color
-                  ? 'border-gray-800 scale-110 shadow-lg'
-                  : 'border-gray-300'
-              }`}
-              style={{ backgroundColor: color }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => {
-                setSelectedColor(color)
-                setIsErasing(false)
-              }}
-            />
-          ))}
-        </div>
       </div>
 
       {/* Tools */}
