@@ -43,7 +43,7 @@ export default function MobileSimpleApp() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">

@@ -214,7 +214,7 @@ export default function PaymentPage() {
   const isExpired = transaction ? isTransactionExpired(transaction) : false
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div

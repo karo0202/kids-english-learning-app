@@ -28,7 +28,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400 dark:from-slate-900 dark:via-purple-900 dark:to-violet-900"
+        className="min-h-screen flex items-center justify-center"
         role="status"
         aria-label="Loading page"
       >

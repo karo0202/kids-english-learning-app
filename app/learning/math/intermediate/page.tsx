@@ -20,7 +20,7 @@ export default function MathIntermediatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-fuchsia-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-2 border-violet-500 border-t-transparent" />
       </div>
     )

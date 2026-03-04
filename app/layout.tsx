@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#f5f3ff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: dark)', color: '#1e1b4b' },
   ],
   appleWebApp: {
     capable: true,
@@ -83,7 +83,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#f5f3ff" media="(prefers-color-scheme: light)" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -116,12 +116,20 @@ export default function RootLayout({
               {/* Skip to main content link for accessibility */}
               <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-violet-600 focus:text-white focus:rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
               >
                 Skip to main content
               </a>
-              <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 m-0 p-0">
-                <main id="main-content">
+              <div className="min-h-screen relative m-0 p-0 bg-gradient-to-br from-violet-50/90 via-indigo-50/80 to-slate-100/90 dark:from-indigo-950/60 dark:via-slate-900 dark:to-violet-950/40 overflow-hidden">
+                {/* Premium background orbs - app-wide */}
+                <div className="fixed inset-0 overflow-hidden pointer-events-none -z-[1]" aria-hidden>
+                  <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-white/50 to-transparent dark:from-white/[0.07] dark:to-transparent" />
+                  <div className="absolute top-20 left-10 w-80 h-80 bg-violet-300/25 dark:bg-violet-500/15 rounded-full blur-3xl" />
+                  <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 dark:bg-indigo-500/12 rounded-full blur-3xl" />
+                  <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-fuchsia-200/15 dark:bg-fuchsia-500/10 rounded-full blur-3xl" />
+                  <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-amber-200/10 dark:bg-amber-500/5 rounded-full blur-3xl" />
+                </div>
+                <main id="main-content" className="relative z-0">
                   {children}
                 </main>
               </div>

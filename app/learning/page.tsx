@@ -130,8 +130,8 @@ export default function LearningPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-violet-500"></div>
       </div>
     )
   }
@@ -184,7 +184,7 @@ export default function LearningPage() {
 
   if (children.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md mx-4">
           <CardContent className="p-8 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
@@ -207,22 +207,14 @@ export default function LearningPage() {
   // Show loading if no child is selected yet
   if (!selectedChild) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-violet-500"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/50 relative overflow-hidden">
-      {/* Subtle premium background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-[60%] bg-gradient-to-b from-white/40 to-transparent dark:from-white/5 dark:to-transparent" />
-        <div className="absolute top-20 left-10 w-80 h-80 bg-indigo-200/15 dark:bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-violet-200/15 dark:bg-violet-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-blue-200/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
-      </div>
-
+    <div className="min-h-screen relative">
       {/* Header */}
       <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 sticky top-0 z-50 shadow-sm relative">
         <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
