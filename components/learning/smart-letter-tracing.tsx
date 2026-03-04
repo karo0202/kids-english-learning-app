@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
 import { 
   RefreshCw, Star, Volume2, VolumeX, Palette, 
-  Minus, Plus, Sparkles, Trophy, CheckCircle, XCircle
+  Minus, Plus, Trophy, CheckCircle, XCircle
 } from 'lucide-react'
 import { audioManager } from '@/lib/audio-manager'
 
@@ -295,12 +295,9 @@ const StarBurst = ({ x, y }: { x: number; y: number }) => {
 
 export default function SmartLetterTracing({ letter, onComplete, onNext }: SmartLetterTracingProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const guideAnimationRef = useRef<number | null>(null)
-  const currentStrokeRef = useRef<number>(0)
-  const isAnimatingGuideRef = useRef<boolean>(false)
+  const referenceCanvasRef = useRef<HTMLCanvasElement>(null)
   
   const [isDrawing, setIsDrawing] = useState(false)
-  const [currentStroke, setCurrentStroke] = useState(0)
   const [drawingPath, setDrawingPath] = useState<Array<{ x: number; y: number }>>([])
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -324,188 +321,83 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   const completedStrokesRef = useRef<Set<number>>(new Set())
   const startTimeRef = useRef<number>(0)
 
-  useEffect(() => {
-    currentStrokeRef.current = currentStroke
-  }, [currentStroke])
-
   const penColors = [
     '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
     '#8B5CF6', '#EC4899', '#14B8A6', '#000000'
   ]
 
-  // Initialize canvas
+  // Clear main canvas to blank white (no guide)
+  const clearMainCanvas = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const size = canvas.width / (window.devicePixelRatio || 1)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, size, size)
+  }, [])
+
+  // Draw the reference letter on the small side canvas (read-only model)
+  const drawReferenceLetter = useCallback(() => {
+    const canvas = referenceCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const size = 120
+    const scale = window.devicePixelRatio || 1
+    canvas.width = size * scale
+    canvas.height = size * scale
+    canvas.style.width = `${size}px`
+    canvas.style.height = `${size}px`
+    ctx.scale(scale, scale)
+    ctx.fillStyle = '#fafafa'
+    ctx.fillRect(0, 0, size, size)
+    const letterScale = size / 100
+    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * letterScale) / 2
+    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * letterScale) / 2
+    ctx.strokeStyle = '#374151'
+    ctx.lineWidth = 3
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    letterPath.strokes.forEach((stroke) => {
+      if (stroke.length < 2) return
+      ctx.beginPath()
+      ctx.moveTo(offsetX + (stroke[0].x - letterPath.bounds.minX) * letterScale, offsetY + (stroke[0].y - letterPath.bounds.minY) * letterScale)
+      for (let i = 1; i < stroke.length; i++) {
+        ctx.lineTo(offsetX + (stroke[i].x - letterPath.bounds.minX) * letterScale, offsetY + (stroke[i].y - letterPath.bounds.minY) * letterScale)
+      }
+      ctx.stroke()
+    })
+  }, [letterPath])
+
+  // Initialize main canvas (blank white paper) and reference canvas
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     const resizeCanvas = () => {
       const container = canvas.parentElement
       if (!container) return
-
-      const size = Math.min(container.clientWidth - 40, 500)
+      const size = Math.min(container.clientWidth - 24, 500)
       const scale = window.devicePixelRatio || 1
-      
       canvas.width = size * scale
       canvas.height = size * scale
       canvas.style.width = `${size}px`
       canvas.style.height = `${size}px`
-      
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.scale(scale, scale)
-      drawGuide()
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, size, size)
     }
 
     resizeCanvas()
+    drawReferenceLetter()
     window.addEventListener('resize', resizeCanvas)
     return () => window.removeEventListener('resize', resizeCanvas)
-  }, [letter])
+  }, [letter, drawReferenceLetter])
 
-  // Draw the letter guide
-  const drawGuide = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1))
-    
-    const size = canvas.width / (window.devicePixelRatio || 1)
-    const scale = size / 100
-    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * scale) / 2
-    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * scale) / 2
-
-    // Draw grid background
-    ctx.strokeStyle = '#E5E7EB'
-    ctx.lineWidth = 1
-    for (let i = 1; i < 3; i++) {
-      const p = (size / 3) * i
-      ctx.beginPath()
-      ctx.moveTo(p, 0)
-      ctx.lineTo(p, size)
-      ctx.stroke()
-      ctx.beginPath()
-      ctx.moveTo(0, p)
-      ctx.lineTo(size, p)
-      ctx.stroke()
-    }
-
-    // Draw letter guide paths: completed = green, current = bold blue, rest = faint
-    const curStroke = currentStrokeRef.current
-    letterPath.strokes.forEach((stroke, strokeIndex) => {
-      if (stroke.length < 2) return
-      
-      const isCompleted = completedStrokesRef.current.has(strokeIndex)
-      const isCurrent = strokeIndex === curStroke
-      ctx.strokeStyle = isCompleted
-        ? '#10B981'
-        : isCurrent
-          ? 'rgba(59, 130, 246, 0.55)'
-          : 'rgba(59, 130, 246, 0.2)'
-      ctx.lineWidth = isCurrent ? 5 : 3
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-      
-      ctx.beginPath()
-      const start = stroke[0]
-      ctx.moveTo(
-        offsetX + (start.x - letterPath.bounds.minX) * scale,
-        offsetY + (start.y - letterPath.bounds.minY) * scale
-      )
-      
-      for (let i = 1; i < stroke.length; i++) {
-        const point = stroke[i]
-        ctx.lineTo(
-          offsetX + (point.x - letterPath.bounds.minX) * scale,
-          offsetY + (point.y - letterPath.bounds.minY) * scale
-        )
-      }
-      ctx.stroke()
-    })
-
-    // Draw "start here" dot for current stroke
-    if (curStroke < letterPath.strokes.length) {
-      const stroke = letterPath.strokes[curStroke]
-      if (stroke.length > 0) {
-        const p = stroke[0]
-        const sx = offsetX + (p.x - letterPath.bounds.minX) * scale
-        const sy = offsetY + (p.y - letterPath.bounds.minY) * scale
-        ctx.fillStyle = '#10B981'
-        ctx.strokeStyle = '#059669'
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        ctx.arc(sx, sy, 8, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.stroke()
-      }
-    }
-  }, [letter, letterPath])
-
-  // Animate guide stroke order
-  const animateGuide = useCallback(() => {
-    if (isAnimatingGuideRef.current) return
-    isAnimatingGuideRef.current = true
-
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const size = canvas.width / (window.devicePixelRatio || 1)
-    const scale = size / 100
-    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * scale) / 2
-    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * scale) / 2
-
-    let strokeIndex = 0
-    let pointIndex = 0
-
-    const animate = () => {
-      if (strokeIndex >= letterPath.strokes.length) {
-        isAnimatingGuideRef.current = false
-        drawGuide()
-        return
-      }
-
-      const stroke = letterPath.strokes[strokeIndex]
-      if (pointIndex < stroke.length - 1) {
-        ctx.strokeStyle = 'rgba(59, 130, 246, 0.6)'
-        ctx.lineWidth = 4
-        ctx.lineCap = 'round'
-        
-        const start = stroke[pointIndex]
-        const end = stroke[pointIndex + 1]
-        
-        ctx.beginPath()
-        ctx.moveTo(
-          offsetX + (start.x - letterPath.bounds.minX) * scale,
-          offsetY + (start.y - letterPath.bounds.minY) * scale
-        )
-        ctx.lineTo(
-          offsetX + (end.x - letterPath.bounds.minX) * scale,
-          offsetY + (end.y - letterPath.bounds.minY) * scale
-        )
-        ctx.stroke()
-
-        pointIndex++
-        guideAnimationRef.current = requestAnimationFrame(animate)
-      } else {
-        strokeIndex++
-        pointIndex = 0
-        setTimeout(() => {
-          drawGuide()
-          guideAnimationRef.current = requestAnimationFrame(animate)
-        }, 300)
-      }
-    }
-
-    drawGuide()
-    setTimeout(() => {
-      guideAnimationRef.current = requestAnimationFrame(animate)
-    }, 500)
-  }, [letterPath, drawGuide])
 
   // Start drawing
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -583,12 +475,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       ctx.lineTo(x / scale, y / scale)
       ctx.stroke()
 
-      // Check if path is correct (simplified - check distance to guide)
-      checkPathCorrectness(x / scale, y / scale)
-
       setDrawingPath(prev => [...prev, { x: x / scale, y: y / scale }])
     }
-
     lastPointRef.current = { x, y }
   }
 
@@ -1103,85 +991,14 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     return matchRatio >= relaxedMinRatio && avgDistance < relaxedMaxDistance
   }
 
-  // Check if drawing path is correct (scale-aware, forgiving for kids)
-  const checkPathCorrectness = (x: number, y: number) => {
-    const size = canvasRef.current?.width ? canvasRef.current.width / (window.devicePixelRatio || 1) : 500
-    const scale = size / 100
-    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * scale) / 2
-    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * scale) / 2
-
-    let minDistance = Infinity
-    let closestStroke = -1
-    let distanceToCurrentStroke = Infinity
-
-    letterPath.strokes.forEach((stroke, strokeIndex) => {
-      stroke.forEach(point => {
-        const guideX = offsetX + (point.x - letterPath.bounds.minX) * scale
-        const guideY = offsetY + (point.y - letterPath.bounds.minY) * scale
-        const distance = Math.sqrt((x - guideX) ** 2 + (y - guideY) ** 2)
-        
-        if (distance < minDistance) {
-          minDistance = distance
-          closestStroke = strokeIndex
-        }
-        // Also track min distance to current stroke (for letters like A where strokes share a point)
-        if (strokeIndex === currentStrokeRef.current) {
-          if (distance < distanceToCurrentStroke) distanceToCurrentStroke = distance
-        }
-      })
-    })
-
-    // Scale-aware thresholds: ~6% of canvas for hit, ~14% for "too far" (forgiving for kids)
-    const hitThreshold = Math.max(18, size * 0.06)
-    const tooFarThreshold = Math.max(35, size * 0.14)
-    const onCurrentStroke = distanceToCurrentStroke < hitThreshold
-    const strokeToMark = closestStroke === currentStrokeRef.current ? closestStroke : (onCurrentStroke ? currentStrokeRef.current : -1)
-    if (minDistance < hitThreshold && strokeToMark >= 0) {
-      // Mark stroke as completed while the child is drawing, but do NOT
-      // update React state yet. Updating state here triggers a guide redraw
-      // that clears the visible line mid-stroke (when they reach the green dot),
-      // which feels like the line is "disappearing". We only update state on lift.
-      if (!completedStrokesRef.current.has(strokeToMark)) {
-        completedStrokesRef.current.add(strokeToMark)
-      }
-    }
-  }
-
-  // Stop drawing and check completion
+  // Stop drawing and check completion (blank-paper mode: validate shape only)
   const stopDrawing = () => {
     if (!isDrawing) return
     setIsDrawing(false)
 
-    // After the child lifts their finger, sync React state with the
-    // completed strokes we tracked during drawing. This avoids the
-    // guide redraw (and canvas clear) happening in the middle of the
-    // stroke right as they reach the green dot.
-    const totalStrokes = letterPath.strokes.length
-    const completedCount = completedStrokesRef.current.size
-
-    // Progress based on how many guide strokes have been completed
-    const newProgress = totalStrokes > 0 ? (completedCount / totalStrokes) * 100 : 0
-    setProgress(Math.min(newProgress, 100))
-
-    // Advance currentStroke to the next uncompleted guide stroke
-    let nextStroke = totalStrokes
-    for (let i = 0; i < totalStrokes; i++) {
-      if (!completedStrokesRef.current.has(i)) {
-        nextStroke = i
-        break
-      }
-    }
-    setCurrentStroke(nextStroke)
-
-    // Check if all strokes for this letter are completed.
-    // We already require the child to stay close to each stroke via
-    // checkPathCorrectness. As a safety net for letters like A / E / F
-    // that may be traced in one continuous path, we also run a simple
-    // shape validation and accept if the overall shape matches.
     const shapeIsValid = validateLetterShape(drawingPath)
-    const allStrokesCompleted = completedStrokesRef.current.size === letterPath.strokes.length
-    
-    if (allStrokesCompleted || shapeIsValid) {
+    if (shapeIsValid) {
+      setProgress(100)
       handleComplete()
     } else {
       // Show feedback for incomplete strokes
@@ -1217,7 +1034,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
         const currentChild = JSON.parse(localStorage.getItem('currentChild') || 'null')
         if (currentChild?.id && currentChild?.parentId) {
           // Calculate accuracy based on correct strokes
-          const accuracy = (completedStrokesRef.current.size / letterPath.strokes.length) * 100
+          const accuracy = 100
           
           // Save trace data (optional - can be enhanced to save canvas data)
           parentAnalytics.recordLetterTracing(
@@ -1283,19 +1100,18 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     return sounds[letter.toUpperCase()] || 'uh'
   }
 
-  // Reset tracing
+  // Reset tracing (blank paper + redraw reference)
   const resetTracing = () => {
     const canvas = canvasRef.current
     if (canvas) {
       const ctx = canvas.getContext('2d')
       if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        const size = canvas.width / (window.devicePixelRatio || 1)
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, size, size)
       }
     }
-    
     setIsDrawing(false)
-    setCurrentStroke(0)
-    currentStrokeRef.current = 0
     startTimeRef.current = 0
     setDrawingPath([])
     setIsCorrect(null)
@@ -1303,20 +1119,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     setProgress(0)
     completedStrokesRef.current.clear()
     lastPointRef.current = null
-    drawGuide()
+    drawReferenceLetter()
   }
-
-  // Redraw guide when current stroke changes (start dot + bold stroke)
-  useEffect(() => {
-    drawGuide()
-  }, [currentStroke, drawGuide])
-
-  // Show guide animation on mount
-  useEffect(() => {
-    setTimeout(() => {
-      animateGuide()
-    }, 1000)
-  }, [letter, animateGuide])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4">
@@ -1430,57 +1234,71 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
           )}
         </AnimatePresence>
 
-        {/* Canvas Container */}
+        {/* Canvas Container: reference letter + blank paper */}
         <Card className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl shadow-xl overflow-hidden">
           <CardContent className="p-6">
             <div className="flex flex-col items-center gap-3">
               <p className="text-sm font-semibold text-gray-600">
-                Stroke {Math.min(currentStroke + 1, letterPath.strokes.length)} of {letterPath.strokes.length}
-                <span className="ml-2 text-gray-400">· Start at the green dot</span>
+                Copy the letter on the white paper
               </p>
-            <div className="relative flex justify-center">
-              <canvas
-                ref={canvasRef}
-                className="border-2 border-purple-300 rounded-2xl shadow-lg bg-white touch-none"
-                style={{ maxWidth: '100%', height: 'auto' }}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                onTouchStart={startDrawing}
-                onTouchMove={draw}
-                onTouchEnd={stopDrawing}
-              />
-              
-              {/* Feedback Overlay */}
-              <AnimatePresence>
-                {showFeedback && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  >
-                    {isCorrect ? (
+            <div className="relative flex flex-wrap items-start justify-center gap-4 w-full">
+              {/* Small reference letter (model to copy) */}
+              <div className="flex flex-col items-center shrink-0">
+                <p className="text-xs font-medium text-gray-500 mb-1">Write this letter</p>
+                <canvas
+                  ref={referenceCanvasRef}
+                  className="border border-gray-200 rounded-xl bg-gray-50 shadow-sm touch-none"
+                  style={{ width: 120, height: 120 }}
+                  aria-hidden
+                />
+              </div>
+              {/* Blank white paper for writing */}
+              <div className="flex flex-col items-center flex-1 min-w-0 relative">
+                <p className="text-xs font-medium text-gray-500 mb-1">Your paper</p>
+                <div className="relative">
+                  <canvas
+                    ref={canvasRef}
+                    className="border-2 border-gray-200 rounded-2xl shadow-md bg-white touch-none"
+                    style={{ maxWidth: '100%', height: 'auto', minHeight: 280 }}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                  />
+                  {/* Feedback Overlay */}
+                  <AnimatePresence>
+                    {showFeedback && (
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: [0, 1.2, 1] }}
-                        className="bg-green-500 text-white rounded-full p-6 shadow-2xl"
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-2xl"
                       >
-                        <CheckCircle className="w-16 h-16" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: [0, 1.2, 1] }}
-                        className="bg-red-500 text-white rounded-full p-6 shadow-2xl"
-                      >
-                        <XCircle className="w-16 h-16" />
+                        {isCorrect ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: [0, 1.2, 1] }}
+                            className="bg-green-500 text-white rounded-full p-6 shadow-2xl"
+                          >
+                            <CheckCircle className="w-16 h-16" />
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: [0, 1.2, 1] }}
+                            className="bg-red-500 text-white rounded-full p-6 shadow-2xl"
+                          >
+                            <XCircle className="w-16 h-16" />
+                          </motion.div>
+                        )}
                       </motion.div>
                     )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </AnimatePresence>
+                </div>
+              </div>
             </div>
             </div>
           </CardContent>
@@ -1488,14 +1306,6 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
 
         {/* Action Buttons */}
         <div className="flex flex-wrap justify-center gap-3 mt-6">
-          <Button
-            variant="outline"
-            onClick={() => animateGuide()}
-            className="rounded-full px-6 py-5 border-2 border-purple-300 text-purple-700 hover:bg-purple-100 font-semibold"
-          >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Show me how
-          </Button>
           <Button
             onClick={resetTracing}
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full px-8 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
@@ -1516,7 +1326,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
 
         {/* Success Message */}
         <AnimatePresence>
-          {showFeedback && isCorrect && completedStrokesRef.current.size === letterPath.strokes.length && (
+          {showFeedback && isCorrect && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
