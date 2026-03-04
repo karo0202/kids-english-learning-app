@@ -14,7 +14,7 @@ import { audioManager } from '@/lib/audio-manager'
 import { progressManager } from '@/lib/progress'
 import { challengeManager } from '@/lib/challenges'
 
-type PuzzleType = 'word' | 'sentence' | 'picture' | 'jigsaw'
+type PuzzleType = 'word' | 'sentence' | 'picture' | 'word-picture' | 'jigsaw'
 
 interface WordPuzzle {
   word: string
@@ -41,6 +41,24 @@ interface JigsawPuzzle {
   pieces: number
   category: string
 }
+
+/** Word + picture puzzles: each piece has an image part and one letter; assemble to spell the word (e.g. bug, pig, duck, cat) */
+interface WordPicturePuzzle {
+  word: string
+  emoji: string
+  hint: string
+}
+
+const WORD_PICTURE_PUZZLES: WordPicturePuzzle[] = [
+  { word: 'bug', emoji: '🐞', hint: 'A little red insect with spots' },
+  { word: 'pig', emoji: '🐷', hint: 'Says oink!' },
+  { word: 'duck', emoji: '🦆', hint: 'Likes water and says quack' },
+  { word: 'cat', emoji: '🐱', hint: 'A furry pet that says meow' },
+  { word: 'dog', emoji: '🐶', hint: 'A loyal friend' },
+  { word: 'sun', emoji: '☀️', hint: 'Shines in the sky' },
+  { word: 'car', emoji: '🚗', hint: 'Takes you places' },
+  { word: 'ball', emoji: '⚽', hint: 'You can kick or throw it' },
+]
 
 const WORD_PUZZLES: WordPuzzle[] = [
   { word: 'APPLE', hint: 'A red fruit', scrambled: ['A', 'P', 'P', 'L', 'E'] },
@@ -115,6 +133,12 @@ export default function PuzzleModule() {
   const [picturePuzzleIndex, setPicturePuzzleIndex] = useState(0)
   const [selectedPictureAnswer, setSelectedPictureAnswer] = useState<number | null>(null)
 
+  // Word-Picture (letter pieces) state: order[i] = letter index at slot i
+  const [wordPictureIndex, setWordPictureIndex] = useState(0)
+  const [pieceOrder, setPieceOrder] = useState<number[]>([])
+  const [draggedSlot, setDraggedSlot] = useState<number | null>(null)
+  const [tappedSlot, setTappedSlot] = useState<number | null>(null)
+
   // Game state
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -139,6 +163,15 @@ export default function PuzzleModule() {
       setShowHint(false)
     }
   }, [puzzleType, sentencePuzzleIndex])
+
+  useEffect(() => {
+    if (puzzleType === 'word-picture' && WORD_PICTURE_PUZZLES[wordPictureIndex]) {
+      const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
+      const indices = Array.from({ length: puzzle.word.length }, (_, i) => i)
+      setPieceOrder(indices.sort(() => Math.random() - 0.5))
+      setShowHint(false)
+    }
+  }, [puzzleType, wordPictureIndex])
 
   const handleLetterClick = (letter: string, index: number) => {
     if (puzzleType !== 'word') return
@@ -257,22 +290,20 @@ export default function PuzzleModule() {
     if (puzzleType === 'word') {
       const nextIndex = (wordPuzzleIndex + 1) % WORD_PUZZLES.length
       setWordPuzzleIndex(nextIndex)
-      if (nextIndex === 0) {
-        setLevel(prev => prev + 1)
-      }
+      if (nextIndex === 0) setLevel(prev => prev + 1)
     } else if (puzzleType === 'sentence') {
       const nextIndex = (sentencePuzzleIndex + 1) % SENTENCE_PUZZLES.length
       setSentencePuzzleIndex(nextIndex)
-      if (nextIndex === 0) {
-        setLevel(prev => prev + 1)
-      }
+      if (nextIndex === 0) setLevel(prev => prev + 1)
     } else if (puzzleType === 'picture') {
       const nextIndex = (picturePuzzleIndex + 1) % PICTURE_PUZZLES.length
       setPicturePuzzleIndex(nextIndex)
       setSelectedPictureAnswer(null)
-      if (nextIndex === 0) {
-        setLevel(prev => prev + 1)
-      }
+      if (nextIndex === 0) setLevel(prev => prev + 1)
+    } else if (puzzleType === 'word-picture') {
+      const nextIndex = (wordPictureIndex + 1) % WORD_PICTURE_PUZZLES.length
+      setWordPictureIndex(nextIndex)
+      if (nextIndex === 0) setLevel(prev => prev + 1)
     }
   }
 
@@ -293,7 +324,54 @@ export default function PuzzleModule() {
       setSelectedWords([])
     } else if (puzzleType === 'picture') {
       setSelectedPictureAnswer(null)
+    } else if (puzzleType === 'word-picture') {
+      const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
+      const indices = Array.from({ length: puzzle.word.length }, (_, i) => i)
+      setPieceOrder(indices.sort(() => Math.random() - 0.5))
+      setTappedSlot(null)
     }
+  }
+
+  const checkWordPictureCorrect = useCallback(() => {
+    if (puzzleType !== 'word-picture' || !WORD_PICTURE_PUZZLES[wordPictureIndex] || pieceOrder.length === 0) return
+    const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
+    const correct = pieceOrder.every((letterIndex, slot) => letterIndex === slot)
+    if (correct && !showFeedback) handleCorrect()
+  }, [puzzleType, wordPictureIndex, pieceOrder, showFeedback])
+
+  useEffect(() => {
+    checkWordPictureCorrect()
+  }, [pieceOrder, checkWordPictureCorrect])
+
+  const handlePieceDragStart = (slotIndex: number) => {
+    setDraggedSlot(slotIndex)
+  }
+  const handlePieceDragOver = (e: React.DragEvent) => e.preventDefault()
+  const handlePieceDrop = (targetSlot: number) => {
+    if (draggedSlot === null || draggedSlot === targetSlot) return
+    setPieceOrder(prev => {
+      const next = [...prev]
+      ;[next[draggedSlot!], next[targetSlot]] = [next[targetSlot], next[draggedSlot!]]
+      return next
+    })
+    setDraggedSlot(null)
+  }
+
+  const handlePieceClick = (slotIndex: number) => {
+    if (tappedSlot === null) {
+      setTappedSlot(slotIndex)
+      return
+    }
+    if (tappedSlot === slotIndex) {
+      setTappedSlot(null)
+      return
+    }
+    setPieceOrder(prev => {
+      const next = [...prev]
+      ;[next[tappedSlot], next[slotIndex]] = [next[slotIndex], next[tappedSlot]]
+      return next
+    })
+    setTappedSlot(null)
   }
 
   const speakWord = (word: string) => {
@@ -308,10 +386,17 @@ export default function PuzzleModule() {
 
   const puzzleTypes = [
     {
+      id: 'word-picture' as PuzzleType,
+      name: 'Word Picture Puzzle',
+      description: 'Put the pieces in order to spell the word!',
+      icon: <Puzzle className="w-8 h-8" />,
+      color: 'from-[#8eca40] to-[#00aeef]'
+    },
+    {
       id: 'word' as PuzzleType,
       name: 'Word Puzzle',
       description: 'Arrange letters to form words',
-      icon: <Puzzle className="w-8 h-8" />,
+      icon: <Target className="w-8 h-8" />,
       color: 'from-blue-400 to-cyan-500'
     },
     {
@@ -365,7 +450,7 @@ export default function PuzzleModule() {
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {puzzleTypes.map((type, index) => (
               <motion.div
                 key={type.id}
@@ -407,6 +492,7 @@ export default function PuzzleModule() {
   const currentWordPuzzle = WORD_PUZZLES[wordPuzzleIndex]
   const currentSentencePuzzle = SENTENCE_PUZZLES[sentencePuzzleIndex]
   const currentPicturePuzzle = PICTURE_PUZZLES[picturePuzzleIndex]
+  const currentWordPicturePuzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 p-4">
@@ -740,6 +826,136 @@ export default function PuzzleModule() {
                         <div className="flex items-center justify-center gap-2">
                           <X className="w-6 h-6" />
                           <span className="font-bold text-lg">Try again! The correct answer is: {currentPicturePuzzle.word}</span>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Word Picture Puzzle - pieces with image + letter, drag to reorder */}
+        {puzzleType === 'word-picture' && currentWordPicturePuzzle && pieceOrder.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
+          >
+            <Card className="card-kid overflow-hidden border-0 shadow-xl">
+              <CardHeader>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    Word Picture Puzzle
+                  </h2>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setShowHint(!showHint)}>
+                      <Lightbulb className="w-4 h-4 mr-2" />
+                      Hint
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={resetPuzzle}>
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {showHint && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4"
+                  >
+                    <p className="text-amber-800 dark:text-amber-200 font-semibold">
+                      💡 {currentWordPicturePuzzle.hint}
+                    </p>
+                  </motion.div>
+                )}
+
+                <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
+                  Drag pieces to reorder, or tap one piece then another to swap. Spell the word!
+                </p>
+
+                {/* Striped background area + puzzle pieces */}
+                <div
+                  className="relative rounded-2xl overflow-hidden min-h-[200px] p-6"
+                  style={{
+                    background: 'repeating-linear-gradient(135deg, #e8f5e9 0px, #e8f5e9 12px, #fff 12px, #fff 24px)',
+                  }}
+                >
+                  <div className="flex flex-wrap justify-center items-end gap-2 md:gap-4">
+                    {pieceOrder.map((letterIndex, slotIndex) => {
+                      const letter = currentWordPicturePuzzle.word[letterIndex]
+                      return (
+                        <motion.div
+                          key={`${slotIndex}-${letterIndex}`}
+                          draggable
+                          onDragStart={() => handlePieceDragStart(slotIndex)}
+                          onDragOver={handlePieceDragOver}
+                          onDrop={() => handlePieceDrop(slotIndex)}
+                          onDragEnd={() => setDraggedSlot(null)}
+                          onClick={() => handlePieceClick(slotIndex)}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: slotIndex * 0.05 }}
+                          className={`
+                            flex flex-col rounded-xl border-2 border-amber-200 dark:border-amber-800
+                            bg-white dark:bg-slate-800 shadow-lg cursor-grab active:cursor-grabbing touch-manipulation
+                            w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-36
+                            ${draggedSlot === slotIndex ? 'opacity-60 scale-95 ring-2 ring-[#00aeef]' : ''}
+                            ${tappedSlot === slotIndex ? 'ring-2 ring-[#00aeef] ring-offset-2 scale-105' : ''}
+                            hover:shadow-xl hover:scale-[1.02]
+                          `}
+                        >
+                          <div className="flex-1 flex items-center justify-center p-1 text-4xl sm:text-5xl md:text-6xl">
+                            {currentWordPicturePuzzle.emoji}
+                          </div>
+                          <div className="h-8 sm:h-10 flex items-center justify-center border-t-2 border-amber-200 dark:border-amber-700 bg-amber-50/80 dark:bg-slate-700/80 rounded-b-lg">
+                            <span className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white lowercase">
+                              {letter}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => speakWord(currentWordPicturePuzzle.word)}
+                    className="text-gray-600 dark:text-gray-400"
+                  >
+                    <Volume2 className="w-4 h-4 mr-2" />
+                    Hear the word
+                  </Button>
+                </div>
+
+                <AnimatePresence>
+                  {showFeedback && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className={`text-center p-4 rounded-xl ${
+                        isCorrect
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                          : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                      }`}
+                    >
+                      {isCorrect ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <CheckCircle className="w-6 h-6" />
+                          <span className="font-bold text-lg">Excellent! +10 points</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <X className="w-6 h-6" />
+                          <span className="font-bold text-lg">Try again!</span>
                         </div>
                       )}
                     </motion.div>
