@@ -1060,10 +1060,11 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       }
     }
 
-    // Play letter sound
+    // Say letter with example word (e.g. "A, as in apple") for clearer learning
     if (soundEnabled) {
       try {
-        audioManager.speak(`${letter} says ${getLetterSound(letter)}`)
+        const word = getLetterExampleWord(letter)
+        audioManager.speak(`${letter}, as in ${word}`)
       } catch (error) {
         console.error('Error speaking letter:', error)
       }
@@ -1088,16 +1089,16 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     }, 2500)
   }
 
-  // Get letter sound for phonics
-  const getLetterSound = (letter: string): string => {
-    const sounds: { [key: string]: string } = {
-      'A': 'ah', 'B': 'buh', 'C': 'kuh', 'D': 'duh', 'E': 'eh',
-      'F': 'fuh', 'G': 'guh', 'H': 'huh', 'I': 'ih', 'J': 'juh',
-      'K': 'kuh', 'L': 'luh', 'M': 'muh', 'N': 'nuh', 'O': 'oh',
-      'P': 'puh', 'Q': 'kwuh', 'R': 'ruh', 'S': 'suh', 'T': 'tuh',
-      'U': 'uh', 'V': 'vuh', 'W': 'wuh', 'X': 'ks', 'Y': 'yuh', 'Z': 'zuh'
+  // Example word for each letter (e.g. "A as in apple") when kid finishes writing
+  const getLetterExampleWord = (letter: string): string => {
+    const words: { [key: string]: string } = {
+      'A': 'apple', 'B': 'ball', 'C': 'cat', 'D': 'dog', 'E': 'elephant',
+      'F': 'fish', 'G': 'grape', 'H': 'house', 'I': 'ice', 'J': 'juice',
+      'K': 'kite', 'L': 'lion', 'M': 'moon', 'N': 'nest', 'O': 'orange',
+      'P': 'pig', 'Q': 'queen', 'R': 'rainbow', 'S': 'sun', 'T': 'tiger',
+      'U': 'umbrella', 'V': 'violin', 'W': 'water', 'X': 'box', 'Y': 'yellow', 'Z': 'zebra'
     }
-    return sounds[letter.toUpperCase()] || 'uh'
+    return words[letter.toUpperCase()] || 'word'
   }
 
   // Reset tracing (blank paper + redraw reference)
