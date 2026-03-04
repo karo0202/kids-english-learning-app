@@ -1010,10 +1010,10 @@ export default function SpeakingModule() {
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/learning')}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Dashboard
+                  Back to Learning
                 </Button>
               </div>
             </CardContent>
@@ -1042,7 +1042,7 @@ export default function SpeakingModule() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/learning')}
                   className="flex-shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4 mr-1 md:mr-2" />

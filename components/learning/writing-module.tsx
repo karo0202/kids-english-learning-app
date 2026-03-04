@@ -1430,10 +1430,10 @@ export default function WritingModule() {
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/learning')}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Dashboard
+                  Back to Learning
                 </Button>
               </div>
             </CardContent>
@@ -1453,7 +1453,7 @@ export default function WritingModule() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/learning')}
                 className="flex-shrink-0 px-2 md:px-3 text-xs md:text-sm dark:border-slate-600 dark:text-white"
               >
                 <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />

@@ -5698,7 +5698,7 @@ export default function GrammarModule() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/learning')}
                 className="hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl transition-all hover:scale-110"
               >
                 <ArrowLeft className="w-5 h-5" />

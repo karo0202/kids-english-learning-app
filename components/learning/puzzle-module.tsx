@@ -341,11 +341,11 @@ export default function PuzzleModule() {
           >
             <Button
               variant="ghost"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push('/learning')}
               className="mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back to Learning
             </Button>
             <div className="text-center mb-8">
               <motion.div
