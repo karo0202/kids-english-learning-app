@@ -131,7 +131,7 @@ export default function LearningPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#E94E6A]"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00aeef]"></div>
       </div>
     )
   }
@@ -163,14 +163,14 @@ export default function LearningPage() {
   const renderLockBadge = (moduleId: string) => {
     if (!moduleIsLocked(moduleId)) return null
     return (
-      <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] text-white text-xs font-semibold shadow-lg flex items-center gap-1.5 z-10 ring-2 ring-white/20">
+      <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white text-xs font-semibold shadow-lg flex items-center gap-1.5 z-10 ring-2 ring-white/20">
         <Lock className="w-3.5 h-3.5" />
         Premium
       </div>
     )
   }
 
-  const cardBase = 'cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#4D4E67] bg-white/90 dark:bg-[#4D4E67]/90 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-black/20 hover:shadow-2xl hover:shadow-[#E94E6A]/10 dark:hover:shadow-[#E94E6A]/15 hover:border-[#E94E6A]/30 dark:hover:border-[#E94E6A]/40 hover:-translate-y-1 transition-all duration-300'
+  const cardBase = 'cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#003366] bg-white/90 dark:bg-[#003366]/40 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-black/20 hover:shadow-2xl hover:shadow-[#00aeef]/15 dark:hover:shadow-[#00aeef]/20 hover:border-[#00aeef]/40 dark:hover:border-[#00aeef]/50 hover:-translate-y-1 transition-all duration-300'
   const iconBase = 'w-20 h-20 md:w-24 md:h-24 mx-auto mb-3 md:mb-4 rounded-2xl flex items-center justify-center shadow-xl ring-4 ring-black/5 dark:ring-white/5 relative overflow-hidden'
 
   // Helper function to handle module click
@@ -187,14 +187,14 @@ export default function LearningPage() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md mx-4">
           <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#E94E6A]/20 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#00aeef]/20 flex items-center justify-center">
               <span className="text-3xl">👶</span>
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">No Children Added</h2>
             <p className="text-gray-600 mb-6">Please add a child first to start learning!</p>
             <Button 
               onClick={() => router.push('/add-child')}
-              className="bg-[#E94E6A] hover:bg-[#8A3D5B] text-white"
+              className="bg-[#00aeef] hover:bg-[#003366] text-white"
             >
               Add Your First Child
             </Button>
@@ -208,7 +208,7 @@ export default function LearningPage() {
   if (!selectedChild) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#E94E6A]"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00aeef]"></div>
       </div>
     )
   }
@@ -216,7 +216,7 @@ export default function LearningPage() {
   return (
     <div className="min-h-screen relative">
       {/* Header */}
-      <div className="bg-white/80 dark:bg-[#3F435C]/95 backdrop-blur-xl border-b border-slate-200/80 dark:border-[#4D4E67] sticky top-0 z-50 shadow-sm relative">
+      <div className="bg-white/80 dark:bg-[#003366]/95 backdrop-blur-xl border-b border-slate-200/80 dark:border-[#003366] sticky top-0 z-50 shadow-sm relative">
         <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -230,8 +230,8 @@ export default function LearningPage() {
               </Button>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-5 h-5 text-[#E94E6A] dark:text-[#FFA578] hidden sm:block" />
-                  <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-800 to-[#8A3D5B] dark:from-white dark:to-[#FFA578] bg-clip-text text-transparent tracking-tight">Learning Center</h1>
+                  <Sparkles className="w-5 h-5 text-[#00aeef] dark:text-[#8eca40] hidden sm:block" />
+                  <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">Learning Center</h1>
                   {selectedChild?.ageGroup && (
                     <AgeGroupBadge ageGroup={selectedChild.ageGroup as AgeGroup} />
                   )}
@@ -293,8 +293,8 @@ export default function LearningPage() {
                     }}
                     className={`whitespace-nowrap text-sm md:text-base rounded-xl ${
                       selectedChild?.id === child.id 
-                        ? 'bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] text-white shadow-lg' 
-                        : 'hover:bg-[#E94E6A]/10 dark:hover:bg-[#E94E6A]/20'
+                        ? 'bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white shadow-lg' 
+                        : 'hover:bg-[#00aeef]/10 dark:hover:bg-[#00aeef]/20'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function LearningPage() {
         {/* Learning Modules */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8A3D5B] dark:from-white dark:to-[#FFA578] bg-clip-text text-transparent tracking-tight">Choose your learning path</h2>
+            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">Choose your learning path</h2>
             <Button
               variant="outline"
               size="sm"
@@ -330,7 +330,7 @@ export default function LearningPage() {
             </Button>
           </div>
           {accessRefreshedMessage && (
-            <p className="text-sm text-[#E94E6A] dark:text-[#FFA578] mb-4 font-medium">
+            <p className="text-sm text-[#00aeef] dark:text-[#8eca40] mb-4 font-medium">
               Subscription updated. Your access has been refreshed.
             </p>
           )}
@@ -349,7 +349,7 @@ export default function LearningPage() {
                 {renderLockBadge('reading')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#4D4E67] to-[#8A3D5B]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#003366] to-[#8c0066]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -359,9 +359,9 @@ export default function LearningPage() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Stories, vocabulary, and comprehension
                   </p>
-                  <div className="text-sm font-medium text-[#8A3D5B] dark:text-[#E94E6A] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#8c0066] dark:text-[#00aeef] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Reading
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -382,7 +382,7 @@ export default function LearningPage() {
                 {renderLockBadge('counting')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#00aeef]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -392,9 +392,9 @@ export default function LearningPage() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Foundation, Elementary & Intermediate — numbers, shapes, operations, fractions
                   </p>
-                  <div className="text-sm font-medium text-[#E94E6A] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -413,7 +413,7 @@ export default function LearningPage() {
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#E94E6A] to-[#FFA578]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#00aeef] to-[#8eca40]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -421,9 +421,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Writing</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Letter tracing and spelling practice</p>
-                  <div className="text-sm font-medium text-[#E94E6A] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Writing
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -443,7 +443,7 @@ export default function LearningPage() {
                 {renderLockBadge('speaking')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#00aeef]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -453,9 +453,9 @@ export default function LearningPage() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Pronunciation and conversation
                   </p>
-                  <div className="text-sm font-medium text-[#8A3D5B] dark:text-[#E94E6A] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#8c0066] dark:text-[#00aeef] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Speaking
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -474,7 +474,7 @@ export default function LearningPage() {
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#E94E6A] to-[#FFA578]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#00aeef] to-[#8eca40]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -482,9 +482,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Games</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Fun interactive learning games</p>
-                  <div className="text-sm font-medium text-[#E94E6A] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Playing
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -504,7 +504,7 @@ export default function LearningPage() {
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#4D4E67] to-[#8A3D5B]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#003366] to-[#8c0066]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -512,9 +512,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Grammar</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Master grammar rules and language</p>
-                  <div className="text-sm font-medium text-[#8A3D5B] dark:text-[#E94E6A] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#8c0066] dark:text-[#00aeef] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Learning
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -535,7 +535,7 @@ export default function LearningPage() {
                 {renderLockBadge('puzzle')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#FFA578] to-[#E94E6A]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#8eca40] to-[#00aeef]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -545,9 +545,9 @@ export default function LearningPage() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Solve word and sentence puzzles
                   </p>
-                  <div className="text-sm font-medium text-[#E94E6A] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Solving
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -568,7 +568,7 @@ export default function LearningPage() {
                 {renderLockBadge('alphabet-coloring')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8A3D5B] to-[#FFA578]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#8eca40]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -578,9 +578,9 @@ export default function LearningPage() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Color letters and learn alphabet
                   </p>
-                  <div className="text-sm font-medium text-[#8A3D5B] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#8c0066] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Coloring
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -601,7 +601,7 @@ export default function LearningPage() {
                 {renderLockBadge('challenges')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#E94E6A] to-[#8A3D5B]`}
+                    className={`${iconBase} bg-gradient-to-br from-[#00aeef] to-[#8c0066]`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -609,9 +609,9 @@ export default function LearningPage() {
                   </motion.div>
                   <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Challenges</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Complete daily challenges</p>
-                  <div className="text-sm font-medium text-[#E94E6A] dark:text-[#FFA578] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     View Challenges
-                    <span className="text-[#E94E6A]">→</span>
+                    <span className="text-[#00aeef]">→</span>
                   </div>
                 </CardContent>
               </Card>
@@ -632,21 +632,21 @@ export default function LearningPage() {
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#8A3D5B] dark:text-[#E94E6A]">0</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#00aeef]">0</div>
               <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Lessons</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#E94E6A] dark:text-[#FFA578]">0</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#00aeef] dark:text-[#8eca40]">0</div>
               <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">New Words</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#8A3D5B] dark:text-[#FFA578]">0</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#8eca40]">0</div>
               <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Minutes</div>
             </motion.div>
           </div>

@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fef3f0' },
-    { media: '(prefers-color-scheme: dark)', color: '#3F435C' },
+    { media: '(prefers-color-scheme: light)', color: '#e8f4fc' },
+    { media: '(prefers-color-scheme: dark)', color: '#003366' },
   ],
   appleWebApp: {
     capable: true,
@@ -83,8 +83,8 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#3F435C" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#fef3f0" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#003366" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#e8f4fc" media="(prefers-color-scheme: light)" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -116,18 +116,18 @@ export default function RootLayout({
               {/* Skip to main content link for accessibility */}
               <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#E94E6A] focus:text-white focus:rounded-md focus:outline-none focus:ring-2 focus:ring-[#E94E6A]"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#00aeef] focus:text-white focus:rounded-md focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
               >
                 Skip to main content
               </a>
-              <div className="min-h-screen relative m-0 p-0 bg-gradient-to-br from-[#fef3f0] via-[#fde8e4] to-[#fce4dc] dark:from-[#3F435C] dark:via-[#4D4E67] dark:to-[#3F435C] overflow-hidden">
-                {/* Embers palette orbs - app-wide */}
+              <div className="min-h-screen relative m-0 p-0 bg-gradient-to-br from-[#e8f4fc] via-[#f0f9e8] to-[#fefce8] dark:from-[#003366] dark:via-[#002244] dark:to-[#003366] overflow-hidden">
+                {/* Kids 3 palette orbs - app-wide */}
                 <div className="fixed inset-0 overflow-hidden pointer-events-none -z-[1]" aria-hidden>
                   <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-white/50 to-transparent dark:from-white/[0.06] dark:to-transparent" />
-                  <div className="absolute top-20 left-10 w-80 h-80 bg-[#E94E6A]/20 dark:bg-[#E94E6A]/15 rounded-full blur-3xl" />
-                  <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8A3D5B]/20 dark:bg-[#8A3D5B]/20 rounded-full blur-3xl" />
-                  <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-[#FFA578]/25 dark:bg-[#FFA578]/15 rounded-full blur-3xl" />
-                  <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-[#4D4E67]/15 dark:bg-[#4D4E67]/25 rounded-full blur-3xl" />
+                  <div className="absolute top-20 left-10 w-80 h-80 bg-[#00aeef]/20 dark:bg-[#00aeef]/15 rounded-full blur-3xl" />
+                  <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8c0066]/15 dark:bg-[#8c0066]/20 rounded-full blur-3xl" />
+                  <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-[#8eca40]/20 dark:bg-[#8eca40]/10 rounded-full blur-3xl" />
+                  <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-[#003366]/10 dark:bg-[#003366]/25 rounded-full blur-3xl" />
                 </div>
                 <main id="main-content" className="relative z-0">
                   {children}

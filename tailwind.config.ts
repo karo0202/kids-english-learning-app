@@ -21,6 +21,13 @@ const config: Config = {
         xl: 'calc(var(--radius) + 4px)',
       },
       colors: {
+        kids3: {
+          darkBlue: '#003366',
+          cyan: '#00aeef',
+          lime: '#8eca40',
+          magenta: '#8c0066',
+          yellow: '#f8f800',
+        },
         embers: {
           bg: '#3F435C',
           muted: '#4D4E67',

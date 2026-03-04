@@ -5705,7 +5705,7 @@ export default function GrammarModule() {
   return (
     <div className="min-h-screen">
       {/* Header - Embers premium */}
-      <div className="bg-white/80 dark:bg-[#3F435C]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-[#4D4E67] sticky top-0 z-50 shadow-lg">
+      <div className="bg-white/80 dark:bg-[#003366]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-[#003366] sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -5713,21 +5713,21 @@ export default function GrammarModule() {
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/learning')}
-                className="hover:bg-[#E94E6A]/10 dark:hover:bg-[#E94E6A]/20 rounded-xl transition-all hover:scale-105 text-slate-700 dark:text-slate-200"
+                className="hover:bg-[#00aeef]/10 dark:hover:bg-[#00aeef]/20 rounded-xl transition-all hover:scale-105 text-slate-700 dark:text-slate-200"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="p-2.5 bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A] rounded-xl shadow-lg ring-2 ring-black/5 dark:ring-white/5">
+                  <div className="p-2.5 bg-gradient-to-br from-[#8c0066] to-[#00aeef] rounded-xl shadow-lg ring-2 ring-black/5 dark:ring-white/5">
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
-                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-[#8A3D5B] via-[#E94E6A] to-[#FFA578] bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-[#8c0066] via-[#00aeef] to-[#8eca40] bg-clip-text text-transparent">
                     English Grammar
                   </h1>
                 </div>
                 <p className="text-slate-600 dark:text-slate-400 text-sm mt-1 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#E94E6A]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#00aeef]" />
                   Learn grammar from A to Z
                 </p>
               </div>
@@ -5737,13 +5737,13 @@ export default function GrammarModule() {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="px-4 py-2 bg-[#FFA578]/20 dark:bg-[#FFA578]/15 rounded-xl border border-[#E94E6A]/30 dark:border-[#E94E6A]/40 shadow-md"
+                  className="px-4 py-2 bg-[#8eca40]/20 dark:bg-[#8eca40]/15 rounded-xl border border-[#00aeef]/30 dark:border-[#00aeef]/40 shadow-md"
                 >
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-[#E94E6A]" />
+                    <Trophy className="w-5 h-5 text-[#00aeef]" />
                     <div>
                       <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold">Score</div>
-                      <div className="text-xl font-bold text-[#8A3D5B] dark:text-[#FFA578]">
+                      <div className="text-xl font-bold text-[#8c0066] dark:text-[#8eca40]">
                         {score} / {totalExercises}
                       </div>
                     </div>
@@ -5753,13 +5753,13 @@ export default function GrammarModule() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="px-4 py-2 bg-[#4D4E67]/10 dark:bg-[#4D4E67]/20 rounded-xl border border-[#4D4E67]/30 dark:border-[#4D4E67]/50 shadow-md"
+                  className="px-4 py-2 bg-[#003366]/10 dark:bg-[#003366]/20 rounded-xl border border-[#003366]/30 dark:border-[#003366]/50 shadow-md"
                 >
                   <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-[#8A3D5B] dark:text-[#FFA578]" />
+                    <Award className="w-5 h-5 text-[#8c0066] dark:text-[#8eca40]" />
                     <div>
                       <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold">Progress</div>
-                      <div className="text-xl font-bold text-[#4D4E67] dark:text-slate-200">
+                      <div className="text-xl font-bold text-[#003366] dark:text-slate-200">
                         {currentExercise + 1} / {totalExercises}
                       </div>
                     </div>
@@ -5783,8 +5783,8 @@ export default function GrammarModule() {
                   onClick={() => setFilter('all')}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     filter === 'all'
-                      ? 'bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] text-white shadow-lg shadow-[#E94E6A]/25'
-                      : 'bg-white/90 dark:bg-[#4D4E67]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#4D4E67] hover:border-[#E94E6A]/40 hover:shadow-md'
+                      ? 'bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white shadow-lg shadow-[#00aeef]/25'
+                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
                   }`}
                 >
                   All Topics
@@ -5795,8 +5795,8 @@ export default function GrammarModule() {
                   onClick={() => setFilter('beginner')}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     filter === 'beginner'
-                      ? 'bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] text-white shadow-lg shadow-[#E94E6A]/25'
-                      : 'bg-white/90 dark:bg-[#4D4E67]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#4D4E67] hover:border-[#E94E6A]/40 hover:shadow-md'
+                      ? 'bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white shadow-lg shadow-[#00aeef]/25'
+                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
                   }`}
                 >
                   Beginner
@@ -5807,8 +5807,8 @@ export default function GrammarModule() {
                   onClick={() => setFilter('intermediate')}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     filter === 'intermediate'
-                      ? 'bg-gradient-to-r from-[#E94E6A] to-[#FFA578] text-white shadow-lg shadow-[#FFA578]/25'
-                      : 'bg-white/90 dark:bg-[#4D4E67]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#4D4E67] hover:border-[#E94E6A]/40 hover:shadow-md'
+                      ? 'bg-gradient-to-r from-[#00aeef] to-[#8eca40] text-white shadow-lg shadow-[#8eca40]/25'
+                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
                   }`}
                 >
                   Intermediate
@@ -5819,8 +5819,8 @@ export default function GrammarModule() {
                   onClick={() => setFilter('advanced')}
                   className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                     filter === 'advanced'
-                      ? 'bg-gradient-to-r from-[#4D4E67] to-[#8A3D5B] text-white shadow-lg'
-                      : 'bg-white/90 dark:bg-[#4D4E67]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#4D4E67] hover:border-[#E94E6A]/40 hover:shadow-md'
+                      ? 'bg-gradient-to-r from-[#003366] to-[#8c0066] text-white shadow-lg'
+                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
                   }`}
                 >
                   Advanced
@@ -5844,20 +5844,20 @@ export default function GrammarModule() {
                   <Card
                     className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-all duration-300 h-full ${
                       completedTopics.has(topic.id) 
-                        ? 'border-[#8A3D5B]/40 dark:border-[#8A3D5B]/50 bg-white/95 dark:bg-[#4D4E67]/40 shadow-xl shadow-[#E94E6A]/10 ring-2 ring-[#E94E6A]/20' 
-                        : 'border-slate-200/80 dark:border-[#4D4E67] bg-white/90 dark:bg-[#4D4E67]/30 hover:border-[#E94E6A]/40 hover:shadow-xl hover:shadow-[#E94E6A]/10'
+                        ? 'border-[#8c0066]/40 dark:border-[#8c0066]/50 bg-white/95 dark:bg-[#003366]/40 shadow-xl shadow-[#00aeef]/10 ring-2 ring-[#00aeef]/20' 
+                        : 'border-slate-200/80 dark:border-[#003366] bg-white/90 dark:bg-[#003366]/30 hover:border-[#00aeef]/40 hover:shadow-xl hover:shadow-[#00aeef]/10'
                     }`}
                     onClick={() => handleTopicSelect(topic)}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#E94E6A]/0 via-[#FFA578]/0 to-[#8A3D5B]/0 group-hover:from-[#E94E6A]/5 group-hover:via-transparent group-hover:to-[#8A3D5B]/5 transition-all duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#00aeef]/0 via-[#8eca40]/0 to-[#8c0066]/0 group-hover:from-[#00aeef]/5 group-hover:via-transparent group-hover:to-[#8c0066]/5 transition-all duration-300" />
                     {completedTopics.has(topic.id) && (
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#E94E6A]/20 to-transparent rounded-bl-full" />
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00aeef]/20 to-transparent rounded-bl-full" />
                     )}
                     <CardContent className="p-6 relative z-10">
                       <div className="flex items-start gap-4 mb-4">
                         <motion.div
                           whileHover={{ scale: 1.08 }}
-                          className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
+                          className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8c0066] to-[#00aeef] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
                         >
                           <TopicIcon className="w-7 h-7" strokeWidth={2} />
                         </motion.div>
@@ -5870,23 +5870,23 @@ export default function GrammarModule() {
                               <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="flex items-center gap-1 px-2 py-1 bg-[#E94E6A]/15 dark:bg-[#E94E6A]/25 rounded-full"
+                                className="flex items-center gap-1 px-2 py-1 bg-[#00aeef]/15 dark:bg-[#00aeef]/25 rounded-full"
                               >
-                                <CheckCircle className="w-3.5 h-3.5 text-[#E94E6A]" />
-                                <span className="text-xs font-semibold text-[#8A3D5B] dark:text-[#FFA578]">Done</span>
+                                <CheckCircle className="w-3.5 h-3.5 text-[#00aeef]" />
+                                <span className="text-xs font-semibold text-[#8c0066] dark:text-[#8eca40]">Done</span>
                               </motion.div>
                             )}
                           </div>
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <p className="text-sm font-medium text-[#4D4E67] dark:text-slate-400">
+                            <p className="text-sm font-medium text-[#003366] dark:text-slate-400">
                               {topic.category}
                             </p>
                             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
                               topic.difficulty === 'beginner' 
-                                ? 'bg-[#8A3D5B]/20 text-[#8A3D5B] dark:bg-[#FFA578]/20 dark:text-[#FFA578]' :
+                                ? 'bg-[#8c0066]/20 text-[#8c0066] dark:bg-[#8eca40]/20 dark:text-[#8eca40]' :
                                 topic.difficulty === 'intermediate' 
-                                ? 'bg-[#E94E6A]/20 text-[#E94E6A] dark:bg-[#E94E6A]/30 dark:text-[#FFA578]' :
-                                'bg-[#4D4E67]/30 text-[#4D4E67] dark:text-slate-300'
+                                ? 'bg-[#00aeef]/20 text-[#00aeef] dark:bg-[#00aeef]/30 dark:text-[#8eca40]' :
+                                'bg-[#003366]/30 text-[#003366] dark:text-slate-300'
                             }`}>
                               {topic.difficulty}
                             </span>
@@ -5896,12 +5896,12 @@ export default function GrammarModule() {
                       <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed line-clamp-2">
                         {topic.description}
                       </p>
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-[#4D4E67]/60">
-                        <div className="flex items-center gap-2 text-sm font-medium text-[#8A3D5B] dark:text-[#FFA578]">
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-[#003366]/60">
+                        <div className="flex items-center gap-2 text-sm font-medium text-[#8c0066] dark:text-[#8eca40]">
                           <BookOpen className="w-4 h-4" />
                           <span>{topic.exercises.length} exercises</span>
                         </div>
-                        <motion.div whileHover={{ x: 4 }} className="text-[#E94E6A]">
+                        <motion.div whileHover={{ x: 4 }} className="text-[#00aeef]">
                           <ArrowLeft className="w-5 h-5 rotate-180" />
                         </motion.div>
                       </div>
@@ -5921,10 +5921,10 @@ export default function GrammarModule() {
               transition={{ duration: 0.4 }}
               className="mb-6"
             >
-              <Card className="mb-6 border border-slate-200/80 dark:border-[#4D4E67] shadow-2xl bg-white/95 dark:bg-[#4D4E67]/30 overflow-hidden relative rounded-3xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#E94E6A]/10 dark:bg-[#E94E6A]/5 rounded-full blur-3xl -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FFA578]/10 dark:bg-[#FFA578]/5 rounded-full blur-3xl -ml-24 -mb-24" />
-                <CardHeader className="relative z-10 pb-6 border-b border-slate-200/80 dark:border-[#4D4E67]/60">
+              <Card className="mb-6 border border-slate-200/80 dark:border-[#003366] shadow-2xl bg-white/95 dark:bg-[#003366]/30 overflow-hidden relative rounded-3xl">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00aeef]/10 dark:bg-[#00aeef]/5 rounded-full blur-3xl -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#8eca40]/10 dark:bg-[#8eca40]/5 rounded-full blur-3xl -ml-24 -mb-24" />
+                <CardHeader className="relative z-10 pb-6 border-b border-slate-200/80 dark:border-[#003366]/60">
                   <div className="flex items-start gap-6">
                     {(() => {
                       const TopicIconInner = TOPIC_ICONS[selectedTopic.id] ?? BookOpen
@@ -5933,7 +5933,7 @@ export default function GrammarModule() {
                           initial={{ scale: 0, rotate: -180 }}
                           animate={{ scale: 1, rotate: 0 }}
                           transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                          className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
+                          className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#8c0066] to-[#00aeef] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
                         >
                           <TopicIconInner className="w-8 h-8" strokeWidth={2} />
                         </motion.div>
@@ -5948,14 +5948,14 @@ export default function GrammarModule() {
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.2 }}
-                          className="px-3 py-1 bg-[#8A3D5B]/20 text-[#8A3D5B] dark:bg-[#E94E6A]/20 dark:text-[#FFA578] text-xs font-bold rounded-full"
+                          className="px-3 py-1 bg-[#8c0066]/20 text-[#8c0066] dark:bg-[#00aeef]/20 dark:text-[#8eca40] text-xs font-bold rounded-full"
                         >
                           {selectedTopic.difficulty.toUpperCase()}
                         </motion.span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-[#E94E6A]" />
-                        <p className="text-[#4D4E67] dark:text-slate-400 font-semibold text-lg">
+                        <Sparkles className="w-4 h-4 text-[#00aeef]" />
+                        <p className="text-[#003366] dark:text-slate-400 font-semibold text-lg">
                           {selectedTopic.category}
                         </p>
                       </div>
@@ -5970,10 +5970,10 @@ export default function GrammarModule() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="mb-8 p-6 bg-slate-50/80 dark:bg-[#4D4E67]/20 rounded-2xl border border-slate-200/80 dark:border-[#4D4E67]/50 shadow-md"
+                    className="mb-8 p-6 bg-slate-50/80 dark:bg-[#003366]/20 rounded-2xl border border-slate-200/80 dark:border-[#003366]/50 shadow-md"
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-gradient-to-br from-[#8A3D5B] to-[#E94E6A] rounded-lg shadow-md text-white">
+                      <div className="p-2 bg-gradient-to-br from-[#8c0066] to-[#00aeef] rounded-lg shadow-md text-white">
                         <BookOpen className="w-5 h-5" />
                       </div>
                       <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
@@ -5983,10 +5983,10 @@ export default function GrammarModule() {
                         variant="outline"
                         size="icon"
                         onClick={() => premiumTTS.speak(selectedTopic.explanation, { voice: 'clear', rate: 0.75, volume: 1 })}
-                        className="flex-shrink-0 rounded-full border-2 border-[#E94E6A]/40 hover:bg-[#E94E6A]/10"
+                        className="flex-shrink-0 rounded-full border-2 border-[#00aeef]/40 hover:bg-[#00aeef]/10"
                         title="Listen to definition"
                       >
-                        <Volume2 className="w-5 h-5 text-[#E94E6A]" />
+                        <Volume2 className="w-5 h-5 text-[#00aeef]" />
                       </Button>
                     </div>
                     <p className="text-slate-700 dark:text-slate-200 text-lg leading-relaxed">
@@ -6021,7 +6021,7 @@ export default function GrammarModule() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           transition={{ delay: 0.3 + idx * 0.05, type: "spring", stiffness: 100 }}
                           whileHover={{ scale: 1.02, y: -2 }}
-                          className="group relative p-4 bg-white dark:bg-[#4D4E67]/30 rounded-xl border-2 border-slate-200 dark:border-[#4D4E67] hover:border-[#E94E6A]/50 dark:hover:border-[#E94E6A]/60 shadow-md hover:shadow-xl transition-all duration-300"
+                          className="group relative p-4 bg-white dark:bg-[#003366]/30 rounded-xl border-2 border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60 shadow-md hover:shadow-xl transition-all duration-300"
                         >
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-1">
@@ -6043,7 +6043,7 @@ export default function GrammarModule() {
                             </Button>
                           </div>
                           {/* Hover effect overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#E94E6A]/0 to-[#FFA578]/0 group-hover:from-[#E94E6A]/5 group-hover:to-[#FFA578]/5 rounded-xl transition-all duration-300 pointer-events-none" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#00aeef]/0 to-[#8eca40]/0 group-hover:from-[#00aeef]/5 group-hover:to-[#8eca40]/5 rounded-xl transition-all duration-300 pointer-events-none" />
                         </motion.div>
                       ))}
                     </div>
@@ -6061,7 +6061,7 @@ export default function GrammarModule() {
                           setShowResult(false)
                         }
                       }}
-                      className="flex-1 bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] hover:from-[#8A3D5B] hover:to-[#E94E6A] hover:shadow-[#E94E6A]/30 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                      className="flex-1 bg-gradient-to-r from-[#8c0066] to-[#00aeef] hover:from-[#8c0066] hover:to-[#00aeef] hover:shadow-[#00aeef]/30 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                       disabled={selectedTopic.exercises.length === 0}
                     >
                       <Play className="w-5 h-5 mr-2" />
@@ -6070,7 +6070,7 @@ export default function GrammarModule() {
                     <Button
                       onClick={() => setSelectedTopic(null)}
                       variant="outline"
-                      className="px-6 border-2 border-slate-300 dark:border-[#4D4E67] hover:border-[#E94E6A]/50 dark:hover:border-[#E94E6A]/50 rounded-xl font-semibold transition-all"
+                      className="px-6 border-2 border-slate-300 dark:border-[#003366] hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/50 rounded-xl font-semibold transition-all"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
@@ -6129,8 +6129,8 @@ export default function GrammarModule() {
                                     ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                                     : 'border-gray-200 dark:border-gray-700'
                                   : selectedAnswer === option
-                                  ? 'border-[#E94E6A] bg-[#E94E6A]/10 dark:bg-[#E94E6A]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#E94E6A]/50 dark:hover:border-[#E94E6A]/60'
+                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
                               }`}
                               style={{ pointerEvents: 'auto', zIndex: 10 }}
                             >
@@ -6143,7 +6143,7 @@ export default function GrammarModule() {
                                       ? 'border-red-500 bg-red-500'
                                       : 'border-gray-300'
                                     : selectedAnswer === option
-                                    ? 'border-[#E94E6A] bg-[#E94E6A]'
+                                    ? 'border-[#00aeef] bg-[#00aeef]'
                                     : 'border-gray-300'
                                 }`}>
                                   {showResult && option === currentExerciseData.correctAnswer && (
@@ -6181,8 +6181,8 @@ export default function GrammarModule() {
                                     ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                                     : 'border-gray-200 dark:border-gray-700'
                                   : selectedAnswer === option
-                                  ? 'border-[#E94E6A] bg-[#E94E6A]/10 dark:bg-[#E94E6A]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#E94E6A]/50 dark:hover:border-[#E94E6A]/60'
+                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
                               }`}
                               style={{ pointerEvents: 'auto', zIndex: 10 }}
                             >
@@ -6213,8 +6213,8 @@ export default function GrammarModule() {
                                     ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                                     : 'border-gray-200 dark:border-gray-700'
                                   : selectedAnswer === option
-                                  ? 'border-[#E94E6A] bg-[#E94E6A]/10 dark:bg-[#E94E6A]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#E94E6A]/50 dark:hover:border-[#E94E6A]/60'
+                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
                               }`}
                               style={{ pointerEvents: 'auto', zIndex: 10 }}
                             >
@@ -6262,7 +6262,7 @@ export default function GrammarModule() {
                         <Button
                           onClick={handleSubmitAnswer}
                           disabled={!selectedAnswer}
-                          className="flex-1 bg-gradient-to-r from-[#8A3D5B] to-[#E94E6A] text-white hover:opacity-95"
+                          className="flex-1 bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white hover:opacity-95"
                           size="lg"
                         >
                           Check Answer

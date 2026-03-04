@@ -27,7 +27,7 @@
   }
 }
 
-/* Embers color palette: #3F435C, #4D4E67, #8A3D5B, #E94E6A, #FFA578 */
+/* Kids 3 color palette: #003366 dark blue, #00aeef cyan, #8eca40 lime, #8c0066 magenta, #f8f800 yellow */
 /* Mobile viewport fixes - prevent line at top on refresh */
 html {
   margin: 0;
@@ -65,6 +65,11 @@ body {
 
 @layer base {
   :root {
+    --kids3-darkBlue: #003366;
+    --kids3-cyan: #00aeef;
+    --kids3-lime: #8eca40;
+    --kids3-magenta: #8c0066;
+    --kids3-yellow: #f8f800;
     --embers-bg: #3F435C;
     --embers-muted: #4D4E67;
     --embers-plum: #8A3D5B;
