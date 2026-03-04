@@ -21,6 +21,14 @@ const config: Config = {
         xl: 'calc(var(--radius) + 4px)',
       },
       colors: {
+        embers: {
+          bg: '#3F435C',
+          muted: '#4D4E67',
+          plum: '#8A3D5B',
+          coral: '#E94E6A',
+          peach: '#FFA578',
+          gray: '#BBBBBB',
+        },
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: {
