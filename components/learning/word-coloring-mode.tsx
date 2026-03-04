@@ -22,7 +22,9 @@ export default function WordColoringMode({
   onSave,
   onLetterClick
 }: WordColoringModeProps) {
+  const canvasBackRef = useRef<HTMLCanvasElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [selectedColor, setSelectedColor] = useState(colorPalette[0])
   const [penSize, setPenSize] = useState(20)
   const [isDrawing, setIsDrawing] = useState(false)
@@ -32,38 +34,65 @@ export default function WordColoringMode({
 
   const letters = word.toUpperCase().split('')
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
-
-    // Clear canvas
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-    // Draw bubble letter outline for current letter (use word/currentLetterIndex so this effect doesn't run every render and wipe paint)
-    const currentLetter = word.toUpperCase()[currentLetterIndex] ?? ''
-    ctx.font = 'bold 120px Arial'
+  const drawLetterOutline = (ctx: CanvasRenderingContext2D, w: number, h: number, char: string) => {
+    const size = Math.min(w, h) * 0.7
+    ctx.font = `bold ${Math.round(size)}px Arial`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.strokeStyle = '#000000'
-    ctx.lineWidth = 5
-    
-    ctx.strokeText(currentLetter, canvas.width / 2, canvas.height / 2)
-    
-    // Load saved coloring if available
+    ctx.lineWidth = Math.max(4, Math.round(size / 30))
+    ctx.strokeText(char, w / 2, h / 2)
+  }
+
+  const drawLetterMask = (ctx: CanvasRenderingContext2D, w: number, h: number, char: string) => {
+    const size = Math.min(w, h) * 0.7
+    ctx.font = `bold ${Math.round(size)}px Arial`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = '#ffffff'
+    ctx.fillText(char, w / 2, h / 2)
+  }
+
+  const initCanvases = () => {
+    const back = canvasBackRef.current
+    const front = canvasRef.current
+    const container = containerRef.current
+    if (!back || !front || !container) return
+    const w = container.offsetWidth
+    const h = container.offsetHeight
+    if (w <= 0 || h <= 0) return
+
+    back.width = w
+    back.height = h
+    front.width = w
+    front.height = h
+
+    const backCtx = back.getContext('2d')
+    const frontCtx = front.getContext('2d')
+    if (!backCtx || !frontCtx) return
+
+    const currentLetter = word.toUpperCase()[currentLetterIndex] ?? ''
+    backCtx.fillStyle = '#ffffff'
+    backCtx.fillRect(0, 0, w, h)
+    drawLetterOutline(backCtx, w, h, currentLetter)
+
+    frontCtx.clearRect(0, 0, w, h)
     if (savedData?.wordTracingData && savedData.wordTracingData[currentLetterIndex]) {
       const img = new Image()
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        frontCtx?.drawImage(img, 0, 0, w, h)
       }
       img.src = savedData.wordTracingData[currentLetterIndex]
     }
+  }
+
+  useEffect(() => {
+    initCanvases()
+    const container = containerRef.current
+    if (!container) return
+    const ro = new ResizeObserver(() => initCanvases())
+    ro.observe(container)
+    return () => ro.disconnect()
   }, [currentLetterIndex, word, savedData])
 
   const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -93,22 +122,32 @@ export default function WordColoringMode({
     if (!ctx) return
 
     const { x, y } = getCoordinates(e)
-    
     const size = isErasing ? Math.max(20, penSize + 8) : penSize
     const half = size / 2
 
     if (isErasing) {
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.lineWidth = size
+      ctx.fillStyle = 'rgba(0,0,0,1)'
     } else {
-      ctx.globalCompositeOperation = 'source-atop'
+      ctx.globalCompositeOperation = 'source-over'
       ctx.fillStyle = selectedColor
-      ctx.lineWidth = size
     }
-
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
     ctx.fillRect(x - half, y - half, size, size)
+  }
+
+  const maskFrontToLetter = () => {
+    const front = canvasRef.current
+    if (!front) return
+    const ctx = front.getContext('2d')
+    if (!ctx) return
+    const w = front.width
+    const h = front.height
+    const currentLetter = letters[currentLetterIndex] ?? ''
+    ctx.globalCompositeOperation = 'destination-in'
+    drawLetterMask(ctx, w, h, currentLetter)
+    ctx.globalCompositeOperation = 'source-over'
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -122,6 +161,7 @@ export default function WordColoringMode({
   }
 
   const handleMouseUp = () => {
+    if (isDrawing && !isErasing) maskFrontToLetter()
     setIsDrawing(false)
   }
 
@@ -140,34 +180,33 @@ export default function WordColoringMode({
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
+    if (isDrawing && !isErasing) maskFrontToLetter()
     setIsDrawing(false)
   }
 
   const handleClear = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
+    const front = canvasRef.current
+    if (!front) return
+    const ctx = front.getContext('2d')
     if (!ctx) return
-
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    
-    // Redraw letter outline
-    const currentLetter = letters[currentLetterIndex]
-    ctx.font = 'bold 120px Arial'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.strokeStyle = '#000000'
-    ctx.lineWidth = 5
-    ctx.strokeText(currentLetter, canvas.width / 2, canvas.height / 2)
+    ctx.clearRect(0, 0, front.width, front.height)
   }
 
   const handleSave = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const back = canvasBackRef.current
+    const front = canvasRef.current
+    if (!back || !front) return
 
-    const imageData = canvas.toDataURL('image/png')
+    const w = back.width
+    const h = back.height
+    const off = document.createElement('canvas')
+    off.width = w
+    off.height = h
+    const offCtx = off.getContext('2d')
+    if (!offCtx) return
+    offCtx.drawImage(back, 0, 0)
+    offCtx.drawImage(front, 0, 0)
+    const imageData = off.toDataURL('image/png')
     const existingData = savedData?.wordTracingData || {}
     
     onSave({
@@ -318,18 +357,28 @@ export default function WordColoringMode({
         )}
 
         <div className="relative bg-white dark:bg-gray-900 rounded-lg border-4 border-gray-300 dark:border-gray-600 p-4">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-96 touch-none cursor-crosshair"
-            style={{ maxHeight: '500px' }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          />
+          <div
+            ref={containerRef}
+            className="relative w-full rounded overflow-hidden"
+            style={{ height: 'min(500px, 70vw)' }}
+          >
+            <canvas
+              ref={canvasBackRef}
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              aria-hidden
+            />
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full touch-none cursor-crosshair"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            />
+          </div>
         </div>
       </div>
 
