@@ -22,7 +22,6 @@ export default function WordColoringMode({
   onSave,
   onLetterClick
 }: WordColoringModeProps) {
-  const canvasBackRef = useRef<HTMLCanvasElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedColor, setSelectedColor] = useState(colorPalette[0])
@@ -53,37 +52,43 @@ export default function WordColoringMode({
     ctx.fillText(char, w / 2, h / 2)
   }
 
-  const initCanvases = () => {
-    const back = canvasBackRef.current
-    const front = canvasRef.current
+  const redrawCanvas = (restoreSaved = false) => {
+    const canvas = canvasRef.current
     const container = containerRef.current
-    if (!back || !front || !container) return
+    if (!canvas || !container) return
     const w = container.offsetWidth
     const h = container.offsetHeight
     if (w <= 0 || h <= 0) return
 
-    back.width = w
-    back.height = h
-    front.width = w
-    front.height = h
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    const backCtx = back.getContext('2d')
-    const frontCtx = front.getContext('2d')
-    if (!backCtx || !frontCtx) return
-
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, w, h)
     const currentLetter = word.toUpperCase()[currentLetterIndex] ?? ''
-    backCtx.fillStyle = '#ffffff'
-    backCtx.fillRect(0, 0, w, h)
-    drawLetterOutline(backCtx, w, h, currentLetter)
+    drawLetterOutline(ctx, w, h, currentLetter)
 
-    frontCtx.clearRect(0, 0, w, h)
-    if (savedData?.wordTracingData && savedData.wordTracingData[currentLetterIndex]) {
+    if (restoreSaved && savedData?.wordTracingData?.[currentLetterIndex]) {
       const img = new Image()
       img.onload = () => {
-        frontCtx?.drawImage(img, 0, 0, w, h)
+        ctx.globalCompositeOperation = 'source-over'
+        ctx.drawImage(img, 0, 0, w, h)
       }
       img.src = savedData.wordTracingData[currentLetterIndex]
     }
+  }
+
+  const initCanvases = () => {
+    const canvas = canvasRef.current
+    const container = containerRef.current
+    if (!canvas || !container) return
+    const w = container.offsetWidth
+    const h = container.offsetHeight
+    if (w <= 0 || h <= 0) return
+
+    canvas.width = w
+    canvas.height = h
+    redrawCanvas(true)
   }
 
   useEffect(() => {
@@ -137,17 +142,18 @@ export default function WordColoringMode({
     ctx.fillRect(x - half, y - half, size, size)
   }
 
-  const maskFrontToLetter = () => {
-    const front = canvasRef.current
-    if (!front) return
-    const ctx = front.getContext('2d')
+  const redrawLetterOutlineOnly = () => {
+    const canvas = canvasRef.current
+    const container = containerRef.current
+    if (!canvas || !container) return
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
-    const w = front.width
-    const h = front.height
+    const w = canvas.width
+    const h = canvas.height
     const currentLetter = letters[currentLetterIndex] ?? ''
-    ctx.globalCompositeOperation = 'destination-in'
-    drawLetterMask(ctx, w, h, currentLetter)
     ctx.globalCompositeOperation = 'source-over'
+    ctx.strokeStyle = '#000000'
+    drawLetterOutline(ctx, w, h, currentLetter)
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -160,8 +166,24 @@ export default function WordColoringMode({
     draw(e)
   }
 
+  const maskDrawingToLetter = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const w = canvas.width
+    const h = canvas.height
+    const currentLetter = letters[currentLetterIndex] ?? ''
+    ctx.globalCompositeOperation = 'destination-in'
+    drawLetterMask(ctx, w, h, currentLetter)
+    ctx.globalCompositeOperation = 'source-over'
+  }
+
   const handleMouseUp = () => {
-    if (isDrawing && !isErasing) maskFrontToLetter()
+    if (isDrawing) {
+      if (isErasing) redrawLetterOutlineOnly()
+      else maskDrawingToLetter()
+    }
     setIsDrawing(false)
   }
 
@@ -180,33 +202,21 @@ export default function WordColoringMode({
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
-    if (isDrawing && !isErasing) maskFrontToLetter()
+    if (isDrawing) {
+      if (isErasing) redrawLetterOutlineOnly()
+      else maskDrawingToLetter()
+    }
     setIsDrawing(false)
   }
 
   const handleClear = () => {
-    const front = canvasRef.current
-    if (!front) return
-    const ctx = front.getContext('2d')
-    if (!ctx) return
-    ctx.clearRect(0, 0, front.width, front.height)
+    redrawCanvas(false)
   }
 
   const handleSave = () => {
-    const back = canvasBackRef.current
-    const front = canvasRef.current
-    if (!back || !front) return
-
-    const w = back.width
-    const h = back.height
-    const off = document.createElement('canvas')
-    off.width = w
-    off.height = h
-    const offCtx = off.getContext('2d')
-    if (!offCtx) return
-    offCtx.drawImage(back, 0, 0)
-    offCtx.drawImage(front, 0, 0)
-    const imageData = off.toDataURL('image/png')
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const imageData = canvas.toDataURL('image/png')
     const existingData = savedData?.wordTracingData || {}
     
     onSave({
@@ -362,11 +372,6 @@ export default function WordColoringMode({
             className="relative w-full rounded overflow-hidden"
             style={{ height: 'min(500px, 70vw)' }}
           >
-            <canvas
-              ref={canvasBackRef}
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              aria-hidden
-            />
             <canvas
               ref={canvasRef}
               className="absolute inset-0 w-full h-full touch-none cursor-crosshair"
