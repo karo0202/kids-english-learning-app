@@ -344,50 +344,29 @@ export async function linkSubscriptionToUser(
     return { success: false, error: 'Supabase not configured' }
   }
 
-  console.log('[linkSubscriptionToUser] START', { transactionId, newUserId })
-
   const { data: sub, error: fetchErr } = await supabase
     .from('subscriptions')
-    .select('id, user_id, status, user_email')
+    .select('id, user_id')
     .eq('transaction_id', transactionId)
     .single()
-
-  console.log('[linkSubscriptionToUser] Found subscription', { sub, fetchErr: fetchErr?.message })
 
   if (fetchErr || !sub) {
     return { success: false, error: 'Subscription not found for this transaction' }
   }
 
-  const { data: updatedSub, error: subUpdateErr } = await supabase
+  const { error: subUpdateErr } = await supabase
     .from('subscriptions')
     .update({ user_id: newUserId })
     .eq('transaction_id', transactionId)
-    .select('id, user_id')
-    .single()
-
-  console.log('[linkSubscriptionToUser] Updated subscription', { updatedSub, subUpdateErr: subUpdateErr?.message })
 
   if (subUpdateErr) {
     return { success: false, error: 'Failed to update subscription: ' + subUpdateErr.message }
   }
 
-  const { error: txUpdateErr } = await supabase
+  await supabase
     .from('payment_transactions')
     .update({ user_id: newUserId })
     .eq('transaction_id', transactionId)
-
-  if (txUpdateErr) {
-    console.log('[linkSubscriptionToUser] tx update error (non-fatal)', { txUpdateErr: txUpdateErr.message })
-  }
-
-  // Verify the update worked
-  const { data: verifySub } = await supabase
-    .from('subscriptions')
-    .select('id, user_id, status')
-    .eq('transaction_id', transactionId)
-    .single()
-
-  console.log('[linkSubscriptionToUser] VERIFY after update', { verifySub })
 
   return { success: true }
 }
@@ -432,10 +411,8 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
     }
   }
 
-  console.log('[getUserSubscriptionStatus] START', { userId, userEmail })
-
   // 1) Look up by user_id first (status case-insensitive: active, Active, ACTIVE)
-  // Use simpler query without join to avoid foreign key issues
+  // Note: Don't use subscription_plans join - it can cause queries to fail silently
   let { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('id, user_id, user_email, plan_id, status, transaction_id, expires_at, created_at')
@@ -444,8 +421,6 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
-
-  console.log('[getUserSubscriptionStatus] Query by user_id result', { subscription, error: error?.message })
 
   // 2) Fallback: if no subscription by user_id and we have email, try by user_email (column must exist)
   let foundByEmail = false
@@ -461,15 +436,12 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
         .limit(1)
         .maybeSingle()
       
-      console.log('[getUserSubscriptionStatus] Query by email result', { subByEmail, emailErr: emailErr?.message })
-      
       if (!emailErr && subByEmail) {
         subscription = subByEmail
         error = null
         foundByEmail = true
         // Auto-repair: link this subscription to current user_id so future lookups work without email
         if (subByEmail.user_id !== userId && subByEmail.transaction_id) {
-          console.log('[getUserSubscriptionStatus] Auto-repairing user_id', { old: subByEmail.user_id, new: userId })
           await supabase
             .from('subscriptions')
             .update({ user_id: userId })
@@ -480,13 +452,12 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
             .eq('transaction_id', subByEmail.transaction_id)
         }
       }
-    } catch (e) {
-      console.log('[getUserSubscriptionStatus] Email lookup error', { error: e instanceof Error ? e.message : e })
+    } catch {
+      // user_email column may not exist yet; ignore
     }
   }
 
   if (error || !subscription) {
-    console.warn('[getUserSubscriptionStatus] No active subscription found', { userId, triedEmail: !!userEmail, foundByEmail, supabaseError: error?.message })
     return {
       hasActiveSubscription: false,
       subscription: null,
@@ -500,7 +471,6 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
   const isExpired = expiresAt && expiresAt < new Date()
 
   if (isExpired) {
-    console.log('[getUserSubscriptionStatus] Subscription expired', { expiresAt: subscription.expires_at, now: new Date().toISOString() })
     return {
       hasActiveSubscription: false,
       subscription: null,
@@ -508,8 +478,6 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
       trialDaysRemaining: 0,
     }
   }
-
-  console.log('[getUserSubscriptionStatus] SUCCESS - Active subscription found', { id: subscription.id, planId: subscription.plan_id, foundByEmail })
 
   return {
     hasActiveSubscription: true,
