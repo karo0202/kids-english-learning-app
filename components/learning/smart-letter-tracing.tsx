@@ -480,14 +480,92 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     lastPointRef.current = { x, y }
   }
 
-  // Validate overall shape. For now we use a VERY forgiving rule:
-  // - child just needs to draw a non-trivial path (to avoid taps / tiny dots).
-  // This avoids marking good letters as wrong and keeps the experience positive.
+  // Validate overall shape: we require the drawing to roughly follow the guide,
+  // but with generous tolerance so kids' letters are still accepted.
   const validateLetterShape = (drawnPath: Array<{ x: number; y: number }>): boolean => {
-    if (drawnPath.length < 10) return false
-    return true
+    const canvas = canvasRef.current
+    if (!canvas) return false
 
-    // --- Legacy distance / letter-specific logic below (kept for future tuning, currently unused) ---
+    // Ignore tiny scribbles
+    if (drawnPath.length < 15) return false
+
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+    const canvasSize = canvas.width / dpr || 300
+
+    const boundsWidth = letterPath.bounds.maxX - letterPath.bounds.minX
+    const boundsHeight = letterPath.bounds.maxY - letterPath.bounds.minY
+    const padding = 10
+
+    const scale = Math.min(
+      (canvasSize - padding * 2) / boundsWidth,
+      (canvasSize - padding * 2) / boundsHeight
+    )
+
+    const offsetX = (canvasSize - boundsWidth * scale) / 2
+    const offsetY = (canvasSize - boundsHeight * scale) / 2
+
+    // Normalize drawn path into the same 0–100 space as LETTER_PATHS
+    const normalizedDrawn: Array<{ x: number; y: number }> = drawnPath.map((point) => ({
+      x: (point.x - offsetX) / scale + letterPath.bounds.minX,
+      y: (point.y - offsetY) / scale + letterPath.bounds.minY,
+    }))
+
+    // Sample guide strokes into a dense set of points
+    const guidePoints: Array<{ x: number; y: number }> = []
+    letterPath.strokes.forEach((stroke) => {
+      for (let i = 0; i < stroke.length - 1; i++) {
+        const a = stroke[i]
+        const b = stroke[i + 1]
+        const steps = 6
+        for (let t = 0; t <= steps; t++) {
+          const r = t / steps
+          guidePoints.push({
+            x: a.x + (b.x - a.x) * r,
+            y: a.y + (b.y - a.y) * r,
+          })
+        }
+      }
+    })
+
+    // Require at least half the path to stay near the letter's bounding box
+    const margin = 15
+    const inBoundsCount = normalizedDrawn.filter(
+      (p) =>
+        p.x >= letterPath.bounds.minX - margin &&
+        p.x <= letterPath.bounds.maxX + margin &&
+        p.y >= letterPath.bounds.minY - margin &&
+        p.y <= letterPath.bounds.maxY + margin
+    ).length
+    if (inBoundsCount < normalizedDrawn.length * 0.5) return false
+
+    // Distance-based similarity to the guide
+    let matchedPoints = 0
+    let totalDistance = 0
+    const MAX_DISTANCE = 22 // forgiving for kids
+
+    normalizedDrawn.forEach((drawnPoint) => {
+      let minDist = Infinity
+      guidePoints.forEach((guidePoint) => {
+        const dx = drawnPoint.x - guidePoint.x
+        const dy = drawnPoint.y - guidePoint.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < minDist) minDist = dist
+      })
+      if (minDist <= MAX_DISTANCE) {
+        matchedPoints++
+        totalDistance += minDist
+      }
+    })
+
+    const matchRatio = matchedPoints / normalizedDrawn.length
+    const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
+
+    // Generous thresholds: shape must mostly follow the guide,
+    // but doesn't need to be perfect.
+    const MIN_MATCH = 0.4
+    const MAX_AVG_DISTANCE = 16
+
+    return matchRatio >= MIN_MATCH && avgDistance <= MAX_AVG_DISTANCE
     const letterUpper = letter.toUpperCase()
     const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_DISTANCE
     const relaxedMinRatio = letterUpper === 'A' ? 0.5 : 0.6
