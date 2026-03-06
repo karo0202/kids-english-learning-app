@@ -396,6 +396,7 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
     .maybeSingle()
 
   // 2) Fallback: if no subscription by user_id and we have email, try by user_email (column must exist)
+  let foundByEmail = false
   if ((error || !subscription) && userEmail) {
     try {
       const { data: subByEmail, error: emailErr } = await supabase
@@ -409,6 +410,18 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
       if (!emailErr && subByEmail) {
         subscription = subByEmail
         error = null
+        foundByEmail = true
+        // Auto-repair: link this subscription to current user_id so future lookups work without email
+        if (subByEmail.user_id !== userId && subByEmail.transaction_id) {
+          await supabase
+            .from('subscriptions')
+            .update({ user_id: userId })
+            .eq('id', subByEmail.id)
+          await supabase
+            .from('payment_transactions')
+            .update({ user_id: userId })
+            .eq('transaction_id', subByEmail.transaction_id)
+        }
       }
     } catch {
       // user_email column may not exist yet; ignore

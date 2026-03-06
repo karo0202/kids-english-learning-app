@@ -334,6 +334,11 @@ export default function LearningPage() {
               Subscription updated. Your access has been refreshed.
             </p>
           )}
+          {Object.keys(moduleAccessMap).some((id) => moduleAccessMap[id]?.isLocked) && (
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+              Just activated? Tap <strong>Refresh access</strong> above to unlock premium modules.
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

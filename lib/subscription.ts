@@ -187,9 +187,9 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
 
   try {
     let token = await getAuthToken(force)
-    // If Firebase auth hasn't hydrated yet, wait briefly and retry once.
+    // If Firebase auth hasn't hydrated yet (common on mobile/slow load), wait and retry once.
     if (!token) {
-      await new Promise((r) => setTimeout(r, 1200))
+      await new Promise((r) => setTimeout(r, 2500))
       token = await getAuthToken(true)
     }
     if (!token) {
@@ -197,11 +197,23 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
       return cachedStatus
     }
 
-    const response = await fetch('/api/subscription/status', {
+    let response = await fetch('/api/subscription/status', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
+
+    // On 401 (e.g. token rejected or expired), clear cache and retry once with a fresh token
+    if (response.status === 401) {
+      cachedStatus = null
+      lastStatusFetch = 0
+      const retryToken = await getAuthToken(true)
+      if (retryToken) {
+        response = await fetch('/api/subscription/status', {
+          headers: { Authorization: `Bearer ${retryToken}` },
+        })
+      }
+    }
 
     if (!response.ok) {
       throw new Error('Failed to fetch subscription status')
