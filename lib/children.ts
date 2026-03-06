@@ -1,13 +1,16 @@
 import { getFirestoreClient } from '@/lib/firebase'
 import {
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDocs,
   onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
   Unsubscribe,
+  where,
 } from 'firebase/firestore'
 import { AgeGroup, getAgeGroup } from './age-utils'
 
@@ -367,71 +370,118 @@ export function clearCurrentChild(): void {
 
 // Force migration function - can be called manually to consolidate children
 export async function forceMigrateChildrenByEmail(parentId: string, userEmail: string): Promise<Child[]> {
-  console.log(`🔍 FAST SYNC: Starting for email: ${userEmail}, parentId: ${parentId}`)
+  console.log(`🔍 SYNC: Starting for email: ${userEmail}, parentId: ${parentId}`)
   
   loadDeletedChildren()
+  const emailLower = userEmail.toLowerCase()
+  const childMap = new Map<string, Child>()
   
-  // 1. Get ALL children from localStorage
-  let allLocalChildren: Child[] = []
+  // 1. Get ALL children from localStorage (any parentId)
   try {
     const raw = localStorage.getItem('children')
     if (raw) {
-      allLocalChildren = JSON.parse(raw)
-        .filter((c: Child) => !deletedChildren.has(c.id))
-      console.log(`📦 Found ${allLocalChildren.length} local children`)
+      const allLocal: Child[] = JSON.parse(raw)
+      console.log(`📦 Found ${allLocal.length} total children in localStorage`)
+      for (const child of allLocal) {
+        if (deletedChildren.has(child.id)) continue
+        // Add to map with updated parentId and email
+        childMap.set(child.id, normalizeChild({
+          ...child,
+          parentId: parentId,
+          parentEmail: userEmail
+        }, userEmail))
+      }
+      console.log(`📦 Added ${childMap.size} local children to sync`)
     }
   } catch (error) {
     console.error('Error reading localStorage:', error)
   }
   
-  // 2. Migrate local children to current user
-  const migratedLocal = allLocalChildren.map(child => normalizeChild({
-    ...child,
-    parentId: parentId,
-    parentEmail: userEmail
-  }, userEmail))
-  
   const firestore = getFirestoreClient()
   if (firestore) {
-    // 3. Upload local children in PARALLEL (much faster)
-    if (migratedLocal.length > 0) {
-      console.log(`📤 Uploading ${migratedLocal.length} children...`)
-      const uploadPromises = migratedLocal.map(child => {
+    // 2. Upload local children to Firestore first
+    if (childMap.size > 0) {
+      console.log(`📤 Uploading ${childMap.size} local children to cloud...`)
+      const uploadPromises = Array.from(childMap.values()).map(child => {
         const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
         return setDoc(docRef, {
           ...child,
           parentId,
           parentEmail: userEmail,
           updatedAt: serverTimestamp(),
-        }, { merge: true }).catch(err => console.error(`Upload failed for ${child.name}:`, err))
+        }, { merge: true }).catch(err => console.error(`Upload failed:`, err))
       })
       await Promise.all(uploadPromises)
       console.log(`✅ Upload complete`)
     }
     
-    // 4. Download children from Firestore (just current parentId - fast!)
-    const firestoreChildren = await getChildrenFromFirestore(parentId, userEmail)
-    console.log(`📥 Found ${firestoreChildren.length} children in cloud`)
-    
-    // 5. Merge local and cloud
-    const childMap = new Map<string, Child>()
-    for (const child of migratedLocal) {
-      childMap.set(child.id, child)
-    }
-    for (const child of firestoreChildren) {
-      childMap.set(child.id, child)
+    // 3. Search ALL children collections by email using collectionGroup (FAST!)
+    try {
+      console.log(`🔍 Searching cloud for children with email: ${userEmail}`)
+      const childrenGroupRef = collectionGroup(firestore, 'children')
+      const emailQuery = query(childrenGroupRef, where('parentEmail', '==', userEmail))
+      const snapshot = await getDocs(emailQuery)
+      
+      console.log(`📥 Found ${snapshot.docs.length} children in cloud with this email`)
+      
+      for (const childDoc of snapshot.docs) {
+        if (deletedChildren.has(childDoc.id)) continue
+        const childData = childDoc.data()
+        const child = normalizeChild({
+          ...childData,
+          id: childDoc.id,
+          parentId: parentId,
+          parentEmail: userEmail
+        }, userEmail)
+        childMap.set(child.id, child)
+        
+        // Move to correct parentId if needed
+        const oldParentId = childData.parentId
+        if (oldParentId && oldParentId !== parentId) {
+          try {
+            // Copy to new location
+            const newDocRef = doc(firestore, 'parents', parentId, 'children', child.id)
+            await setDoc(newDocRef, {
+              ...child,
+              updatedAt: serverTimestamp(),
+            }, { merge: true })
+            // Delete from old location
+            const oldDocRef = doc(firestore, 'parents', oldParentId, 'children', childDoc.id)
+            await deleteDoc(oldDocRef)
+            console.log(`🚚 Moved ${child.name} to current account`)
+          } catch (err) {
+            console.error(`Failed to move child:`, err)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Cloud search failed:', error)
+      // Fallback: just get from current parentId
+      const directRef = collection(firestore, 'parents', parentId, 'children')
+      const snapshot = await getDocs(directRef)
+      for (const childDoc of snapshot.docs) {
+        if (deletedChildren.has(childDoc.id)) continue
+        const childData = childDoc.data()
+        childMap.set(childDoc.id, normalizeChild({
+          ...childData,
+          id: childDoc.id,
+          parentId,
+          parentEmail: userEmail
+        }, userEmail))
+      }
     }
     
     const allChildren = Array.from(childMap.values())
-    console.log(`🎯 SYNC COMPLETE: ${allChildren.length} children`)
+    console.log(`🎯 SYNC COMPLETE: ${allChildren.length} total children`)
     
     updateChildrenCache(parentId, allChildren)
     return allChildren
   }
   
-  console.log(`🎯 SYNC COMPLETE (local only): ${migratedLocal.length} children`)
-  updateChildrenCache(parentId, migratedLocal)
-  return migratedLocal
+  const allChildren = Array.from(childMap.values())
+  console.log(`🎯 SYNC COMPLETE (local only): ${allChildren.length} children`)
+  updateChildrenCache(parentId, allChildren)
+  return allChildren
 }
 
 // Fast function to get children from Firestore (just current parentId)
