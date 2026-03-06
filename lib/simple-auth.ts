@@ -103,12 +103,28 @@ export async function getAuthToken(forceRefresh = false): Promise<string | null>
   try {
     const { getAuthClient } = await import('@/lib/firebase')
     const client = getAuthClient()
-    if (client?.auth?.currentUser) {
-      const { getIdToken } = await import('firebase/auth')
-      const token = await getIdToken(client.auth.currentUser, forceRefresh)
-      if (token) {
-        localStorage.setItem('accessToken', token)
-        return token
+    if (client?.auth) {
+      const { getIdToken, onAuthStateChanged } = await import('firebase/auth')
+
+      // Firebase auth can be slow to hydrate after refresh/redirect.
+      // Wait briefly for currentUser if needed so subscription checks don't mis-detect "free".
+      const user =
+        client.auth.currentUser ||
+        (await new Promise<NonNullable<typeof client.auth.currentUser> | null>((resolve) => {
+          const timeout = setTimeout(() => resolve(null), 2500)
+          const unsubscribe = onAuthStateChanged(client.auth, (u) => {
+            clearTimeout(timeout)
+            unsubscribe()
+            resolve(u)
+          })
+        }))
+
+      if (user) {
+        const token = await getIdToken(user, forceRefresh)
+        if (token) {
+          localStorage.setItem('accessToken', token)
+          return token
+        }
       }
     }
   } catch (error) {

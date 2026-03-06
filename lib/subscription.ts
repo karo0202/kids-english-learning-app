@@ -186,7 +186,12 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
   }
 
   try {
-    const token = await getAuthToken()
+    let token = await getAuthToken(force)
+    // If Firebase auth hasn't hydrated yet, wait briefly and retry once.
+    if (!token) {
+      await new Promise((r) => setTimeout(r, 1200))
+      token = await getAuthToken(true)
+    }
     if (!token) {
       cachedStatus = getSubscriptionStatus()
       return cachedStatus
