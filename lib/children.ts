@@ -376,15 +376,21 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
   const emailLower = userEmail.toLowerCase()
   const childMap = new Map<string, Child>()
   
-  // 1. Get ALL children from localStorage (any parentId)
+  // 1. Get ALL children from localStorage (any parentId, any email)
   try {
     const raw = localStorage.getItem('children')
+    console.log(`📦 localStorage 'children' raw:`, raw ? `${raw.length} chars` : 'null')
     if (raw) {
       const allLocal: Child[] = JSON.parse(raw)
-      console.log(`📦 Found ${allLocal.length} total children in localStorage`)
+      console.log(`📦 Parsed ${allLocal.length} children from localStorage`)
+      allLocal.forEach((c, i) => console.log(`  ${i}: ${c.name} (id: ${c.id?.substring(0,10)}..., parentId: ${c.parentId?.substring(0,10)}...)`))
+      
       for (const child of allLocal) {
-        if (deletedChildren.has(child.id)) continue
-        // Add to map with updated parentId and email
+        if (deletedChildren.has(child.id)) {
+          console.log(`🚫 Skipping deleted child: ${child.name}`)
+          continue
+        }
+        // Add ALL local children to map with updated parentId and email
         childMap.set(child.id, normalizeChild({
           ...child,
           parentId: parentId,
@@ -392,9 +398,29 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
         }, userEmail))
       }
       console.log(`📦 Added ${childMap.size} local children to sync`)
+    } else {
+      console.log(`⚠️ No children in localStorage`)
     }
   } catch (error) {
     console.error('Error reading localStorage:', error)
+  }
+  
+  // Also check for children stored with 'currentChild' key
+  try {
+    const currentChildRaw = localStorage.getItem('currentChild')
+    if (currentChildRaw) {
+      const currentChild = JSON.parse(currentChildRaw)
+      if (currentChild?.id && !childMap.has(currentChild.id) && !deletedChildren.has(currentChild.id)) {
+        console.log(`📦 Found currentChild not in main list: ${currentChild.name}`)
+        childMap.set(currentChild.id, normalizeChild({
+          ...currentChild,
+          parentId: parentId,
+          parentEmail: userEmail
+        }, userEmail))
+      }
+    }
+  } catch (error) {
+    console.error('Error reading currentChild:', error)
   }
   
   const firestore = getFirestoreClient()
@@ -419,10 +445,20 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
     try {
       console.log(`🔍 Searching cloud for children with email: ${userEmail}`)
       const childrenGroupRef = collectionGroup(firestore, 'children')
-      const emailQuery = query(childrenGroupRef, where('parentEmail', '==', userEmail))
-      const snapshot = await getDocs(emailQuery)
       
-      console.log(`📥 Found ${snapshot.docs.length} children in cloud with this email`)
+      // Search with exact email
+      const emailQuery = query(childrenGroupRef, where('parentEmail', '==', userEmail))
+      let snapshot = await getDocs(emailQuery)
+      console.log(`📥 Found ${snapshot.docs.length} children with exact email match`)
+      
+      // Also try lowercase email (in case stored differently)
+      if (snapshot.docs.length === 0 && userEmail !== emailLower) {
+        const lowerQuery = query(childrenGroupRef, where('parentEmail', '==', emailLower))
+        snapshot = await getDocs(lowerQuery)
+        console.log(`📥 Found ${snapshot.docs.length} children with lowercase email match`)
+      }
+      
+      console.log(`📥 Total found in cloud: ${snapshot.docs.length} children`)
       
       for (const childDoc of snapshot.docs) {
         if (deletedChildren.has(childDoc.id)) continue
@@ -456,11 +492,18 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
       }
     } catch (error) {
       console.error('Cloud search failed:', error)
-      // Fallback: just get from current parentId
+    }
+    
+    // 4. Also directly check current parentId's children (in case collectionGroup failed or missed some)
+    try {
+      console.log(`📂 Also checking direct parentId collection...`)
       const directRef = collection(firestore, 'parents', parentId, 'children')
-      const snapshot = await getDocs(directRef)
-      for (const childDoc of snapshot.docs) {
+      const directSnapshot = await getDocs(directRef)
+      console.log(`📂 Found ${directSnapshot.docs.length} children under current parentId`)
+      
+      for (const childDoc of directSnapshot.docs) {
         if (deletedChildren.has(childDoc.id)) continue
+        if (childMap.has(childDoc.id)) continue // Already have it
         const childData = childDoc.data()
         childMap.set(childDoc.id, normalizeChild({
           ...childData,
@@ -469,10 +512,13 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
           parentEmail: userEmail
         }, userEmail))
       }
+    } catch (error) {
+      console.error('Direct collection check failed:', error)
     }
     
     const allChildren = Array.from(childMap.values())
     console.log(`🎯 SYNC COMPLETE: ${allChildren.length} total children`)
+    allChildren.forEach(c => console.log(`  - ${c.name} (${c.age} years)`))
     
     updateChildrenCache(parentId, allChildren)
     return allChildren
