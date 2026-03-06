@@ -3,13 +3,13 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getUserSession, clearUserSession } from '@/lib/simple-auth'
-import { getChildrenSync, addChild, deleteChild, Child, subscribeToChildren } from '@/lib/children'
+import { getChildrenSync, addChild, deleteChild, Child, subscribeToChildren, forceMigrateChildrenByEmail } from '@/lib/children'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 
@@ -22,6 +22,8 @@ export default function DashboardPage() {
   const [newChildName, setNewChildName] = useState('')
   const [newChildAge, setNewChildAge] = useState<number | ''>('')
   const [subscription, setSubscription] = useState<any>(null)
+  const [syncing, setSyncing] = useState(false)
+  const [syncMessage, setSyncMessage] = useState<string | null>(null)
 
   // Debug: Log whenever children state changes
   useEffect(() => {
@@ -200,6 +202,27 @@ const handleDeleteChild = async (childId: string) => {
     }
   }
 }
+
+  const handleSyncChildren = async () => {
+    if (!user?.email) {
+      setSyncMessage('Please log in first')
+      return
+    }
+    setSyncing(true)
+    setSyncMessage(null)
+    try {
+      const migrated = await forceMigrateChildrenByEmail(user.id, user.email)
+      setChildren(migrated)
+      setSyncMessage(`Synced! Found ${migrated.length} child${migrated.length !== 1 ? 'ren' : ''} across all devices.`)
+      setTimeout(() => setSyncMessage(null), 5000)
+    } catch (error) {
+      console.error('Sync error:', error)
+      setSyncMessage('Sync failed. Please try again.')
+      setTimeout(() => setSyncMessage(null), 4000)
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -451,16 +474,34 @@ const handleDeleteChild = async (childId: string) => {
 
         {/* Children Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">Your Children</h2>
-            <Button 
-              onClick={() => setIsAddingChild(true)}
-              className="btn-primary-kid"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Child
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleSyncChildren}
+                disabled={syncing}
+                variant="outline"
+                size="sm"
+                className="text-sm"
+                title="Sync children across all your devices"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                {syncing ? 'Syncing...' : 'Sync devices'}
+              </Button>
+              <Button 
+                onClick={() => setIsAddingChild(true)}
+                className="btn-primary-kid"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Child
+              </Button>
+            </div>
           </div>
+          {syncMessage && (
+            <p className={`text-sm mb-4 ${syncMessage.includes('failed') ? 'text-red-600' : 'text-green-600'}`}>
+              {syncMessage}
+            </p>
+          )}
 
           {isAddingChild && (
             <motion.div
