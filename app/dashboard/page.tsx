@@ -209,11 +209,15 @@ const handleDeleteChild = async (childId: string) => {
       return
     }
     setSyncing(true)
-    setSyncMessage(null)
+    setSyncMessage(`Syncing for ${user.email}...`)
     try {
       const migrated = await forceMigrateChildrenByEmail(user.id, user.email)
       setChildren(migrated)
-      setSyncMessage(`Synced! Found ${migrated.length} child${migrated.length !== 1 ? 'ren' : ''} across all devices.`)
+      if (migrated.length === 0) {
+        setSyncMessage(`No children found for ${user.email}. Add a child first!`)
+      } else {
+        setSyncMessage(`Synced ${migrated.length} child${migrated.length !== 1 ? 'ren' : ''} for ${user.email}`)
+      }
       setTimeout(() => setSyncMessage(null), 5000)
     } catch (error) {
       console.error('Sync error:', error)

@@ -469,91 +469,45 @@ async function getChildrenFromFirestore(parentId: string, userEmail: string): Pr
 async function refreshChildrenFromFirestore(parentId: string, userEmail?: string) {
   const firestore = getFirestoreClient()
   if (!firestore) {
-    console.log('Firestore not available, skipping refresh for parentId:', parentId)
+    console.log('Firestore not available')
     return
   }
 
   try {
-    console.log('Refreshing children from Firestore for parentId:', parentId, 'email:', userEmail)
+    console.log('Quick refresh for parentId:', parentId)
     
-    // First, try to get children by parentId
+    // Fast: just get children under current parentId
     const collectionRef = collection(firestore, 'parents', parentId, 'children')
     const snapshot = await getDocs(collectionRef)
-    let firestoreChildren = snapshot.docs
+    const firestoreChildren = snapshot.docs
       .map(docSnapshot => normalizeChild(docSnapshot.data(), userEmail))
-      .filter(child => !deletedChildren.has(child.id)) // EXCLUDE deleted children
-    console.log(`Loaded ${firestoreChildren.length} children from Firestore for parentId: ${parentId} (after filtering deleted)`)
+      .filter(child => !deletedChildren.has(child.id))
     
-    // Always search by email to find any children that might be under a different parentId
-    // This consolidates all children for the same email under the correct parentId
-    if (userEmail) {
-      console.log(`Searching Firestore by email to consolidate children: ${userEmail}`)
-      const childrenByEmail = await findChildrenInFirestoreByEmail(userEmail, parentId)
-      if (childrenByEmail.length > 0) {
-        console.log(`Found ${childrenByEmail.length} children in Firestore by email`)
-        // Merge: combine children found by parentId and by email, removing duplicates
-        const existingIds = new Set(firestoreChildren.map(c => c.id))
-        const newFromEmail = childrenByEmail.filter(c => !existingIds.has(c.id))
-        firestoreChildren = [...firestoreChildren, ...newFromEmail]
-        console.log(`Consolidated ${firestoreChildren.length} total children (${newFromEmail.length} found by email)`)
-      }
+    console.log(`Found ${firestoreChildren.length} children in Firestore`)
+    
+    // Merge with local children
+    const localChildren = loadLocalChildren(parentId, userEmail)
+    const firestoreIds = new Set(firestoreChildren.map(c => c.id))
+    const localOnly = localChildren.filter(c => !firestoreIds.has(c.id))
+    const merged = [...firestoreChildren, ...localOnly]
+    
+    // Upload local-only children to Firestore (in parallel, non-blocking)
+    if (localOnly.length > 0 && userEmail) {
+      console.log(`Uploading ${localOnly.length} local children to Firestore`)
+      Promise.all(localOnly.map(child => {
+        const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
+        return setDoc(docRef, {
+          ...child,
+          parentId,
+          parentEmail: userEmail,
+          updatedAt: serverTimestamp(),
+        }, { merge: true }).catch(() => {})
+      }))
     }
     
-    // If Firestore has children, prioritize them (they're the source of truth across devices)
-    if (firestoreChildren.length > 0) {
-      // Merge with localStorage - Firestore is source of truth, but keep local-only children too
-      const localChildren = loadLocalChildren(parentId, userEmail)
-      const firestoreIds = new Set(firestoreChildren.map(c => c.id))
-      const localOnly = localChildren.filter(c => !firestoreIds.has(c.id))
-      const merged = [...firestoreChildren, ...localOnly]
-      console.log(`Merged: ${merged.length} (Firestore: ${firestoreChildren.length}, Local-only: ${localOnly.length})`)
-      updateChildrenCache(parentId, merged)
-    } else {
-      // If Firestore is empty, check localStorage and try email-based migration
-      const localChildren = loadLocalChildren(parentId, userEmail)
-      if (localChildren.length > 0) {
-        // We have local children but not in Firestore - save them to Firestore
-        console.log(`Saving ${localChildren.length} local children to Firestore`)
-        for (const child of localChildren) {
-          try {
-            const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
-            await setDoc(docRef, {
-              ...child,
-              parentId, // Ensure parentId is correct
-              parentEmail: userEmail, // Store email for future migrations
-              updatedAt: serverTimestamp(),
-            }, { merge: true })
-          } catch (error) {
-            console.error(`Failed to save child ${child.id} to Firestore:`, error)
-          }
-        }
-        updateChildrenCache(parentId, localChildren)
-      } else if (userEmail) {
-        // Try email-based migration from localStorage
-        const migrated = findChildrenByEmail(userEmail, parentId)
-        if (migrated.length > 0) {
-          console.log(`Migrated ${migrated.length} children from localStorage by email to parentId: ${parentId}`)
-          // Save migrated children to Firestore
-          for (const child of migrated) {
-            try {
-              const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
-              await setDoc(docRef, {
-                ...child,
-                parentId,
-                parentEmail: userEmail,
-                updatedAt: serverTimestamp(),
-              }, { merge: true })
-            } catch (error) {
-              console.error(`Failed to save migrated child ${child.id} to Firestore:`, error)
-            }
-          }
-          updateChildrenCache(parentId, migrated)
-        }
-      }
-    }
+    updateChildrenCache(parentId, merged)
   } catch (error) {
-    console.error('Failed to fetch children from Firestore:', error)
-    // Fallback to localStorage
+    console.error('Refresh failed:', error)
     const localChildren = loadLocalChildren(parentId, userEmail)
     if (localChildren.length > 0) {
       updateChildrenCache(parentId, localChildren)
