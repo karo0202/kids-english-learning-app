@@ -130,8 +130,9 @@ export async function createSubscriptionPayment(
       insertPayload.user_email = userEmail.trim().toLowerCase()
     }
     let result = await supabase.from('subscriptions').insert(insertPayload).select().single()
-    // If user_email column is missing, retry without it so existing DBs keep working
-    if (result.error && result.error.message && /column.*user_email|user_email.*does not exist/i.test(result.error.message)) {
+    // If user_email column is missing (e.g. "Could not find the 'user_email' column... in the schema cache"), retry without it
+    const errMsg = result.error?.message ?? ''
+    if (result.error && insertPayload.user_email !== undefined && /user_email/.test(errMsg) && (/column|schema|cache|does not exist/i.test(errMsg) || errMsg.includes("'user_email'"))) {
       delete insertPayload.user_email
       result = await supabase.from('subscriptions').insert(insertPayload).select().single()
     }
