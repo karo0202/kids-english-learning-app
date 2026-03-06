@@ -369,12 +369,16 @@ export function clearCurrentChild(): void {
 export async function forceMigrateChildrenByEmail(parentId: string, userEmail: string): Promise<Child[]> {
   console.log(`🔍 FORCE MIGRATION: Starting for email: ${userEmail}, parentId: ${parentId}`)
   
+  // Load deleted children to exclude them
+  loadDeletedChildren()
+  
   // 1. First, get ALL children from localStorage (not filtered by parentId)
   let allLocalChildren: Child[] = []
   try {
     const raw = localStorage.getItem('children')
     if (raw) {
       allLocalChildren = JSON.parse(raw)
+        .filter((c: Child) => !deletedChildren.has(c.id)) // Exclude deleted
       console.log(`📦 Found ${allLocalChildren.length} total children in localStorage`)
       console.log('All children:', allLocalChildren.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, email: c.parentEmail })))
     }
@@ -382,46 +386,56 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
     console.error('Error reading localStorage:', error)
   }
   
-  // 2. Find children by email in localStorage
-  const migratedLocal = findChildrenByEmail(userEmail, parentId)
-  console.log(`✅ Migrated ${migratedLocal.length} children from localStorage by email`)
+  // 2. Migrate ALL local children to current user (aggressive sync)
+  // This ensures all local children get the current user's email and parentId
+  const migratedLocal = allLocalChildren.map(child => normalizeChild({
+    ...child,
+    parentId: parentId,
+    parentEmail: userEmail
+  }, userEmail))
+  console.log(`✅ Migrated ${migratedLocal.length} children from localStorage`)
   
-  // 3. Also find ALL children regardless of email (in case email wasn't set)
-  // This is a fallback to catch orphaned children
-  const emailLower = userEmail.toLowerCase()
-  const orphanedChildren = allLocalChildren
-    .filter(child => {
-      const childEmail = (child.parentEmail || '').toLowerCase()
-      // Include if no email set or if parentId is different (might be from this user)
-      return !childEmail || child.parentId !== parentId
-    })
-    .map(child => normalizeChild({
-      ...child,
-      parentId: parentId,
-      parentEmail: userEmail
-    }, userEmail))
-  
-  if (orphanedChildren.length > 0) {
-    console.log(`🔗 Found ${orphanedChildren.length} potentially orphaned children, migrating them too`)
-  }
-  
-  // Merge local migrations
-  const localIds = new Set(migratedLocal.map(c => c.id))
-  const newOrphaned = orphanedChildren.filter(c => !localIds.has(c.id))
-  const allLocalMerged = [...migratedLocal, ...newOrphaned]
-  console.log(`📊 Total from localStorage: ${allLocalMerged.length} children`)
-  
-  // 4. Migrate from Firestore
+  // 3. Upload ALL local children to Firestore with correct email
   const firestore = getFirestoreClient()
   if (firestore) {
-    const migratedFirestore = await findChildrenInFirestoreByEmail(userEmail, parentId)
-    console.log(`✅ Migrated ${migratedFirestore.length} children from Firestore by email`)
+    console.log(`📤 Uploading ${migratedLocal.length} local children to Firestore...`)
+    for (const child of migratedLocal) {
+      try {
+        const docRef = doc(firestore, 'parents', parentId, 'children', child.id)
+        await setDoc(docRef, {
+          ...child,
+          parentId,
+          parentEmail: userEmail,
+          updatedAt: serverTimestamp(),
+        }, { merge: true })
+        console.log(`✅ Uploaded child ${child.name} to Firestore`)
+      } catch (error) {
+        console.error(`Failed to upload child ${child.name}:`, error)
+      }
+    }
     
-    // Merge both sources
-    const allIds = new Set(allLocalMerged.map(c => c.id))
-    const newFromFirestore = migratedFirestore.filter(c => !allIds.has(c.id))
-    const allChildren = [...allLocalMerged, ...newFromFirestore]
+    // 4. Download ALL children from Firestore (by email AND by parentId)
+    const firestoreChildren = await findAllChildrenInFirestore(userEmail, parentId)
+    console.log(`📥 Found ${firestoreChildren.length} children in Firestore`)
     
+    // 5. Merge: combine local and Firestore, remove duplicates by ID
+    const childMap = new Map<string, Child>()
+    
+    // Add local children first
+    for (const child of migratedLocal) {
+      childMap.set(child.id, child)
+    }
+    
+    // Add/update with Firestore children (Firestore is source of truth)
+    for (const child of firestoreChildren) {
+      childMap.set(child.id, normalizeChild({
+        ...child,
+        parentId,
+        parentEmail: userEmail
+      }, userEmail))
+    }
+    
+    const allChildren = Array.from(childMap.values())
     console.log(`🎯 FINAL RESULT: ${allChildren.length} total children consolidated`)
     console.log('Consolidated children:', allChildren.map(c => ({ id: c.id, name: c.name, age: c.age })))
     
@@ -431,9 +445,100 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
   }
   
   // If no Firestore, just use local
-  console.log(`🎯 FINAL RESULT (localStorage only): ${allLocalMerged.length} total children`)
-  updateChildrenCache(parentId, allLocalMerged)
-  return allLocalMerged
+  console.log(`🎯 FINAL RESULT (localStorage only): ${migratedLocal.length} total children`)
+  updateChildrenCache(parentId, migratedLocal)
+  return migratedLocal
+}
+
+// Find ALL children in Firestore - both by email and by parentId
+async function findAllChildrenInFirestore(userEmail: string, targetParentId: string): Promise<Child[]> {
+  const firestore = getFirestoreClient()
+  if (!firestore) return []
+
+  try {
+    loadDeletedChildren()
+    
+    console.log(`🔍 Searching Firestore for ALL children (email: ${userEmail}, parentId: ${targetParentId})`)
+    const emailLower = userEmail.toLowerCase()
+    const childMap = new Map<string, Child>()
+
+    // First, get children directly under current parentId
+    try {
+      const directRef = collection(firestore, 'parents', targetParentId, 'children')
+      const directSnapshot = await getDocs(directRef)
+      for (const childDoc of directSnapshot.docs) {
+        if (deletedChildren.has(childDoc.id)) continue
+        const childData = childDoc.data()
+        childMap.set(childDoc.id, normalizeChild({
+          ...childData,
+          id: childDoc.id,
+          parentId: targetParentId,
+          parentEmail: userEmail
+        }, userEmail))
+      }
+      console.log(`📂 Found ${directSnapshot.docs.length} children under current parentId`)
+    } catch (error) {
+      console.error('Error getting direct children:', error)
+    }
+
+    // Then search ALL parent collections for children with matching email
+    try {
+      const parentsRef = collection(firestore, 'parents')
+      const parentsSnapshot = await getDocs(parentsRef)
+      
+      for (const parentDoc of parentsSnapshot.docs) {
+        const parentId = parentDoc.id
+        const childrenRef = collection(firestore, 'parents', parentId, 'children')
+        const childrenSnapshot = await getDocs(childrenRef)
+        
+        for (const childDoc of childrenSnapshot.docs) {
+          if (deletedChildren.has(childDoc.id)) continue
+          if (childMap.has(childDoc.id)) continue // Skip duplicates
+          
+          const childData = childDoc.data()
+          const childEmail = (childData.parentEmail || '').toLowerCase()
+          
+          // Include if email matches OR if no email is set (might be orphaned)
+          if (childEmail === emailLower || !childEmail) {
+            const child = normalizeChild({
+              ...childData,
+              id: childDoc.id,
+              parentId: targetParentId,
+              parentEmail: userEmail
+            }, userEmail)
+            childMap.set(childDoc.id, child)
+            
+            // Move to correct parentId if different
+            if (parentId !== targetParentId) {
+              try {
+                const targetDocRef = doc(firestore, 'parents', targetParentId, 'children', child.id)
+                await setDoc(targetDocRef, {
+                  ...child,
+                  updatedAt: serverTimestamp(),
+                }, { merge: true })
+                
+                // Delete from old location
+                const oldDocRef = doc(firestore, 'parents', parentId, 'children', childDoc.id)
+                await deleteDoc(oldDocRef)
+                console.log(`🚚 Moved child ${child.name} from ${parentId} to ${targetParentId}`)
+              } catch (error) {
+                console.error(`Failed to move child:`, error)
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error searching all parents:', error)
+    }
+    
+    const allChildren = Array.from(childMap.values())
+    console.log(`🎯 Found ${allChildren.length} total children in Firestore`)
+    return allChildren
+  } catch (error) {
+    console.error('Failed to find children in Firestore:', error)
+    return []
+  }
 }
 
 async function refreshChildrenFromFirestore(parentId: string, userEmail?: string) {
