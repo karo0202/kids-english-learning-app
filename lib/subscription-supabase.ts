@@ -375,6 +375,36 @@ export async function linkSubscriptionToUser(
   return { success: true }
 }
 
+/** Admin/debug: check if an email has an active subscription (by user_email). Returns minimal info for support. */
+export async function getSubscriptionStatusByEmail(email: string): Promise<{
+  hasActiveSubscription: boolean
+  transactionId?: string
+  userId?: string
+  expiresAt?: string
+}> {
+  if (!supabase || !email?.trim()) {
+    return { hasActiveSubscription: false }
+  }
+  const emailNorm = email.trim().toLowerCase()
+  const { data: sub, error } = await supabase
+    .from('subscriptions')
+    .select('transaction_id, user_id, expires_at, status')
+    .eq('user_email', emailNorm)
+    .ilike('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error || !sub) return { hasActiveSubscription: false }
+  const expiresAt = sub.expires_at ? new Date(sub.expires_at) : null
+  if (expiresAt && expiresAt < new Date()) return { hasActiveSubscription: false }
+  return {
+    hasActiveSubscription: true,
+    transactionId: sub.transaction_id,
+    userId: sub.user_id,
+    expiresAt: sub.expires_at ?? undefined,
+  }
+}
+
 export async function getUserSubscriptionStatus(userId: string, userEmail?: string | null) {
   if (!supabase) {
     return {
@@ -385,12 +415,12 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
     }
   }
 
-  // 1) Look up by user_id first
+  // 1) Look up by user_id first (status case-insensitive: active, Active, ACTIVE)
   let { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*, subscription_plans(*)')
     .eq('user_id', userId)
-    .eq('status', 'active')
+    .ilike('status', 'active')
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -399,11 +429,12 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
   let foundByEmail = false
   if ((error || !subscription) && userEmail) {
     try {
+      const emailNorm = userEmail.trim().toLowerCase()
       const { data: subByEmail, error: emailErr } = await supabase
         .from('subscriptions')
         .select('*, subscription_plans(*)')
-        .eq('user_email', userEmail.trim().toLowerCase())
-        .eq('status', 'active')
+        .eq('user_email', emailNorm)
+        .ilike('status', 'active')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -429,6 +460,9 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
   }
 
   if (error || !subscription) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn('[subscription] No active subscription found', { triedEmail: !!userEmail, foundByEmail, supabaseError: error?.message })
+    }
     return {
       hasActiveSubscription: false,
       subscription: null,

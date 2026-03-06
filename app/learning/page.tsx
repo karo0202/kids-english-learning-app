@@ -14,7 +14,7 @@ import {
 import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
-import { checkModuleAccess, refreshSubscriptionStatus, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
+import { checkModuleAccess, refreshSubscriptionStatus, clearSubscriptionCache, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -104,10 +104,10 @@ export default function LearningPage() {
 
   useEffect(() => {
     let mounted = true
+    let retryTimeout: ReturnType<typeof setTimeout> | null = null
 
     const loadModuleAccess = async () => {
       try {
-        // Force refresh so paid users see access right after admin activates (no stale cache)
         const status = await refreshSubscriptionStatus(true)
         if (!mounted) return
         const map: Record<string, ModuleAccess> = {}
@@ -116,6 +116,13 @@ export default function LearningPage() {
           map[moduleId] = checkModuleAccess(moduleId, status)
         })
         setModuleAccessMap(map)
+        // If any premium module is still locked, retry once after 5s (Firebase auth can be slow)
+        const hasLockedPremium = PREMIUM_MODULES.some((id) => map[id]?.isLocked)
+        if (hasLockedPremium && mounted) {
+          retryTimeout = setTimeout(() => {
+            loadModuleAccess()
+          }, 5000)
+        }
       } catch (error) {
         console.error('Error loading module access:', error)
       }
@@ -125,6 +132,7 @@ export default function LearningPage() {
 
     return () => {
       mounted = false
+      if (retryTimeout) clearTimeout(retryTimeout)
     }
   }, [])
 
@@ -143,6 +151,7 @@ export default function LearningPage() {
   const handleRefreshAccess = async () => {
     setRefreshingAccess(true)
     setAccessRefreshedMessage(false)
+    clearSubscriptionCache()
     try {
       const status = await refreshSubscriptionStatus(true)
       const map: Record<string, ModuleAccess> = {}

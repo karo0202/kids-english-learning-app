@@ -37,6 +37,10 @@ export async function GET(request: NextRequest) {
     // Get subscription status from database (lookup by user_id, then fallback by user_email)
     const status = await getUserSubscriptionStatus(userId, userEmail)
 
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('[subscription/status]', { hasActive: status.hasActiveSubscription, hasEmail: !!userEmail })
+    }
+
     // Note: Dev admin check is handled client-side in subscription.ts
     // This endpoint returns database subscription status
     // Client-side checkModuleAccess() will grant full access for dev admin

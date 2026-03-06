@@ -51,6 +51,9 @@ export default function AdminPaymentsPage() {
   const [linkUserId, setLinkUserId] = useState('')
   const [linkUserLoading, setLinkUserLoading] = useState(false)
   const [linkUserMessage, setLinkUserMessage] = useState<string | null>(null)
+  const [checkEmail, setCheckEmail] = useState('')
+  const [checkEmailLoading, setCheckEmailLoading] = useState(false)
+  const [checkEmailResult, setCheckEmailResult] = useState<{ hasActive: boolean; transactionId?: string; userId?: string } | null>(null)
 
   // Convert data URLs to blob object URL so the image renders reliably (long data URLs can fail in img src)
   const proofViewUrlRef = useRef(proofViewUrl)
@@ -153,6 +156,40 @@ export default function AdminPaymentsPage() {
       setError(e.message || 'Request failed')
     } finally {
       setActivatingId(null)
+    }
+  }
+
+  const runCheckEmail = async () => {
+    if (!secret.trim() || !checkEmail.trim()) {
+      setCheckEmailResult(null)
+      return
+    }
+    setCheckEmailResult(null)
+    setCheckEmailLoading(true)
+    try {
+      const res = await fetch('/api/subscription/admin/check-email', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ email: checkEmail.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setCheckEmailResult({ hasActive: false })
+        return
+      }
+      setCheckEmailResult({
+        hasActive: !!data.hasActiveSubscription,
+        transactionId: data.transactionId ?? undefined,
+        userId: data.userId ?? undefined,
+      })
+      if (data.hasActiveSubscription && data.transactionId) {
+        setLinkTransactionId(data.transactionId)
+        // Leave Firebase UID for admin to paste (user's current UID, not the one stored on the row)
+      }
+    } catch {
+      setCheckEmailResult({ hasActive: false })
+    } finally {
+      setCheckEmailLoading(false)
     }
   }
 
@@ -271,10 +308,52 @@ export default function AdminPaymentsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2 className="w-5 h-5" />
+              Check subscription by email
+            </CardTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter the user&apos;s email to see if they have an active subscription. If yes, transaction ID and user_id are filled below for &quot;Fix user access&quot;.
+            </p>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-end gap-4 mb-4">
+            <div className="flex-1 min-w-[200px]">
+              <Label htmlFor="check-email">User email</Label>
+              <Input
+                id="check-email"
+                type="email"
+                placeholder="user@example.com"
+                value={checkEmail}
+                onChange={(e) => setCheckEmail(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <Button onClick={runCheckEmail} disabled={checkEmailLoading}>
+              {checkEmailLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Check
+            </Button>
+          </CardContent>
+          {checkEmailResult && (
+            <div className="px-6 pb-4 text-sm">
+              {checkEmailResult.hasActive ? (
+                <p className="text-green-600 dark:text-green-400">
+                  Active subscription found. Transaction ID filled below. Paste the user&apos;s <strong>current Firebase UID</strong> and click Link user.
+                </p>
+              ) : (
+                <p className="text-amber-600 dark:text-amber-400">
+                  No active subscription found for this email (or user_email not set on the row).
+                </p>
+              )}
+            </div>
+          )}
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="w-5 h-5" />
               Fix user access
             </CardTitle>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              If a user still can&apos;t access paid modules after activation, link their subscription to their Firebase UID. Get transaction_id from Supabase or from the row below before activating.
+              If a user still can&apos;t access paid modules after activation, link their subscription to their Firebase UID. Use &quot;Check by email&quot; above or get transaction_id from Supabase.
             </p>
           </CardHeader>
           <CardContent className="flex flex-wrap items-end gap-4">

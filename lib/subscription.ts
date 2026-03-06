@@ -35,6 +35,15 @@ let cachedStatus: SubscriptionStatus | null = null
 let lastStatusFetch = 0
 const STATUS_TTL_MS = 60 * 1000
 
+/** Clear in-memory and stored subscription cache so the next refresh hits the API. */
+export function clearSubscriptionCache(): void {
+  cachedStatus = null
+  lastStatusFetch = 0
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(SUBSCRIPTION_STORAGE_KEY)
+  }
+}
+
 // Get user registration date from localStorage
 export function getUserRegistrationDate(): Date | null {
   if (typeof window === 'undefined') return null
@@ -185,6 +194,10 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
     return cachedStatus
   }
 
+  if (force) {
+    clearSubscriptionCache()
+  }
+
   try {
     let token = await getAuthToken(force)
     // If Firebase auth hasn't hydrated yet (common on mobile/slow load), wait and retry once.
@@ -193,8 +206,10 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
       token = await getAuthToken(true)
     }
     if (!token) {
-      cachedStatus = getSubscriptionStatus()
-      return cachedStatus
+      // Don't cache so the next refresh (e.g. delayed retry on learning page) will try again
+      cachedStatus = null
+      lastStatusFetch = 0
+      return getSubscriptionStatus()
     }
 
     let response = await fetch('/api/subscription/status', {
@@ -249,8 +264,10 @@ export async function refreshSubscriptionStatus(force = false): Promise<Subscrip
     return trialStatus
   } catch (error) {
     console.error('Error refreshing subscription status:', error)
-    cachedStatus = getSubscriptionStatus()
-    return cachedStatus
+    // Don't cache failure so next force refresh will retry the API
+    cachedStatus = null
+    lastStatusFetch = 0
+    return getSubscriptionStatus()
   }
 }
 
