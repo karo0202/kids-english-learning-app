@@ -432,15 +432,20 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
     }
   }
 
+  console.log('[getUserSubscriptionStatus] START', { userId, userEmail })
+
   // 1) Look up by user_id first (status case-insensitive: active, Active, ACTIVE)
+  // Use simpler query without join to avoid foreign key issues
   let { data: subscription, error } = await supabase
     .from('subscriptions')
-    .select('*, subscription_plans(*)')
+    .select('id, user_id, user_email, plan_id, status, transaction_id, expires_at, created_at')
     .eq('user_id', userId)
     .ilike('status', 'active')
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
+
+  console.log('[getUserSubscriptionStatus] Query by user_id result', { subscription, error: error?.message })
 
   // 2) Fallback: if no subscription by user_id and we have email, try by user_email (column must exist)
   let foundByEmail = false
@@ -449,18 +454,22 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
       const emailNorm = userEmail.trim().toLowerCase()
       const { data: subByEmail, error: emailErr } = await supabase
         .from('subscriptions')
-        .select('*, subscription_plans(*)')
+        .select('id, user_id, user_email, plan_id, status, transaction_id, expires_at, created_at')
         .eq('user_email', emailNorm)
         .ilike('status', 'active')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
+      
+      console.log('[getUserSubscriptionStatus] Query by email result', { subByEmail, emailErr: emailErr?.message })
+      
       if (!emailErr && subByEmail) {
         subscription = subByEmail
         error = null
         foundByEmail = true
         // Auto-repair: link this subscription to current user_id so future lookups work without email
         if (subByEmail.user_id !== userId && subByEmail.transaction_id) {
+          console.log('[getUserSubscriptionStatus] Auto-repairing user_id', { old: subByEmail.user_id, new: userId })
           await supabase
             .from('subscriptions')
             .update({ user_id: userId })
@@ -471,15 +480,13 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
             .eq('transaction_id', subByEmail.transaction_id)
         }
       }
-    } catch {
-      // user_email column may not exist yet; ignore
+    } catch (e) {
+      console.log('[getUserSubscriptionStatus] Email lookup error', { error: e instanceof Error ? e.message : e })
     }
   }
 
   if (error || !subscription) {
-    if (process.env.NODE_ENV !== 'test') {
-      console.warn('[subscription] No active subscription found', { triedEmail: !!userEmail, foundByEmail, supabaseError: error?.message })
-    }
+    console.warn('[getUserSubscriptionStatus] No active subscription found', { userId, triedEmail: !!userEmail, foundByEmail, supabaseError: error?.message })
     return {
       hasActiveSubscription: false,
       subscription: null,
@@ -493,6 +500,7 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
   const isExpired = expiresAt && expiresAt < new Date()
 
   if (isExpired) {
+    console.log('[getUserSubscriptionStatus] Subscription expired', { expiresAt: subscription.expires_at, now: new Date().toISOString() })
     return {
       hasActiveSubscription: false,
       subscription: null,
@@ -500,6 +508,8 @@ export async function getUserSubscriptionStatus(userId: string, userEmail?: stri
       trialDaysRemaining: 0,
     }
   }
+
+  console.log('[getUserSubscriptionStatus] SUCCESS - Active subscription found', { id: subscription.id, planId: subscription.plan_id, foundByEmail })
 
   return {
     hasActiveSubscription: true,
