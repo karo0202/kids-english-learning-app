@@ -65,13 +65,24 @@ export default function LearningPage() {
       // Try to get current child first, otherwise use first child
       try {
         const currentChild = getCurrentChild()
-        if (currentChild && storedChildren.some(c => c.id === currentChild.id)) {
-          // Current child exists in the stored children list
-          if (mounted) {
-            setSelectedChild(currentChild)
+        if (currentChild && storedChildren.length > 0) {
+          // Find the matching child from storedChildren (fresh data)
+          const matchingChild = storedChildren.find(c => c.id === currentChild.id)
+          if (matchingChild) {
+            // Use fresh data from storedChildren, not stale localStorage data
+            if (mounted) {
+              setSelectedChild(matchingChild)
+              setCurrentChild(matchingChild) // Update localStorage with fresh data
+            }
+          } else {
+            // Current child not found in stored children - use first child
+            if (mounted) {
+              setSelectedChild(storedChildren[0])
+              setCurrentChild(storedChildren[0])
+            }
           }
         } else if (storedChildren.length > 0) {
-          // Use first child and set as current
+          // No current child set - use first child
           if (mounted) {
             setSelectedChild(storedChildren[0])
             setCurrentChild(storedChildren[0])
