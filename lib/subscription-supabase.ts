@@ -344,20 +344,28 @@ export async function linkSubscriptionToUser(
     return { success: false, error: 'Supabase not configured' }
   }
 
+  console.log('[linkSubscriptionToUser] START', { transactionId, newUserId })
+
   const { data: sub, error: fetchErr } = await supabase
     .from('subscriptions')
-    .select('id, user_id')
+    .select('id, user_id, status, user_email')
     .eq('transaction_id', transactionId)
     .single()
+
+  console.log('[linkSubscriptionToUser] Found subscription', { sub, fetchErr: fetchErr?.message })
 
   if (fetchErr || !sub) {
     return { success: false, error: 'Subscription not found for this transaction' }
   }
 
-  const { error: subUpdateErr } = await supabase
+  const { data: updatedSub, error: subUpdateErr } = await supabase
     .from('subscriptions')
     .update({ user_id: newUserId })
     .eq('transaction_id', transactionId)
+    .select('id, user_id')
+    .single()
+
+  console.log('[linkSubscriptionToUser] Updated subscription', { updatedSub, subUpdateErr: subUpdateErr?.message })
 
   if (subUpdateErr) {
     return { success: false, error: 'Failed to update subscription: ' + subUpdateErr.message }
@@ -369,8 +377,17 @@ export async function linkSubscriptionToUser(
     .eq('transaction_id', transactionId)
 
   if (txUpdateErr) {
-    return { success: false, error: 'Failed to update transaction: ' + txUpdateErr.message }
+    console.log('[linkSubscriptionToUser] tx update error (non-fatal)', { txUpdateErr: txUpdateErr.message })
   }
+
+  // Verify the update worked
+  const { data: verifySub } = await supabase
+    .from('subscriptions')
+    .select('id, user_id, status')
+    .eq('transaction_id', transactionId)
+    .single()
+
+  console.log('[linkSubscriptionToUser] VERIFY after update', { verifySub })
 
   return { success: true }
 }

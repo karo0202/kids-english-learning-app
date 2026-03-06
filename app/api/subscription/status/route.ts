@@ -38,8 +38,12 @@ export async function GET(request: NextRequest) {
     const status = await getUserSubscriptionStatus(userId, userEmail)
 
     if (process.env.NODE_ENV !== 'test') {
-      const uidSuffix = userId.length >= 4 ? userId.slice(-4) : '????'
-      console.log('[subscription/status]', { uidLast4: uidSuffix, hasActive: status.hasActiveSubscription, hasEmail: !!userEmail })
+      console.log('[subscription/status]', { 
+        uid: userId,
+        email: userEmail,
+        hasActive: status.hasActiveSubscription,
+        subId: status.subscription?.id ?? null
+      })
     }
 
     // Note: Dev admin check is handled client-side in subscription.ts

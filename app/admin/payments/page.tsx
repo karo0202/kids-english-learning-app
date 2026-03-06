@@ -54,6 +54,9 @@ export default function AdminPaymentsPage() {
   const [checkEmail, setCheckEmail] = useState('')
   const [checkEmailLoading, setCheckEmailLoading] = useState(false)
   const [checkEmailResult, setCheckEmailResult] = useState<{ hasActive: boolean; transactionId?: string; userId?: string } | null>(null)
+  const [debugQuery, setDebugQuery] = useState('')
+  const [debugLoading, setDebugLoading] = useState(false)
+  const [debugResult, setDebugResult] = useState<unknown>(null)
 
   // Convert data URLs to blob object URL so the image renders reliably (long data URLs can fail in img src)
   const proofViewUrlRef = useRef(proofViewUrl)
@@ -221,6 +224,37 @@ export default function AdminPaymentsPage() {
       setLinkUserMessage(e instanceof Error ? e.message : 'Request failed')
     } finally {
       setLinkUserLoading(false)
+    }
+  }
+
+  const runDebugQuery = async () => {
+    if (!secret.trim() || !debugQuery.trim()) {
+      setDebugResult(null)
+      return
+    }
+    setDebugResult(null)
+    setDebugLoading(true)
+    try {
+      const query = debugQuery.trim()
+      // Auto-detect if it's an email, transaction ID, or user ID
+      const isEmail = query.includes('@')
+      const isTxId = query.startsWith('pay_')
+      const body: Record<string, string> = {}
+      if (isEmail) body.email = query
+      else if (isTxId) body.transactionId = query
+      else body.userId = query
+      
+      const res = await fetch('/api/subscription/admin/debug', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(body),
+      })
+      const data = await res.json()
+      setDebugResult(data)
+    } catch (e) {
+      setDebugResult({ error: e instanceof Error ? e.message : 'Failed' })
+    } finally {
+      setDebugLoading(false)
     }
   }
 
@@ -392,6 +426,38 @@ export default function AdminPaymentsPage() {
               <p className="text-amber-600 dark:text-amber-400 text-xs">If they still can&apos;t access: use the exact Firebase UID (digit 0, not @). Have them tap Refresh access on the learning page after you link.</p>
             </div>
           )}
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Debug: Check database</CardTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter an email, transaction ID (pay_...), or Firebase UID to see what&apos;s in the database.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex-1 min-w-[200px]">
+                <Label htmlFor="debug-query">Email / Transaction ID / UID</Label>
+                <Input
+                  id="debug-query"
+                  placeholder="user@example.com or pay_xxx or UID"
+                  value={debugQuery}
+                  onChange={(e) => setDebugQuery(e.target.value)}
+                  className="mt-1 font-mono text-sm"
+                />
+              </div>
+              <Button onClick={runDebugQuery} disabled={debugLoading}>
+                {debugLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Query
+              </Button>
+            </div>
+            {debugResult && (
+              <pre className="p-3 bg-slate-100 dark:bg-slate-800 rounded text-xs overflow-auto max-h-64 font-mono">
+                {JSON.stringify(debugResult, null, 2)}
+              </pre>
+            )}
+          </CardContent>
         </Card>
 
         <Card>

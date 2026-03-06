@@ -25,7 +25,7 @@ export default function LearningPage() {
   const [moduleAccessMap, setModuleAccessMap] = useState<Record<string, ModuleAccess>>({})
   const [refreshingAccess, setRefreshingAccess] = useState(false)
   const [accessRefreshedMessage, setAccessRefreshedMessage] = useState(false)
-  const [subscriptionCheck, setSubscriptionCheck] = useState<{ hasToken: boolean; hasActive: boolean; error?: string } | null>(null)
+  const [subscriptionCheck, setSubscriptionCheck] = useState<{ hasToken: boolean; hasActive: boolean; error?: string; debug?: { uid?: string; uidLast4?: string; serverResponse?: unknown } } | null>(null)
   const [checkingSubscription, setCheckingSubscription] = useState(false)
 
   // Ensure dark mode CSS class is present when user selected dark theme
@@ -400,6 +400,12 @@ export default function LearningPage() {
                       <p className="text-slate-600 dark:text-slate-400 mt-1">
                         Make sure you&apos;re logged in as <strong>{user?.email ?? 'the email you used to subscribe'}</strong>. Try: 1) Log out 2) Log in with that email 3) Tap Refresh access.
                       </p>
+                    )}
+                    {subscriptionCheck.debug?.uid && (
+                      <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-xs font-mono break-all">
+                        <p><strong>Your Firebase UID:</strong> {subscriptionCheck.debug.uid}</p>
+                        <p className="text-slate-500 dark:text-slate-400 mt-1">Share this with support if asked.</p>
+                      </div>
                     )}
                   </div>
                 )}
