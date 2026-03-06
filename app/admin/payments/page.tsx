@@ -56,7 +56,7 @@ export default function AdminPaymentsPage() {
   const [checkEmailResult, setCheckEmailResult] = useState<{ hasActive: boolean; transactionId?: string; userId?: string } | null>(null)
   const [debugQuery, setDebugQuery] = useState('')
   const [debugLoading, setDebugLoading] = useState(false)
-  const [debugResult, setDebugResult] = useState<unknown>(null)
+  const [debugResult, setDebugResult] = useState<Record<string, unknown> | null>(null)
 
   // Convert data URLs to blob object URL so the image renders reliably (long data URLs can fail in img src)
   const proofViewUrlRef = useRef(proofViewUrl)
