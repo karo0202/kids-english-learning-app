@@ -1393,7 +1393,7 @@ export default function WritingModule() {
 
   if (completedActivities >= totalActivities) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4 landscape-optimized">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1444,9 +1444,9 @@ export default function WritingModule() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 landscape-optimized">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
       {/* Header */}
-      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-green-100 dark:border-slate-700 sticky top-0 z-50">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-green-100 dark:border-slate-700 sticky top-0 z-40">
         <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between gap-2 md:gap-4">
             <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
@@ -1485,7 +1485,7 @@ export default function WritingModule() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Activity Selector */}
         <motion.div 
           className="mb-8"

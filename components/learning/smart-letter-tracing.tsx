@@ -1237,8 +1237,8 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
 
         {/* Canvas Container: reference letter + blank paper */}
         <Card className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl shadow-xl overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center gap-3">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col items-center gap-2 sm:gap-3">
               <p className="text-sm font-semibold text-gray-600">
                 Copy the letter on the white paper
               </p>
@@ -1256,11 +1256,11 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
               {/* Blank white paper for writing */}
               <div className="flex flex-col items-center flex-1 min-w-0 relative">
                 <p className="text-xs font-medium text-gray-500 mb-1">Your paper</p>
-                <div className="relative">
+                <div className="relative max-w-full">
                   <canvas
                     ref={canvasRef}
                     className="border-2 border-gray-200 rounded-2xl shadow-md bg-white touch-none"
-                    style={{ maxWidth: '100%', height: 'auto', minHeight: 280 }}
+                    style={{ maxWidth: '100%', minHeight: 220, maxHeight: 360 }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}

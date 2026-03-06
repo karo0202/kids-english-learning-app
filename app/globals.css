@@ -305,9 +305,8 @@ button,
 @media screen and (orientation: landscape) {
   /* Optimize layout for landscape mode */
   .landscape-optimized {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
+    /* Use full viewport height but let each page decide its own flex layout */
+    min-height: 100vh;
   }
   
   /* Adjust grid layouts for landscape */
