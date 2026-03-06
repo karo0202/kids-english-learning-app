@@ -480,65 +480,14 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     lastPointRef.current = { x, y }
   }
 
-  // Validate overall shape matches the target letter
+  // Validate overall shape. For now we use a VERY forgiving rule:
+  // - child just needs to draw a non-trivial path (to avoid taps / tiny dots).
+  // This avoids marking good letters as wrong and keeps the experience positive.
   const validateLetterShape = (drawnPath: Array<{ x: number; y: number }>): boolean => {
-    if (drawnPath.length < 10) return false // Need minimum points to validate
-    
-    const size = canvasRef.current?.width ? canvasRef.current.width / (window.devicePixelRatio || 1) : 500
-    const scale = size / 100
-    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * scale) / 2
-    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * scale) / 2
-
-    // Normalize drawn path to 0-100 coordinate system for comparison
-    const normalizedDrawn: Array<{ x: number; y: number }> = drawnPath.map(point => ({
-      x: ((point.x - offsetX) / scale) + letterPath.bounds.minX,
-      y: ((point.y - offsetY) / scale) + letterPath.bounds.minY
-    }))
-
-    // Get all guide points from the target letter
-    const allGuidePoints: Array<{ x: number; y: number }> = []
-    letterPath.strokes.forEach(stroke => {
-      stroke.forEach(point => allGuidePoints.push(point))
-    })
-
-    // Calculate average distance from drawn path to guide points
-    let totalDistance = 0
-    let matchedPoints = 0
-    const MAX_DISTANCE = 20 // Forgiving threshold for kids
-
-    normalizedDrawn.forEach(drawnPoint => {
-      let minDist = Infinity
-      allGuidePoints.forEach(guidePoint => {
-        const dist = Math.sqrt((drawnPoint.x - guidePoint.x) ** 2 + (drawnPoint.y - guidePoint.y) ** 2)
-        if (dist < minDist) {
-          minDist = dist
-        }
-      })
-      if (minDist < MAX_DISTANCE) {
-        totalDistance += minDist
-        matchedPoints++
-      }
-    })
-
-    // Overall similarity to the guide
-    const matchRatio = matchedPoints / normalizedDrawn.length
-    const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
-
-    // Simple, consistent rule for all letters:
-    // - child must keep most of their path near the guide
-    // - and not wander too far on average
-    const SIMPLE_MIN_MATCH = 0.55
-    const SIMPLE_MAX_AVG_DISTANCE = 10
-
-    if (matchRatio < SIMPLE_MIN_MATCH) return false
-    if (avgDistance > SIMPLE_MAX_AVG_DISTANCE) return false
-
-    // If we pass the simple distance-based check, treat it as correct.
-    // (Letter-specific shape checks below are currently disabled to avoid
-    //  marking good traces as wrong for some letters.)
+    if (drawnPath.length < 10) return false
     return true
 
-    // --- Legacy letter-specific logic below (kept for potential future tuning) ---
+    // --- Legacy distance / letter-specific logic below (kept for future tuning, currently unused) ---
     const letterUpper = letter.toUpperCase()
     const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_DISTANCE
     const relaxedMinRatio = letterUpper === 'A' ? 0.5 : 0.6
