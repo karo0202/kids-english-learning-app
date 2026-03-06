@@ -14,7 +14,7 @@ import {
 import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/children'
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
-import { checkModuleAccess, refreshSubscriptionStatus, clearSubscriptionCache, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
+import { checkModuleAccess, refreshSubscriptionStatus, clearSubscriptionCache, getSubscriptionCheckDetail, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -25,6 +25,8 @@ export default function LearningPage() {
   const [moduleAccessMap, setModuleAccessMap] = useState<Record<string, ModuleAccess>>({})
   const [refreshingAccess, setRefreshingAccess] = useState(false)
   const [accessRefreshedMessage, setAccessRefreshedMessage] = useState(false)
+  const [subscriptionCheck, setSubscriptionCheck] = useState<{ hasToken: boolean; hasActive: boolean; error?: string } | null>(null)
+  const [checkingSubscription, setCheckingSubscription] = useState(false)
 
   // Ensure dark mode CSS class is present when user selected dark theme
   useEffect(() => {
@@ -151,6 +153,7 @@ export default function LearningPage() {
   const handleRefreshAccess = async () => {
     setRefreshingAccess(true)
     setAccessRefreshedMessage(false)
+    setSubscriptionCheck(null)
     clearSubscriptionCache()
     try {
       const status = await refreshSubscriptionStatus(true)
@@ -166,6 +169,27 @@ export default function LearningPage() {
       console.error('Error refreshing access:', error)
     } finally {
       setRefreshingAccess(false)
+    }
+  }
+
+  const handleCheckSubscription = async () => {
+    setCheckingSubscription(true)
+    setSubscriptionCheck(null)
+    try {
+      const detail = await getSubscriptionCheckDetail()
+      setSubscriptionCheck(detail)
+      if (detail.hasActive) {
+        clearSubscriptionCache()
+        const status = await refreshSubscriptionStatus(true)
+        const map: Record<string, ModuleAccess> = {}
+        const modules = [...FREE_MODULES, ...PREMIUM_MODULES]
+        modules.forEach((moduleId) => {
+          map[moduleId] = checkModuleAccess(moduleId, status)
+        })
+        setModuleAccessMap(map)
+      }
+    } finally {
+      setCheckingSubscription(false)
     }
   }
 
@@ -344,9 +368,43 @@ export default function LearningPage() {
             </p>
           )}
           {Object.keys(moduleAccessMap).some((id) => moduleAccessMap[id]?.isLocked) && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
-              Just activated? Tap <strong>Refresh access</strong> above to unlock premium modules.
-            </p>
+            <>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                Just activated? Tap <strong>Refresh access</strong> above to unlock premium modules.
+              </p>
+              <div className="mb-4 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Having trouble accessing premium?</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCheckSubscription}
+                  disabled={checkingSubscription}
+                  className="mb-2"
+                >
+                  {checkingSubscription ? 'Checking…' : 'Check my subscription'}
+                </Button>
+                {subscriptionCheck && (
+                  <div className="text-sm mt-2 space-y-1">
+                    {subscriptionCheck.error && (
+                      <p className="text-amber-600 dark:text-amber-400">{subscriptionCheck.error}</p>
+                    )}
+                    {!subscriptionCheck.hasToken && !subscriptionCheck.error && (
+                      <p className="text-amber-600 dark:text-amber-400">No sign-in token. Sign in with <strong>Google or Email</strong> (the same account you used to subscribe), then tap Refresh access.</p>
+                    )}
+                    {subscriptionCheck.hasToken && (
+                      <p className={subscriptionCheck.hasActive ? 'text-green-600 dark:text-green-400' : 'text-slate-600 dark:text-slate-400'}>
+                        Server says: {subscriptionCheck.hasActive ? 'Premium access' : 'No active subscription for this account.'}
+                      </p>
+                    )}
+                    {subscriptionCheck.hasToken && !subscriptionCheck.hasActive && (
+                      <p className="text-slate-600 dark:text-slate-400 mt-1">
+                        Make sure you&apos;re logged in as <strong>{user?.email ?? 'the email you used to subscribe'}</strong>. Try: 1) Log out 2) Log in with that email 3) Tap Refresh access.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <motion.div

@@ -327,6 +327,32 @@ export async function checkModuleAccessAsync(moduleId: ModuleId): Promise<Module
   return checkModuleAccess(moduleId, status)
 }
 
+/** Check subscription and return detail for troubleshooting (has token, server says active). */
+export async function getSubscriptionCheckDetail(): Promise<{
+  hasToken: boolean
+  hasActive: boolean
+  error?: string
+}> {
+  if (typeof window === 'undefined') {
+    return { hasToken: false, hasActive: false }
+  }
+  try {
+    const { getAuthToken } = await import('./simple-auth')
+    const token = await getAuthToken(true)
+    if (!token) {
+      return { hasToken: false, hasActive: false, error: 'No sign-in token. Sign in with Google or Email, then tap Refresh access.' }
+    }
+    const res = await fetch('/api/subscription/status', { headers: { Authorization: `Bearer ${token}` } })
+    const data = await res.json()
+    if (!res.ok) {
+      return { hasToken: true, hasActive: false, error: res.status === 401 ? 'Session expired. Try logging out and back in, then Refresh access.' : 'Server error. Try again.' }
+    }
+    return { hasToken: true, hasActive: !!(data.hasActiveSubscription && data.subscription) }
+  } catch (e) {
+    return { hasToken: false, hasActive: false, error: (e instanceof Error ? e.message : 'Network error') + '. Try again.' }
+  }
+}
+
 // Set subscription (persists subscription state locally)
 export function setSubscription(subscription: {
   isActive: boolean

@@ -376,15 +376,20 @@ export default function AdminPaymentsPage() {
                 onChange={(e) => setLinkUserId(e.target.value)}
                 className="mt-1 font-mono text-sm"
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Letters and numbers only — no @ or spaces. Get from Firebase Console → Authentication.</p>
+              {/[@\s]/.test(linkUserId) && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">Invalid character in UID (e.g. @ or space). Use the exact UID: digit 0 not @.</p>
+              )}
             </div>
-            <Button onClick={linkUser} disabled={linkUserLoading}>
+            <Button onClick={linkUser} disabled={linkUserLoading || /[@\s]/.test(linkUserId)}>
               {linkUserLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Link2 className="w-4 h-4 mr-2" />}
               Link user
             </Button>
           </CardContent>
           {linkUserMessage && (
-            <div className="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
-              {linkUserMessage}
+            <div className="px-6 pb-4 text-sm space-y-1">
+              <p className="text-gray-600 dark:text-gray-400">{linkUserMessage}</p>
+              <p className="text-amber-600 dark:text-amber-400 text-xs">If they still can&apos;t access: use the exact Firebase UID (digit 0, not @). Have them tap Refresh access on the learning page after you link.</p>
             </div>
           )}
         </Card>
