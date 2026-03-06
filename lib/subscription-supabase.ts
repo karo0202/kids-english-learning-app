@@ -58,7 +58,12 @@ export async function seedPlansIfNeeded() {
   }
 }
 
-export async function createSubscriptionPayment(userId: string, planId: string, paymentMethod: string) {
+export async function createSubscriptionPayment(
+  userId: string,
+  planId: string,
+  paymentMethod: string,
+  userEmail?: string | null
+) {
   // SECURITY: Always fetch plan from database first, fallback to hardcoded
   let plan = null
   
@@ -110,21 +115,27 @@ export async function createSubscriptionPayment(userId: string, planId: string, 
       throw new Error('Transaction ID collision - please try again')
     }
 
-    // Store in Supabase
-    const { data: subscription, error: subError } = await supabase
-      .from('subscriptions')
-      .insert({
-        user_id: userId,
-        plan_id: planId,
-        status: 'pending',
-        payment_method: paymentMethod,
-        transaction_id: transactionId,
-        amount: plan.price,
-        currency: plan.currency,
-        expires_at: expiresAt.toISOString(),
-      })
-      .select()
-      .single()
+    // Store in Supabase. Optional: add user_email for email fallback — ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS user_email TEXT;
+    const insertPayload: Record<string, unknown> = {
+      user_id: userId,
+      plan_id: planId,
+      status: 'pending',
+      payment_method: paymentMethod,
+      transaction_id: transactionId,
+      amount: plan.price,
+      currency: plan.currency,
+      expires_at: expiresAt.toISOString(),
+    }
+    if (userEmail != null && userEmail !== '') {
+      insertPayload.user_email = userEmail.trim().toLowerCase()
+    }
+    let result = await supabase.from('subscriptions').insert(insertPayload).select().single()
+    // If user_email column is missing, retry without it so existing DBs keep working
+    if (result.error && result.error.message && /column.*user_email|user_email.*does not exist/i.test(result.error.message)) {
+      delete insertPayload.user_email
+      result = await supabase.from('subscriptions').insert(insertPayload).select().single()
+    }
+    const { data: subscription, error: subError } = result
 
     if (subError) {
       throw new Error('Failed to create subscription: ' + subError.message)
@@ -320,7 +331,50 @@ export async function activateManualSubscription(transactionId: string): Promise
   return { success: true }
 }
 
-export async function getUserSubscriptionStatus(userId: string) {
+/**
+ * Admin: Link a subscription (by transaction_id) to a specific user_id.
+ * Use when a user's subscription was created with wrong/missing user_id so they can't access paid modules.
+ */
+export async function linkSubscriptionToUser(
+  transactionId: string,
+  newUserId: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' }
+  }
+
+  const { data: sub, error: fetchErr } = await supabase
+    .from('subscriptions')
+    .select('id, user_id')
+    .eq('transaction_id', transactionId)
+    .single()
+
+  if (fetchErr || !sub) {
+    return { success: false, error: 'Subscription not found for this transaction' }
+  }
+
+  const { error: subUpdateErr } = await supabase
+    .from('subscriptions')
+    .update({ user_id: newUserId })
+    .eq('transaction_id', transactionId)
+
+  if (subUpdateErr) {
+    return { success: false, error: 'Failed to update subscription: ' + subUpdateErr.message }
+  }
+
+  const { error: txUpdateErr } = await supabase
+    .from('payment_transactions')
+    .update({ user_id: newUserId })
+    .eq('transaction_id', transactionId)
+
+  if (txUpdateErr) {
+    return { success: false, error: 'Failed to update transaction: ' + txUpdateErr.message }
+  }
+
+  return { success: true }
+}
+
+export async function getUserSubscriptionStatus(userId: string, userEmail?: string | null) {
   if (!supabase) {
     return {
       hasActiveSubscription: false,
@@ -330,8 +384,8 @@ export async function getUserSubscriptionStatus(userId: string) {
     }
   }
 
-  // Check for active subscription (maybeSingle: no error when 0 rows)
-  const { data: subscription, error } = await supabase
+  // 1) Look up by user_id first
+  let { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*, subscription_plans(*)')
     .eq('user_id', userId)
@@ -339,6 +393,26 @@ export async function getUserSubscriptionStatus(userId: string) {
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
+
+  // 2) Fallback: if no subscription by user_id and we have email, try by user_email (column must exist)
+  if ((error || !subscription) && userEmail) {
+    try {
+      const { data: subByEmail, error: emailErr } = await supabase
+        .from('subscriptions')
+        .select('*, subscription_plans(*)')
+        .eq('user_email', userEmail.trim().toLowerCase())
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (!emailErr && subByEmail) {
+        subscription = subByEmail
+        error = null
+      }
+    } catch {
+      // user_email column may not exist yet; ignore
+    }
+  }
 
   if (error || !subscription) {
     return {

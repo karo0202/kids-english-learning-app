@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Shield, RefreshCw, CheckCircle, ExternalLink, Loader2 } from 'lucide-react'
+import { Shield, RefreshCw, CheckCircle, ExternalLink, Loader2, Link2 } from 'lucide-react'
 import { getUserSession } from '@/lib/simple-auth'
 
 const ADMIN_EMAIL = 'karolatef143@gmail.com'
@@ -47,6 +47,10 @@ export default function AdminPaymentsPage() {
   const [proofImageError, setProofImageError] = useState(false)
   const [proofDisplayUrl, setProofDisplayUrl] = useState<string | null>(null)
   const proofObjectUrlRef = useRef<string | null>(null)
+  const [linkTransactionId, setLinkTransactionId] = useState('')
+  const [linkUserId, setLinkUserId] = useState('')
+  const [linkUserLoading, setLinkUserLoading] = useState(false)
+  const [linkUserMessage, setLinkUserMessage] = useState<string | null>(null)
 
   // Convert data URLs to blob object URL so the image renders reliably (long data URLs can fail in img src)
   const proofViewUrlRef = useRef(proofViewUrl)
@@ -152,6 +156,37 @@ export default function AdminPaymentsPage() {
     }
   }
 
+  const linkUser = async () => {
+    if (!secret.trim() || !linkTransactionId.trim() || !linkUserId.trim()) {
+      setLinkUserMessage('Enter admin secret, transaction ID, and Firebase UID.')
+      return
+    }
+    setLinkUserMessage(null)
+    setLinkUserLoading(true)
+    try {
+      const res = await fetch('/api/subscription/admin/link-user', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({
+          transactionId: linkTransactionId.trim(),
+          userId: linkUserId.trim(),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setLinkUserMessage(data.error || 'Link failed')
+        return
+      }
+      setLinkUserMessage('Done. Ask the user to refresh the app.')
+      setLinkTransactionId('')
+      setLinkUserId('')
+    } catch (e: unknown) {
+      setLinkUserMessage(e instanceof Error ? e.message : 'Request failed')
+    } finally {
+      setLinkUserLoading(false)
+    }
+  }
+
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -231,6 +266,49 @@ export default function AdminPaymentsPage() {
             {error}
           </div>
         )}
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="w-5 h-5" />
+              Fix user access
+            </CardTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              If a user still can&apos;t access paid modules after activation, link their subscription to their Firebase UID. Get transaction_id from Supabase or from the row below before activating.
+            </p>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-end gap-4">
+            <div className="flex-1 min-w-[180px]">
+              <Label htmlFor="link-tx">Transaction ID</Label>
+              <Input
+                id="link-tx"
+                placeholder="pay_1738xxxxx_abc"
+                value={linkTransactionId}
+                onChange={(e) => setLinkTransactionId(e.target.value)}
+                className="mt-1 font-mono text-sm"
+              />
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <Label htmlFor="link-uid">Firebase UID</Label>
+              <Input
+                id="link-uid"
+                placeholder="V8iXAGR7gXXSK0bkiiqAZJwN0zq2"
+                value={linkUserId}
+                onChange={(e) => setLinkUserId(e.target.value)}
+                className="mt-1 font-mono text-sm"
+              />
+            </div>
+            <Button onClick={linkUser} disabled={linkUserLoading}>
+              {linkUserLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Link2 className="w-4 h-4 mr-2" />}
+              Link user
+            </Button>
+          </CardContent>
+          {linkUserMessage && (
+            <div className="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              {linkUserMessage}
+            </div>
+          )}
+        </Card>
 
         <Card>
           <CardHeader>

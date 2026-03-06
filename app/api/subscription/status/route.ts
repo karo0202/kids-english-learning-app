@@ -4,10 +4,9 @@
  * Dev admin (karolatef143@gmail.com) always gets premium access
  */
 import { NextRequest, NextResponse } from 'next/server'
+import jwt from 'jsonwebtoken'
 import { getUserIdFromToken } from '@/lib/verify-auth'
 import { getUserSubscriptionStatus } from '@/lib/subscription-supabase'
-
-const DEV_ADMIN_EMAIL = 'karolatef143@gmail.com'
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,23 +20,22 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if user is dev admin by getting user email from token
-    // For dev admin, return premium status immediately
+    // Decode token for email (Firebase ID token includes email) so we can fallback lookup by email
+    let userEmail: string | null = null
     try {
-      // Try to decode token to get email
-      const token = authHeader?.replace('Bearer ', '') || ''
+      const token = authHeader?.replace(/^Bearer\s+/i, '')?.trim() || ''
       if (token) {
-        // Simple check: if we can get user email from session, check it
-        // Note: This is a client-side check, but we'll also check server-side
-        const { getUserSession } = await import('@/lib/simple-auth')
-        // This won't work server-side, so we'll check in subscription-supabase instead
+        const decoded = jwt.decode(token) as { email?: string } | null
+        if (decoded?.email && typeof decoded.email === 'string') {
+          userEmail = decoded.email.trim().toLowerCase()
+        }
       }
-    } catch (error) {
-      // Continue with normal flow
+    } catch {
+      // ignore
     }
 
-    // Get subscription status from database
-    const status = await getUserSubscriptionStatus(userId)
+    // Get subscription status from database (lookup by user_id, then fallback by user_email)
+    const status = await getUserSubscriptionStatus(userId, userEmail)
 
     // Note: Dev admin check is handled client-side in subscription.ts
     // This endpoint returns database subscription status

@@ -148,6 +148,30 @@ Replace `your-app.vercel.app` with your real Vercel URL, `paste_your_secret_here
 
 The API sets `subscriptions.status` to **active** and `payment_transactions.status` to **completed** for that transaction; `expires_at` is already set when the subscription was created.
 
+**If a user still can't access after activation:** Sometimes the subscription was created with a different or wrong `user_id`, so the app (which sends the user's current Firebase UID) doesn't find it. Use the **Link user** API to fix it:
+
+1. Get the **transaction_id** of that user's payment (from admin payments page or Supabase `subscriptions` table).
+2. Get the user's **Firebase UID** (e.g. from Supabase or from the user — they can find it in account/settings in some apps, or you can use the UID you see in your auth logs; e.g. `V8iXAGR7gXXSK0bkiiqAZJwN0zq2`).
+3. Call the link-user API (same auth as activate — `X-Admin-Secret` or `Authorization: Bearer YOUR_ADMIN_SECRET`):
+
+```bash
+curl -X POST YOUR_APP_URL/api/subscription/admin/link-user \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Secret: YOUR_ADMIN_SECRET" \
+  -d '{"transactionId":"THE_TRANSACTION_ID","userId":"THE_FIREBASE_UID"}'
+```
+
+Example for one user:
+
+```bash
+curl -X POST https://your-app.vercel.app/api/subscription/admin/link-user \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Secret: YOUR_SECRET" \
+  -d '{"transactionId":"pay_1738xxxxx_abc","userId":"V8iXAGR7gXXSK0bkiiqAZJwN0zq2"}'
+```
+
+Then ask the user to refresh the app; they should get access. Optional: in Supabase, run `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS user_email TEXT;` so future subscriptions store email and the app can also match by email if needed.
+
 #### Option B: Supabase Dashboard (manual)
 
 1. **Supabase** → **Table Editor** → **subscriptions**. Find the row with the **transaction_id** you verified. Change **status** from `pending` to **active**. Save.

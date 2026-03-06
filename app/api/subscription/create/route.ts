@@ -121,7 +121,8 @@ export async function POST(request: NextRequest) {
     }
 
     await seedPlansIfNeeded()
-    const result = await createSubscriptionPayment(userId, planId, paymentMethod)
+    const userEmail = typeof body.userEmail === 'string' ? body.userEmail.trim() || undefined : undefined
+    const result = await createSubscriptionPayment(userId, planId, paymentMethod, userEmail)
 
     // Get plan price for logging and email
     const FALLBACK_PLANS = [
