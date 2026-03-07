@@ -370,6 +370,17 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     })
   }, [letterPath])
 
+  // Prevent scroll/zoom on canvas touch so drawing responds properly
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const preventTouch = (e: TouchEvent) => {
+      if (e.touches.length === 1) e.preventDefault()
+    }
+    canvas.addEventListener('touchmove', preventTouch, { passive: false })
+    return () => canvas.removeEventListener('touchmove', preventTouch)
+  }, [])
+
   // Initialize main canvas (blank white paper) and reference canvas
   useEffect(() => {
     const canvas = canvasRef.current
@@ -380,7 +391,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     const resizeCanvas = () => {
       const container = canvas.parentElement
       if (!container) return
-      const size = Math.min(container.clientWidth - 24, 500)
+      const maxFromContainer = container.clientWidth - 24
+      const maxFromViewport = typeof window !== 'undefined'
+        ? Math.min(window.innerWidth * 0.92, window.innerHeight * 0.5, 520)
+        : 500
+      const minSize = 280
+      const size = Math.max(minSize, Math.min(maxFromContainer, maxFromViewport, 500))
       const scale = window.devicePixelRatio || 1
       canvas.width = size * scale
       canvas.height = size * scale
@@ -399,25 +415,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
   }, [letter, drawReferenceLetter])
 
 
-  // Start drawing
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault()
+  // Get position in canvas display coordinates (same space as context after scale)
+  const getCanvasPoint = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
-    if (!canvas) return
-
-    // Record start time for analytics
-    if (startTimeRef.current === 0) {
-      startTimeRef.current = Date.now()
-    }
-
+    if (!canvas) return null
     const rect = canvas.getBoundingClientRect()
-    const scale = window.devicePixelRatio || 1
-    const displayWidth = rect.width
-    const displayHeight = rect.height
-
-    let clientX = 0
-    let clientY = 0
-
+    let clientX = 0, clientY = 0
     if ('touches' in e && e.touches.length > 0) {
       clientX = e.touches[0].clientX
       clientY = e.touches[0].clientY
@@ -425,18 +428,32 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
       clientX = e.clientX
       clientY = e.clientY
     }
+    const x = clientX - rect.left
+    const y = clientY - rect.top
+    return { x, y }
+  }
 
-    const x = (clientX - rect.left) * scale
-    const y = (clientY - rect.top) * scale
+  // Start drawing
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const point = getCanvasPoint(e)
+    if (!point) return
+
+    if (startTimeRef.current === 0) {
+      startTimeRef.current = Date.now()
+    }
 
     setIsDrawing(true)
-    setDrawingPath([{ x, y }])
-    lastPointRef.current = { x, y }
+    setDrawingPath([point])
+    lastPointRef.current = point
     setIsCorrect(null)
     setShowFeedback(false)
   }
 
-  // Continue drawing
+  // Continue drawing (use display coords so touch and mouse match)
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return
 
@@ -444,40 +461,24 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     const canvas = canvasRef.current
     if (!canvas) return
 
+    const point = getCanvasPoint(e)
+    if (!point) return
+
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx || !lastPointRef.current) return
 
-    const rect = canvas.getBoundingClientRect()
     const scale = window.devicePixelRatio || 1
+    ctx.strokeStyle = penColor
+    ctx.lineWidth = penSize * scale
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y)
+    ctx.lineTo(point.x, point.y)
+    ctx.stroke()
 
-    let clientX = 0
-    let clientY = 0
-
-    if ('touches' in e && e.touches.length > 0) {
-      clientX = e.touches[0].clientX
-      clientY = e.touches[0].clientY
-    } else if ('clientX' in e) {
-      clientX = e.clientX
-      clientY = e.clientY
-    }
-
-    const x = (clientX - rect.left) * scale
-    const y = (clientY - rect.top) * scale
-
-    if (lastPointRef.current) {
-      ctx.strokeStyle = penColor
-      ctx.lineWidth = penSize * scale
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-      
-      ctx.beginPath()
-      ctx.moveTo(lastPointRef.current.x / scale, lastPointRef.current.y / scale)
-      ctx.lineTo(x / scale, y / scale)
-      ctx.stroke()
-
-      setDrawingPath(prev => [...prev, { x: x / scale, y: y / scale }])
-    }
-    lastPointRef.current = { x, y }
+    setDrawingPath(prev => [...prev, point])
+    lastPointRef.current = point
   }
 
   // Validate overall shape: we require the drawing to roughly follow the guide,
@@ -538,10 +539,10 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     ).length
     if (inBoundsCount < normalizedDrawn.length * 0.5) return false
 
-    // Distance-based similarity to the guide
+    // Distance-based similarity to the guide (must match THIS letter's shape)
     let matchedPoints = 0
     let totalDistance = 0
-    const MAX_DISTANCE = 22 // forgiving for kids
+    const MAX_DISTANCE = 18 // strict enough so wrong letter (e.g. A vs B) fails
 
     normalizedDrawn.forEach((drawnPoint) => {
       let minDist = Infinity
@@ -560,17 +561,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     const matchRatio = matchedPoints / normalizedDrawn.length
     const avgDistance = matchedPoints > 0 ? totalDistance / matchedPoints : Infinity
 
-    // Generous thresholds: shape must mostly follow the guide,
-    // but doesn't need to be perfect.
-    const MIN_MATCH = 0.4
-    const MAX_AVG_DISTANCE = 16
-
-    return matchRatio >= MIN_MATCH && avgDistance <= MAX_AVG_DISTANCE
     const letterUpper = letter.toUpperCase()
-    const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_DISTANCE
+    const MAX_AVG_DISTANCE = 16
+    const relaxedMaxDistance = letterUpper === 'A' ? 25 : MAX_AVG_DISTANCE
     const relaxedMinRatio = letterUpper === 'A' ? 0.5 : 0.6
 
-    // Additional validation: Check letter-specific characteristics
+    // Letter-specific validation: must match THIS letter, not another
     
     // Helper function to check for vertical line
     const hasVerticalLine = (xPos: number, threshold: number = 10, minRatio: number = 0.15) => {
@@ -1280,14 +1276,14 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
                   aria-hidden
                 />
               </div>
-              {/* Blank white paper for writing */}
-              <div className="flex flex-col items-center flex-1 min-w-0 relative">
+              {/* Blank white paper for writing - large area for portrait/landscape */}
+              <div className="flex flex-col items-center flex-1 min-w-0 relative w-full">
                 <p className="text-xs font-medium text-gray-500 mb-1">Your paper</p>
-                <div className="relative max-w-full">
+                <div className="relative w-full min-h-[280px] sm:min-h-[340px] md:min-h-[380px]">
                   <canvas
                     ref={canvasRef}
-                    className="border-2 border-gray-200 rounded-2xl shadow-md bg-white touch-none"
-                    style={{ maxWidth: '100%', minHeight: 220, maxHeight: 360 }}
+                    className="border-2 border-gray-200 rounded-2xl shadow-md bg-white touch-none select-none w-full"
+                    style={{ minHeight: 320, maxHeight: 420 }}
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}

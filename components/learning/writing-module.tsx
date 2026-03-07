@@ -1518,10 +1518,10 @@ export default function WritingModule() {
           </div>
         </motion.div>
 
-        {/* Letter Tracing Activity */}
+        {/* Letter Tracing Activity - large area for portrait/landscape */}
         {activityType === 'tracing' ? (
           currentLetter ? (
-            <div className="w-full">
+            <div className="w-full min-h-[60vh] flex flex-col">
               <SmartLetterTracing
                 letter={currentLetter.letter}
                 onComplete={() => {
