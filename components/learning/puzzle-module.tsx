@@ -42,6 +42,16 @@ interface JigsawPuzzle {
   category: string
 }
 
+/** Fisher-Yates shuffle - ensures uniform random order (unlike sort(() => Math.random() - 0.5)) */
+function shuffleArray<T>(arr: T[]): T[] {
+  const out = [...arr]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+
 /** Word + picture puzzles: each piece has an image part and one letter; assemble to spell the word (e.g. bug, pig, duck, cat) */
 interface WordPicturePuzzle {
   word: string
@@ -168,7 +178,12 @@ export default function PuzzleModule() {
     if (puzzleType === 'word-picture' && WORD_PICTURE_PUZZLES[wordPictureIndex]) {
       const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
       const indices = Array.from({ length: puzzle.word.length }, (_, i) => i)
-      setPieceOrder(indices.sort(() => Math.random() - 0.5))
+      let order = shuffleArray(indices)
+      // Never show puzzle already solved: reshuffle until order is not correct
+      while (order.every((letterIndex, slot) => letterIndex === slot) && order.length > 1) {
+        order = shuffleArray(indices)
+      }
+      setPieceOrder(order)
       setShowHint(false)
     }
   }, [puzzleType, wordPictureIndex])
@@ -327,7 +342,11 @@ export default function PuzzleModule() {
     } else if (puzzleType === 'word-picture') {
       const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
       const indices = Array.from({ length: puzzle.word.length }, (_, i) => i)
-      setPieceOrder(indices.sort(() => Math.random() - 0.5))
+      let order = shuffleArray(indices)
+      while (order.every((letterIndex, slot) => letterIndex === slot) && order.length > 1) {
+        order = shuffleArray(indices)
+      }
+      setPieceOrder(order)
       setTappedSlot(null)
     }
   }
@@ -878,14 +897,14 @@ export default function PuzzleModule() {
                   Drag pieces to reorder, or tap one piece then another to swap. Spell the word!
                 </p>
 
-                {/* Striped background area + puzzle pieces */}
+                {/* Striped background area + puzzle pieces - responsive for portrait */}
                 <div
-                  className="relative rounded-2xl overflow-hidden min-h-[200px] p-6"
+                  className="relative rounded-2xl overflow-hidden min-h-[200px] p-4 sm:p-6"
                   style={{
                     background: 'repeating-linear-gradient(135deg, #e8f5e9 0px, #e8f5e9 12px, #fff 12px, #fff 24px)',
                   }}
                 >
-                  <div className="flex flex-wrap justify-center items-end gap-2 md:gap-4">
+                  <div className="flex flex-wrap justify-center items-end gap-3 sm:gap-4">
                     {pieceOrder.map((letterIndex, slotIndex) => {
                       const letter = currentWordPicturePuzzle.word[letterIndex]
                       return (
