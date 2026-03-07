@@ -63,49 +63,107 @@ interface WordPicturePuzzle {
 
 const WORD_PICTURE_PUZZLES: WordPicturePuzzle[] = [
   { word: 'bug', emoji: '🐞', hint: 'A little red insect with spots' },
-  { word: 'pig', emoji: '🐷', hint: 'Says oink!' },
+  { word: 'pig', emoji: '🐷', hint: 'A pink animal that says oink!' },
   { word: 'duck', emoji: '🦆', hint: 'Likes water and says quack' },
   { word: 'cat', emoji: '🐱', hint: 'A furry pet that says meow' },
-  { word: 'dog', emoji: '🐶', hint: 'A loyal friend' },
-  { word: 'sun', emoji: '☀️', hint: 'Shines in the sky' },
-  { word: 'car', emoji: '🚗', hint: 'Takes you places' },
+  { word: 'dog', emoji: '🐶', hint: 'A loyal friend that barks' },
+  { word: 'sun', emoji: '☀️', hint: 'Shines in the sky during the day' },
+  { word: 'car', emoji: '🚗', hint: 'Takes you places on four wheels' },
   { word: 'ball', emoji: '⚽', hint: 'You can kick or throw it' },
   { word: 'bear', emoji: '🐻', hint: 'A big furry animal that likes honey' },
   { word: 'fish', emoji: '🐟', hint: 'Swims in the sea' },
   { word: 'bird', emoji: '🐦', hint: 'Has wings and can fly' },
-  { word: 'moon', emoji: '🌙', hint: 'Shines at night' },
-  { word: 'star', emoji: '⭐', hint: 'Twinkles in the sky' },
-  { word: 'book', emoji: '📖', hint: 'You read it' },
-  { word: 'hand', emoji: '✋', hint: 'You have five on each arm' },
+  { word: 'moon', emoji: '🌙', hint: 'Shines at night in the sky' },
+  { word: 'star', emoji: '⭐', hint: 'Twinkles in the night sky' },
+  { word: 'book', emoji: '📖', hint: 'You read it for stories' },
+  { word: 'hand', emoji: '✋', hint: 'You have five fingers on each one' },
+  { word: 'frog', emoji: '🐸', hint: 'Green animal that hops and says ribbit' },
+  { word: 'lion', emoji: '🦁', hint: 'King of the jungle with a mane' },
+  { word: 'cake', emoji: '🎂', hint: 'Sweet treat for birthdays' },
+  { word: 'rain', emoji: '🌧️', hint: 'Water that falls from clouds' },
+  { word: 'tree', emoji: '🌳', hint: 'Has leaves and branches' },
+  { word: 'boat', emoji: '⛵', hint: 'Floats on water' },
+  { word: 'bell', emoji: '🔔', hint: 'Makes a ding or ring sound' },
+  { word: 'milk', emoji: '🥛', hint: 'White drink good for your bones' },
+  { word: 'hat', emoji: '🧢', hint: 'You wear it on your head' },
+  { word: 'key', emoji: '🔑', hint: 'Opens a lock' },
+  { word: 'nest', emoji: '🪺', hint: 'Where birds lay eggs' },
+  { word: 'foot', emoji: '🦶', hint: 'You have two; you walk on them' },
+  { word: 'fire', emoji: '🔥', hint: 'Hot and bright' },
+  { word: 'leaf', emoji: '🍃', hint: 'Grows on trees; green or autumn colors' },
 ]
 
 const WORD_PUZZLES: WordPuzzle[] = [
-  { word: 'APPLE', hint: 'A red fruit', scrambled: ['A', 'P', 'P', 'L', 'E'] },
-  { word: 'BANANA', hint: 'A yellow fruit', scrambled: ['B', 'A', 'N', 'A', 'N', 'A'] },
-  { word: 'CAT', hint: 'A furry pet', scrambled: ['C', 'A', 'T'] },
-  { word: 'DOG', hint: 'A loyal friend', scrambled: ['D', 'O', 'G'] },
-  { word: 'ELEPHANT', hint: 'A big gray animal', scrambled: ['E', 'L', 'E', 'P', 'H', 'A', 'N', 'T'] },
-  { word: 'FISH', hint: 'Lives in water', scrambled: ['F', 'I', 'S', 'H'] },
-  { word: 'GIRAFFE', hint: 'Has a long neck', scrambled: ['G', 'I', 'R', 'A', 'F', 'F', 'E'] },
-  { word: 'HOUSE', hint: 'Where we live', scrambled: ['H', 'O', 'U', 'S', 'E'] },
+  // 3-letter
+  { word: 'CAT', hint: 'A furry pet that says meow', scrambled: ['C', 'A', 'T'] },
+  { word: 'DOG', hint: 'A loyal friend that barks', scrambled: ['D', 'O', 'G'] },
+  { word: 'SUN', hint: 'Shines in the sky during the day', scrambled: ['S', 'U', 'N'] },
+  { word: 'PIG', hint: 'A pink animal that says oink', scrambled: ['P', 'I', 'G'] },
+  { word: 'CAR', hint: 'Takes you places on four wheels', scrambled: ['C', 'A', 'R'] },
+  { word: 'HAT', hint: 'You wear it on your head', scrambled: ['H', 'A', 'T'] },
+  { word: 'BED', hint: 'You sleep in it at night', scrambled: ['B', 'E', 'D'] },
+  { word: 'RED', hint: 'Color of an apple', scrambled: ['R', 'E', 'D'] },
   { word: 'ICE', hint: 'Frozen water', scrambled: ['I', 'C', 'E'] },
-  { word: 'JUMP', hint: 'Move up quickly', scrambled: ['J', 'U', 'M', 'P'] },
-  { word: 'KITE', hint: 'Flies in the sky', scrambled: ['K', 'I', 'T', 'E'] },
-  { word: 'LION', hint: 'King of the jungle', scrambled: ['L', 'I', 'O', 'N'] },
-  { word: 'MOON', hint: 'Shines at night', scrambled: ['M', 'O', 'O', 'N'] },
-  { word: 'NOSE', hint: 'We smell with it', scrambled: ['N', 'O', 'S', 'E'] },
-  { word: 'ORANGE', hint: 'A round orange fruit', scrambled: ['O', 'R', 'A', 'N', 'G', 'E'] },
-  { word: 'PIG', hint: 'Says oink', scrambled: ['P', 'I', 'G'] },
-  { word: 'QUEEN', hint: 'A royal lady', scrambled: ['Q', 'U', 'E', 'E', 'N'] },
-  { word: 'RAIN', hint: 'Falls from clouds', scrambled: ['R', 'A', 'I', 'N'] },
-  { word: 'SUN', hint: 'Shines in the day', scrambled: ['S', 'U', 'N'] },
+  { word: 'EGG', hint: 'Chickens lay it; you eat it for breakfast', scrambled: ['E', 'G', 'G'] },
+  // 4-letter
+  { word: 'FISH', hint: 'Swims in the sea and has fins', scrambled: ['F', 'I', 'S', 'H'] },
+  { word: 'MOON', hint: 'Shines at night in the sky', scrambled: ['M', 'O', 'O', 'N'] },
+  { word: 'RAIN', hint: 'Water that falls from clouds', scrambled: ['R', 'A', 'I', 'N'] },
   { word: 'TREE', hint: 'Has leaves and branches', scrambled: ['T', 'R', 'E', 'E'] },
-  { word: 'UMBRELLA', hint: 'Keeps us dry', scrambled: ['U', 'M', 'B', 'R', 'E', 'L', 'L', 'A'] },
-  { word: 'VIOLIN', hint: 'A musical instrument', scrambled: ['V', 'I', 'O', 'L', 'I', 'N'] },
-  { word: 'WATER', hint: 'We drink it', scrambled: ['W', 'A', 'T', 'E', 'R'] },
-  { word: 'XRAY', hint: 'Shows bones', scrambled: ['X', 'R', 'A', 'Y'] },
-  { word: 'YELLOW', hint: 'Color of the sun', scrambled: ['Y', 'E', 'L', 'L', 'O', 'W'] },
-  { word: 'ZEBRA', hint: 'Black and white stripes', scrambled: ['Z', 'E', 'B', 'R', 'A'] }
+  { word: 'BOOK', hint: 'You read it for stories', scrambled: ['B', 'O', 'O', 'K'] },
+  { word: 'BALL', hint: 'You can kick or throw it', scrambled: ['B', 'A', 'L', 'L'] },
+  { word: 'BEAR', hint: 'Big furry animal that likes honey', scrambled: ['B', 'E', 'A', 'R'] },
+  { word: 'BIRD', hint: 'Has wings and can fly', scrambled: ['B', 'I', 'R', 'D'] },
+  { word: 'DUCK', hint: 'Says quack and likes water', scrambled: ['D', 'U', 'C', 'K'] },
+  { word: 'STAR', hint: 'Twinkles in the night sky', scrambled: ['S', 'T', 'A', 'R'] },
+  { word: 'JUMP', hint: 'Move up quickly off the ground', scrambled: ['J', 'U', 'M', 'P'] },
+  { word: 'NOSE', hint: 'You smell and breathe with it', scrambled: ['N', 'O', 'S', 'E'] },
+  { word: 'KITE', hint: 'Flies in the sky on a string', scrambled: ['K', 'I', 'T', 'E'] },
+  { word: 'LION', hint: 'King of the jungle, has a mane', scrambled: ['L', 'I', 'O', 'N'] },
+  { word: 'MILK', hint: 'White drink that is good for bones', scrambled: ['M', 'I', 'L', 'K'] },
+  { word: 'CAKE', hint: 'Sweet treat for birthdays', scrambled: ['C', 'A', 'K', 'E'] },
+  { word: 'HAND', hint: 'You have five fingers on it', scrambled: ['H', 'A', 'N', 'D'] },
+  { word: 'SHOE', hint: 'You wear it on your foot', scrambled: ['S', 'H', 'O', 'E'] },
+  { word: 'WIND', hint: 'Moves the leaves and kites', scrambled: ['W', 'I', 'N', 'D'] },
+  { word: 'FROG', hint: 'Green animal that hops and says ribbit', scrambled: ['F', 'R', 'O', 'G'] },
+  // 5-letter
+  { word: 'APPLE', hint: 'A red or green fruit', scrambled: ['A', 'P', 'P', 'L', 'E'] },
+  { word: 'HOUSE', hint: 'Where we live with our family', scrambled: ['H', 'O', 'U', 'S', 'E'] },
+  { word: 'WATER', hint: 'We drink it to stay healthy', scrambled: ['W', 'A', 'T', 'E', 'R'] },
+  { word: 'TIGER', hint: 'Big cat with orange and black stripes', scrambled: ['T', 'I', 'G', 'E', 'R'] },
+  { word: 'HAPPY', hint: 'How you feel when something is fun', scrambled: ['H', 'A', 'P', 'P', 'Y'] },
+  { word: 'MUSIC', hint: 'Songs and sounds we listen to', scrambled: ['M', 'U', 'S', 'I', 'C'] },
+  { word: 'TABLE', hint: 'We put food and books on it', scrambled: ['T', 'A', 'B', 'L', 'E'] },
+  { word: 'CLOUD', hint: 'White or gray in the sky', scrambled: ['C', 'L', 'O', 'U', 'D'] },
+  { word: 'SPOON', hint: 'You use it to eat soup', scrambled: ['S', 'P', 'O', 'O', 'N'] },
+  { word: 'PIZZA', hint: 'Round food with cheese and sauce', scrambled: ['P', 'I', 'Z', 'Z', 'A'] },
+  { word: 'SNAKE', hint: 'Long animal that slithers', scrambled: ['S', 'N', 'A', 'K', 'E'] },
+  { word: 'WHALE', hint: 'Very big animal that lives in the ocean', scrambled: ['W', 'H', 'A', 'L', 'E'] },
+  { word: 'GRASS', hint: 'Green and grows on the ground', scrambled: ['G', 'R', 'A', 'S', 'S'] },
+  { word: 'RABBIT', hint: 'Fluffy animal with long ears that hops', scrambled: ['R', 'A', 'B', 'B', 'I', 'T'] },
+  // 6-letter
+  { word: 'BANANA', hint: 'A long yellow fruit', scrambled: ['B', 'A', 'N', 'A', 'N', 'A'] },
+  { word: 'ORANGE', hint: 'A round orange fruit', scrambled: ['O', 'R', 'A', 'N', 'G', 'E'] },
+  { word: 'MONKEY', hint: 'Animal that climbs trees and likes bananas', scrambled: ['M', 'O', 'N', 'K', 'E', 'Y'] },
+  { word: 'TURTLE', hint: 'Has a shell and moves slowly', scrambled: ['T', 'U', 'R', 'T', 'L', 'E'] },
+  { word: 'BUTTER', hint: 'Yellow spread for bread', scrambled: ['B', 'U', 'T', 'T', 'E', 'R'] },
+  { word: 'PURPLE', hint: 'Color of grapes and violets', scrambled: ['P', 'U', 'R', 'P', 'L', 'E'] },
+  { word: 'FRIEND', hint: 'Someone you like to play with', scrambled: ['F', 'R', 'I', 'E', 'N', 'D'] },
+  { word: 'PENCIL', hint: 'You write and draw with it', scrambled: ['P', 'E', 'N', 'C', 'I', 'L'] },
+  { word: 'GARDEN', hint: 'Where flowers and vegetables grow', scrambled: ['G', 'A', 'R', 'D', 'E', 'N'] },
+  { word: 'SUMMER', hint: 'Hot season when we play outside', scrambled: ['S', 'U', 'M', 'M', 'E', 'R'] },
+  // 7-letter
+  { word: 'GIRAFFE', hint: 'Tall animal with a long neck', scrambled: ['G', 'I', 'R', 'A', 'F', 'F', 'E'] },
+  { word: 'ELEPHANT', hint: 'Very big gray animal with a trunk', scrambled: ['E', 'L', 'E', 'P', 'H', 'A', 'N', 'T'] },
+  { word: 'CHICKEN', hint: 'Bird that lays eggs and says cluck', scrambled: ['C', 'H', 'I', 'C', 'K', 'E', 'N'] },
+  // 7–9 letter
+  { word: 'BREAKFAST', hint: 'First meal of the day', scrambled: ['B', 'R', 'E', 'A', 'K', 'F', 'A', 'S', 'T'] },
+  { word: 'UMBRELLA', hint: 'Keeps you dry in the rain', scrambled: ['U', 'M', 'B', 'R', 'E', 'L', 'L', 'A'] },
+  { word: 'VIOLIN', hint: 'Musical instrument you play with a bow', scrambled: ['V', 'I', 'O', 'L', 'I', 'N'] },
+  { word: 'QUEEN', hint: 'A royal lady who wears a crown', scrambled: ['Q', 'U', 'E', 'E', 'N'] },
+  { word: 'XRAY', hint: 'Shows your bones at the doctor', scrambled: ['X', 'R', 'A', 'Y'] },
+  { word: 'YELLOW', hint: 'Color of the sun and bananas', scrambled: ['Y', 'E', 'L', 'L', 'O', 'W'] },
+  { word: 'ZEBRA', hint: 'Animal with black and white stripes', scrambled: ['Z', 'E', 'B', 'R', 'A'] },
 ]
 
 const SENTENCE_PUZZLES: SentencePuzzle[] = [
@@ -252,8 +310,7 @@ export default function PuzzleModule() {
   useEffect(() => {
     if (puzzleType === 'word' && WORD_PUZZLES[wordPuzzleIndex]) {
       const puzzle = WORD_PUZZLES[wordPuzzleIndex]
-      const shuffled = [...puzzle.scrambled].sort(() => Math.random() - 0.5)
-      setAvailableLetters(shuffled)
+      setAvailableLetters(shuffleArray([...puzzle.scrambled]))
       setSelectedLetters([])
       setShowHint(false)
     }
@@ -262,8 +319,7 @@ export default function PuzzleModule() {
   useEffect(() => {
     if (puzzleType === 'sentence' && SENTENCE_PUZZLES[sentencePuzzleIndex]) {
       const puzzle = SENTENCE_PUZZLES[sentencePuzzleIndex]
-      const shuffled = [...puzzle.scrambled].sort(() => Math.random() - 0.5)
-      setAvailableWords(shuffled)
+      setAvailableWords(shuffleArray([...puzzle.scrambled]))
       setSelectedWords([])
       setShowHint(false)
     }
@@ -285,61 +341,51 @@ export default function PuzzleModule() {
 
   const handleLetterClick = (letter: string, index: number) => {
     if (puzzleType !== 'word') return
-    
     setAvailableLetters(prev => prev.filter((_, i) => i !== index))
     setSelectedLetters(prev => [...prev, letter])
-    checkWordPuzzle()
   }
 
   const handleLetterRemove = (letter: string, index: number) => {
     if (puzzleType !== 'word') return
-    
     setSelectedLetters(prev => prev.filter((_, i) => i !== index))
-    setAvailableLetters(prev => [...prev, letter].sort(() => Math.random() - 0.5))
-    checkWordPuzzle()
+    setAvailableLetters(prev => shuffleArray([...prev, letter]))
   }
 
   const handleWordClick = (word: string, index: number) => {
     if (puzzleType !== 'sentence') return
-    
     setAvailableWords(prev => prev.filter((_, i) => i !== index))
     setSelectedWords(prev => [...prev, word])
-    checkSentencePuzzle()
   }
 
   const handleWordRemove = (word: string, index: number) => {
     if (puzzleType !== 'sentence') return
-    
     setSelectedWords(prev => prev.filter((_, i) => i !== index))
-    setAvailableWords(prev => [...prev, word].sort(() => Math.random() - 0.5))
-    checkSentencePuzzle()
+    setAvailableWords(prev => shuffleArray([...prev, word]))
   }
 
-  const checkWordPuzzle = () => {
-    if (puzzleType !== 'word' || !WORD_PUZZLES[wordPuzzleIndex]) return
-    
+  // Word puzzle: check after state updates (setState is async, so we validate in effect)
+  useEffect(() => {
+    if (puzzleType !== 'word' || showFeedback) return
     const puzzle = WORD_PUZZLES[wordPuzzleIndex]
+    if (!puzzle) return
     const currentWord = selectedLetters.join('')
-    
-    if (currentWord.length === puzzle.word.length) {
-      if (currentWord === puzzle.word) {
-        handleCorrect()
-      }
+    if (currentWord.length === puzzle.word.length && currentWord === puzzle.word) {
+      handleCorrect()
     }
-  }
+  }, [puzzleType, wordPuzzleIndex, selectedLetters, showFeedback])
 
-  const checkSentencePuzzle = () => {
-    if (puzzleType !== 'sentence' || !SENTENCE_PUZZLES[sentencePuzzleIndex]) return
-    
+  // Sentence puzzle: check after state updates
+  useEffect(() => {
+    if (puzzleType !== 'sentence' || showFeedback) return
     const puzzle = SENTENCE_PUZZLES[sentencePuzzleIndex]
-    const currentSentence = selectedWords.join(' ')
-    
+    if (!puzzle) return
     if (selectedWords.length === puzzle.words.length) {
+      const currentSentence = selectedWords.join(' ')
       if (currentSentence.toLowerCase() === puzzle.sentence.toLowerCase()) {
         handleCorrect()
       }
     }
-  }
+  }, [puzzleType, sentencePuzzleIndex, selectedWords, showFeedback])
 
   const handlePictureAnswer = (index: number) => {
     if (puzzleType !== 'picture') return
@@ -427,13 +473,11 @@ export default function PuzzleModule() {
     
     if (puzzleType === 'word') {
       const puzzle = WORD_PUZZLES[wordPuzzleIndex]
-      const shuffled = [...puzzle.scrambled].sort(() => Math.random() - 0.5)
-      setAvailableLetters(shuffled)
+      setAvailableLetters(shuffleArray([...puzzle.scrambled]))
       setSelectedLetters([])
     } else if (puzzleType === 'sentence') {
       const puzzle = SENTENCE_PUZZLES[sentencePuzzleIndex]
-      const shuffled = [...puzzle.scrambled].sort(() => Math.random() - 0.5)
-      setAvailableWords(shuffled)
+      setAvailableWords(shuffleArray([...puzzle.scrambled]))
       setSelectedWords([])
     } else if (puzzleType === 'picture') {
       setSelectedPictureAnswer(null)
@@ -653,10 +697,15 @@ export default function PuzzleModule() {
           >
             <Card className="card-kid">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                    Word Puzzle
-                  </h2>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                      Word Puzzle
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                      {wordPuzzleIndex + 1} of {WORD_PUZZLES.length}
+                    </p>
+                  </div>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -691,6 +740,9 @@ export default function PuzzleModule() {
                 )}
 
                 <div className="text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    Spell the word ({currentWordPuzzle.word.length} letters)
+                  </p>
                   <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 min-h-[120px] flex items-center justify-center border-4 border-dashed border-purple-300 dark:border-purple-700">
                     {selectedLetters.length > 0 ? (
                       <div className="flex gap-3 flex-wrap justify-center">
@@ -707,11 +759,20 @@ export default function PuzzleModule() {
                             {letter}
                           </motion.button>
                         ))}
+                        {Array.from({ length: currentWordPuzzle.word.length - selectedLetters.length }).map((_, i) => (
+                          <span key={`empty-${i}`} className="w-16 h-16 rounded-xl border-2 border-dashed border-purple-200 dark:border-purple-600 flex items-center justify-center text-gray-300 dark:text-gray-500 text-2xl" aria-hidden>
+                            ?
+                          </span>
+                        ))}
                       </div>
                     ) : (
-                      <p className="text-gray-400 dark:text-gray-500 text-lg">
-                        Arrange the letters below to form a word
-                      </p>
+                      <div className="flex gap-3 flex-wrap justify-center">
+                        {Array.from({ length: currentWordPuzzle.word.length }).map((_, i) => (
+                          <span key={`slot-${i}`} className="w-16 h-16 rounded-xl border-2 border-dashed border-purple-200 dark:border-purple-600 flex items-center justify-center text-gray-300 dark:text-gray-500 text-xl" aria-hidden>
+                            _
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -978,9 +1039,14 @@ export default function PuzzleModule() {
             <Card className="card-kid overflow-hidden border-0 shadow-xl">
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                    Word Picture Puzzle
-                  </h2>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                      Word Picture Puzzle
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                      {wordPictureIndex + 1} of {WORD_PICTURE_PUZZLES.length}
+                    </p>
+                  </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => setShowHint(!showHint)}>
                       <Lightbulb className="w-4 h-4 mr-2" />
