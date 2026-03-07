@@ -1525,16 +1525,12 @@ export default function WritingModule() {
               <SmartLetterTracing
                 letter={currentLetter.letter}
                 onComplete={() => {
-                  // Update score and progress when letter is completed
+                  // Update score and progress when child presses Next Letter
                   setScore(prev => prev + 10)
                   setCompletedActivities(prev => prev + 1)
                   progressManager.addScore(10, 5)
                   challengeManager.updateChallengeProgress('writing', 1)
-                  
-                  // Move to next letter after a short delay
-                  setTimeout(() => {
-                    nextActivity()
-                  }, 1000)
+                  nextActivity()
                 }}
                 onNext={() => {
                   // Move to next letter

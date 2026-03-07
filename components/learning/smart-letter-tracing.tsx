@@ -295,7 +295,6 @@ const StarBurst = ({ x, y }: { x: number; y: number }) => {
 
 export default function SmartLetterTracing({ letter, onComplete, onNext }: SmartLetterTracingProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const referenceCanvasRef = useRef<HTMLCanvasElement>(null)
   
   const [isDrawing, setIsDrawing] = useState(false)
   const [drawingPath, setDrawingPath] = useState<Array<{ x: number; y: number }>>([])
@@ -337,39 +336,6 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     ctx.fillRect(0, 0, size, size)
   }, [])
 
-  // Draw the reference letter on the small side canvas (read-only model)
-  const drawReferenceLetter = useCallback(() => {
-    const canvas = referenceCanvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const size = 120
-    const scale = window.devicePixelRatio || 1
-    canvas.width = size * scale
-    canvas.height = size * scale
-    canvas.style.width = `${size}px`
-    canvas.style.height = `${size}px`
-    ctx.scale(scale, scale)
-    ctx.fillStyle = '#fafafa'
-    ctx.fillRect(0, 0, size, size)
-    const letterScale = size / 100
-    const offsetX = (size - (letterPath.bounds.maxX - letterPath.bounds.minX) * letterScale) / 2
-    const offsetY = (size - (letterPath.bounds.maxY - letterPath.bounds.minY) * letterScale) / 2
-    ctx.strokeStyle = '#374151'
-    ctx.lineWidth = 3
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
-    letterPath.strokes.forEach((stroke) => {
-      if (stroke.length < 2) return
-      ctx.beginPath()
-      ctx.moveTo(offsetX + (stroke[0].x - letterPath.bounds.minX) * letterScale, offsetY + (stroke[0].y - letterPath.bounds.minY) * letterScale)
-      for (let i = 1; i < stroke.length; i++) {
-        ctx.lineTo(offsetX + (stroke[i].x - letterPath.bounds.minX) * letterScale, offsetY + (stroke[i].y - letterPath.bounds.minY) * letterScale)
-      }
-      ctx.stroke()
-    })
-  }, [letterPath])
-
   // Prevent scroll/zoom on canvas touch so drawing responds properly
   useEffect(() => {
     const canvas = canvasRef.current
@@ -409,10 +375,9 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     }
 
     resizeCanvas()
-    drawReferenceLetter()
     window.addEventListener('resize', resizeCanvas)
     return () => window.removeEventListener('resize', resizeCanvas)
-  }, [letter, drawReferenceLetter])
+  }, [letter])
 
 
   // Get position in canvas display coordinates (same space as context after scale)
@@ -1014,27 +979,10 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     return matchRatio >= relaxedMinRatio && avgDistance < relaxedMaxDistance
   }
 
-  // Stop drawing and check completion (blank-paper mode: validate shape only)
+  // Stop drawing — no right/wrong; child moves on when they press Next Letter
   const stopDrawing = () => {
     if (!isDrawing) return
     setIsDrawing(false)
-
-    const shapeIsValid = validateLetterShape(drawingPath)
-    if (shapeIsValid) {
-      setProgress(100)
-      handleComplete()
-    } else {
-      // Show feedback for incomplete strokes
-      setShowFeedback(true)
-      if (soundEnabled) {
-        audioManager.playError()
-      }
-      
-      setTimeout(() => {
-        setShowFeedback(false)
-      }, 1500)
-    }
-
     lastPointRef.current = null
   }
 
@@ -1124,7 +1072,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     return words[letter.toUpperCase()] || 'word'
   }
 
-  // Reset tracing (blank paper + redraw reference)
+  // Reset tracing (clear blank paper)
   const resetTracing = () => {
     const canvas = canvasRef.current
     if (canvas) {
@@ -1138,12 +1086,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
     setIsDrawing(false)
     startTimeRef.current = 0
     setDrawingPath([])
-    setIsCorrect(null)
-    setShowFeedback(false)
-    setProgress(0)
-    completedStrokesRef.current.clear()
     lastPointRef.current = null
-    drawReferenceLetter()
   }
 
   return (
@@ -1258,28 +1201,12 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
           )}
         </AnimatePresence>
 
-        {/* Canvas Container: reference letter + blank paper */}
+        {/* Canvas Container: blank paper only */}
         <Card className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-3xl shadow-xl overflow-hidden">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col items-center gap-2 sm:gap-3">
-              <p className="text-sm font-semibold text-gray-600">
-                Copy the letter on the white paper
-              </p>
-            <div className="relative flex flex-wrap items-start justify-center gap-4 w-full">
-              {/* Small reference letter (model to copy) */}
-              <div className="flex flex-col items-center shrink-0">
-                <p className="text-xs font-medium text-gray-500 mb-1">Write this letter</p>
-                <canvas
-                  ref={referenceCanvasRef}
-                  className="border border-gray-200 rounded-xl bg-gray-50 shadow-sm touch-none"
-                  style={{ width: 120, height: 120 }}
-                  aria-hidden
-                />
-              </div>
-              {/* Blank white paper for writing - large area for portrait/landscape */}
-              <div className="flex flex-col items-center flex-1 min-w-0 relative w-full">
-                <p className="text-xs font-medium text-gray-500 mb-1">Your paper</p>
-                <div className="relative w-full min-h-[280px] sm:min-h-[340px] md:min-h-[380px]">
+            <div className="relative w-full">
+              <div className="relative w-full min-h-[280px] sm:min-h-[340px] md:min-h-[380px]">
                   <canvas
                     ref={canvasRef}
                     className="border-2 border-gray-200 rounded-2xl shadow-md bg-white touch-none select-none w-full"
@@ -1292,106 +1219,35 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
                     onTouchMove={draw}
                     onTouchEnd={stopDrawing}
                   />
-                  {/* Feedback Overlay */}
-                  <AnimatePresence>
-                    {showFeedback && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-2xl"
-                      >
-                        {isCorrect ? (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: [0, 1.2, 1] }}
-                            className="bg-green-500 text-white rounded-full p-6 shadow-2xl"
-                          >
-                            <CheckCircle className="w-16 h-16" />
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: [0, 1.2, 1] }}
-                            className="bg-red-500 text-white rounded-full p-6 shadow-2xl"
-                          >
-                            <XCircle className="w-16 h-16" />
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
-              </div>
             </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
+        {/* Action Buttons — no right/wrong; child writes then presses Next when ready */}
         <div className="flex flex-wrap justify-center gap-3 mt-6">
           <Button
             onClick={resetTracing}
             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full px-8 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
           >
             <RefreshCw className="w-5 h-5 mr-2" />
-            Try Again
+            Clear
           </Button>
           
           {onNext && (
             <Button
-              onClick={onNext}
+              onClick={() => {
+                resetTracing()
+                onComplete?.()
+              }}
               className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full px-8 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
             >
               Next Letter
             </Button>
           )}
         </div>
-
-        {/* Success Message */}
-        <AnimatePresence>
-          {showFeedback && isCorrect && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="mt-6 text-center"
-            >
-              <Card className="bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0 shadow-2xl">
-                <CardContent className="p-6">
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.5 }}
-                  >
-                    <Trophy className="w-12 h-12 mx-auto mb-2" />
-                  </motion.div>
-                  <h3 className="text-3xl font-bold mb-2">Great Job! 🎉</h3>
-                  <p className="text-xl">You traced {letter} perfectly!</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
-
-      {/* Confetti */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <ConfettiParticle
-              key={i}
-              delay={i * 0.05}
-              color={penColors[Math.floor(Math.random() * penColors.length)]}
-              x={Math.random() * 100}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Star Burst */}
-      {showStarBurst && (
-        <StarBurst x={starBurstPos.x} y={starBurstPos.y} />
-      )}
     </div>
   )
 }
