@@ -316,6 +316,8 @@ export default function PuzzleModule() {
       setSelectedPictureAnswer(null)
       if (nextIndex === 0) setLevel(prev => prev + 1)
     } else if (puzzleType === 'word-picture') {
+      setPieceOrder([]) // clear so stale "solved" order doesn't trigger checkWordPictureCorrect and skip the next puzzle
+      setTappedSlot(null)
       const nextIndex = (wordPictureIndex + 1) % WORD_PICTURE_PUZZLES.length
       setWordPictureIndex(nextIndex)
       if (nextIndex === 0) setLevel(prev => prev + 1)
@@ -352,8 +354,8 @@ export default function PuzzleModule() {
   }
 
   const checkWordPictureCorrect = useCallback(() => {
-    if (puzzleType !== 'word-picture' || !WORD_PICTURE_PUZZLES[wordPictureIndex] || pieceOrder.length === 0) return
     const puzzle = WORD_PICTURE_PUZZLES[wordPictureIndex]
+    if (puzzleType !== 'word-picture' || !puzzle || pieceOrder.length !== puzzle.word.length) return
     const correct = pieceOrder.every((letterIndex, slot) => letterIndex === slot)
     if (correct && !showFeedback) handleCorrect()
   }, [puzzleType, wordPictureIndex, pieceOrder, showFeedback])
