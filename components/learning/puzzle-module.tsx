@@ -31,6 +31,8 @@ interface SentencePuzzle {
 interface PicturePuzzle {
   word: string
   image: string
+  /** Optional high-res image URL for sharp display on retina/mobile; falls back to emoji */
+  imageUrl?: string
   options: string[]
   correct: number
 }
@@ -110,15 +112,16 @@ const SENTENCE_PUZZLES: SentencePuzzle[] = [
   { sentence: 'Fish swim in water', words: ['Fish', 'swim', 'in', 'water'], scrambled: ['water', 'Fish', 'swim', 'in'] }
 ]
 
+// High-res image URLs (800px) for sharp display on retina smartphones; fallback to emoji
 const PICTURE_PUZZLES: PicturePuzzle[] = [
-  { word: 'APPLE', image: '🍎', options: ['APPLE', 'ORANGE', 'BANANA', 'GRAPE'], correct: 0 },
-  { word: 'CAT', image: '🐱', options: ['DOG', 'CAT', 'BIRD', 'FISH'], correct: 1 },
-  { word: 'DOG', image: '🐶', options: ['CAT', 'DOG', 'RABBIT', 'MOUSE'], correct: 1 },
-  { word: 'SUN', image: '☀️', options: ['MOON', 'STAR', 'SUN', 'CLOUD'], correct: 2 },
-  { word: 'TREE', image: '🌳', options: ['FLOWER', 'TREE', 'GRASS', 'LEAF'], correct: 1 },
-  { word: 'CAR', image: '🚗', options: ['BUS', 'CAR', 'BIKE', 'PLANE'], correct: 1 },
-  { word: 'BOOK', image: '📚', options: ['PEN', 'BOOK', 'PAPER', 'PENCIL'], correct: 1 },
-  { word: 'BALL', image: '⚽', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 }
+  { word: 'APPLE', image: '🍎', imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=800&q=85&fit=crop', options: ['APPLE', 'ORANGE', 'BANANA', 'GRAPE'], correct: 0 },
+  { word: 'CAT', image: '🐱', imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=85&fit=crop', options: ['DOG', 'CAT', 'BIRD', 'FISH'], correct: 1 },
+  { word: 'DOG', image: '🐶', imageUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&q=85&fit=crop', options: ['CAT', 'DOG', 'RABBIT', 'MOUSE'], correct: 1 },
+  { word: 'SUN', image: '☀️', imageUrl: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=800&q=85&fit=crop', options: ['MOON', 'STAR', 'SUN', 'CLOUD'], correct: 2 },
+  { word: 'TREE', image: '🌳', imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=85&fit=crop', options: ['FLOWER', 'TREE', 'GRASS', 'LEAF'], correct: 1 },
+  { word: 'CAR', image: '🚗', imageUrl: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=85&fit=crop', options: ['BUS', 'CAR', 'BIKE', 'PLANE'], correct: 1 },
+  { word: 'BOOK', image: '📚', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=85&fit=crop', options: ['PEN', 'BOOK', 'PAPER', 'PENCIL'], correct: 1 },
+  { word: 'BALL', image: '⚽', imageUrl: 'https://images.unsplash.com/photo-1614632537197-38a17061c2bd?w=800&q=85&fit=crop', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 }
 ]
 
 export default function PuzzleModule() {
@@ -793,9 +796,23 @@ export default function PuzzleModule() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 200 }}
-                    className="text-9xl mb-6"
+                    className="mb-6 flex justify-center items-center min-h-[200px] sm:min-h-[260px]"
                   >
-                    {currentPicturePuzzle.image}
+                    {currentPicturePuzzle.imageUrl ? (
+                      <img
+                        src={currentPicturePuzzle.imageUrl}
+                        alt={currentPicturePuzzle.word}
+                        className="w-full max-w-[280px] sm:max-w-[320px] h-auto object-contain rounded-2xl shadow-lg"
+                        width={800}
+                        height={800}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    ) : (
+                      <span className="text-9xl block" style={{ fontSize: 'min(8rem, 22vw)' }}>
+                        {currentPicturePuzzle.image}
+                      </span>
+                    )}
                   </motion.div>
                   <p className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
                     What word matches this picture?
