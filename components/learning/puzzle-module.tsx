@@ -70,6 +70,13 @@ const WORD_PICTURE_PUZZLES: WordPicturePuzzle[] = [
   { word: 'sun', emoji: '☀️', hint: 'Shines in the sky' },
   { word: 'car', emoji: '🚗', hint: 'Takes you places' },
   { word: 'ball', emoji: '⚽', hint: 'You can kick or throw it' },
+  { word: 'bear', emoji: '🐻', hint: 'A big furry animal that likes honey' },
+  { word: 'fish', emoji: '🐟', hint: 'Swims in the sea' },
+  { word: 'bird', emoji: '🐦', hint: 'Has wings and can fly' },
+  { word: 'moon', emoji: '🌙', hint: 'Shines at night' },
+  { word: 'star', emoji: '⭐', hint: 'Twinkles in the sky' },
+  { word: 'book', emoji: '📖', hint: 'You read it' },
+  { word: 'hand', emoji: '✋', hint: 'You have five on each arm' },
 ]
 
 const WORD_PUZZLES: WordPuzzle[] = [
@@ -109,7 +116,14 @@ const SENTENCE_PUZZLES: SentencePuzzle[] = [
   { sentence: 'The sun is bright', words: ['The', 'sun', 'is', 'bright'], scrambled: ['bright', 'The', 'sun', 'is'] },
   { sentence: 'I can read books', words: ['I', 'can', 'read', 'books'], scrambled: ['books', 'I', 'can', 'read'] },
   { sentence: 'Birds fly in the sky', words: ['Birds', 'fly', 'in', 'the', 'sky'], scrambled: ['sky', 'Birds', 'fly', 'in', 'the'] },
-  { sentence: 'Fish swim in water', words: ['Fish', 'swim', 'in', 'water'], scrambled: ['water', 'Fish', 'swim', 'in'] }
+  { sentence: 'Fish swim in water', words: ['Fish', 'swim', 'in', 'water'], scrambled: ['water', 'Fish', 'swim', 'in'] },
+  { sentence: 'The ball is red', words: ['The', 'ball', 'is', 'red'], scrambled: ['red', 'The', 'ball', 'is'] },
+  { sentence: 'I see a big tree', words: ['I', 'see', 'a', 'big', 'tree'], scrambled: ['tree', 'I', 'see', 'a', 'big'] },
+  { sentence: 'She has a blue hat', words: ['She', 'has', 'a', 'blue', 'hat'], scrambled: ['hat', 'She', 'has', 'a', 'blue'] },
+  { sentence: 'We like to run', words: ['We', 'like', 'to', 'run'], scrambled: ['run', 'We', 'like', 'to'] },
+  { sentence: 'The moon is round', words: ['The', 'moon', 'is', 'round'], scrambled: ['round', 'The', 'moon', 'is'] },
+  { sentence: 'He has a new bike', words: ['He', 'has', 'a', 'new', 'bike'], scrambled: ['bike', 'He', 'has', 'a', 'new'] },
+  { sentence: 'They eat lunch at noon', words: ['They', 'eat', 'lunch', 'at', 'noon'], scrambled: ['noon', 'They', 'eat', 'lunch', 'at'] },
 ]
 
 // High-res image URLs (800px) for sharp display on retina smartphones; fallback to emoji
@@ -121,7 +135,11 @@ const PICTURE_PUZZLES: PicturePuzzle[] = [
   { word: 'TREE', image: '🌳', imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=85&fit=crop', options: ['FLOWER', 'TREE', 'GRASS', 'LEAF'], correct: 1 },
   { word: 'CAR', image: '🚗', imageUrl: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=85&fit=crop', options: ['BUS', 'CAR', 'BIKE', 'PLANE'], correct: 1 },
   { word: 'BOOK', image: '📚', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=85&fit=crop', options: ['PEN', 'BOOK', 'PAPER', 'PENCIL'], correct: 1 },
-  { word: 'BALL', image: '⚽', imageUrl: 'https://images.unsplash.com/photo-1614632537197-38a17061c2bd?w=800&q=85&fit=crop', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 }
+  { word: 'BALL', image: '⚽', imageUrl: 'https://images.unsplash.com/photo-1614632537197-38a17061c2bd?w=800&q=85&fit=crop', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 },
+  { word: 'FISH', image: '🐟', imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85&fit=crop', options: ['CAT', 'FISH', 'BIRD', 'DOG'], correct: 1 },
+  { word: 'MOON', image: '🌙', imageUrl: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=800&q=85&fit=crop', options: ['SUN', 'STAR', 'MOON', 'CLOUD'], correct: 2 },
+  { word: 'BIRD', image: '🐦', imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85&fit=crop', options: ['BIRD', 'FISH', 'CAT', 'DOG'], correct: 0 },
+  { word: 'HOUSE', image: '🏠', imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=85&fit=crop', options: ['CAR', 'TREE', 'HOUSE', 'BALL'], correct: 2 },
 ]
 
 export default function PuzzleModule() {

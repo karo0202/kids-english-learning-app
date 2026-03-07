@@ -39,14 +39,29 @@ const DEFAULT_SENTENCE_BANK = [
   'THE SUN IS BRIGHT',
   'BIRDS FLY IN SKY',
   'PLEASE CLOSE THE DOOR',
-  'FISH SWIM IN WATER'
+  'FISH SWIM IN WATER',
+  'THE BALL IS RED',
+  'I SEE A BIG TREE',
+  'SHE HAS A BLUE HAT',
+  'WE LIKE TO RUN',
+  'THE MOON IS ROUND',
+  'HE HAS A NEW BIKE',
+  'THEY EAT LUNCH AT NOON',
+  'MY DOG LIKES TO PLAY',
+  'THE BOOK IS ON THE TABLE',
+  'I LOVE MY FAMILY',
 ]
 
 interface WritingPrompt { title: string; prompt: string; words?: string[] }
 const DEFAULT_PROMPTS: WritingPrompt[] = [
   { title: 'A Day at the Park', prompt: 'Write a short story about a fun day at the park with your friends.', words: ['play', 'tree', 'slide', 'sunny'] },
   { title: 'My Magic Pet', prompt: 'Imagine you have a magic pet. What can it do? What adventures do you have together?', words: ['magic', 'friend', 'fly', 'secret'] },
-  { title: 'Rainy Day', prompt: 'It is raining outside. Describe what you do at home and how you feel.', words: ['rain', 'window', 'warm', 'music'] }
+  { title: 'Rainy Day', prompt: 'It is raining outside. Describe what you do at home and how you feel.', words: ['rain', 'window', 'warm', 'music'] },
+  { title: 'My Best Friend', prompt: 'Who is your best friend? What do you like to do together?', words: ['friend', 'play', 'happy', 'together'] },
+  { title: 'A Trip to the Zoo', prompt: 'Describe a visit to the zoo. What animals did you see? Which was your favourite?', words: ['animal', 'zoo', 'see', 'favourite'] },
+  { title: 'My Favourite Food', prompt: 'What is your favourite food? When do you eat it? Why do you like it?', words: ['food', 'eat', 'like', 'yummy'] },
+  { title: 'When I Grow Up', prompt: 'What do you want to be when you grow up? Why?', words: ['grow', 'dream', 'job', 'future'] },
+  { title: 'My Family', prompt: 'Tell me about your family. Who lives with you? What do you do together?', words: ['family', 'love', 'home', 'together'] },
 ]
 
 const LETTER_STROKE_PATTERNS: { [key: string]: { strokes: number; description: string; difficulty: 'easy' | 'medium' | 'hard' } } = {
@@ -436,6 +451,56 @@ export default function WritingModule() {
       letters: ['F', 'A', 'M', 'I', 'L', 'Y'],
       hint: 'People who live with you',
       imageUrl: `https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // More animals
+    {
+      word: 'BEAR',
+      letters: ['B', 'E', 'A', 'R', 'L', 'I'],
+      hint: 'A big furry animal that likes honey',
+      imageUrl: `https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'LION',
+      letters: ['L', 'I', 'O', 'N', 'C', 'T'],
+      hint: 'The king of the jungle',
+      imageUrl: `https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'FROG',
+      letters: ['F', 'R', 'O', 'G', 'J', 'P'],
+      hint: 'Green animal that hops and lives near water',
+      imageUrl: `https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'DUCK',
+      letters: ['D', 'U', 'C', 'K', 'B', 'E'],
+      hint: 'A bird that says quack and likes water',
+      imageUrl: `https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    // More objects & nature
+    {
+      word: 'RAIN',
+      letters: ['R', 'A', 'I', 'N', 'B', 'W'],
+      hint: 'Falls from clouds when it is wet outside',
+      imageUrl: `https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'STAR',
+      letters: ['S', 'T', 'A', 'R', 'N', 'Y'],
+      hint: 'Twinkles in the night sky',
+      imageUrl: `https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'SHOE',
+      letters: ['S', 'H', 'O', 'E', 'F', 'T'],
+      hint: 'You wear these on your feet',
+      imageUrl: `https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+    },
+    {
+      word: 'MILK',
+      letters: ['M', 'I', 'L', 'K', 'C', 'D'],
+      hint: 'A white drink that is good for bones',
+      imageUrl: `https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     }
   ]
   }

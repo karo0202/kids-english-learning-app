@@ -184,6 +184,78 @@ export default function ReadingModule() {
           ]
         }
       ]
+    },
+    {
+      id: '6',
+      title: 'The Friendly Dragon',
+      author: 'Fantasy Stories',
+      coverImage: `https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300${cacheBuster}`,
+      ageGroup: 'AGE_6_8',
+      difficulty: 2,
+      estimatedTime: 6,
+      pages: [
+        {
+          id: '6-1',
+          pageNumber: 1,
+          text: 'Once upon a time, a small dragon named Spark lived in a cosy cave by the sea.',
+          imageUrl: `https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'cosy', definition: 'warm and comfortable', example: 'My bed is cosy on a cold night.' },
+            { word: 'cave', definition: 'a hollow space in a mountain or hill', example: 'Bears sometimes sleep in a cave.' }
+          ]
+        },
+        {
+          id: '6-2',
+          pageNumber: 2,
+          text: 'Spark did not like to scare people. He wanted to make friends and share his treasure.',
+          imageUrl: `https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'treasure', definition: 'valuable things like gold or jewels', example: 'Pirates looked for treasure on islands.' },
+            { word: 'friends', definition: 'people who like each other', example: 'My friends and I play together.' }
+          ]
+        },
+        {
+          id: '6-3',
+          pageNumber: 3,
+          text: 'One day a brave girl came to the cave. She said hello, and Spark was so happy he blew friendly smoke rings!',
+          imageUrl: `https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'brave', definition: 'not afraid when something is scary', example: 'She was brave to try the big slide.' },
+            { word: 'smoke', definition: 'grey or white stuff that rises from fire', example: 'Smoke came out of the chimney.' }
+          ]
+        }
+      ]
+    },
+    {
+      id: '7',
+      title: 'A Trip to the Market',
+      author: 'Everyday Stories',
+      coverImage: `https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=300${cacheBuster}`,
+      ageGroup: 'AGE_3_5',
+      difficulty: 1,
+      estimatedTime: 5,
+      pages: [
+        {
+          id: '7-1',
+          pageNumber: 1,
+          text: 'Mum and Sam went to the market. They saw apples, bread, and big yellow bananas.',
+          imageUrl: `https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'market', definition: 'a place where people buy food and things', example: 'We buy vegetables at the market.' },
+            { word: 'bananas', definition: 'long yellow fruit', example: 'Monkeys love to eat bananas.' }
+          ]
+        },
+        {
+          id: '7-2',
+          pageNumber: 2,
+          text: 'Sam helped carry the bags. When they got home, they made a yummy fruit salad together.',
+          imageUrl: `https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400${cacheBuster}`,
+          vocabulary: [
+            { word: 'carry', definition: 'to hold and take something somewhere', example: 'I carry my books in my bag.' },
+            { word: 'salad', definition: 'a mix of vegetables or fruit to eat', example: 'We had a green salad for dinner.' }
+          ]
+        }
+      ]
     }
   ]
   }
