@@ -346,6 +346,7 @@ export default function WritingModule() {
   const [promptIndex, setPromptIndex] = useState(0)
   const [currentPrompt, setCurrentPrompt] = useState<WritingPrompt | null>(null)
   const [storyText, setStoryText] = useState('')
+  const creativeTextareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Memoize tracingLetters to avoid recreation on every render
   const tracingLetters = useMemo(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter, idx) => ({
@@ -601,6 +602,14 @@ export default function WritingModule() {
       }
     }
   }, [activityType, wordBank, sentences, prompts, tracingLetters, drawLetterGuide]) // Removed currentLetter and letterIndex to prevent re-initialization when letter changes
+
+  // Focus Creative Writing textarea when entering the activity so keyboard opens and input works
+  useEffect(() => {
+    if (activityType === 'creative' && currentPrompt) {
+      const t = setTimeout(() => creativeTextareaRef.current?.focus(), 100)
+      return () => clearTimeout(t)
+    }
+  }, [activityType, currentPrompt])
 
   useEffect(() => {
     // Load large word list for Word Builder from public JSON (optional)
@@ -1636,15 +1645,26 @@ export default function WritingModule() {
                       )}
                     </div>
 
-                    <textarea
-                      value={storyText}
-                      onChange={(e) => setStoryText(e.target.value)}
-                      onKeyDown={(e) => e.stopPropagation()}
-                      onKeyUp={(e) => e.stopPropagation()}
-                      className="w-full min-h-[220px] p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-green-300"
-                      placeholder="Start your story here..."
-                      style={{ pointerEvents: 'auto', zIndex: 10 }}
-                    />
+                    <div
+                      className="relative z-20"
+                      style={{ touchAction: 'manipulation' }}
+                      onClick={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      <textarea
+                        ref={creativeTextareaRef}
+                        value={storyText}
+                        onChange={(e) => setStoryText(e.target.value)}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        onKeyUp={(e) => e.stopPropagation()}
+                        className="w-full min-h-[220px] p-4 border-4 border-gray-200 rounded-2xl outline-none focus:border-green-300 focus:ring-2 focus:ring-green-200 resize-y bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                        placeholder="Start your story here..."
+                        style={{ pointerEvents: 'auto' }}
+                        autoComplete="off"
+                        data-lpignore="true"
+                        aria-label="Story text"
+                      />
+                    </div>
 
                     <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
                       <div>
