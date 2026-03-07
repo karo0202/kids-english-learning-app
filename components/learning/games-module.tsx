@@ -210,10 +210,12 @@ export default function GamesModule() {
     }
   ]
 
-  // Helpers: Word Hunt generation
+  // Helpers: Word Hunt generation — forward-only so words read naturally (e.g. MOON not NOOM)
   const directions = [
-    { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 1, dc: 1 }, { dr: -1, dc: 1 },
-    { dr: 0, dc: -1 }, { dr: -1, dc: 0 }, { dr: -1, dc: -1 }, { dr: 1, dc: -1 }
+    { dr: 0, dc: 1 },  // right
+    { dr: 1, dc: 0 },  // down
+    { dr: 1, dc: 1 },  // down-right
+    { dr: 1, dc: -1 }  // down-left
   ]
 
   const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
