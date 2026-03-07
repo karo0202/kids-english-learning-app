@@ -136,8 +136,8 @@ const PICTURE_PUZZLES: PicturePuzzle[] = [
   { word: 'CAR', image: '🚗', imageUrl: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=85&fit=crop', options: ['BUS', 'CAR', 'BIKE', 'PLANE'], correct: 1 },
   { word: 'BOOK', image: '📚', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=85&fit=crop', options: ['PEN', 'BOOK', 'PAPER', 'PENCIL'], correct: 1 },
   { word: 'BALL', image: '⚽', imageUrl: 'https://images.unsplash.com/photo-1614632537197-38a17061c2bd?w=800&q=85&fit=crop', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 },
-  { word: 'FISH', image: '🐟', imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85&fit=crop', options: ['CAT', 'FISH', 'BIRD', 'DOG'], correct: 1 },
-  { word: 'MOON', image: '🌙', imageUrl: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=800&q=85&fit=crop', options: ['SUN', 'STAR', 'MOON', 'CLOUD'], correct: 2 },
+  { word: 'FISH', image: '🐟', imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=85&fit=crop', options: ['CAT', 'FISH', 'BIRD', 'DOG'], correct: 1 },
+  { word: 'MOON', image: '🌙', imageUrl: 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=800&q=85&fit=crop', options: ['SUN', 'STAR', 'MOON', 'CLOUD'], correct: 2 },
   { word: 'BIRD', image: '🐦', imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85&fit=crop', options: ['BIRD', 'FISH', 'CAT', 'DOG'], correct: 0 },
   { word: 'HOUSE', image: '🏠', imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=85&fit=crop', options: ['CAR', 'TREE', 'HOUSE', 'BALL'], correct: 2 },
 ]

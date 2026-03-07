@@ -207,7 +207,7 @@ export default function SpeakingModule() {
         word: 'fish',
         pronunciation: '/fɪʃ/',
         definition: 'A swimming animal that lives in water',
-        imageUrl: `https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
@@ -289,7 +289,7 @@ export default function SpeakingModule() {
         word: 'moon',
         pronunciation: '/muːn/',
         definition: 'The bright light in the night sky',
-        imageUrl: `https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
+        imageUrl: `https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=300&h=300&fit=crop&crop=center${cacheBuster}`,
         difficulty: 1
       },
       {
