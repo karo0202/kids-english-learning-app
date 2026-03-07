@@ -109,6 +109,7 @@ const WORD_PUZZLES: WordPuzzle[] = [
 ]
 
 const SENTENCE_PUZZLES: SentencePuzzle[] = [
+  // ——— Original set ———
   { sentence: 'I love apples', words: ['I', 'love', 'apples'], scrambled: ['apples', 'I', 'love'] },
   { sentence: 'The cat is sleeping', words: ['The', 'cat', 'is', 'sleeping'], scrambled: ['sleeping', 'The', 'cat', 'is'] },
   { sentence: 'We play in the park', words: ['We', 'play', 'in', 'the', 'park'], scrambled: ['park', 'We', 'play', 'in', 'the'] },
@@ -124,6 +125,74 @@ const SENTENCE_PUZZLES: SentencePuzzle[] = [
   { sentence: 'The moon is round', words: ['The', 'moon', 'is', 'round'], scrambled: ['round', 'The', 'moon', 'is'] },
   { sentence: 'He has a new bike', words: ['He', 'has', 'a', 'new', 'bike'], scrambled: ['bike', 'He', 'has', 'a', 'new'] },
   { sentence: 'They eat lunch at noon', words: ['They', 'eat', 'lunch', 'at', 'noon'], scrambled: ['noon', 'They', 'eat', 'lunch', 'at'] },
+  // ——— Premium: feelings & me ———
+  { sentence: 'I am happy today', words: ['I', 'am', 'happy', 'today'], scrambled: ['today', 'I', 'am', 'happy'] },
+  { sentence: 'She is kind and nice', words: ['She', 'is', 'kind', 'and', 'nice'], scrambled: ['nice', 'She', 'is', 'kind', 'and'] },
+  { sentence: 'We are best friends', words: ['We', 'are', 'best', 'friends'], scrambled: ['friends', 'We', 'are', 'best'] },
+  { sentence: 'He is very brave', words: ['He', 'is', 'very', 'brave'], scrambled: ['brave', 'He', 'is', 'very'] },
+  { sentence: 'My sister likes to draw', words: ['My', 'sister', 'likes', 'to', 'draw'], scrambled: ['draw', 'My', 'sister', 'likes', 'to'] },
+  { sentence: 'I feel proud of my work', words: ['I', 'feel', 'proud', 'of', 'my', 'work'], scrambled: ['work', 'I', 'feel', 'proud', 'of', 'my'] },
+  // ——— Premium: daily life ———
+  { sentence: 'I brush my teeth every day', words: ['I', 'brush', 'my', 'teeth', 'every', 'day'], scrambled: ['day', 'I', 'brush', 'my', 'teeth', 'every'] },
+  { sentence: 'We eat breakfast in the morning', words: ['We', 'eat', 'breakfast', 'in', 'the', 'morning'], scrambled: ['morning', 'We', 'eat', 'breakfast', 'in', 'the'] },
+  { sentence: 'Mom reads a story at night', words: ['Mom', 'reads', 'a', 'story', 'at', 'night'], scrambled: ['night', 'Mom', 'reads', 'a', 'story', 'at'] },
+  { sentence: 'Dad cooks dinner for us', words: ['Dad', 'cooks', 'dinner', 'for', 'us'], scrambled: ['us', 'Dad', 'cooks', 'dinner', 'for'] },
+  { sentence: 'I go to bed early', words: ['I', 'go', 'to', 'bed', 'early'], scrambled: ['early', 'I', 'go', 'to', 'bed'] },
+  { sentence: 'We clean our room together', words: ['We', 'clean', 'our', 'room', 'together'], scrambled: ['together', 'We', 'clean', 'our', 'room'] },
+  // ——— Premium: nature & weather ———
+  { sentence: 'The flower is pretty', words: ['The', 'flower', 'is', 'pretty'], scrambled: ['pretty', 'The', 'flower', 'is'] },
+  { sentence: 'Leaves fall in autumn', words: ['Leaves', 'fall', 'in', 'autumn'], scrambled: ['autumn', 'Leaves', 'fall', 'in'] },
+  { sentence: 'The rain makes puddles', words: ['The', 'rain', 'makes', 'puddles'], scrambled: ['puddles', 'The', 'rain', 'makes'] },
+  { sentence: 'Snow is cold and white', words: ['Snow', 'is', 'cold', 'and', 'white'], scrambled: ['white', 'Snow', 'is', 'cold', 'and'] },
+  { sentence: 'The wind blows the leaves', words: ['The', 'wind', 'blows', 'the', 'leaves'], scrambled: ['leaves', 'The', 'wind', 'blows', 'the'] },
+  { sentence: 'Stars twinkle at night', words: ['Stars', 'twinkle', 'at', 'night'], scrambled: ['night', 'Stars', 'twinkle', 'at'] },
+  { sentence: 'A rainbow has many colors', words: ['A', 'rainbow', 'has', 'many', 'colors'], scrambled: ['colors', 'A', 'rainbow', 'has', 'many'] },
+  { sentence: 'The bee likes the flower', words: ['The', 'bee', 'likes', 'the', 'flower'], scrambled: ['flower', 'The', 'bee', 'likes', 'the'] },
+  // ——— Premium: animals ———
+  { sentence: 'The lion is big and strong', words: ['The', 'lion', 'is', 'big', 'and', 'strong'], scrambled: ['strong', 'The', 'lion', 'is', 'big', 'and'] },
+  { sentence: 'A bird has wings to fly', words: ['A', 'bird', 'has', 'wings', 'to', 'fly'], scrambled: ['fly', 'A', 'bird', 'has', 'wings', 'to'] },
+  { sentence: 'The rabbit hops in the grass', words: ['The', 'rabbit', 'hops', 'in', 'the', 'grass'], scrambled: ['grass', 'The', 'rabbit', 'hops', 'in', 'the'] },
+  { sentence: 'Elephants have long trunks', words: ['Elephants', 'have', 'long', 'trunks'], scrambled: ['trunks', 'Elephants', 'have', 'long'] },
+  { sentence: 'The duck swims in the pond', words: ['The', 'duck', 'swims', 'in', 'the', 'pond'], scrambled: ['pond', 'The', 'duck', 'swims', 'in', 'the'] },
+  { sentence: 'A frog can jump very high', words: ['A', 'frog', 'can', 'jump', 'very', 'high'], scrambled: ['high', 'A', 'frog', 'can', 'jump', 'very'] },
+  { sentence: 'The horse runs fast', words: ['The', 'horse', 'runs', 'fast'], scrambled: ['fast', 'The', 'horse', 'runs'] },
+  { sentence: 'Bears like to eat honey', words: ['Bears', 'like', 'to', 'eat', 'honey'], scrambled: ['honey', 'Bears', 'like', 'to', 'eat'] },
+  // ——— Premium: school & learning ———
+  { sentence: 'I go to school every day', words: ['I', 'go', 'to', 'school', 'every', 'day'], scrambled: ['day', 'I', 'go', 'to', 'school', 'every'] },
+  { sentence: 'We learn new words in class', words: ['We', 'learn', 'new', 'words', 'in', 'class'], scrambled: ['class', 'We', 'learn', 'new', 'words', 'in'] },
+  { sentence: 'The teacher is very kind', words: ['The', 'teacher', 'is', 'very', 'kind'], scrambled: ['kind', 'The', 'teacher', 'is', 'very'] },
+  { sentence: 'I write with a pencil', words: ['I', 'write', 'with', 'a', 'pencil'], scrambled: ['pencil', 'I', 'write', 'with', 'a'] },
+  { sentence: 'We sing a song together', words: ['We', 'sing', 'a', 'song', 'together'], scrambled: ['together', 'We', 'sing', 'a', 'song'] },
+  { sentence: 'Reading books is fun', words: ['Reading', 'books', 'is', 'fun'], scrambled: ['fun', 'Reading', 'books', 'is'] },
+  // ——— Premium: food & play ———
+  { sentence: 'I like pizza and juice', words: ['I', 'like', 'pizza', 'and', 'juice'], scrambled: ['juice', 'I', 'like', 'pizza', 'and'] },
+  { sentence: 'We have milk for breakfast', words: ['We', 'have', 'milk', 'for', 'breakfast'], scrambled: ['breakfast', 'We', 'have', 'milk', 'for'] },
+  { sentence: 'Fruits are good for you', words: ['Fruits', 'are', 'good', 'for', 'you'], scrambled: ['you', 'Fruits', 'are', 'good', 'for'] },
+  { sentence: 'Let us play a game', words: ['Let', 'us', 'play', 'a', 'game'], scrambled: ['game', 'Let', 'us', 'play', 'a'] },
+  { sentence: 'The toy is under the table', words: ['The', 'toy', 'is', 'under', 'the', 'table'], scrambled: ['table', 'The', 'toy', 'is', 'under', 'the'] },
+  { sentence: 'I build a tower with blocks', words: ['I', 'build', 'a', 'tower', 'with', 'blocks'], scrambled: ['blocks', 'I', 'build', 'a', 'tower', 'with'] },
+  // ——— Premium: family & home ———
+  { sentence: 'This is my family', words: ['This', 'is', 'my', 'family'], scrambled: ['family', 'This', 'is', 'my'] },
+  { sentence: 'Grandma tells good stories', words: ['Grandma', 'tells', 'good', 'stories'], scrambled: ['stories', 'Grandma', 'tells', 'good'] },
+  { sentence: 'My brother plays in the garden', words: ['My', 'brother', 'plays', 'in', 'the', 'garden'], scrambled: ['garden', 'My', 'brother', 'plays', 'in', 'the'] },
+  { sentence: 'We live in a big house', words: ['We', 'live', 'in', 'a', 'big', 'house'], scrambled: ['house', 'We', 'live', 'in', 'a', 'big'] },
+  { sentence: 'The kitchen is very clean', words: ['The', 'kitchen', 'is', 'very', 'clean'], scrambled: ['clean', 'The', 'kitchen', 'is', 'very'] },
+  // ——— Premium: actions & verbs ———
+  { sentence: 'The dog runs in the park', words: ['The', 'dog', 'runs', 'in', 'the', 'park'], scrambled: ['park', 'The', 'dog', 'runs', 'in', 'the'] },
+  { sentence: 'She jumps over the rope', words: ['She', 'jumps', 'over', 'the', 'rope'], scrambled: ['rope', 'She', 'jumps', 'over', 'the'] },
+  { sentence: 'They swim in the pool', words: ['They', 'swim', 'in', 'the', 'pool'], scrambled: ['pool', 'They', 'swim', 'in', 'the'] },
+  { sentence: 'I draw a picture of a cat', words: ['I', 'draw', 'a', 'picture', 'of', 'a', 'cat'], scrambled: ['cat', 'I', 'draw', 'a', 'picture', 'of', 'a'] },
+  { sentence: 'We ride our bikes to the park', words: ['We', 'ride', 'our', 'bikes', 'to', 'the', 'park'], scrambled: ['park', 'We', 'ride', 'our', 'bikes', 'to', 'the'] },
+  { sentence: 'The baby is sleeping in the crib', words: ['The', 'baby', 'is', 'sleeping', 'in', 'the', 'crib'], scrambled: ['crib', 'The', 'baby', 'is', 'sleeping', 'in', 'the'] },
+  // ——— Premium: simple statements ———
+  { sentence: 'This is my book', words: ['This', 'is', 'my', 'book'], scrambled: ['book', 'This', 'is', 'my'] },
+  { sentence: 'That is a big dog', words: ['That', 'is', 'a', 'big', 'dog'], scrambled: ['dog', 'That', 'is', 'a', 'big'] },
+  { sentence: 'Here is your coat', words: ['Here', 'is', 'your', 'coat'], scrambled: ['coat', 'Here', 'is', 'your'] },
+  { sentence: 'There are five apples', words: ['There', 'are', 'five', 'apples'], scrambled: ['apples', 'There', 'are', 'five'] },
+  { sentence: 'I want to help you', words: ['I', 'want', 'to', 'help', 'you'], scrambled: ['you', 'I', 'want', 'to', 'help'] },
+  { sentence: 'Can you see the bird', words: ['Can', 'you', 'see', 'the', 'bird'], scrambled: ['bird', 'Can', 'you', 'see', 'the'] },
+  { sentence: 'Please pass the salt', words: ['Please', 'pass', 'the', 'salt'], scrambled: ['salt', 'Please', 'pass', 'the'] },
+  { sentence: 'Thank you for the gift', words: ['Thank', 'you', 'for', 'the', 'gift'], scrambled: ['gift', 'Thank', 'you', 'for', 'the'] },
 ]
 
 // High-res image URLs (800px) for sharp display on retina smartphones; fallback to emoji
