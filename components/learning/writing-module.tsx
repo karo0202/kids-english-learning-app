@@ -418,7 +418,7 @@ export default function WritingModule() {
       word: 'MOON',
       letters: ['M', 'O', 'O', 'N', 'S', 'U'],
       hint: 'Bright light in the night sky',
-      imageUrl: `https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=300&fit=crop&crop=center${cacheBuster}`
+      imageUrl: `https://images.unsplash.com/photo-1486845918423-c82bbda48d29?w=300&h=300&fit=crop&crop=center${cacheBuster}`
     },
     // Food
     {

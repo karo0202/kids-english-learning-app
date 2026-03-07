@@ -137,7 +137,7 @@ const PICTURE_PUZZLES: PicturePuzzle[] = [
   { word: 'BOOK', image: '📚', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=85&fit=crop', options: ['PEN', 'BOOK', 'PAPER', 'PENCIL'], correct: 1 },
   { word: 'BALL', image: '⚽', imageUrl: 'https://images.unsplash.com/photo-1614632537197-38a17061c2bd?w=800&q=85&fit=crop', options: ['BALL', 'TOY', 'DOLL', 'BLOCK'], correct: 0 },
   { word: 'FISH', image: '🐟', imageUrl: 'https://images.unsplash.com/photo-1753644350123-9cb32be6e0b5?w=800&q=85&fit=crop', options: ['CAT', 'FISH', 'BIRD', 'DOG'], correct: 1 },
-  { word: 'MOON', image: '🌙', imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&q=85&fit=crop', options: ['SUN', 'STAR', 'MOON', 'CLOUD'], correct: 2 },
+  { word: 'MOON', image: '🌙', imageUrl: 'https://images.unsplash.com/photo-1486845918423-c82bbda48d29?w=800&q=85&fit=crop', options: ['SUN', 'STAR', 'MOON', 'CLOUD'], correct: 2 },
   { word: 'BIRD', image: '🐦', imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85&fit=crop', options: ['BIRD', 'FISH', 'CAT', 'DOG'], correct: 0 },
   { word: 'HOUSE', image: '🏠', imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=85&fit=crop', options: ['CAR', 'TREE', 'HOUSE', 'BALL'], correct: 2 },
 ]
@@ -163,6 +163,7 @@ export default function PuzzleModule() {
   // Picture Puzzle State
   const [picturePuzzleIndex, setPicturePuzzleIndex] = useState(0)
   const [selectedPictureAnswer, setSelectedPictureAnswer] = useState<number | null>(null)
+  const [pictureImageError, setPictureImageError] = useState(false)
 
   // Word-Picture (letter pieces) state: order[i] = letter index at slot i
   const [wordPictureIndex, setWordPictureIndex] = useState(0)
@@ -174,6 +175,10 @@ export default function PuzzleModule() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [completedPuzzles, setCompletedPuzzles] = useState(0)
+
+  useEffect(() => {
+    if (puzzleType === 'picture') setPictureImageError(false)
+  }, [puzzleType, picturePuzzleIndex])
 
   useEffect(() => {
     if (puzzleType === 'word' && WORD_PUZZLES[wordPuzzleIndex]) {
@@ -335,6 +340,7 @@ export default function PuzzleModule() {
       const nextIndex = (picturePuzzleIndex + 1) % PICTURE_PUZZLES.length
       setPicturePuzzleIndex(nextIndex)
       setSelectedPictureAnswer(null)
+      setPictureImageError(false)
       if (nextIndex === 0) setLevel(prev => prev + 1)
     } else if (puzzleType === 'word-picture') {
       setPieceOrder([]) // clear so stale "solved" order doesn't trigger checkWordPictureCorrect and skip the next puzzle
@@ -816,7 +822,7 @@ export default function PuzzleModule() {
                     transition={{ type: "spring", stiffness: 200 }}
                     className="mb-6 flex justify-center items-center min-h-[200px] sm:min-h-[260px]"
                   >
-                    {currentPicturePuzzle.imageUrl ? (
+                    {currentPicturePuzzle.imageUrl && !pictureImageError ? (
                       <img
                         src={currentPicturePuzzle.imageUrl}
                         alt={currentPicturePuzzle.word}
@@ -825,6 +831,7 @@ export default function PuzzleModule() {
                         height={800}
                         loading="eager"
                         decoding="async"
+                        onError={() => setPictureImageError(true)}
                       />
                     ) : (
                       <span className="text-9xl block" style={{ fontSize: 'min(8rem, 22vw)' }}>
