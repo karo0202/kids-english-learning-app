@@ -266,21 +266,14 @@ const handleDeleteChild = async (childId: string) => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-      </div>
-
-      {/* Hero: kids learning background (behind header) */}
-      <div className="absolute top-0 left-0 right-0 h-56 md:h-64 overflow-hidden pointer-events-none z-0" aria-hidden>
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-15"
-          style={{ backgroundImage: "url('/images/kids-learning-background.png')" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-transparent dark:from-[#003366]/70" />
-      </div>
+      {/* Full-page background: covers entire viewport */}
+      <div 
+        className="fixed inset-0 z-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/dashboard-background.png')" }}
+        aria-hidden
+      />
+      {/* Light overlay so content stays readable */}
+      <div className="fixed inset-0 z-[1] pointer-events-none bg-white/75 dark:bg-[#003366]/80" aria-hidden />
 
       {/* Header */}
       <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border-b border-purple-100/50 dark:border-white/10 sticky top-0 z-50 shadow-sm">
