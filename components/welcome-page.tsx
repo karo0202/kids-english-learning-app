@@ -20,7 +20,6 @@ import {
 
 export default function WelcomePage() {
   const router = useRouter()
-  const [bgSrc, setBgSrc] = useState('https://images.unsplash.com/photo-1604882737218-2c5622a3b3c5?q=80&w=1600&auto=format&fit=crop')
   const [showAudioSettings, setShowAudioSettings] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -76,7 +75,10 @@ export default function WelcomePage() {
   ]
 
   return (
-		<div className="min-h-screen relative bg-gradient-to-br from-rose-50 via-violet-50 to-sky-50 dark:from-slate-900 dark:via-purple-900 dark:to-violet-900">
+		<div className="min-h-screen relative">
+			{/* Same kids-learning background as app (from layout); optional extra overlay for landing readability */}
+			<div className="fixed inset-0 -z-10 bg-[url('/images/kids-learning-background.png')] bg-cover bg-center bg-no-repeat" aria-hidden />
+			<div className="fixed inset-0 -z-[1] bg-white/65 dark:bg-[#003366]/80 pointer-events-none" aria-hidden />
 			{/* Top Nav */}
 			<div className="absolute inset-x-0 top-0 z-20">
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -139,18 +141,6 @@ export default function WelcomePage() {
 					</Sheet>
 				</div>
 			</div>
-      {/* Background image */}
-      <div className="absolute inset-0 -z-10">
-        <img
-          src={bgSrc}
-          alt="Kids learning background"
-          className="w-full h-full object-contain mx-auto"
-          onError={() => setBgSrc('')}
-          aria-hidden
-        />
-        {/* Soft vignette for readability without obscuring image */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/30 to-white/70 dark:from-slate-900/70 dark:via-slate-900/30 dark:to-slate-900/70" />
-      </div>
 			{/* Header */}
 			<div className="container mx-auto px-4 py-8">
 				{/* Floating decorative letters */}
