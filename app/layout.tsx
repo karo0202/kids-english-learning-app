@@ -120,15 +120,15 @@ export default function RootLayout({
               >
                 Skip to main content
               </a>
-              <div className="min-h-screen relative m-0 p-0 bg-gradient-to-br from-[#e8f4fc] via-[#f0f9e8] to-[#fefce8] dark:from-[#003366] dark:via-[#002244] dark:to-[#003366] overflow-hidden">
-                {/* Kids 3 palette orbs - app-wide */}
-                <div className="fixed inset-0 overflow-hidden pointer-events-none -z-[1]" aria-hidden>
-                  <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-white/50 to-transparent dark:from-white/[0.06] dark:to-transparent" />
-                  <div className="absolute top-20 left-10 w-80 h-80 bg-[#00aeef]/20 dark:bg-[#00aeef]/15 rounded-full blur-3xl" />
-                  <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8c0066]/15 dark:bg-[#8c0066]/20 rounded-full blur-3xl" />
-                  <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-[#8eca40]/20 dark:bg-[#8eca40]/10 rounded-full blur-3xl" />
-                  <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-[#003366]/10 dark:bg-[#003366]/25 rounded-full blur-3xl" />
-                </div>
+              <div className="min-h-screen relative m-0 p-0 overflow-hidden">
+                {/* App-wide full-page background: kids learning illustration */}
+                <div
+                  className="fixed inset-0 -z-[2] bg-cover bg-center bg-no-repeat min-h-screen"
+                  style={{ backgroundImage: "url('/images/kids-learning-background.png')" }}
+                  aria-hidden
+                />
+                {/* Overlay so all page content stays readable */}
+                <div className="fixed inset-0 -z-[1] pointer-events-none min-h-screen bg-white/70 dark:bg-[#003366]/85" aria-hidden />
                 <main id="main-content" className="relative z-0">
                   {children}
                 </main>

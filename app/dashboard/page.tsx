@@ -266,14 +266,7 @@ const handleDeleteChild = async (childId: string) => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Full-page background: covers entire viewport */}
-      <div 
-        className="fixed inset-0 z-0 pointer-events-none bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/dashboard-background.png')" }}
-        aria-hidden
-      />
-      {/* Light overlay so content stays readable */}
-      <div className="fixed inset-0 z-[1] pointer-events-none bg-white/75 dark:bg-[#003366]/80" aria-hidden />
+      {/* Background is app-wide in layout (kids-learning-background) */}
 
       {/* Header */}
       <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border-b border-purple-100/50 dark:border-white/10 sticky top-0 z-50 shadow-sm">
