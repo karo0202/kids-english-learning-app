@@ -286,6 +286,33 @@ export default function LearningPage() {
         </div>
       </div>
 
+      {/* Hero: kids learning background + all modules headline */}
+      <div className="relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30 dark:opacity-25"
+          style={{ backgroundImage: "url('/images/kids-learning-background.png')" }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/70 to-white dark:from-[#003366]/95 dark:via-[#003366]/90 dark:to-[#003366]/95" aria-hidden />
+        <div className="relative z-10 container mx-auto px-4 py-6 md:py-8 text-center">
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight mb-1"
+          >
+            Choose your learning path
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-sm md:text-base text-slate-600 dark:text-slate-300"
+          >
+            Reading · Math · Writing · Speaking · Games · Grammar · Puzzles · Coloring · Challenges
+          </motion.p>
+        </div>
+      </div>
+
       <AgeAdaptiveContainer 
         ageGroup={(selectedChild?.ageGroup as AgeGroup) || AgeGroup.AGE_6_8}
         className="container mx-auto px-4 py-8 relative z-10"

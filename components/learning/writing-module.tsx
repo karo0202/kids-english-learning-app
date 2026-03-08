@@ -978,6 +978,7 @@ export default function WritingModule() {
         setScore(prev => prev + 10)
         setCompletedActivities(prev => prev + 1)
         progressManager.addScore(10, 5)
+        progressManager.addModuleProgress('writing', 1)
         challengeManager.updateChallengeProgress('writing', 1)
         clearCanvas()
         nextActivity()
@@ -1385,6 +1386,7 @@ export default function WritingModule() {
         try {
           audioManager.playSuccess()
           progressManager.addScore(15, 8)
+          progressManager.addModuleProgress('writing', 1)
           challengeManager.updateChallengeProgress('writing', 1)
         } catch (error) {
           console.error('Error updating progress:', error)
@@ -1603,6 +1605,7 @@ export default function WritingModule() {
                   setScore(prev => prev + 10)
                   setCompletedActivities(prev => prev + 1)
                   progressManager.addScore(10, 5)
+                  progressManager.addModuleProgress('writing', 1)
                   challengeManager.updateChallengeProgress('writing', 1)
                   nextActivity()
                 }}

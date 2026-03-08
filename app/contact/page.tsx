@@ -108,7 +108,7 @@ export default function ContactPage() {
       {/* Header */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-90" />
-        <div className="absolute inset-0 bg-[url('/images/kids-learning-background.jpg')] bg-cover bg-center opacity-20" />
+        <div className="absolute inset-0 bg-[url('/images/kids-learning-background.png')] bg-cover bg-center opacity-20" />
         
         <div className="relative z-10 container mx-auto px-4 py-16">
           <motion.div

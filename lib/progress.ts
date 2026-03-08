@@ -1,5 +1,17 @@
 // Progress persistence and user data management
 import { dataPersistence } from './data-persistence'
+
+export type ProgressModule = 'writing' | 'reading' | 'speaking' | 'games' | 'puzzle' | 'grammar'
+
+export interface ModuleStats {
+  writing: number
+  reading: number
+  speaking: number
+  games: number
+  puzzle: number
+  grammar: number
+}
+
 export interface UserProgress {
   userId: string
   totalScore: number
@@ -12,6 +24,8 @@ export interface UserProgress {
   xp: number
   coins: number
   unlockedContent: string[]
+  /** Per-module activity count (and optional score) for parent progress view */
+  moduleStats?: ModuleStats
   preferences: {
     soundEnabled: boolean
     musicEnabled: boolean
@@ -59,6 +73,7 @@ export class ProgressManager {
       xp: 0,
       coins: 100,
       unlockedContent: ['basic_letters', 'basic_words'],
+      moduleStats: { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 },
       preferences: {
         soundEnabled: true,
         musicEnabled: true,
@@ -78,7 +93,11 @@ export class ProgressManager {
       if (typeof window !== 'undefined') {
         const saved = localStorage.getItem(`progress_${userId}`)
         if (saved) {
-          this.progress = JSON.parse(saved)
+          const parsed = JSON.parse(saved) as UserProgress
+          if (!parsed.moduleStats) {
+            parsed.moduleStats = { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
+          }
+          this.progress = parsed
           return this.progress
         }
       }
@@ -93,7 +112,7 @@ export class ProgressManager {
     if (this.progress && typeof window !== 'undefined') {
       try {
         localStorage.setItem(`progress_${this.progress.userId}`, JSON.stringify(this.progress))
-        
+        const ms = this.progress.moduleStats ?? { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
         // Also save to persistence layer
         dataPersistence.saveProgress({
           childId: this.progress.userId,
@@ -109,10 +128,10 @@ export class ProgressManager {
             lastActivity: this.progress.lastActivityDate
           },
           learningStats: {
-            speaking: 0,
-            reading: 0,
-            writing: 0,
-            games: 0
+            speaking: ms.speaking,
+            reading: ms.reading,
+            writing: ms.writing,
+            games: ms.games
           },
           lastUpdated: new Date().toISOString()
         }).catch(error => {
@@ -150,6 +169,16 @@ export class ProgressManager {
 
     this.progress.longestStreak = Math.max(this.progress.longestStreak, this.progress.currentStreak)
     this.progress.lastActivityDate = today
+    this.saveProgress()
+  }
+
+  // Record progress in a specific module (for parent progress view). Call when child completes an activity.
+  addModuleProgress(module: ProgressModule, activitiesCount: number = 1): void {
+    if (!this.progress) return
+    if (!this.progress.moduleStats) {
+      this.progress.moduleStats = { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
+    }
+    this.progress.moduleStats[module] = (this.progress.moduleStats[module] ?? 0) + activitiesCount
     this.saveProgress()
   }
 
@@ -235,6 +264,25 @@ export class ProgressManager {
   // Get current progress
   getProgress(): UserProgress | null {
     return this.progress
+  }
+
+  /** Read progress for a specific child without switching current user (for parent dashboard). */
+  getProgressForChild(childId: string): UserProgress | null {
+    try {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(`progress_${childId}`)
+        if (saved) {
+          const parsed = JSON.parse(saved) as UserProgress
+          if (!parsed.moduleStats) {
+            parsed.moduleStats = { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
+          }
+          return parsed
+        }
+      }
+    } catch (error) {
+      console.error('Error reading progress for child:', error)
+    }
+    return null
   }
 
   // Get activity progress

@@ -716,6 +716,7 @@ export default function SpeakingModule() {
       // Play success sound and update progress
       enhancedAudioManager.playSuccess()
       progressManager.addScore(10, 5)
+      progressManager.addModuleProgress('speaking', 1)
       challengeManager.updateChallengeProgress('speaking', 1)
     } else {
       // Play error sound

@@ -12,6 +12,7 @@ import {
   Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
+import { progressManager } from '@/lib/progress'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -270,6 +271,15 @@ const handleDeleteChild = async (childId: string) => {
         <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      {/* Hero: kids learning background (behind header) */}
+      <div className="absolute top-0 left-0 right-0 h-56 md:h-64 overflow-hidden pointer-events-none z-0" aria-hidden>
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-15"
+          style={{ backgroundImage: "url('/images/kids-learning-background.png')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-transparent dark:from-[#003366]/70" />
       </div>
 
       {/* Header */}
@@ -631,7 +641,33 @@ const handleDeleteChild = async (childId: string) => {
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent animate-shimmer"></div>
                         </motion.div>
                         <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1 bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">{child.name}</h3>
-                        <p className="text-gray-600 dark:text-white/70 mb-5 font-medium">{child.age} years old</p>
+                        <p className="text-gray-600 dark:text-white/70 mb-2 font-medium">{child.age} years old</p>
+                        {(() => {
+                          const prog = progressManager.getProgressForChild(child.id)
+                          const ms = prog?.moduleStats ?? { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
+                          const total = ms.writing + ms.reading + ms.speaking + ms.games + ms.puzzle + ms.grammar
+                          return (
+                            <div className="mb-4 p-3 rounded-xl bg-gray-100/80 dark:bg-slate-800/80 border border-gray-200/80 dark:border-slate-600/80 text-left">
+                              <div className="flex items-center justify-between gap-2 mb-2">
+                                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Progress</span>
+                                <span className="text-sm font-bold text-purple-600 dark:text-purple-400">Level {prog?.level ?? 1}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+                                <span title="Writing"><PenTool className="w-3.5 h-3.5 inline mr-0.5" />{ms.writing}</span>
+                                <span title="Reading"><BookOpen className="w-3.5 h-3.5 inline mr-0.5" />{ms.reading}</span>
+                                <span title="Speaking"><Mic className="w-3.5 h-3.5 inline mr-0.5" />{ms.speaking}</span>
+                                <span title="Games"><Gamepad2 className="w-3.5 h-3.5 inline mr-0.5" />{ms.games}</span>
+                                <span title="Puzzles"><Puzzle className="w-3.5 h-3.5 inline mr-0.5" />{ms.puzzle}</span>
+                              </div>
+                              <div className="mt-1.5 flex items-center justify-between gap-2">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{total} activities · {prog?.totalScore ?? 0} pts</span>
+                                <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-purple-600 dark:text-purple-400" onClick={(e) => { e.stopPropagation(); router.push(`/parent-dashboard?child=${child.id}`); }}>
+                                  View progress →
+                                </Button>
+                              </div>
+                            </div>
+                          )
+                        })()}
                         <div className="flex gap-2">
                           <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                             <Button 

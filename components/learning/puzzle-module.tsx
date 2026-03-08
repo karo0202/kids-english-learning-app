@@ -409,6 +409,7 @@ export default function PuzzleModule() {
     try {
       audioManager.playSuccess()
       progressManager.addScore(10, 5)
+      progressManager.addModuleProgress('puzzle', 1)
       challengeManager.updateChallengeProgress('puzzle', 1)
     } catch (error) {
       console.error('Error updating progress:', error)

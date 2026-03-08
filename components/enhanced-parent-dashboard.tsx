@@ -127,10 +127,11 @@ useEffect(() => {
   if (!mounted) return
 
   setChildren(initialChildren)
+  const childIdFromUrl = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('child') : null
+  const childToSelect = childIdFromUrl ? initialChildren.find(c => c.id === childIdFromUrl) : null
   setSelectedChild(prev => {
-    if (prev && initialChildren.some(child => child.id === prev.id)) {
-      return prev
-    }
+    if (childToSelect) return childToSelect
+    if (prev && initialChildren.some(child => child.id === prev.id)) return prev
     return initialChildren[0] ?? null
   })
   setLoading(false)
@@ -713,63 +714,51 @@ const handleAddChild = async () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700 shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-white font-bold">Progress by Category</CardTitle>
+                    <CardTitle className="text-white font-bold">Progress by module</CardTitle>
+                    <p className="text-sm text-gray-400">Activities completed per module</p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <PenTool className="w-4 h-4 text-green-400" />
-                            <span className="font-medium text-white">Writing</span>
-                          </div>
-                          <span className="text-sm text-gray-400">{moduleProgress.writing.toFixed(0)}%</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <motion.div 
-                            className="bg-green-500 h-2 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${moduleProgress.writing}%` }}
-                            transition={{ duration: 0.5 }}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-blue-400" />
-                            <span className="font-medium text-white">Vocabulary</span>
-                          </div>
-                          <span className="text-sm text-gray-400">{moduleProgress.vocabulary} words</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <motion.div 
-                            className="bg-blue-500 h-2 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${Math.min(100, (moduleProgress.vocabulary / 100) * 100)}%` }}
-                            transition={{ duration: 0.5 }}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Mic className="w-4 h-4 text-purple-400" />
-                            <span className="font-medium text-white">Grammar/Phonics</span>
-                          </div>
-                          <span className="text-sm text-gray-400">{moduleProgress.grammar.toFixed(0)}%</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <motion.div 
-                            className="bg-purple-500 h-2 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${moduleProgress.grammar}%` }}
-                            transition={{ duration: 0.5 }}
-                          />
-                        </div>
-                      </div>
+                      {(() => {
+                        const prog = selectedChild ? progressManager.getProgressForChild(selectedChild.id) : null
+                        const ms = prog?.moduleStats ?? { writing: 0, reading: 0, speaking: 0, games: 0, puzzle: 0, grammar: 0 }
+                        const total = ms.writing + ms.reading + ms.speaking + ms.games + ms.puzzle + ms.grammar
+                        const max = Math.max(1, total, ms.writing, ms.reading, ms.speaking, ms.games, ms.puzzle, ms.grammar)
+                        const rows = [
+                          { label: 'Writing', value: ms.writing, icon: PenTool, color: 'bg-green-500' },
+                          { label: 'Reading', value: ms.reading, icon: BookOpen, color: 'bg-blue-500' },
+                          { label: 'Speaking', value: ms.speaking, icon: Mic, color: 'bg-purple-500' },
+                          { label: 'Games', value: ms.games, icon: Gamepad2, color: 'bg-amber-500' },
+                          { label: 'Puzzles', value: ms.puzzle, icon: Puzzle, color: 'bg-pink-500' },
+                          { label: 'Grammar', value: ms.grammar, icon: FileText, color: 'bg-cyan-500' },
+                        ]
+                        return (
+                          <>
+                            {rows.map(({ label, value, icon: Icon, color }) => (
+                              <div key={label}>
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon className="w-4 h-4 text-gray-400" />
+                                    <span className="font-medium text-white">{label}</span>
+                                  </div>
+                                  <span className="text-sm text-gray-400">{value} activities</span>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2">
+                                  <motion.div 
+                                    className={`${color} h-2 rounded-full`}
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${max ? (value / max) * 100 : 0}%` }}
+                                    transition={{ duration: 0.5 }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                            <div className="pt-2 mt-2 border-t border-gray-700 text-sm text-gray-400">
+                              Total: {total} activities · Level {prog?.level ?? 1} · {prog?.totalScore ?? 0} pts
+                            </div>
+                          </>
+                        )
+                      })()}
                     </div>
                   </CardContent>
                 </Card>
