@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw, Calculator, Target
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 import { progressManager } from '@/lib/progress'
@@ -867,6 +867,52 @@ const handleDeleteChild = async (childId: string) => {
                   </motion.div>
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Puzzle Games</h3>
                   <p className="text-gray-600 dark:text-white/70 text-sm">Solve word and sentence puzzles</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card className="card-kid cursor-pointer group relative overflow-hidden" onClick={() => router.push('/learning/math')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-600/0 group-hover:from-amber-500/10 group-hover:to-orange-600/10 transition-all duration-500"></div>
+                <CardContent className="p-6 text-center relative">
+                  <motion.div 
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 5, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Calculator className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Math in English</h3>
+                  <p className="text-gray-600 dark:text-white/70 text-sm">Numbers, shapes, and problem solving</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Card className="card-kid cursor-pointer group relative overflow-hidden" onClick={() => router.push('/learning')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/0 to-indigo-600/0 group-hover:from-sky-500/10 group-hover:to-indigo-600/10 transition-all duration-500"></div>
+                <CardContent className="p-6 text-center relative">
+                  <motion.div 
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 5, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Target className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Daily Challenges</h3>
+                  <p className="text-gray-600 dark:text-white/70 text-sm">Complete fun daily learning goals</p>
                 </CardContent>
               </Card>
             </motion.div>
