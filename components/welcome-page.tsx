@@ -2,7 +2,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
@@ -18,10 +18,63 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>
+}
+
 export default function WelcomePage() {
   const router = useRouter()
   const [showAudioSettings, setShowAudioSettings] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [appInstalled, setAppInstalled] = useState(false)
+  const [isIOSStandaloneHintVisible, setIsIOSStandaloneHintVisible] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault()
+      setInstallPrompt(event as BeforeInstallPromptEvent)
+    }
+
+    const handleAppInstalled = () => {
+      setAppInstalled(true)
+      setInstallPrompt(null)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    // iOS Safari does not support beforeinstallprompt, so we show a custom hint
+    const ua = window.navigator.userAgent || ''
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream
+    const isInStandalone =
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      // Safari iOS legacy check
+      (window.navigator as any).standalone === true
+
+    if (isIOS && !isInStandalone) {
+      setIsIOSStandaloneHintVisible(true)
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return
+    try {
+      await installPrompt.prompt()
+      await installPrompt.userChoice
+      setInstallPrompt(null)
+    } catch {
+      // ignore
+    }
+  }
 
   const features = [
     {
@@ -87,6 +140,14 @@ export default function WelcomePage() {
 					<div className="hidden sm:flex items-center gap-2">
 						<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
 						<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
+            {installPrompt && !appInstalled && (
+              <Button
+                className="ml-2 px-4 py-2 text-sm rounded-xl bg-[#00aeef] text-white hover:bg-[#0090c5] shadow-sm"
+                onClick={handleInstallClick}
+              >
+                Download app
+              </Button>
+            )}
 					</div>
 					{/* Mobile Menu */}
 					<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -136,6 +197,17 @@ export default function WelcomePage() {
 										<span className="text-xs text-gray-600 dark:text-gray-400">Get in touch with us</span>
 									</div>
 								</Button>
+                {installPrompt && !appInstalled && (
+                  <Button
+                    className="mt-2 w-full justify-center h-auto py-3 px-4 bg-[#00aeef] text-white hover:bg-[#0090c5]"
+                    onClick={() => {
+                      handleInstallClick()
+                      setMobileMenuOpen(false)
+                    }}
+                  >
+                    Download app
+                  </Button>
+                )}
 							</div>
 						</SheetContent>
 					</Sheet>
@@ -184,12 +256,30 @@ export default function WelcomePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-						<div className="rounded-3xl bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 p-6 shadow-sm">
-							<p className="text-slate-700 dark:text-white/90">
-								Join millions of kids learning English through fun games, interactive activities,
-								and magical adventures!
-							</p>
-						</div>
+						<div className="space-y-4">
+              <div className="rounded-3xl bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 p-6 shadow-sm">
+                <p className="text-slate-700 dark:text-white/90">
+                  Join millions of kids learning English through fun games, interactive activities,
+                  and magical adventures!
+                </p>
+              </div>
+              {isIOSStandaloneHintVisible && !installPrompt && !appInstalled && (
+                <div className="rounded-3xl bg-amber-50/90 dark:bg-amber-900/40 backdrop-blur border border-amber-200/80 dark:border-amber-700/70 p-4 text-sm text-amber-900 dark:text-amber-50 flex items-start gap-3">
+                  <div className="mt-0.5">
+                    <Star className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">
+                      Add this app to your iPhone or iPad
+                    </p>
+                    <p>
+                      Tap the <span className="font-semibold">Share</span> button in Safari, then choose{' '}
+                      <span className="font-semibold">“Add to Home Screen”</span> to install the app.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
 					</motion.div>
 
           {/* CTA Buttons */}
