@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
-import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target, Menu, X, MessageSquare } from 'lucide-react'
+import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target, Menu, X, MessageSquare, Calculator, PencilLine, Trophy } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AudioSettings from '@/components/audio-settings'
 import {
@@ -129,6 +129,24 @@ export default function WelcomePage() {
       title: "Daily Challenges",
       description: "Complete fun challenges and earn rewards!",
       color: "from-rose-400 to-rose-600"
+    },
+    {
+      icon: <Calculator className="w-8 h-8" />,
+      title: "Math in English",
+      description: "Numbers, shapes, and problem solving explained in English.",
+      color: "from-amber-400 to-orange-500"
+    },
+    {
+      icon: <PencilLine className="w-8 h-8" />,
+      title: "Creative Writing",
+      description: "Story prompts and guided writing practice for older kids.",
+      color: "from-emerald-400 to-teal-500"
+    },
+    {
+      icon: <Trophy className="w-8 h-8" />,
+      title: "Progress & Rewards",
+      description: "XP, stars, and a parent dashboard to track every module.",
+      color: "from-sky-400 to-indigo-500"
     }
   ]
 
@@ -463,7 +481,7 @@ export default function WelcomePage() {
 			{/* Footer */}
 			<div className="container mx-auto px-4 pb-8">
 				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 dark:bg-white/10 backdrop-blur border border-white/50 dark:border-white/20 p-4 text-center text-sm text-gray-600 dark:text-white/70">
-					Built with ❤️ for kids. New: Reading Library, PDF books, and daily challenges.
+					Built with ❤️ for kids. New: Reading Library, Math in English, Creative Writing, Word & Picture Puzzles, Alphabet Coloring, Daily Challenges, and a Parent Progress Dashboard.
         </div>
       </div>
       
