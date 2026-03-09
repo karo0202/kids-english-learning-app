@@ -30,6 +30,7 @@ export default function WelcomePage() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [appInstalled, setAppInstalled] = useState(false)
   const [isIOSStandaloneHintVisible, setIsIOSStandaloneHintVisible] = useState(false)
+  const [showInstallHelp, setShowInstallHelp] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -66,14 +67,18 @@ export default function WelcomePage() {
   }, [])
 
   const handleInstallClick = async () => {
-    if (!installPrompt) return
-    try {
-      await installPrompt.prompt()
-      await installPrompt.userChoice
-      setInstallPrompt(null)
-    } catch {
-      // ignore
+    if (installPrompt) {
+      try {
+        await installPrompt.prompt()
+        await installPrompt.userChoice
+        setInstallPrompt(null)
+        return
+      } catch {
+        // ignore and fall through to help
+      }
     }
+    // If we don't have a native prompt, show manual install help
+    setShowInstallHelp(true)
   }
 
   const features = [
@@ -140,7 +145,7 @@ export default function WelcomePage() {
 					<div className="hidden sm:flex items-center gap-2">
 						<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
 						<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
-            {installPrompt && !appInstalled && (
+            {!appInstalled && (
               <Button
                 className="ml-2 px-4 py-2 text-sm rounded-xl bg-[#00aeef] text-white hover:bg-[#0090c5] shadow-sm"
                 onClick={handleInstallClick}
@@ -197,7 +202,7 @@ export default function WelcomePage() {
 										<span className="text-xs text-gray-600 dark:text-gray-400">Get in touch with us</span>
 									</div>
 								</Button>
-                {installPrompt && !appInstalled && (
+                {!appInstalled && (
                   <Button
                     className="mt-2 w-full justify-center h-auto py-3 px-4 bg-[#00aeef] text-white hover:bg-[#0090c5]"
                     onClick={() => {
@@ -314,6 +319,57 @@ export default function WelcomePage() {
 							<span className="relative z-10">I Already Have an Account</span>
 						</Button>
           </motion.div>
+
+          {/* Install help modal */}
+          {showInstallHelp && !appInstalled && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+              <div className="max-w-md w-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 shadow-xl">
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                      How to install this app
+                    </h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      Follow the steps below to add Kids English to your device.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowInstallHelp(false)}
+                    className="rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300"
+                    aria-label="Close install help"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
+                  <p className="font-semibold">On Android (Chrome):</p>
+                  <ul className="list-disc list-inside pl-1 space-y-1">
+                    <li>Tap the browser menu <span className="font-semibold">(⋮)</span> in the top-right.</li>
+                    <li>Choose <span className="font-semibold">“Install app”</span> or <span className="font-semibold">“Add to Home screen”</span>.</li>
+                  </ul>
+                  <p className="font-semibold mt-3">On iPhone / iPad (Safari):</p>
+                  <ul className="list-disc list-inside pl-1 space-y-1">
+                    <li>Tap the <span className="font-semibold">Share</span> icon.</li>
+                    <li>Scroll and tap <span className="font-semibold">“Add to Home Screen”</span>.</li>
+                  </ul>
+                  <p className="font-semibold mt-3">On computer (Chrome / Edge):</p>
+                  <ul className="list-disc list-inside pl-1 space-y-1">
+                    <li>Open the browser menu.</li>
+                    <li>Select <span className="font-semibold">“Install Kids English”</span> or <span className="font-semibold">“Install app”</span>.</li>
+                  </ul>
+                </div>
+                <div className="mt-5 flex justify-end">
+                  <Button
+                    variant="outline"
+                    className="text-sm"
+                    onClick={() => setShowInstallHelp(false)}
+                  >
+                    Got it
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Features Grid */}
