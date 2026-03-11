@@ -790,13 +790,19 @@ function loadLocalChildren(parentId: string, userEmail?: string): Child[] {
       return []
     }
     const children: Child[] = JSON.parse(raw)
+    const emailLower = userEmail ? userEmail.toLowerCase() : null
     console.log(`Found ${children.length} total children in localStorage`)
     console.log('All children in localStorage:', children.map(c => ({ id: c.id, name: c.name, parentId: c.parentId, parentEmail: c.parentEmail })))
     
-    // First, try to find children by parentId
+    // First, try to find children by parentId (and, if available, matching parentEmail)
     let filtered = children
       .filter(child => child.parentId === parentId)
       .filter(child => !deletedChildren.has(child.id)) // EXCLUDE deleted children
+      .filter(child => {
+        if (!emailLower) return true
+        const childEmail = (child.parentEmail || '').toLowerCase()
+        return childEmail === emailLower
+      })
       .map(child => normalizeChild(child, userEmail))
     
     if (filtered.length < children.filter(c => c.parentId === parentId).length) {
