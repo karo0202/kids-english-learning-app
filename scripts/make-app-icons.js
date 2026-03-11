@@ -1,13 +1,12 @@
 /*
   Make App Icons from existing logo
   - Input: app/public/logo.png (or pass a path)
-  - Output: app/public/icons/icon-<size>.png (1024,512,256,192,128,64)
+  - Output: app/public/icons/icon-<size>.png (1024,512,256,192,128,64), public/favicon.png
 
   Approach:
-  - Load image, convert to sRGB
-  - Auto-trim outer background using trim(threshold)
-  - Center on transparent 1024x1024 canvas with padding
-  - Export multiple sizes
+  - Load image, convert to sRGB, trim outer background
+  - Scale to COVER 1024x1024 (fill entire icon, no white/padding edges), crop center
+  - Export all sizes + favicon
 */
 
 const fs = require('fs')
@@ -65,18 +64,17 @@ async function main() {
   const cropW = meta.width
   const cropH = meta.height
 
-  // Compose on transparent square 1024 canvas with padding
+  // Fill entire icon (no padding): scale to cover 1024x1024, then crop center
   const baseSize = 1024
-  const paddingRatio = 0.10 // 10% padding keeps edges clean at small sizes
-  const targetBox = Math.round(baseSize * (1 - paddingRatio * 2))
-  const scale = Math.min(targetBox / cropW, targetBox / cropH)
-  const resizedW = Math.max(1, Math.round(cropW * scale))
-  const resizedH = Math.max(1, Math.round(cropH * scale))
+  const scale = Math.max(baseSize / cropW, baseSize / cropH)
+  const resizedW = Math.round(cropW * scale)
+  const resizedH = Math.round(cropH * scale)
+  const left = Math.max(0, Math.round((resizedW - baseSize) / 2))
+  const top = Math.max(0, Math.round((resizedH - baseSize) / 2))
 
-  const centered1024 = await sharp({ create: { width: baseSize, height: baseSize, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-    .composite([
-      { input: await sharp(trimmedPng).resize(resizedW, resizedH, { kernel: 'lanczos3' }).png().toBuffer(), left: Math.round((baseSize - resizedW) / 2), top: Math.round((baseSize - resizedH) / 2) }
-    ])
+  const centered1024 = await sharp(trimmedPng)
+    .resize(resizedW, resizedH, { kernel: 'lanczos3' })
+    .extract({ left, top, width: baseSize, height: baseSize })
     .png({ compressionLevel: 9 })
     .toBuffer()
 
@@ -86,7 +84,10 @@ async function main() {
     await sharp(centered1024).resize(size, size, { kernel: 'lanczos3' }).png({ compressionLevel: 9 }).toFile(path.join(outDir, `icon-${size}.png`))
   }
 
-  console.log('Icons created in', outDir)
+  // Favicon (32x32) so browser tab icon also has no white edges
+  await sharp(centered1024).resize(32, 32, { kernel: 'lanczos3' }).png({ compressionLevel: 9 }).toFile(path.join(PUBLIC_DIR, 'favicon.png'))
+
+  console.log('Icons created in', outDir, '(favicon.png updated)')
 }
 
 main().catch(err => {
