@@ -72,9 +72,39 @@ async function main() {
   const left = Math.max(0, Math.round((resizedW - baseSize) / 2))
   const top = Math.max(0, Math.round((resizedH - baseSize) / 2))
 
-  const centered1024 = await sharp(trimmedPng)
+  let centered1024 = await sharp(trimmedPng)
     .resize(resizedW, resizedH, { kernel: 'lanczos3' })
     .extract({ left, top, width: baseSize, height: baseSize })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  // Replace white/light ring with dominant (gold) color so icon fills like other apps
+  const { data, info } = centered1024
+  centered1024 = null
+  const w = info.width
+  const h = info.height
+  const ch = info.channels
+  const stride = w * ch
+  const isNearWhite = (r, g, b) => r >= 230 && g >= 230 && b >= 230
+  const isNearTransparent = (a) => a < 20
+  // Sample gold from center (avoid white ring)
+  let fillR = 0xc9, fillG = 0x9a, fillB = 0x50
+  for (const [cx, cy] of [[w/2, h/2], [w/4, h/2], [w/2, h/4], [3*w/4, h/2], [w/2, 3*h/4]]) {
+    const i = (Math.floor(cy) * stride + Math.floor(cx) * ch)
+    const r = data[i], g = data[i+1], b = data[i+2]
+    if (!isNearWhite(r, g, b)) { fillR = r; fillG = g; fillB = b; break }
+  }
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * stride + x * ch
+      const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3]
+      if (isNearTransparent(a) || isNearWhite(r, g, b)) {
+        data[i] = fillR; data[i+1] = fillG; data[i+2] = fillB; data[i+3] = 255
+      }
+    }
+  }
+  centered1024 = await sharp(Buffer.from(data), { raw: { width: w, height: h, channels: ch } })
     .png({ compressionLevel: 9 })
     .toBuffer()
 
