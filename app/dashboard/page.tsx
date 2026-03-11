@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { 
-  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw, Calculator, Target
+  Mic, PenTool, Gamepad2, BookOpen, Settings, LogOut, User, Plus, Trash2, Crown, Sparkles, GraduationCap, Palette, Puzzle, BarChart3, Shield, RefreshCw, Calculator, Target, Gift
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 import { progressManager } from '@/lib/progress'
@@ -379,6 +379,13 @@ const handleDeleteChild = async (childId: string) => {
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Parent Dashboard
               </Button>
+              <Button 
+                onClick={() => router.push('/rewards')}
+                className="hidden md:flex bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 font-semibold px-3 sm:px-4 text-sm"
+              >
+                <Gift className="w-4 h-4 mr-2" />
+                Rewards
+              </Button>
               {!subscription?.isPremium && (
                 <Button 
                   onClick={() => router.push('/payment')}
@@ -409,6 +416,15 @@ const handleDeleteChild = async (childId: string) => {
                 title="Parent Dashboard"
               >
                 <BarChart3 className="w-5 h-5" />
+              </Button>
+              <Button 
+                onClick={() => router.push('/rewards')}
+                variant="ghost"
+                size="icon"
+                className="md:hidden hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-xl"
+                title="Rewards"
+              >
+                <Gift className="w-5 h-5" />
               </Button>
               {!subscription?.isPremium && (
                 <Button 

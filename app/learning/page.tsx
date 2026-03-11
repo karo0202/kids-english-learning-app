@@ -29,6 +29,7 @@ export default function LearningPage() {
   const [todayLessons, setTodayLessons] = useState(0)
   const [todayNewWords, setTodayNewWords] = useState(0)
   const [todayMinutes, setTodayMinutes] = useState(0)
+  const [showModuleTips, setShowModuleTips] = useState(false)
 
   // Ensure dark mode CSS class is present when user selected dark theme
   useEffect(() => {
@@ -93,6 +94,21 @@ export default function LearningPage() {
       setTodayMinutes(0)
     }
   }, [selectedChild])
+
+  // Simple first-time guidance about key modules (Reading & Games)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const key = 'learning_module_tips_seen_v1'
+      const seen = localStorage.getItem(key)
+      if (!seen) {
+        setShowModuleTips(true)
+        localStorage.setItem(key, '1')
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -445,6 +461,37 @@ export default function LearningPage() {
               {refreshingAccess ? 'Refreshing…' : 'Refresh access'}
             </Button>
           </div>
+          {showModuleTips && (
+            <Card className="mb-4 rounded-3xl border border-[#00aeef]/20 bg-[#e0f4ff]/80 dark:bg-[#003b66]/70 shadow-sm">
+              <CardContent className="px-4 py-3 md:py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5">
+                    <Sparkles className="w-5 h-5 text-[#00aeef]" />
+                  </div>
+                  <div>
+                    <p className="text-sm md:text-base font-semibold text-slate-800 dark:text-white">
+                      Tip for parents
+                    </p>
+                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-200">
+                      Start with <span className="font-semibold">Reading</span> to learn new words, then let your child
+                      relax with <span className="font-semibold">Games</span>. Little learners (3–5) love games and coloring;
+                      older kids (9–12) often enjoy grammar and puzzles.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex md:flex-col gap-2 md:gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs md:text-sm rounded-2xl"
+                    onClick={() => setShowModuleTips(false)}
+                  >
+                    Hide tip
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           {accessRefreshedMessage && (
             <p className="text-sm text-[#00aeef] dark:text-[#8eca40] mb-4 font-medium">
               Subscription updated. Your access has been refreshed.
