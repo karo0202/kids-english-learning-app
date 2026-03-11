@@ -25,6 +25,15 @@ export default function DashboardPage() {
   const [subscription, setSubscription] = useState<any>(null)
   const [syncing, setSyncing] = useState(false)
   const [syncMessage, setSyncMessage] = useState<string | null>(null)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [rewardStats, setRewardStats] = useState<{
+    childName: string
+    streak: number
+    level: number
+    xpPercent: number
+    coins: number
+    badges: number
+  } | null>(null)
 
   // Debug: Log whenever children state changes
   useEffect(() => {
@@ -127,6 +136,56 @@ export default function DashboardPage() {
       unsubscribe?.()
     }
   }, [router])
+
+  // Load basic reward stats (streak, level, XP, coins, badges) for the first child
+  useEffect(() => {
+    if (!children || children.length === 0) {
+      setRewardStats(null)
+      return
+    }
+
+    const primaryChild = children[0]
+    try {
+      const progress = progressManager.getProgressForChild(primaryChild.id)
+      if (!progress) {
+        setRewardStats(null)
+        return
+      }
+
+      const level = progress.level || 1
+      const xp = progress.xp || 0
+      const xpNeeded = level * 100
+      const xpPercent = xpNeeded > 0 ? Math.min(100, Math.round((xp / xpNeeded) * 100)) : 0
+
+      setRewardStats({
+        childName: primaryChild.name,
+        streak: progress.currentStreak || 0,
+        level,
+        xpPercent,
+        coins: progress.coins || 0,
+        badges: progress.achievements?.length ?? 0,
+      })
+    } catch (error) {
+      console.error('Error loading reward stats:', error)
+      setRewardStats(null)
+    }
+  }, [children])
+
+  // Simple first-time onboarding: explain flow and highlight "Start Learning" path
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!user) return
+    try {
+      const flagKey = 'dashboard_onboarding_seen_v1'
+      const seen = localStorage.getItem(flagKey)
+      if (!seen) {
+        localStorage.setItem(flagKey, '1')
+        setShowOnboarding(true)
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [user])
 
   const handleLogout = async () => {
     // Use the centralized logout function that preserves children data
@@ -399,6 +458,54 @@ const handleDeleteChild = async (childId: string) => {
         </div>
       </div>
 
+      {/* First-time onboarding overlay */}
+      {showOnboarding && (
+        <div className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center px-4">
+          <Card className="max-w-lg w-full rounded-3xl shadow-2xl">
+            <CardHeader>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-500" />
+                Welcome to Kids English
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Three quick steps to get started:
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ol className="space-y-2 text-sm text-gray-700">
+                <li>
+                  <span className="font-semibold">1.</span> Add your child (name + age) on this dashboard.
+                </li>
+                <li>
+                  <span className="font-semibold">2.</span> Tap <span className="font-semibold">“Start Learning”</span> to open the Learning Center.
+                </li>
+                <li>
+                  <span className="font-semibold">3.</span> Let your child pick a module: Reading, Math in English, Writing, Games, and more.
+                </li>
+              </ol>
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowOnboarding(false)}
+                  className="sm:min-w-[120px]"
+                >
+                  Maybe later
+                </Button>
+                <Button
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white sm:min-w-[160px]"
+                  onClick={() => {
+                    setShowOnboarding(false)
+                    router.push('/learning')
+                  }}
+                >
+                  Start Learning
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Premium Upgrade Banner */}
         {!subscription?.isPremium && (
@@ -471,6 +578,113 @@ const handleDeleteChild = async (childId: string) => {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Quick “Start Learning” call-to-action */}
+        {children.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <Card className="border border-purple-100/70 dark:border-purple-900/40 shadow-md bg-white/80 dark:bg-purple-950/40">
+              <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-3 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow">
+                    <GraduationCap className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-semibold text-gray-800 dark:text-white">
+                      Ready to learn?
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">
+                      Open the Learning Center and let your child choose today&apos;s activity.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => router.push('/learning')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-sm font-semibold rounded-2xl shadow"
+                >
+                  Start Learning
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Motivation & rewards for the first child */}
+        {rewardStats && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <Card className="bg-white/90 dark:bg-slate-900/70 border border-purple-100/70 dark:border-purple-900/40 shadow-md rounded-3xl">
+              <CardContent className="py-4 px-4 sm:px-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-purple-500 dark:text-purple-300 font-semibold mb-1">
+                    Learning streak & rewards
+                  </p>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-800 dark:text-white">
+                    {rewardStats.childName}&apos;s progress
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs sm:text-sm text-gray-700 dark:text-gray-200">
+                    <div className="flex items-center gap-1">
+                      <Sparkles className="w-4 h-4 text-yellow-500" />
+                      <span>
+                        Streak:{' '}
+                        <span className="font-semibold">
+                          {rewardStats.streak} day{rewardStats.streak === 1 ? '' : 's'}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <GraduationCap className="w-4 h-4 text-blue-500" />
+                      <span>
+                        Level{' '}
+                        <span className="font-semibold">
+                          {rewardStats.level}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Target className="w-4 h-4 text-emerald-500" />
+                      <span>
+                        Badges:{' '}
+                        <span className="font-semibold">
+                          {rewardStats.badges}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calculator className="w-4 h-4 text-orange-500" />
+                      <span>
+                        Coins:{' '}
+                        <span className="font-semibold">
+                          {rewardStats.coins}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-56">
+                  <p className="text-xs text-gray-600 dark:text-gray-300 mb-1 flex items-center justify-between">
+                    <span>XP to next level</span>
+                    <span className="font-semibold">
+                      {rewardStats.xpPercent}%
+                    </span>
+                  </p>
+                  <div className="h-3 rounded-full bg-purple-100 dark:bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400"
+                      style={{ width: `${rewardStats.xpPercent}%` }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Children Section */}
         <div className="mb-8">

@@ -23,6 +23,7 @@ export interface Child {
   parentEmail?: string // Store email for migration purposes
   createdAt: string
   avatar?: string
+  accentColor?: string
 }
 
 type ChildrenSubscriber = (children: Child[]) => void
@@ -121,6 +122,7 @@ export async function addChild(parentId: string, name: string, age: number, pare
     parentEmail, // Store email for migration
     createdAt: new Date().toISOString(),
     avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(name)}`,
+    accentColor: getAccentColorFromName(name),
   }
 
   console.log('Adding child:', { parentId, childId: newChild.id, name, age, ageGroup: newChild.ageGroup })
@@ -917,9 +919,29 @@ function normalizeChild(data: any, defaultEmail?: string): Child {
     parentEmail: data?.parentEmail || defaultEmail, // Always set email if missing
     createdAt: data?.createdAt ?? new Date().toISOString(),
     avatar: data?.avatar,
+    accentColor: data?.accentColor || getAccentColorFromName(data?.name || ''),
   }
 
   return child
+}
+
+// Deterministic accent color per child, based on name
+function getAccentColorFromName(name: string): string {
+  const palette = [
+    '#00aeef',
+    '#8c0066',
+    '#8eca40',
+    '#f59e0b',
+    '#ec4899',
+    '#6366f1',
+    '#10b981',
+  ]
+  if (!name) return palette[0]
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) >>> 0
+  }
+  return palette[hash % palette.length]
 }
 
 function cloneChildren(children: Child[]): Child[] {

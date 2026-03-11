@@ -111,6 +111,7 @@ export default function WritingModule() {
   const [isCorrect, setIsCorrect] = useState(false)
   const [strokeLength, setStrokeLength] = useState(0)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showTracingTips, setShowTracingTips] = useState(false)
   const lastPointRef = useRef<{ x: number; y: number } | null>(null)
   const drawStartTimeRef = useRef<number | null>(null)
   const visitedCellsRef = useRef<Set<string>>(new Set())
@@ -124,6 +125,20 @@ export default function WritingModule() {
       console.log('WritingModule component unmounting')
     }
   }, [])
+
+  // Show simple tracing tips the first time child opens the writing module (per browser)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (activityType !== 'tracing') return
+    try {
+      const seen = localStorage.getItem('writing_tracing_tips_seen_v1')
+      if (!seen) {
+        setShowTracingTips(true)
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [activityType])
 
   // Define drawLetterGuide with useCallback first
   const drawLetterGuide = useCallback(() => {
@@ -1597,25 +1612,72 @@ export default function WritingModule() {
         {/* Letter Tracing Activity - large area for portrait/landscape */}
         {activityType === 'tracing' ? (
           currentLetter ? (
-            <div className="w-full min-h-[60vh] flex flex-col">
-              <SmartLetterTracing
-                letter={currentLetter.letter}
-                onComplete={() => {
-                  // Update score and progress when child presses Next Letter
-                  setScore(prev => prev + 10)
-                  setCompletedActivities(prev => prev + 1)
-                  progressManager.addScore(10, 5)
-                  progressManager.addModuleProgress('writing', 1)
-                  challengeManager.updateChallengeProgress('writing', 1)
-                  nextActivity()
-                }}
-                onNext={() => {
-                  // Move to next letter
-                  const nextIndex = (letterIndex + 1) % tracingLetters.length
-                  setLetterIndex(nextIndex)
-                  setCurrentLetter(tracingLetters[nextIndex])
-                }}
-              />
+            <div className="w-full min-h-[60vh] flex flex-col relative">
+              {/* First-time tracing tips overlay */}
+              {showTracingTips && (
+                <div className="absolute inset-0 z-20 flex items-center justify-center px-4">
+                  <Card className="max-w-md w-full rounded-3xl shadow-2xl bg-white/95">
+                    <CardContent className="p-6 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <PenTool className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800">
+                            How to trace letters
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Ask your child to:
+                          </p>
+                        </div>
+                      </div>
+                      <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
+                        <li>Start at the gray dots and follow the path.</li>
+                        <li>Write slowly from top to bottom.</li>
+                        <li>Try to stay inside the guide shape.</li>
+                      </ul>
+                      <div className="flex justify-end pt-2">
+                        <Button
+                          className="bg-blue-500 hover:bg-blue-600 text-white rounded-2xl px-4"
+                          onClick={() => {
+                            setShowTracingTips(false)
+                            try {
+                              if (typeof window !== 'undefined') {
+                                localStorage.setItem('writing_tracing_tips_seen_v1', '1')
+                              }
+                            } catch {
+                              // ignore
+                            }
+                          }}
+                        >
+                          Got it, start tracing
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              <div className={showTracingTips ? 'pointer-events-none opacity-40' : 'pointer-events-auto opacity-100 transition-opacity'}>
+                <SmartLetterTracing
+                  letter={currentLetter.letter}
+                  onComplete={() => {
+                    // Update score and progress when child presses Next Letter
+                    setScore(prev => prev + 10)
+                    setCompletedActivities(prev => prev + 1)
+                    progressManager.addScore(10, 5)
+                    progressManager.addModuleProgress('writing', 1)
+                    challengeManager.updateChallengeProgress('writing', 1)
+                    nextActivity()
+                  }}
+                  onNext={() => {
+                    // Move to next letter
+                    const nextIndex = (letterIndex + 1) % tracingLetters.length
+                    setLetterIndex(nextIndex)
+                    setCurrentLetter(tracingLetters[nextIndex])
+                  }}
+                />
+              </div>
             </div>
           ) : (
             <div className="max-w-4xl mx-auto text-center p-8">

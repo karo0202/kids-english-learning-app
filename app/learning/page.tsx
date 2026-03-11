@@ -241,7 +241,7 @@ export default function LearningPage() {
     )
   }
 
-  const cardBase = 'cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#003366] bg-white/90 dark:bg-[#003366]/40 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-black/20 hover:shadow-2xl hover:shadow-[#00aeef]/15 dark:hover:shadow-[#00aeef]/20 hover:border-[#00aeef]/40 dark:hover:border-[#00aeef]/50 hover:-translate-y-1 transition-all duration-300'
+  const cardBase = 'cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#003366] bg-white/90 dark:bg-[#003366]/40 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300'
   const iconBase = 'w-20 h-20 md:w-24 md:h-24 mx-auto mb-3 md:mb-4 rounded-2xl flex items-center justify-center shadow-xl ring-4 ring-black/5 dark:ring-white/5 relative overflow-hidden'
 
   // Helper function to handle module click
@@ -252,6 +252,8 @@ export default function LearningPage() {
     }
     router.push(overrideRoute || `/learning/${moduleId}`)
   }
+
+  const accentColor = (selectedChild?.accentColor as string) || '#00aeef'
 
   if (children.length === 0) {
     return (
@@ -301,7 +303,7 @@ export default function LearningPage() {
               </Button>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-5 h-5 text-[#00aeef] dark:text-[#8eca40] hidden sm:block" />
+                  <Sparkles className="w-5 h-5 hidden sm:block" style={{ color: accentColor }} />
                   <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">Learning Center</h1>
                   {selectedChild?.ageGroup && (
                     <AgeGroupBadge ageGroup={selectedChild.ageGroup as AgeGroup} />
@@ -323,14 +325,17 @@ export default function LearningPage() {
                 whileHover={{ scale: 1.05 }}
               >
                 <Star className="w-4 h-4 text-yellow-600" />
-                <span className="text-xs md:text-sm font-medium text-yellow-800">100 XP</span>
+                <span className="text-xs md:text-sm font-medium text-yellow-800">Keep it up!</span>
               </motion.div>
               <motion.div 
-                className="flex items-center gap-1 bg-gradient-to-r from-blue-100 to-cyan-50 px-2 md:px-3 py-1 rounded-full shadow-md"
+                className="flex items-center gap-1 px-2 md:px-3 py-1 rounded-full shadow-md"
+                style={{ backgroundImage: `linear-gradient(to right, ${accentColor}22, ${accentColor}33)` }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Trophy className="w-4 h-4 text-blue-600" />
-                <span className="text-xs md:text-sm font-medium text-blue-800">Level 1</span>
+                <Trophy className="w-4 h-4" style={{ color: accentColor }} />
+                <span className="text-xs md:text-sm font-medium" style={{ color: accentColor }}>
+                  Personalized for age
+                </span>
               </motion.div>
             </div>
           </div>
@@ -351,7 +356,9 @@ export default function LearningPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight mb-1"
           >
-            Choose your learning path
+            {selectedChild?.name
+              ? `${selectedChild.name}'s learning path`
+              : 'Choose your learning path'}
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 10 }}
@@ -359,7 +366,18 @@ export default function LearningPage() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-base text-slate-600 dark:text-slate-300"
           >
-            Reading · Math · Writing · Speaking · Games · Grammar · Puzzles · Coloring · Challenges
+            {selectedChild?.ageGroup === AgeGroup.AGE_3_5 && (
+              <>Best for Little Learners: <span className="font-semibold">Alphabet Reading, Coloring, Games</span>.</>
+            )}
+            {selectedChild?.ageGroup === AgeGroup.AGE_6_8 && (
+              <>Great for Word Builders: <span className="font-semibold">Reading, Math in English, Writing, Games</span>.</>
+            )}
+            {selectedChild?.ageGroup === AgeGroup.AGE_9_12 && (
+              <>Perfect for Language Masters: <span className="font-semibold">Reading, Grammar, Puzzles, Challenges</span>.</>
+            )}
+            {!selectedChild?.ageGroup && (
+              <>Reading · Math · Writing · Speaking · Games · Grammar · Puzzles · Coloring · Challenges</>
+            )}
           </motion.p>
         </div>
       </div>
@@ -447,18 +465,29 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: accentColor }}
                 onClick={() => handleModuleClick('reading', 'Reading')}
               >
                 {renderLockBadge('reading')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#003366] to-[#8c0066]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, ${accentColor}, #8c0066)`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <Library className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Reading</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Reading
+                    {selectedChild?.ageGroup && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Stories, vocabulary, and comprehension
                   </p>
@@ -480,18 +509,29 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: selectedChild?.ageGroup === AgeGroup.AGE_6_8 ? accentColor : undefined }}
                 onClick={() => handleModuleClick('counting', 'Math', '/learning/math')}
               >
                 {renderLockBadge('counting')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#00aeef]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, #8c0066, ${accentColor})`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <Calculator className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Math in English</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Math in English
+                    {selectedChild?.ageGroup === AgeGroup.AGE_6_8 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Foundation, Elementary & Intermediate — numbers, shapes, operations, fractions
                   </p>
@@ -512,17 +552,28 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: selectedChild?.ageGroup !== AgeGroup.AGE_3_5 ? accentColor : undefined }}
                 onClick={() => handleModuleClick('writing', 'Writing')}
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#00aeef] to-[#8eca40]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, ${accentColor}, #8eca40)`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <PencilLine className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Writing</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Writing
+                    {selectedChild?.ageGroup !== AgeGroup.AGE_3_5 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Letter tracing and spelling practice</p>
                   <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Writing
@@ -546,7 +597,10 @@ export default function LearningPage() {
                 {renderLockBadge('speaking')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#00aeef]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, #8c0066, ${accentColor})`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
@@ -577,13 +631,23 @@ export default function LearningPage() {
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#00aeef] to-[#8eca40]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, ${accentColor}, #8eca40)`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <Gamepad2 className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Games</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Games
+                    {selectedChild?.ageGroup === AgeGroup.AGE_3_5 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Fun interactive learning games</p>
                   <div className="text-sm font-medium text-[#00aeef] dark:text-[#8eca40] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Playing
@@ -603,17 +667,28 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: selectedChild?.ageGroup === AgeGroup.AGE_9_12 ? accentColor : undefined }}
                 onClick={() => handleModuleClick('grammar', 'Grammar')}
               >
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#003366] to-[#8c0066]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, #003366, ${accentColor})`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <FileText className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Grammar</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Grammar
+                    {selectedChild?.ageGroup === AgeGroup.AGE_9_12 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">Master grammar rules and language</p>
                   <div className="text-sm font-medium text-[#8c0066] dark:text-[#00aeef] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Start Learning
@@ -633,18 +708,29 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: selectedChild?.ageGroup === AgeGroup.AGE_9_12 ? accentColor : undefined }}
                 onClick={() => handleModuleClick('puzzle', 'Puzzles')}
               >
                 {renderLockBadge('puzzle')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8eca40] to-[#00aeef]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, #8eca40, ${accentColor})`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <Puzzle className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Puzzles</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Puzzles
+                    {selectedChild?.ageGroup === AgeGroup.AGE_9_12 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Solve word and sentence puzzles
                   </p>
@@ -666,18 +752,29 @@ export default function LearningPage() {
             >
               <Card 
                 className={cardBase}
+                style={{ borderColor: selectedChild?.ageGroup === AgeGroup.AGE_3_5 ? accentColor : undefined }}
                 onClick={() => handleModuleClick('alphabet-coloring', 'Coloring')}
               >
                 {renderLockBadge('alphabet-coloring')}
                 <CardContent className="p-5 md:p-6 text-center relative z-10">
                   <motion.div 
-                    className={`${iconBase} bg-gradient-to-br from-[#8c0066] to-[#8eca40]`}
+                    className={iconBase}
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom right, #8c0066, ${accentColor})`,
+                    }}
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: 'spring', stiffness: 400 }}
                   >
                     <Palette className="w-9 h-9 md:w-11 md:h-11 text-white" strokeWidth={2} />
                   </motion.div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">Coloring</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 tracking-tight">
+                    Coloring
+                    {selectedChild?.ageGroup === AgeGroup.AGE_3_5 && (
+                      <span className="ml-2 align-middle text-[10px] px-2 py-0.5 rounded-full bg-[#00aeef]/10 text-[#00aeef] font-semibold uppercase tracking-wide">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
                     Color letters and learn alphabet
                   </p>
