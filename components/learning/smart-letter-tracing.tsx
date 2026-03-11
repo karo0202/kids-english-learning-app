@@ -1054,9 +1054,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
 
     setTimeout(() => {
       onComplete?.()
-      if (onNext) {
-        resetTracing()
-      }
+      resetTracing()
     }, 2500)
   }
 
@@ -1238,8 +1236,7 @@ export default function SmartLetterTracing({ letter, onComplete, onNext }: Smart
           {onNext && (
             <Button
               onClick={() => {
-                resetTracing()
-                onComplete?.()
+                handleComplete()
               }}
               className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full px-8 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
             >
