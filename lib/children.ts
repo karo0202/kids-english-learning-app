@@ -359,21 +359,31 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
     if (raw) {
       const allLocal: Child[] = JSON.parse(raw)
       console.log(`📦 Parsed ${allLocal.length} children from localStorage`)
-      allLocal.forEach((c, i) => console.log(`  ${i}: ${c.name} (id: ${c.id?.substring(0,10)}..., parentId: ${c.parentId?.substring(0,10)}...)`))
+      allLocal.forEach((c, i) => console.log(`  ${i}: ${c.name} (id: ${c.id?.substring(0,10)}..., parentId: ${c.parentId?.substring(0,10)}..., email: ${c.parentEmail})`))
       
       for (const child of allLocal) {
         if (deletedChildren.has(child.id)) {
           console.log(`🚫 Skipping deleted child: ${child.name}`)
           continue
         }
-        // Add ALL local children to map with updated parentId and email
+
+        const childEmail = (child.parentEmail || '').toLowerCase()
+        const matchesEmail = childEmail === emailLower
+        const matchesParentId = child.parentId === parentId
+
+        // ONLY pull in children that already belong to this account
+        // (same email or same parentId). Do NOT adopt all local children.
+        if (!matchesEmail && !matchesParentId) {
+          continue
+        }
+
         childMap.set(child.id, normalizeChild({
           ...child,
           parentId: parentId,
           parentEmail: userEmail
         }, userEmail))
       }
-      console.log(`📦 Added ${childMap.size} local children to sync`)
+      console.log(`📦 Added ${childMap.size} local children to sync for this account`)
     } else {
       console.log(`⚠️ No children in localStorage`)
     }
@@ -386,8 +396,12 @@ export async function forceMigrateChildrenByEmail(parentId: string, userEmail: s
     const currentChildRaw = localStorage.getItem('currentChild')
     if (currentChildRaw) {
       const currentChild = JSON.parse(currentChildRaw)
-      if (currentChild?.id && !childMap.has(currentChild.id) && !deletedChildren.has(currentChild.id)) {
-        console.log(`📦 Found currentChild not in main list: ${currentChild.name}`)
+      const childEmail = (currentChild?.parentEmail || '').toLowerCase()
+      const matchesEmail = childEmail === emailLower
+      const matchesParentId = currentChild?.parentId === parentId
+
+      if (currentChild?.id && !childMap.has(currentChild.id) && !deletedChildren.has(currentChild.id) && (matchesEmail || matchesParentId)) {
+        console.log(`📦 Found currentChild for this account: ${currentChild.name}`)
         childMap.set(currentChild.id, normalizeChild({
           ...currentChild,
           parentId: parentId,
