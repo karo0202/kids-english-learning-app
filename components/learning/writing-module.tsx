@@ -103,7 +103,7 @@ export default function WritingModule() {
   const [wordBank, setWordBank] = useState<WordBuildingWord[] | null>(null)
   const [score, setScore] = useState(0)
   const [completedActivities, setCompletedActivities] = useState(0)
-  const [totalActivities] = useState(8)
+  const [totalActivities] = useState(26)
   const [isDrawing, setIsDrawing] = useState(false)
   const [builderLetters, setBuilderLetters] = useState<string[]>([])
   const [builtWord, setBuiltWord] = useState<string[]>([])
