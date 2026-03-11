@@ -15,6 +15,7 @@ import { getCurrentChild, getChildrenSync, setCurrentChild } from '@/lib/childre
 import { AgeGroup, getAgeGroupConfig } from '@/lib/age-utils'
 import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-ui'
 import { checkModuleAccess, refreshSubscriptionStatus, clearSubscriptionCache, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
+import { progressManager } from '@/lib/progress'
 
 export default function LearningPage() {
   const router = useRouter()
@@ -25,6 +26,9 @@ export default function LearningPage() {
   const [moduleAccessMap, setModuleAccessMap] = useState<Record<string, ModuleAccess>>({})
   const [refreshingAccess, setRefreshingAccess] = useState(false)
   const [accessRefreshedMessage, setAccessRefreshedMessage] = useState(false)
+  const [todayLessons, setTodayLessons] = useState(0)
+  const [todayNewWords, setTodayNewWords] = useState(0)
+  const [todayMinutes, setTodayMinutes] = useState(0)
 
   // Ensure dark mode CSS class is present when user selected dark theme
   useEffect(() => {
@@ -42,6 +46,53 @@ export default function LearningPage() {
       } catch {}
     }
   }, [])
+
+  // Load per-child progress stats for the dashboard tiles
+  useEffect(() => {
+    if (!selectedChild) {
+      setTodayLessons(0)
+      setTodayNewWords(0)
+      setTodayMinutes(0)
+      return
+    }
+
+    try {
+      const progress = progressManager.getProgressForChild(selectedChild.id)
+      if (!progress) {
+        setTodayLessons(0)
+        setTodayNewWords(0)
+        setTodayMinutes(0)
+        return
+      }
+
+      const ms = progress.moduleStats ?? {
+        writing: 0,
+        reading: 0,
+        speaking: 0,
+        games: 0,
+        puzzle: 0,
+        grammar: 0,
+      }
+
+      // Use completedActivities as "lessons" and sum of moduleStats as "new words / activities".
+      setTodayLessons(progress.completedActivities || 0)
+      setTodayNewWords(
+        (ms.reading || 0) +
+        (ms.writing || 0) +
+        (ms.speaking || 0) +
+        (ms.games || 0) +
+        (ms.puzzle || 0) +
+        (ms.grammar || 0)
+      )
+      // Time in minutes is not stored yet; keep it zero for now so UI is consistent.
+      setTodayMinutes(0)
+    } catch (e) {
+      console.error('Error loading child progress:', e)
+      setTodayLessons(0)
+      setTodayNewWords(0)
+      setTodayMinutes(0)
+    }
+  }, [selectedChild])
 
   useEffect(() => {
     let mounted = true
@@ -684,22 +735,28 @@ export default function LearningPage() {
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#00aeef]">0</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Lessons</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#00aeef]">
+                {todayLessons}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Total Lessons</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#00aeef] dark:text-[#8eca40]">0</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">New Words</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#00aeef] dark:text-[#8eca40]">
+                {todayNewWords}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Activities Done</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#8eca40]">0</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Minutes</div>
+              <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#8eca40]">
+                {todayMinutes}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Minutes (coming soon)</div>
             </motion.div>
           </div>
         </motion.div>
