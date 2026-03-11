@@ -43,10 +43,11 @@ class PremiumTTSService {
   }
 
   private checkGoogleTTSAvailability(): void {
-    // Check if Google TTS API key is configured
-    // We'll check by trying to call the API route, but for now assume it's available
-    // The API route will handle the actual check
-    this.googleTTSEnabled = true // Always try API route first, it will fallback if not configured
+    // Temporarily disable Google Cloud TTS and always use the
+    // browser Web Speech API. This makes the "Stop" button in
+    // reading modules reliably cancel speech on all devices,
+    // without depending on the remote API route.
+    this.googleTTSEnabled = false
   }
 
   /**
