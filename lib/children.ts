@@ -59,18 +59,6 @@ export function getChildrenSync(parentId: string, userEmail?: string): Child[] {
     return cloneChildren(local)
   }
 
-  // No local data by parentId - try recovering by email (e.g. after Google re-login, children may exist under same email)
-  if (userEmail) {
-    const byEmail = findChildrenByEmail(userEmail, parentId)
-    if (byEmail.length > 0) {
-      childCache.set(parentId, byEmail)
-      if (typeof window !== 'undefined') {
-        void refreshChildrenFromFirestore(parentId, userEmail)
-      }
-      return cloneChildren(byEmail)
-    }
-  }
-
   // No local data found - start Firestore sync immediately (will notify subscribers when done)
   if (typeof window !== 'undefined') {
     void refreshChildrenFromFirestore(parentId, userEmail)
@@ -97,21 +85,9 @@ export function subscribeToChildren(parentId: string, callback: ChildrenSubscrib
   subscribers.add(callback)
   childSubscribers.set(parentId, subscribers)
 
-  // First, do aggressive email-based migration from localStorage
-  let initialChildren: Child[] = []
-  if (userEmail) {
-    const migrated = findChildrenByEmail(userEmail, parentId)
-    if (migrated.length > 0) {
-      initialChildren = migrated
-      childCache.set(parentId, migrated)
-      persistLocalChildren(parentId, migrated)
-    }
-  }
-  
-  // If no migrated children, load from cache or localStorage
-  if (initialChildren.length === 0) {
-    initialChildren = childCache.get(parentId) ?? loadLocalChildren(parentId, userEmail)
-  }
+  // Load from cache or localStorage scoped to this parentId/email
+  const initialChildren: Child[] =
+    childCache.get(parentId) ?? loadLocalChildren(parentId, userEmail)
   
   callback(cloneChildren(initialChildren))
   ensureFirestoreListener(parentId, userEmail)
