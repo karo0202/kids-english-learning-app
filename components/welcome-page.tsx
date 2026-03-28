@@ -18,7 +18,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import ModulesShowcaseSlides from '@/components/modules-showcase-slides'
-import { WELCOME_MODULES } from '@/lib/welcome-modules'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -271,7 +270,9 @@ export default function WelcomePage() {
 						</Button>
           </motion.div>
 
-          <ModulesShowcaseSlides />
+          <div id="about-section">
+            <ModulesShowcaseSlides />
+          </div>
 
           {/* Install help modal */}
           {showInstallHelp && !appInstalled && (
@@ -323,40 +324,6 @@ export default function WelcomePage() {
               </div>
             </div>
           )}
-        </motion.div>
-
-        {/* Features Grid */}
-				<motion.div 
-						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 max-w-7xl mx-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-					id="about-section"
-				>
-          {WELCOME_MODULES.map((module, index) => {
-            const Icon = module.Icon
-            return (
-            <motion.div
-              key={module.title}
-              className="card-kid p-6 text-center group relative overflow-hidden"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5 + (index * 0.1) }}
-              whileHover={{ scale: 1.05, y: -5 }}
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-              <motion.div 
-                className={`w-16 h-16 bg-gradient-to-r ${module.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg relative z-10`}
-                whileHover={{ rotate: 5, scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Icon className="w-8 h-8" />
-              </motion.div>
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 relative z-10">{module.title}</h3>
-              <p className="text-gray-600 dark:text-white/70 relative z-10">{module.description}</p>
-            </motion.div>
-            )
-          })}
         </motion.div>
 
         {/* Age Groups */}

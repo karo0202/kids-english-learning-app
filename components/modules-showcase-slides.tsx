@@ -1,7 +1,7 @@
 'use client'
 
 import useEmblaCarousel from 'embla-carousel-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,6 +56,18 @@ export default function ModulesShowcaseSlides() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
   const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi])
 
+  const moduleChipRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  useEffect(() => {
+    const el = moduleChipRefs.current[selectedIndex]
+    if (!el) return
+    el.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    })
+  }, [selectedIndex, prefersReducedMotion])
+
   return (
     <motion.section
       className="relative mb-20 max-w-6xl mx-auto px-3 sm:px-4"
@@ -83,7 +95,7 @@ export default function ModulesShowcaseSlides() {
           Crafted for curious young minds
         </h2>
         <p className="text-slate-600 dark:text-white/65 text-base md:text-lg max-w-xl mx-auto leading-relaxed font-medium">
-          Peek inside each module—real app screens when available, with a polished preview as backup.
+          One place to explore everything we teach—tap a module below or use the arrows to tour each screen.
         </p>
         <div
           className="mx-auto mt-6 h-px w-24 bg-gradient-to-r from-transparent via-[#00aeef]/60 to-transparent"
@@ -181,42 +193,71 @@ export default function ModulesShowcaseSlides() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 md:mt-8 flex-wrap px-1">
+          <div
+            className="mt-6 md:mt-8 flex items-stretch gap-2 sm:gap-3 px-0.5"
+            role="group"
+            aria-label="Browse modules"
+          >
             <Button
               type="button"
               variant="outline"
               size="icon"
-              className="rounded-full h-12 w-12 shrink-0 border-slate-200/90 dark:border-white/12 bg-white/90 dark:bg-white/[0.06] text-slate-700 dark:text-white shadow-md shadow-slate-200/40 dark:shadow-none hover:bg-white dark:hover:bg-white/10 hover:border-[#00aeef]/40 hover:text-[#003366] dark:hover:text-white transition-all duration-300"
+              className="rounded-full h-11 w-11 sm:h-12 sm:w-12 shrink-0 self-center border-slate-200/90 dark:border-white/12 bg-white/90 dark:bg-white/[0.06] text-slate-700 dark:text-white shadow-md shadow-slate-200/40 dark:shadow-none hover:bg-white dark:hover:bg-white/10 hover:border-[#00aeef]/40 hover:text-[#003366] dark:hover:text-white transition-all duration-300"
               onClick={scrollPrev}
               aria-label="Previous module"
             >
               <ChevronLeft className="h-5 w-5" strokeWidth={2.25} />
             </Button>
+
             <div
-              className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-[min(100%,18rem)] sm:max-w-[22rem] md:max-w-none"
-              aria-label="Choose module slide"
+              className="min-w-0 flex-1 flex gap-2 sm:gap-2.5 overflow-x-auto overflow-y-hidden py-1 scroll-smooth touch-pan-x [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.5)_transparent]"
+              role="tablist"
+              aria-label="All learning modules"
             >
-              {WELCOME_MODULES.map((mod, i) => (
-                <button
-                  key={mod.title}
-                  type="button"
-                  aria-current={selectedIndex === i ? 'true' : undefined}
-                  aria-label={`Show ${mod.title}`}
-                  className={cn(
-                    'h-2 rounded-full transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aeef] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900',
-                    selectedIndex === i
-                      ? 'w-9 bg-gradient-to-r from-[#00aeef] to-cyan-500 shadow-[0_0_12px_rgba(0,174,239,0.45)]'
-                      : 'w-2 bg-slate-300/70 dark:bg-white/[0.2] hover:bg-slate-400 dark:hover:bg-white/35'
-                  )}
-                  onClick={() => scrollTo(i)}
-                />
-              ))}
+              {WELCOME_MODULES.map((mod, i) => {
+                const Icon = mod.Icon
+                const active = selectedIndex === i
+                return (
+                  <button
+                    key={mod.title}
+                    ref={(el) => {
+                      moduleChipRefs.current[i] = el
+                    }}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    aria-label={`Show ${mod.title}`}
+                    className={cn(
+                      'flex shrink-0 flex-col items-center gap-1.5 rounded-2xl border px-2 py-2 sm:px-2.5 sm:py-2.5 w-[4.65rem] sm:w-[5.35rem] transition-all duration-300 ease-out',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aeef] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#0a1628]',
+                      active
+                        ? 'border-[#00aeef]/55 bg-white dark:bg-slate-900/90 shadow-lg shadow-slate-300/40 dark:shadow-black/40 ring-2 ring-[#00aeef]/35 scale-[1.02] z-[1]'
+                        : 'border-slate-200/90 dark:border-white/[0.1] bg-white/55 dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 opacity-[0.92] hover:opacity-100'
+                    )}
+                    onClick={() => scrollTo(i)}
+                  >
+                    <div
+                      className={cn(
+                        'w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-white shadow-md ring-1 ring-black/5',
+                        'bg-gradient-to-br',
+                        mod.gradient
+                      )}
+                    >
+                      <Icon className="w-[1.15rem] h-[1.15rem] sm:w-5 sm:h-5" strokeWidth={2} />
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-center leading-[1.2] text-slate-800 dark:text-slate-100 line-clamp-2 min-h-[2.4em] px-0.5">
+                      {mod.title}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
+
             <Button
               type="button"
               variant="outline"
               size="icon"
-              className="rounded-full h-12 w-12 shrink-0 border-slate-200/90 dark:border-white/12 bg-white/90 dark:bg-white/[0.06] text-slate-700 dark:text-white shadow-md shadow-slate-200/40 dark:shadow-none hover:bg-white dark:hover:bg-white/10 hover:border-[#00aeef]/40 hover:text-[#003366] dark:hover:text-white transition-all duration-300"
+              className="rounded-full h-11 w-11 sm:h-12 sm:w-12 shrink-0 self-center border-slate-200/90 dark:border-white/12 bg-white/90 dark:bg-white/[0.06] text-slate-700 dark:text-white shadow-md shadow-slate-200/40 dark:shadow-none hover:bg-white dark:hover:bg-white/10 hover:border-[#00aeef]/40 hover:text-[#003366] dark:hover:text-white transition-all duration-300"
               onClick={scrollNext}
               aria-label="Next module"
             >
