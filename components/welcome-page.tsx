@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Mascot } from '@/components/ui/mascot'
 import Logo from '@/components/logo'
-import { Star, BookOpen, Gamepad2, Mic, PenTool, Volume2, FileText, Palette, Puzzle, Target, Menu, X, MessageSquare, Calculator, PencilLine, Trophy } from 'lucide-react'
+import { Star, BookOpen, Menu, X, MessageSquare } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AudioSettings from '@/components/audio-settings'
 import {
@@ -17,6 +17,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import ModulesShowcaseSlides from '@/components/modules-showcase-slides'
+import { WELCOME_MODULES } from '@/lib/welcome-modules'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -80,75 +82,6 @@ export default function WelcomePage() {
     // If we don't have a native prompt, show manual install help
     setShowInstallHelp(true)
   }
-
-  const features = [
-    {
-      icon: <Mic className="w-8 h-8" />,
-      title: "Speaking Practice",
-      description: "Learn pronunciation with our friendly AI buddy!",
-      color: "from-blue-400 to-blue-600"
-    },
-    {
-      icon: <PenTool className="w-8 h-8" />,
-      title: "Writing & Spelling",
-      description: "Trace letters and build words in fun ways!",
-      color: "from-green-400 to-green-600"
-    },
-    {
-      icon: <BookOpen className="w-8 h-8" />,
-      title: "Reading Library",
-      description: "Explore magical stories and PDF books!",
-      color: "from-pink-400 to-pink-600"
-    },
-    {
-      icon: <Gamepad2 className="w-8 h-8" />,
-      title: "Educational Games",
-      description: "Play exciting games while learning English!",
-      color: "from-purple-400 to-purple-600"
-    },
-    {
-      icon: <FileText className="w-8 h-8" />,
-      title: "Grammar & Language",
-      description: "Master grammar rules with interactive exercises!",
-      color: "from-indigo-400 to-indigo-600"
-    },
-    {
-      icon: <Puzzle className="w-8 h-8" />,
-      title: "Word Puzzles",
-      description: "Solve word, sentence, and picture puzzles!",
-      color: "from-orange-400 to-orange-600"
-    },
-    {
-      icon: <Palette className="w-8 h-8" />,
-      title: "Alphabet Coloring",
-      description: "Color letters and learn the alphabet creatively!",
-      color: "from-cyan-400 to-cyan-600"
-    },
-    {
-      icon: <Target className="w-8 h-8" />,
-      title: "Daily Challenges",
-      description: "Complete fun challenges and earn rewards!",
-      color: "from-rose-400 to-rose-600"
-    },
-    {
-      icon: <Calculator className="w-8 h-8" />,
-      title: "Math in English",
-      description: "Numbers, shapes, and problem solving explained in English.",
-      color: "from-amber-400 to-orange-500"
-    },
-    {
-      icon: <PencilLine className="w-8 h-8" />,
-      title: "Creative Writing",
-      description: "Story prompts and guided writing practice for older kids.",
-      color: "from-emerald-400 to-teal-500"
-    },
-    {
-      icon: <Trophy className="w-8 h-8" />,
-      title: "Progress & Rewards",
-      description: "XP, stars, and a parent dashboard to track every module.",
-      color: "from-sky-400 to-indigo-500"
-    }
-  ]
 
   return (
 		<div className="min-h-screen relative">
@@ -338,6 +271,8 @@ export default function WelcomePage() {
 						</Button>
           </motion.div>
 
+          <ModulesShowcaseSlides />
+
           {/* Install help modal */}
           {showInstallHelp && !appInstalled && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
@@ -398,27 +333,30 @@ export default function WelcomePage() {
           transition={{ delay: 1.5 }}
 					id="about-section"
 				>
-          {features.map((feature, index) => (
+          {WELCOME_MODULES.map((module, index) => {
+            const Icon = module.Icon
+            return (
             <motion.div
-              key={index}
+              key={module.title}
               className="card-kid p-6 text-center group relative overflow-hidden"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5 + (index * 0.1) }}
               whileHover={{ scale: 1.05, y: -5 }}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color.replace('from-', 'from-').replace('to-', 'to-')} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
               <motion.div 
-                className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg relative z-10`}
+                className={`w-16 h-16 bg-gradient-to-r ${module.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg relative z-10`}
                 whileHover={{ rotate: 5, scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                {feature.icon}
+                <Icon className="w-8 h-8" />
               </motion.div>
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 relative z-10">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-white/70 relative z-10">{feature.description}</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 relative z-10">{module.title}</h3>
+              <p className="text-gray-600 dark:text-white/70 relative z-10">{module.description}</p>
             </motion.div>
-          ))}
+            )
+          })}
         </motion.div>
 
         {/* Age Groups */}
