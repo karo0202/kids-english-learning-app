@@ -18,6 +18,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import ModulesShowcaseSlides from '@/components/modules-showcase-slides'
+import AppQrBlock from '@/components/app-qr-block'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -385,8 +386,11 @@ export default function WelcomePage() {
 
 			{/* Footer */}
 			<div className="container mx-auto px-4 pb-8">
-				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 dark:bg-white/10 backdrop-blur border border-white/50 dark:border-white/20 p-4 text-center text-sm text-gray-600 dark:text-white/70">
-					Built with ❤️ for kids. New: Reading Library, Math in English, Creative Writing, Word & Picture Puzzles, Alphabet Coloring, Daily Challenges, and a Parent Progress Dashboard.
+				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 dark:bg-white/10 backdrop-blur border border-white/50 dark:border-white/20 p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+					<p className="text-center md:text-left text-sm text-gray-600 dark:text-white/70 max-w-xl leading-relaxed">
+						Built with ❤️ for kids. New: Reading Library, Math in English, Creative Writing, Word & Picture Puzzles, Alphabet Coloring, Daily Challenges, and a Parent Progress Dashboard.
+					</p>
+					<AppQrBlock className="shrink-0" />
         </div>
       </div>
       
