@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ModuleContentPreview } from '@/components/module-content-preview'
 import { WELCOME_MODULES } from '@/lib/welcome-modules'
 import { cn } from '@/lib/utils'
 
@@ -72,8 +73,7 @@ export default function ModulesShowcaseSlides() {
           What we offer for your kids
         </h2>
         <p className="text-slate-600 dark:text-white/75 text-base md:text-lg max-w-2xl mx-auto">
-          Swipe or use the arrows to see each learning module—speaking, reading, games, and more in one
-          place.
+          Real screenshots from the app (plus a simple preview if an image is still being added).
         </p>
       </div>
 
@@ -104,27 +104,40 @@ export default function ModulesShowcaseSlides() {
                         'p-1'
                       )}
                     >
-                      <div className="rounded-[0.9rem] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row items-center gap-8 md:gap-10 text-center md:text-left">
-                        <div
-                          className={cn(
-                            'shrink-0 w-28 h-28 md:w-36 md:h-36 rounded-3xl flex items-center justify-center',
-                            'bg-gradient-to-br shadow-lg text-white',
-                            mod.gradient
-                          )}
-                          aria-hidden
-                        >
-                          <Icon className="w-14 h-14 md:w-[4.5rem] md:h-[4.5rem]" strokeWidth={1.75} />
-                        </div>
-                        <div className="min-w-0 flex-1 space-y-3">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                            Learning module
-                          </p>
-                          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                            {mod.title}
-                          </h3>
+                      <div className="rounded-[0.9rem] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm px-5 py-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+                        <div className="min-w-0 flex-1 space-y-3 text-center md:text-left order-2 md:order-1">
+                          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+                            <div
+                              className={cn(
+                                'shrink-0 w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] rounded-2xl flex items-center justify-center mx-auto md:mx-0',
+                                'bg-gradient-to-br shadow-lg text-white',
+                                mod.gradient
+                              )}
+                              aria-hidden
+                            >
+                              <Icon className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.75} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                Learning module
+                              </p>
+                              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                                {mod.title}
+                              </h3>
+                            </div>
+                          </div>
                           <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg leading-relaxed">
                             {mod.description}
                           </p>
+                        </div>
+                        <div className="order-1 md:order-2 shrink-0 flex justify-center md:justify-end w-full md:w-auto">
+                          <ModuleContentPreview
+                            previewKey={mod.previewKey}
+                            gradient={mod.gradient}
+                            screenshotSrc={mod.screenshotSrc}
+                            screenshotAlt={`${mod.title} — screen from Kids English app`}
+                            priority={index === 0}
+                          />
                         </div>
                       </div>
                     </div>
