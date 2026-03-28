@@ -18,23 +18,28 @@ type Props = {
 
 function PhoneChrome({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={cn(
-        'relative mx-auto w-full max-w-[280px] md:max-w-[300px]',
-        'rounded-[1.75rem] border-[10px] border-slate-800/90 dark:border-slate-700 shadow-xl',
-        'bg-slate-900 overflow-hidden',
-        className
-      )}
-      aria-hidden
-    >
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 h-5 w-16 rounded-full bg-slate-800/80 z-10" />
+    <div className={cn('relative mx-auto w-full max-w-[270px] sm:max-w-[288px] md:max-w-[300px]', className)} aria-hidden>
       <div
         className={cn(
-          'min-h-[200px] md:min-h-[220px] pt-8 pb-4 px-3 flex items-center justify-center',
-          'bg-gradient-to-b from-slate-100 to-slate-200/90 dark:from-slate-800 dark:to-slate-900'
+          'relative rounded-[2rem] p-[3px] bg-gradient-to-b from-slate-500 via-slate-800 to-slate-950',
+          'shadow-[0_28px_56px_-12px_rgba(15,23,42,0.45),0_12px_24px_-8px_rgba(0,174,239,0.12),inset_0_1px_0_rgba(255,255,255,0.15)]',
+          'dark:shadow-[0_28px_56px_-8px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.12)]'
         )}
       >
-        {children}
+        <div className="relative rounded-[1.85rem] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 p-[6px]">
+          <div className="absolute top-[7px] left-1/2 -translate-x-1/2 z-20 flex items-center justify-center">
+            <span className="h-[10px] w-[72px] rounded-full bg-black/90 shadow-[inset_0_1px_2px_rgba(255,255,255,0.12)] ring-1 ring-white/10" />
+          </div>
+          <div
+            className={cn(
+              'relative min-h-[198px] md:min-h-[218px] pt-9 pb-3 px-2 flex items-center justify-center rounded-[1.55rem]',
+              'bg-gradient-to-b from-slate-200/95 via-slate-100 to-slate-200/90',
+              'dark:from-slate-800 dark:via-slate-800 dark:to-slate-900'
+            )}
+          >
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -57,7 +62,7 @@ export function ModuleContentPreview({
   if (useFallback) {
     return (
       <PhoneChrome className={className}>
-        <div className="w-full rounded-2xl bg-white/95 dark:bg-slate-950/90 shadow-inner border border-slate-200/80 dark:border-slate-700/80 p-3 min-h-[168px] flex items-center justify-center">
+        <div className="w-full rounded-[1.35rem] bg-white dark:bg-slate-950/95 shadow-[inset_0_2px_8px_rgba(15,23,42,0.06)] dark:shadow-[inset_0_2px_12px_rgba(0,0,0,0.4)] border border-white/80 dark:border-white/[0.07] p-3 min-h-[168px] flex items-center justify-center">
           <IllustrativeModuleScene previewKey={previewKey} gradient={gradient} />
         </div>
       </PhoneChrome>
@@ -66,7 +71,7 @@ export function ModuleContentPreview({
 
   return (
     <PhoneChrome className={className}>
-      <div className="relative w-full aspect-[9/19.5] rounded-2xl overflow-hidden bg-slate-300 dark:bg-slate-800 shadow-inner border border-slate-200/80 dark:border-slate-700/80">
+      <div className="relative w-full aspect-[9/19.5] rounded-[1.35rem] overflow-hidden bg-slate-200/90 dark:bg-slate-950 shadow-[inset_0_2px_12px_rgba(15,23,42,0.08)] dark:shadow-[inset_0_2px_16px_rgba(0,0,0,0.5)] ring-1 ring-black/5 dark:ring-white/10">
         <Image
           src={screenshotSrc}
           alt={screenshotAlt}
