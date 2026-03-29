@@ -123,31 +123,37 @@ export default function MathHubPage() {
                   className={`absolute inset-0 bg-gradient-to-br ${phase.hoverGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                   aria-hidden
                 />
-                <CardContent className="p-5 md:p-6 text-center relative z-10 pl-6">
-                  <motion.div
-                    className={`w-14 h-14 md:w-16 md:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${phase.gradient} flex items-center justify-center shadow-lg ring-4 ring-white/50 dark:ring-slate-800/50 relative overflow-hidden`}
-                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.08 }}
-                    transition={{ type: 'spring', stiffness: 300, duration: 0.5 }}
-                  >
-                    <phase.icon className="w-7 h-7 md:w-8 md:h-8 text-white relative z-10" />
-                    <span className="sparkle-dot top-1 right-1" style={{ animationDelay: `${i * 0.2}s` }} aria-hidden />
-                    <span className="sparkle-dot bottom-1 left-1" style={{ animationDelay: `${i * 0.2 + 0.8}s` }} aria-hidden />
-                  </motion.div>
-                  <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">
-                    {phase.ages}
-                  </p>
-                  <h2 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-0.5">
-                    {phase.title}
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{phase.subtitle}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-snug">
-                    {phase.description}
-                  </p>
-                  <div
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold ${phase.id === 'foundation' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : phase.id === 'elementary' ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300' : 'bg-violet-500/15 text-violet-700 dark:text-violet-300'} group-hover:scale-105 transition-transform`}
-                  >
-                    <span>Start</span>
-                    <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}>→</motion.span>
+                <CardContent className="p-5 md:p-6 relative z-10 pl-6">
+                  <div className="grid grid-cols-1 md:grid-cols-[minmax(3.75rem,auto)_1fr] gap-3 md:gap-x-4 md:gap-y-2">
+                    <motion.div
+                      className={`w-14 h-14 md:w-16 md:h-16 mx-auto md:mx-0 rounded-2xl bg-gradient-to-br ${phase.gradient} flex items-center justify-center shadow-lg ring-4 ring-white/50 dark:ring-slate-800/50 relative overflow-hidden md:row-span-2 md:row-start-1 md:col-start-1 md:self-center shrink-0`}
+                      whileHover={{ rotate: [0, -5, 5, 0], scale: 1.08 }}
+                      transition={{ type: 'spring', stiffness: 300, duration: 0.5 }}
+                    >
+                      <phase.icon className="w-7 h-7 md:w-8 md:h-8 text-white relative z-10" />
+                      <span className="sparkle-dot top-1 right-1" style={{ animationDelay: `${i * 0.2}s` }} aria-hidden />
+                      <span className="sparkle-dot bottom-1 left-1" style={{ animationDelay: `${i * 0.2 + 0.8}s` }} aria-hidden />
+                    </motion.div>
+                    <div className="text-center md:text-left space-y-1 min-w-0 md:row-start-1 md:col-start-2">
+                      <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                        {phase.ages}
+                      </p>
+                      <h2 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white">
+                        {phase.title}
+                      </h2>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{phase.subtitle}</p>
+                    </div>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-snug text-center md:text-left md:row-start-2 md:col-start-2 min-w-0">
+                      {phase.description}
+                    </p>
+                    <div className="flex justify-center md:justify-start md:col-span-2 md:row-start-3 pt-1">
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold ${phase.id === 'foundation' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : phase.id === 'elementary' ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300' : 'bg-violet-500/15 text-violet-700 dark:text-violet-300'} group-hover:scale-105 transition-transform`}
+                      >
+                        <span>Start</span>
+                        <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}>→</motion.span>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
