@@ -37,6 +37,10 @@ interface BookPage {
   questions?: string[]
 }
 
+function isSvgAsset(url?: string) {
+  return Boolean(url?.split('?')[0].toLowerCase().endsWith('.svg'))
+}
+
 export default function ReadingModule() {
   const router = useRouter()
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
@@ -436,7 +440,7 @@ export default function ReadingModule() {
                         <img 
                           src={currentPageData.imageUrl} 
                           alt={`Illustration for ${selectedBook.title} page ${currentPageData.pageNumber}`}
-                          className="w-full h-full object-cover"
+                          className={`w-full h-full ${isSvgAsset(currentPageData.imageUrl) ? 'object-contain object-center bg-white/90 dark:bg-stone-900/80 p-2' : 'object-cover'}`}
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display = 'none'
                           }}
@@ -851,11 +855,11 @@ export default function ReadingModule() {
             >
               <Card className="bg-white/70 backdrop-blur-xl border-white/60 shadow-xl h-full">
                 <CardContent className="p-6">
-                  <div className="w-full h-56 mb-4 rounded-2xl overflow-hidden shadow-lg">
+                  <div className="w-full h-56 mb-4 rounded-2xl overflow-hidden shadow-lg bg-amber-50/80 dark:bg-stone-900/60">
                     <img 
                       src={book.coverImage} 
                       alt={book.title}
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full ${isSvgAsset(book.coverImage) ? 'object-contain object-center p-2' : 'object-cover'}`}
                     />
                   </div>
                   

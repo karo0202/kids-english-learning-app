@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="p1sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style="stop-color:#bae6fd"/>
+      <stop offset="100%" style="stop-color:#fef3c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#p1sky)"/>
+  <ellipse cx="650" cy="100" rx="55" ry="55" fill="#fde047"/>
+  <path d="M80 420 L120 320 L180 340 L220 280 L280 300 L340 250 L400 270 L460 240 L520 260 L580 230 L640 250 L720 220 L720 420 Z" fill="#86efac"/>
+  <rect x="140" y="300" width="70" height="90" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+  <polygon points="175,280 155,300 195,300" fill="#f97316"/>
+  <rect x="480" y="280" width="85" height="110" rx="4" fill="#fce7f3" stroke="#db2777" stroke-width="3"/>
+  <polygon points="522,255 498,280 546,280" fill="#ec4899"/>
+  <rect x="320" y="320" width="60" height="70" rx="4" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <g transform="translate(360 340)">
+    <ellipse cx="40" cy="130" rx="45" ry="14" fill="#000" opacity="0.1"/>
+    <path d="M15 125 Q40 40 65 125 L65 145 L15 145 Z" fill="#0ea5e9"/>
+    <circle cx="40" cy="48" r="32" fill="#fecdd3"/>
+    <path d="M22 40 Q40 18 58 40" stroke="#9a3412" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="30" cy="48" r="4" fill="#0f172a"/>
+    <circle cx="50" cy="48" r="4" fill="#0f172a"/>
+    <circle cx="32" cy="52" r="2" fill="#fff"/>
+    <circle cx="48" cy="52" r="2" fill="#fff"/>
+    <path d="M32 65 Q40 72 48 65" stroke="#be123c" stroke-width="2.5" fill="none"/>
+    <path d="M8 55 Q0 45 12 42" stroke="#9a3412" stroke-width="3" fill="none"/>
+    <path d="M72 55 Q80 45 68 42" stroke="#9a3412" stroke-width="3" fill="none"/>
+  </g>
+  <g transform="translate(580 200)">
+    <path d="M0 40 Q20 0 40 40 Q20 25 0 40" fill="#38bdf8" opacity="0.7"/>
+    <path d="M30 50 Q50 15 70 50 Q50 35 30 50" fill="#7dd3fc" opacity="0.8"/>
+  </g>
+  <g transform="translate(200 380)">
+    <ellipse cx="15" cy="0" rx="20" ry="8" fill="#1e293b"/>
+    <path d="M5 -5 L25 -5 L20 -25 L10 -25 Z" fill="#64748b"/>
+  </g>
+  <circle cx="250" cy="400" r="4" fill="#78350f"/>
+  <circle cx="265" cy="395" r="4" fill="#78350f"/>
+</svg>
