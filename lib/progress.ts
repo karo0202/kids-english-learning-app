@@ -137,6 +137,11 @@ export class ProgressManager {
         }).catch(error => {
           console.warn('Failed to save progress to persistence layer:', error)
         })
+        window.dispatchEvent(
+          new CustomEvent('child-progress-updated', {
+            detail: { childId: this.progress.userId },
+          })
+        )
       } catch (error) {
         console.error('Error saving progress:', error)
       }
