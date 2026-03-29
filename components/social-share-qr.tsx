@@ -134,11 +134,6 @@ export default function SocialShareQr() {
               {copied ? 'Copied!' : 'Copy link'}
             </Button>
           </div>
-
-          <p className="mt-8 text-center text-xs text-slate-500 dark:text-slate-500">
-            Tip: set <code className="rounded bg-slate-100 px-1 dark:bg-slate-800">NEXT_PUBLIC_APP_URL</code> on
-            Vercel so this page always uses your production link.
-          </p>
         </div>
       </div>
     </div>
