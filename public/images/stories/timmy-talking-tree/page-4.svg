@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="earthg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#ecfdf5"/>
+  <circle cx="400" cy="300" r="160" fill="url(#earthg)" opacity="0.5"/>
+  <path d="M320 260 Q400 220 480 260 Q460 320 400 340 Q340 320 320 260" fill="#166534" opacity="0.4"/>
+  <path d="M400 180 L410 220 L450 220 L418 245 L430 285 L400 260 L370 285 L382 245 L350 220 L390 220 Z" fill="#f472b6"/>
+</svg>

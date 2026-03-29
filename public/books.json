@@ -84,7 +84,7 @@
     "id": "2",
     "title": "The Magic School Bus",
     "author": "Adventure Stories",
-    "coverImage": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=300",
+    "coverImage": "/images/stories/magic-school-bus/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 8,
@@ -93,19 +93,19 @@
         "id": "2-1",
         "pageNumber": 1,
         "text": "Emma and her friends boarded the magic school bus for an amazing adventure.",
-        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+        "imageUrl": "/images/stories/magic-school-bus/page-1.svg"
       },
       {
         "id": "2-2",
         "pageNumber": 2,
         "text": "They visited different countries and learned new words in each place.",
-        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+        "imageUrl": "/images/stories/magic-school-bus/page-2.svg"
       },
       {
         "id": "2-3",
         "pageNumber": 3,
         "text": "The bus could fly, swim, and even travel through time!",
-        "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400"
+        "imageUrl": "/images/stories/magic-school-bus/page-3.svg"
       }
     ]
   },
@@ -113,7 +113,7 @@
     "id": "5",
     "title": "Mina and the Magical Numbers",
     "author": "Numberville Stories",
-    "coverImage": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=300",
+    "coverImage": "/images/stories/mina-magical-numbers/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 8,
@@ -122,49 +122,49 @@
         "id": "5-1",
         "pageNumber": 1,
         "text": "In a colorful town called Numberville, there lived a clever girl named Mina. She loved solving puzzles and counting everything around her — the stars, the apples, and even her cat's whiskers!",
-        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-1.svg"
       },
       {
         "id": "5-2",
         "pageNumber": 2,
         "text": "One morning, Mina found a shiny blue calculator in her school bag. When she pressed the number 2, the calculator suddenly spoke!",
-        "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-2.svg"
       },
       {
         "id": "5-3",
         "pageNumber": 3,
         "text": "'Hello, Mina! I'm Calc the Calculator. Let's go on a math adventure!' Mina gasped. 'Wow! You can talk?' 'Yes,' said Calc, 'but to keep me alive, you must solve my math challenges!'",
-        "imageUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-3.svg"
       },
       {
         "id": "5-4",
         "pageNumber": 4,
         "text": "Calc showed her a tree with 3 apples. 'If you pick 2 apples, how many will be left?' Mina counted on her fingers. 'One!' 'Correct!' said Calc, flashing bright lights.",
-        "imageUrl": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-4.svg"
       },
       {
         "id": "5-5",
         "pageNumber": 5,
         "text": "Next, they walked to the park where 5 birds were sitting on a fence. 'If 2 fly away, how many stay?' Mina thought carefully. 'Three birds stay!' 'You're amazing!' said Calc.",
-        "imageUrl": "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-5.svg"
       },
       {
         "id": "5-6",
         "pageNumber": 6,
         "text": "After solving more questions, Calc said, 'Mina, you've learned the magic of numbers. Math is not scary — it's everywhere!'",
-        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-6.svg"
       },
       {
         "id": "5-7",
         "pageNumber": 7,
         "text": "When Mina got home, she smiled and said, 'Math isn't just in school. It's in the apples we eat, the birds we see, and the stars we count!'",
-        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400"
+        "imageUrl": "/images/stories/mina-magical-numbers/page-7.svg"
       },
       {
         "id": "5-8",
         "pageNumber": 8,
         "text": "Moral: Math is fun and all around us — we just need to look closely!",
-        "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400",
+        "imageUrl": "/images/stories/mina-magical-numbers/page-8.svg",
         "vocabulary": [
           { "word": "Count", "definition": "To find how many there are", "example": "Mina can count from 1 to 20." },
           { "word": "Subtract", "definition": "To take away one number from another", "example": "She learned to subtract apples from the tree." },
@@ -192,15 +192,15 @@
     "id": "6",
     "title": "Timmy and the Talking Tree",
     "author": "Nature & Recycling",
-    "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=300",
+    "coverImage": "/images/stories/timmy-talking-tree/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 6,
     "pages": [
-      { "id": "6-1", "pageNumber": 1, "text": "Timmy loved snacks but always threw wrappers on the ground. One day, the big oak tree in the park whispered, 'Please don't hurt me, Timmy. When you drop trash, the earth feels sad.'", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400" },
-      { "id": "6-2", "pageNumber": 2, "text": "Timmy was shocked! He started picking up litter and teaching his friends to recycle.", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400" },
-      { "id": "6-3", "pageNumber": 3, "text": "Soon, the park became clean and full of singing birds again.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
-      { "id": "6-4", "pageNumber": 4, "text": "Moral: Keep the Earth clean — nature needs our care.", "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400", "vocabulary": [
+      { "id": "6-1", "pageNumber": 1, "text": "Timmy loved snacks but always threw wrappers on the ground. One day, the big oak tree in the park whispered, 'Please don't hurt me, Timmy. When you drop trash, the earth feels sad.'", "imageUrl": "/images/stories/timmy-talking-tree/page-1.svg" },
+      { "id": "6-2", "pageNumber": 2, "text": "Timmy was shocked! He started picking up litter and teaching his friends to recycle.", "imageUrl": "/images/stories/timmy-talking-tree/page-2.svg" },
+      { "id": "6-3", "pageNumber": 3, "text": "Soon, the park became clean and full of singing birds again.", "imageUrl": "/images/stories/timmy-talking-tree/page-3.svg" },
+      { "id": "6-4", "pageNumber": 4, "text": "Moral: Keep the Earth clean — nature needs our care.", "imageUrl": "/images/stories/timmy-talking-tree/page-4.svg", "vocabulary": [
         { "word": "Recycle", "definition": "To use something again instead of throwing it away", "example": "Timmy learned to recycle bottles." },
         { "word": "Litter", "definition": "Trash that is left on the ground", "example": "The park was full of litter before Timmy cleaned it." },
         { "word": "Earth", "definition": "The planet we live on", "example": "We must take care of our Earth." },
@@ -221,15 +221,15 @@
     "id": "7",
     "title": "Lila and the Lost Marble",
     "author": "Honesty Tales",
-    "coverImage": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?w=300",
+    "coverImage": "/images/stories/lila-lost-marble/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 6,
     "pages": [
-      { "id": "7-1", "pageNumber": 1, "text": "Lila found a shiny blue marble on the playground. She wanted to keep it but then saw her friend Amir crying nearby. 'It's my favorite marble,' said Amir.", "imageUrl": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?w=400" },
-      { "id": "7-2", "pageNumber": 2, "text": "Lila took a deep breath and gave it back. Amir smiled and said, 'Thank you, Lila! You're an honest friend.'", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400" },
-      { "id": "7-3", "pageNumber": 3, "text": "That night, Lila felt proud and happy inside. She learned that honesty is the best treasure.", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400" },
-      { "id": "7-4", "pageNumber": 4, "text": "Moral: Always tell the truth, even when it's hard.", "imageUrl": "https://images.unsplash.com/photo-1520975922325-24f81fc1ae9e?w=400", "vocabulary": [
+      { "id": "7-1", "pageNumber": 1, "text": "Lila found a shiny blue marble on the playground. She wanted to keep it but then saw her friend Amir crying nearby. 'It's my favorite marble,' said Amir.", "imageUrl": "/images/stories/lila-lost-marble/page-1.svg" },
+      { "id": "7-2", "pageNumber": 2, "text": "Lila took a deep breath and gave it back. Amir smiled and said, 'Thank you, Lila! You're an honest friend.'", "imageUrl": "/images/stories/lila-lost-marble/page-2.svg" },
+      { "id": "7-3", "pageNumber": 3, "text": "That night, Lila felt proud and happy inside. She learned that honesty is the best treasure.", "imageUrl": "/images/stories/lila-lost-marble/page-3.svg" },
+      { "id": "7-4", "pageNumber": 4, "text": "Moral: Always tell the truth, even when it's hard.", "imageUrl": "/images/stories/lila-lost-marble/page-4.svg", "vocabulary": [
         { "word": "Marble", "definition": "A small round toy ball", "example": "Lila found a shiny blue marble." },
         { "word": "Honest", "definition": "Always telling the truth", "example": "Lila was honest and returned the marble." },
         { "word": "Friend", "definition": "Someone you like and care about", "example": "Amir is Lila's best friend." },
@@ -250,15 +250,15 @@
     "id": "8",
     "title": "The Turtle Team",
     "author": "Teamwork Stories",
-    "coverImage": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300",
+    "coverImage": "/images/stories/turtle-team/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 6,
     "pages": [
-      { "id": "8-1", "pageNumber": 1, "text": "The forest animals wanted to build a playground. Rabbit tried to do it alone, but he couldn't finish.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
-      { "id": "8-2", "pageNumber": 2, "text": "Then Turtle, Fox, and Bird joined him — each helping in their own way. When they finished, Rabbit said, 'Together we did what I couldn't do alone!'", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
-      { "id": "8-3", "pageNumber": 3, "text": "The playground became a place where everyone played happily.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400" },
-      { "id": "8-4", "pageNumber": 4, "text": "Moral: Teamwork makes big dreams possible.", "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400", "vocabulary": [
+      { "id": "8-1", "pageNumber": 1, "text": "The forest animals wanted to build a playground. Rabbit tried to do it alone, but he couldn't finish.", "imageUrl": "/images/stories/turtle-team/page-1.svg" },
+      { "id": "8-2", "pageNumber": 2, "text": "Then Turtle, Fox, and Bird joined him — each helping in their own way. When they finished, Rabbit said, 'Together we did what I couldn't do alone!'", "imageUrl": "/images/stories/turtle-team/page-2.svg" },
+      { "id": "8-3", "pageNumber": 3, "text": "The playground became a place where everyone played happily.", "imageUrl": "/images/stories/turtle-team/page-3.svg" },
+      { "id": "8-4", "pageNumber": 4, "text": "Moral: Teamwork makes big dreams possible.", "imageUrl": "/images/stories/turtle-team/page-4.svg", "vocabulary": [
         { "word": "Teamwork", "definition": "Working together to reach a goal", "example": "Teamwork helped the animals build the playground." },
         { "word": "Together", "definition": "With other people or things", "example": "The animals worked together." },
         { "word": "Help", "definition": "To do something for someone", "example": "Turtle helped Rabbit finish the job." },
@@ -278,14 +278,14 @@
     "id": "9",
     "title": "Emma and the Magic Library",
     "author": "Reading & Imagination",
-    "coverImage": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=300",
+    "coverImage": "/images/stories/emma-magic-library/cover.svg",
     "ageGroup": "AGE_6_8",
     "difficulty": 2,
     "estimatedTime": 7,
     "pages": [
-      { "id": "9-1", "pageNumber": 1, "text": "Emma didn’t like reading. She thought books were boring. One rainy day, she found a glowing book in the library. When she opened it — whoosh! She was inside the story, flying with dragons and solving riddles!", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400" },
-      { "id": "9-2", "pageNumber": 2, "text": "When she came back, she smiled and said, 'Books are magic — they can take you anywhere!'", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400" },
-      { "id": "9-3", "pageNumber": 3, "text": "Moral: Reading opens the door to imagination and adventure.", "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400", "vocabulary": [
+      { "id": "9-1", "pageNumber": 1, "text": "Emma didn’t like reading. She thought books were boring. One rainy day, she found a glowing book in the library. When she opened it — whoosh! She was inside the story, flying with dragons and solving riddles!", "imageUrl": "/images/stories/emma-magic-library/page-1.svg" },
+      { "id": "9-2", "pageNumber": 2, "text": "When she came back, she smiled and said, 'Books are magic — they can take you anywhere!'", "imageUrl": "/images/stories/emma-magic-library/page-2.svg" },
+      { "id": "9-3", "pageNumber": 3, "text": "Moral: Reading opens the door to imagination and adventure.", "imageUrl": "/images/stories/emma-magic-library/page-3.svg", "vocabulary": [
         { "word": "Library", "definition": "A place full of books to read or borrow", "example": "Emma went to the library on a rainy day." },
         { "word": "Book", "definition": "A set of pages with stories or information", "example": "She opened a glowing book." },
         { "word": "Imagine", "definition": "To create pictures or ideas in your mind", "example": "Emma imagined flying with dragons." },

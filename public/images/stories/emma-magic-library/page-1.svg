@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="rain" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" style="stop-color:#64748b"/>
+      <stop offset="100%" style="stop-color:#334155"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#rain)"/>
+  <path d="M100 0 L95 40 M200 20 L190 80 M350 0 L340 70 M500 10 L490 90 M650 0 L640 60" stroke="#94a3b8" stroke-width="3" opacity="0.6"/>
+  <rect x="80" y="80" width="640" height="440" rx="12" fill="#0f172a" stroke="#475569" stroke-width="4"/>
+  <rect x="120" y="120" width="80" height="360" rx="4" fill="#7f1d1d"/>
+  <rect x="220" y="100" width="80" height="380" rx="4" fill="#1e3a8a"/>
+  <rect x="320" y="130" width="80" height="350" rx="4" fill="#14532d"/>
+  <rect x="420" y="110" width="80" height="370" rx="4" fill="#831843"/>
+  <rect x="360" y="220" width="70" height="200" rx="6" fill="#fbbf24" opacity="0.95"/>
+  <ellipse cx="395" cy="280" rx="50" ry="60" fill="#38bdf8" opacity="0.3"/>
+  <path d="M380 240 L400 200 L420 240 L450 230 L430 260 L440 290 L395 275 L350 290 L360 260 L340 230 Z" fill="#a855f7" opacity="0.8"/>
+  <g transform="translate(520 280)">
+    <ellipse cx="40" cy="160" rx="35" ry="10" fill="#000" opacity="0.3"/>
+    <path d="M18 155 Q40 65 62 155 L62 178 L18 178 Z" fill="#f472b6"/>
+    <circle cx="40" cy="68" r="26" fill="#fecdd3"/>
+    <path d="M32 105 Q40 98 48 105" stroke="#64748b" stroke-width="2" fill="none"/>
+  </g>
+</svg>

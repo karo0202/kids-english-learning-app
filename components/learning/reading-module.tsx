@@ -49,7 +49,7 @@ export default function ReadingModule() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [score, setScore] = useState(0)
   const [completedBooks, setCompletedBooks] = useState(0)
-  const [totalBooks] = useState(5)
+  const [totalBooks] = useState(7)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [books, setBooks] = useState<Book[] | null>(null)
