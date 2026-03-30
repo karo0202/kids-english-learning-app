@@ -24,6 +24,7 @@ import { getChildrenSync, Child, updateChild, addChild, deleteChild, subscribeTo
 import { parentAnalytics, ChildAnalytics } from '@/lib/parent-analytics'
 import { progressManager } from '@/lib/progress'
 import { getAgeGroupConfigByAge } from '@/lib/age-utils'
+import SubscriptionBillingHelp from '@/components/subscription-billing-help'
 
 interface ParentControls {
   timeLimit: number
@@ -456,6 +457,8 @@ const handleAddChild = async () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        <SubscriptionBillingHelp compact />
+
         {/* Child Profile Cards */}
         {children.length > 0 && (
           <motion.div 

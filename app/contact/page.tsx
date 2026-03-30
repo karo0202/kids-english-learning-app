@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   ArrowLeft, Mail, Phone, MapPin, Clock, Send, 
   MessageCircle, HelpCircle, Heart, Star, CheckCircle,
   Mail as MailIcon, Phone as PhoneIcon, MapPin as MapPinIcon,
-  Clock as ClockIcon, MessageSquare, Users, Shield
+  Clock as ClockIcon,   MessageSquare, Users, Shield, Crown
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -29,8 +29,22 @@ export default function ContactPage() {
     { value: 'support', label: 'Technical Support', icon: <HelpCircle className="w-4 h-4" /> },
     { value: 'feedback', label: 'Feedback', icon: <Heart className="w-4 h-4" /> },
     { value: 'partnership', label: 'Partnership', icon: <Users className="w-4 h-4" /> },
-    { value: 'privacy', label: 'Privacy & Safety', icon: <Shield className="w-4 h-4" /> }
+    { value: 'privacy', label: 'Privacy & Safety', icon: <Shield className="w-4 h-4" /> },
+    { value: 'subscription', label: 'Billing & subscription', icon: <Crown className="w-4 h-4" /> }
   ]
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const topic = new URLSearchParams(window.location.search).get('topic')
+    if (topic !== 'subscription') return
+    setFormData((prev) => ({
+      ...prev,
+      inquiryType: 'subscription',
+      subject: prev.subject.trim() ? prev.subject : 'Subscription / billing request',
+      message:
+        prev.message.trim() ? prev.message : 'Please describe what you need (e.g. cancel renewal, billing question).',
+    }))
+  }, [])
 
   const contactMethods = [
     {
@@ -77,7 +91,8 @@ export default function ContactPage() {
     },
     {
       question: "How do I cancel my subscription?",
-      answer: "You can manage your subscription from the Parent Dashboard > Account Settings > Subscription Management."
+      answer:
+        "Go to Settings → Subscription & billing (or open Parent Dashboard — same section at the top) and tap Contact support. Choose Billing & subscription on the Contact page, or write to our support email. We process cancellations manually and will confirm when your account is updated. Time-based plans end when the paid period expires unless you renew.",
     }
   ]
 

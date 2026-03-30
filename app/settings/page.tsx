@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/lib/theme-context'
 import DataManagement from '@/components/data-management'
+import SubscriptionBillingHelp from '@/components/subscription-billing-help'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -276,6 +277,15 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Subscription & billing (cancel / support) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <SubscriptionBillingHelp />
           </motion.div>
 
           {/* Data Management */}
