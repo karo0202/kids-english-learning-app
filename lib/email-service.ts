@@ -40,6 +40,48 @@ function getResendClient() {
 /**
  * Send email notification
  */
+/**
+ * Emails that receive admin alerts for payments.
+ * Set PAYMENT_NOTIFY_EMAILS=comma@separated.com,list@example.com
+ * Or a single ADMIN_EMAIL as fallback.
+ */
+export function getPaymentNotificationRecipients(): string[] {
+  const raw =
+    process.env.PAYMENT_NOTIFY_EMAILS?.trim() ||
+    process.env.ADMIN_EMAIL?.trim() ||
+    ''
+  if (!raw) return []
+  const list = raw
+    .split(/[,;]/)
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => e.includes('@'))
+  return [...new Set(list)]
+}
+
+function adminDashboardUrl(): string {
+  const base =
+    process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, '') ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+  return base ? `${base}/admin/payments` : ''
+}
+
+async function sendEmailToPaymentAdmins(subject: string, html: string): Promise<void> {
+  const recipients = getPaymentNotificationRecipients()
+  if (recipients.length === 0) {
+    console.warn('No PAYMENT_NOTIFY_EMAILS or ADMIN_EMAIL — skipping admin payment notification')
+    return
+  }
+  await Promise.all(
+    recipients.map((to) =>
+      sendEmail({
+        to,
+        subject,
+        html,
+      }).catch((err) => console.error('Admin notify failed for', to, err))
+    )
+  )
+}
+
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   const client = getResendClient()
   if (!client) {
@@ -200,4 +242,93 @@ export async function sendPaymentConfirmedEmail(params: {
     subject: `Payment Confirmed - ${params.planName}`,
     html,
   })
+}
+
+/**
+ * Notify admins when a user starts a manual payment (transaction created, pending transfer).
+ */
+export async function sendAdminNewPendingPaymentEmail(params: {
+  transactionId: string
+  planName: string
+  amount: number
+  currency: string
+  userId: string
+  userEmail?: string
+  paymentMethod: string
+  payToPhone?: string
+}): Promise<void> {
+  const dash = adminDashboardUrl()
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8" /></head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #5b21b6;">New pending payment</h2>
+        <p>A user started a paid-module checkout (manual / FIB flow).</p>
+        <table style="width: 100%; border-collapse: collapse; background: #f9fafb; border-radius: 8px;">
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Transaction ID</td><td style="padding: 8px 12px;">${escapeHtml(params.transactionId)}</td></tr>
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Plan</td><td style="padding: 8px 12px;">${escapeHtml(params.planName)}</td></tr>
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Amount</td><td style="padding: 8px 12px;">${params.amount} ${escapeHtml(params.currency)}</td></tr>
+          <tr><td style="padding: 8px 12px; font-weight: bold;">User ID</td><td style="padding: 8px 12px; font-size: 12px; word-break: break-all;">${escapeHtml(params.userId)}</td></tr>
+          ${params.userEmail ? `<tr><td style="padding: 8px 12px; font-weight: bold;">Email</td><td style="padding: 8px 12px;">${escapeHtml(params.userEmail)}</td></tr>` : ''}
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Method</td><td style="padding: 8px 12px;">${escapeHtml(params.paymentMethod)}</td></tr>
+          ${params.payToPhone ? `<tr><td style="padding: 8px 12px; font-weight: bold;">Pay to (FIB)</td><td style="padding: 8px 12px;">${escapeHtml(params.payToPhone)}</td></tr>` : ''}
+        </table>
+        ${dash ? `<p style="margin-top: 20px;"><a href="${escapeHtml(dash)}" style="color: #5b21b6;">Open admin payments</a></p>` : '<p style="margin-top: 16px; color: #666;">Review pending payments in your admin dashboard.</p>'}
+      </div>
+    </body>
+    </html>
+  `
+  const shortId = params.transactionId.slice(0, 14)
+  await sendEmailToPaymentAdmins(`[Kids English] New pending payment — ${shortId}`, html)
+}
+
+/**
+ * Notify admins when a user submits payment reference / proof (awaiting verification).
+ */
+export async function sendAdminPaymentProofSubmittedEmail(params: {
+  transactionId: string
+  userId: string
+  userEmail?: string
+  reference?: string
+  hasProofScreenshot: boolean
+  contactPhone?: string
+  notesPreview?: string
+}): Promise<void> {
+  const dash = adminDashboardUrl()
+  const ref = params.reference ? escapeHtml(params.reference) : '—'
+  const notes = params.notesPreview ? escapeHtml(params.notesPreview) : '—'
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8" /></head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #0d9488;">Payment proof submitted</h2>
+        <p>A user submitted a reference or screenshot for verification.</p>
+        <table style="width: 100%; border-collapse: collapse; background: #f0fdfa; border-radius: 8px;">
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Transaction ID</td><td style="padding: 8px 12px;">${escapeHtml(params.transactionId)}</td></tr>
+          <tr><td style="padding: 8px 12px; font-weight: bold;">User ID</td><td style="padding: 8px 12px; font-size: 12px; word-break: break-all;">${escapeHtml(params.userId)}</td></tr>
+          ${params.userEmail ? `<tr><td style="padding: 8px 12px; font-weight: bold;">Email</td><td style="padding: 8px 12px;">${escapeHtml(params.userEmail)}</td></tr>` : ''}
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Reference</td><td style="padding: 8px 12px;">${ref}</td></tr>
+          <tr><td style="padding: 8px 12px; font-weight: bold;">Screenshot</td><td style="padding: 8px 12px;">${params.hasProofScreenshot ? 'Yes (view in admin)' : 'No'}</td></tr>
+          ${params.contactPhone ? `<tr><td style="padding: 8px 12px; font-weight: bold;">Contact phone</td><td style="padding: 8px 12px;">${escapeHtml(params.contactPhone)}</td></tr>` : ''}
+          <tr><td style="padding: 8px 12px; font-weight: bold; vertical-align: top;">Notes</td><td style="padding: 8px 12px;">${notes}</td></tr>
+        </table>
+        ${dash ? `<p style="margin-top: 20px;"><a href="${escapeHtml(dash)}" style="color: #0f766e;">Open admin payments</a></p>` : '<p style="margin-top: 16px; color: #666;">Open Admin → Payments to review the proof.</p>'}
+      </div>
+    </body>
+    </html>
+  `
+  const shortId = params.transactionId.slice(0, 14)
+  await sendEmailToPaymentAdmins(`[Kids English] Proof submitted — ${shortId}`, html)
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 }

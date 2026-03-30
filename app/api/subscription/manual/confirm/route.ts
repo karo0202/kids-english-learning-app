@@ -4,9 +4,13 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserIdFromToken } from '@/lib/verify-auth'
-import { confirmManualPayment } from '@/lib/subscription-supabase'
+import {
+  confirmManualPayment,
+  getSubscriptionUserEmailByTransactionId,
+} from '@/lib/subscription-supabase'
 import { checkRateLimit, getRateLimitHeaders, getRateLimitIdentifier } from '@/lib/rate-limit'
 import { logPaymentAction, getRequestMetadata } from '@/lib/payment-logger'
+import { sendAdminPaymentProofSubmittedEmail } from '@/lib/email-service'
 
 export async function POST(request: NextRequest) {
   const requestMetadata = getRequestMetadata(request)
@@ -100,6 +104,29 @@ export async function POST(request: NextRequest) {
         hasNotes: !!notes,
       },
     })
+
+    const bodyUserEmail =
+      typeof body.userEmail === 'string' ? body.userEmail.trim() || undefined : undefined
+    const emailFromSub = await getSubscriptionUserEmailByTransactionId(transactionId)
+    const userEmail = bodyUserEmail || emailFromSub
+    const notesPreview =
+      typeof notes === 'string' && notes.trim()
+        ? notes.trim().slice(0, 280) + (notes.trim().length > 280 ? '…' : '')
+        : undefined
+    const hasProof =
+      typeof proofUrl === 'string' &&
+      proofUrl.trim().length > 0 &&
+      !proofUrl.trim().startsWith('undefined')
+
+    sendAdminPaymentProofSubmittedEmail({
+      transactionId,
+      userId,
+      userEmail,
+      reference: typeof reference === 'string' ? reference : undefined,
+      hasProofScreenshot: hasProof,
+      contactPhone: typeof contactPhone === 'string' ? contactPhone : undefined,
+      notesPreview,
+    }).catch((err) => console.error('Failed to send admin proof-submitted email:', err))
 
     return NextResponse.json(
       { success: true, message: 'Payment confirmation submitted successfully. We will verify and activate your subscription soon.' },

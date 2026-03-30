@@ -8,7 +8,7 @@ import { getUserIdFromToken } from '@/lib/verify-auth'
 import { createSubscriptionPayment, seedPlansIfNeeded } from '@/lib/subscription-supabase'
 import { checkRateLimit, getRateLimitHeaders, getRateLimitIdentifier } from '@/lib/rate-limit'
 import { logPaymentAction, getRequestMetadata } from '@/lib/payment-logger'
-import { sendPaymentCreatedEmail } from '@/lib/email-service'
+import { sendPaymentCreatedEmail, sendAdminNewPendingPaymentEmail } from '@/lib/email-service'
 
 export async function POST(request: NextRequest) {
   const requestMetadata = getRequestMetadata(request)
@@ -148,13 +148,14 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    const payerEmail =
+      typeof body.userEmail === 'string' ? body.userEmail.trim() || undefined : undefined
+
     // Send email notification (non-blocking)
     if (result.manualInstructions && result.manualInstructions.phoneNumber) {
-      // Get user email from Firebase or Supabase
-      const userEmail = body.userEmail || process.env.ADMIN_EMAIL // Fallback to admin email
-      if (userEmail) {
+      if (payerEmail) {
         sendPaymentCreatedEmail({
-          to: userEmail,
+          to: payerEmail,
           userName: body.userName || 'User',
           transactionId: result.transactionId,
           amount: plan.price,
@@ -168,6 +169,18 @@ export async function POST(request: NextRequest) {
         })
       }
     }
+
+    // Admin alert: new pending payment (non-blocking)
+    sendAdminNewPendingPaymentEmail({
+      transactionId: result.transactionId,
+      planName: plan.name,
+      amount: plan.price,
+      currency: plan.currency,
+      userId,
+      userEmail: payerEmail,
+      paymentMethod,
+      payToPhone: result.manualInstructions?.phoneNumber,
+    }).catch((err) => console.error('Failed to send admin new-payment email:', err))
 
     return NextResponse.json(result, {
       headers: getRateLimitHeaders(rateLimit.remaining, rateLimit.resetTime),

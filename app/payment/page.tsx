@@ -167,7 +167,11 @@ export default function PaymentPage() {
       const res = await fetch('/api/subscription/manual/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ ...payload, paymentMethod: 'fib_manual' }),
+        body: JSON.stringify({
+          ...payload,
+          paymentMethod: 'fib_manual',
+          userEmail: user?.email || undefined,
+        }),
       })
       const data = await res.json()
       if (data.success) {

@@ -196,6 +196,7 @@ export default function SubscribePage() {
       setConfirmingManual(true)
       const { getAuthToken } = await import('@/lib/simple-auth')
       const token = await getAuthToken()
+      const sessionUser = getUserSession()
       const response = await fetch('/api/subscription/manual/confirm', {
         method: 'POST',
         headers: {
@@ -205,6 +206,7 @@ export default function SubscribePage() {
         body: JSON.stringify({
           ...payload,
           paymentMethod: manualPaymentData?.method,
+          userEmail: sessionUser?.email || undefined,
         }),
       })
 

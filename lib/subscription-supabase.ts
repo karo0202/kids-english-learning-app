@@ -256,6 +256,21 @@ export async function confirmManualPayment(
   return { success: true }
 }
 
+/** For admin emails: optional `user_email` on subscriptions (may be missing if column absent). */
+export async function getSubscriptionUserEmailByTransactionId(
+  transactionId: string
+): Promise<string | undefined> {
+  if (!supabase) return undefined
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('user_email')
+    .eq('transaction_id', transactionId)
+    .maybeSingle()
+  if (error || !data) return undefined
+  const em = (data as { user_email?: string | null }).user_email
+  return typeof em === 'string' && em.includes('@') ? em.trim() : undefined
+}
+
 const MANUAL_PAYMENT_METHODS = ['fib_manual', 'manual']
 
 /**
