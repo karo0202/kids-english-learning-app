@@ -87,7 +87,7 @@ export default function WelcomePage() {
 		<div className="min-h-screen relative">
 			{/* Same kids-learning background as app (from layout); optional extra overlay for landing readability */}
 			<div className="fixed inset-0 -z-10 bg-[url('/images/kids-learning-background.png')] bg-cover bg-center bg-no-repeat" aria-hidden />
-			<div className="fixed inset-0 -z-[1] bg-white/65 dark:bg-[#003366]/80 pointer-events-none" aria-hidden />
+			<div className="fixed inset-0 -z-[1] bg-white/88 backdrop-blur-[2px] dark:bg-[#003366]/88 dark:backdrop-blur-sm pointer-events-none" aria-hidden />
 			{/* Top Nav */}
 			<div className="absolute inset-x-0 top-0 z-20">
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -188,23 +188,24 @@ export default function WelcomePage() {
             <Mascot emotion="celebrating" size="large" />
           </div>
           
-					<motion.h1 
-						className="text-5xl md:text-7xl font-extrabold mb-3 drop-shadow-sm bg-gradient-to-r from-indigo-800 via-violet-700 to-fuchsia-700 bg-clip-text text-transparent"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
-          >
-            Kids English
-          </motion.h1>
-          
-					<motion.p 
-						className="text-xl md:text-2xl text-slate-700 dark:text-white/90 mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            Learning Adventure! 🌟
-          </motion.p>
+					<div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-white/90 bg-white/95 px-6 py-5 shadow-[0_12px_40px_-12px_rgba(0,51,102,0.18)] backdrop-blur-md dark:border-white/15 dark:bg-slate-900/92 dark:shadow-black/25">
+						<motion.h1
+							className="text-5xl md:text-7xl font-extrabold mb-2 bg-gradient-to-r from-indigo-900 via-violet-800 to-fuchsia-800 bg-clip-text text-transparent dark:from-indigo-200 dark:via-violet-200 dark:to-fuchsia-200"
+							initial={{ scale: 0 }}
+							animate={{ scale: 1 }}
+							transition={{ delay: 0.3, type: 'spring', stiffness: 100 }}
+						>
+							Kids English
+						</motion.h1>
+						<motion.p
+							className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.6 }}
+						>
+							Learning Adventure! 🌟
+						</motion.p>
+					</div>
 
 					<motion.div 
 						className="max-w-3xl mx-auto mb-12"
@@ -213,8 +214,8 @@ export default function WelcomePage() {
             transition={{ delay: 0.9 }}
           >
 						<div className="space-y-4">
-              <div className="rounded-3xl bg-white/80 dark:bg-white/10 backdrop-blur border border-white/60 dark:border-white/20 p-6 shadow-sm">
-                <p className="text-slate-700 dark:text-white/90">
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-md dark:border-white/20 dark:bg-slate-900/95 dark:shadow-black/20">
+                <p className="text-base font-medium leading-relaxed text-slate-900 dark:text-white">
                   Join millions of kids learning English through fun games, interactive activities,
                   and magical adventures!
                 </p>
@@ -334,7 +335,9 @@ export default function WelcomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          <h2 className="text-4xl font-bold text-white dark:text-white mb-8 drop-shadow-lg">Perfect for Every Age!</h2>
+          <h2 className="mb-8 text-4xl font-bold text-slate-900 drop-shadow-sm dark:text-white dark:drop-shadow-lg">
+            Perfect for Every Age!
+          </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
@@ -386,8 +389,8 @@ export default function WelcomePage() {
 
 			{/* Footer */}
 			<div className="container mx-auto px-4 pb-8">
-				<div className="mx-auto max-w-4xl rounded-3xl bg-white/60 dark:bg-white/10 backdrop-blur border border-white/50 dark:border-white/20 p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-					<p className="text-center md:text-left text-sm text-gray-600 dark:text-white/70 max-w-xl leading-relaxed">
+				<div className="mx-auto max-w-4xl rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-md backdrop-blur-sm dark:border-white/20 dark:bg-slate-900/90 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+					<p className="max-w-xl text-center text-sm font-medium leading-relaxed text-slate-800 md:text-left dark:text-white/85">
 						Built with ❤️ for kids. New: Reading Library, Math in English, Creative Writing, Word & Picture Puzzles, Alphabet Coloring, Daily Challenges, and a Parent Progress Dashboard.
 					</p>
 					<AppQrBlock className="shrink-0" />

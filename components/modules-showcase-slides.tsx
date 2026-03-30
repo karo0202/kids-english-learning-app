@@ -15,17 +15,17 @@ export default function ModulesShowcaseSlides() {
       transition={{ delay: 1.35, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       aria-labelledby="what-we-offer-heading"
     >
-      <div className="relative text-center mb-8 md:mb-10">
-        <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.28em] text-[#00aeef] mb-2">
+      <div className="relative mx-auto mb-8 max-w-2xl rounded-3xl border border-slate-200/90 bg-white/95 px-6 py-5 text-center shadow-[0_12px_40px_-16px_rgba(0,51,102,0.12)] backdrop-blur-sm dark:border-slate-600/80 dark:bg-slate-900/95 dark:shadow-black/25 md:mb-10 md:px-8 md:py-6">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#0090c5] dark:text-[#5fd4ff] md:text-xs">
           Curriculum
         </p>
         <h2
           id="what-we-offer-heading"
-          className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-[#003366] dark:text-white tracking-tight"
+          className="font-display text-2xl font-semibold tracking-tight text-[#00264d] dark:text-white sm:text-3xl md:text-4xl"
         >
           Learning modules
         </h2>
-        <p className="mt-2 text-sm md:text-base text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+        <p className="mx-auto mt-2 max-w-lg text-sm font-medium leading-relaxed text-slate-800 dark:text-slate-200 md:text-base">
           Every subject in one glance—each card shows what kids do inside the app.
         </p>
       </div>
