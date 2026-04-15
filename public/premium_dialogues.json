@@ -301,6 +301,341 @@
     ]
   },
   {
+    "id": "daily_1",
+    "title": "Asking for Help with Homework",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Dad, can you help me with my homework? I'm stuck on a math problem."},
+      {"speaker": "Dad", "text": "Sure! Let me see. What are you working on?"},
+      {"speaker": "You", "text": "I need to solve 24 divided by 6, but I don't understand division very well."},
+      {"speaker": "Dad", "text": "Okay! Think of it this way — if you have 24 candies and 6 friends, how many does each friend get?"},
+      {"speaker": "You", "text": "Hmm, so I share them equally? Let me count... each friend gets 4!"},
+      {"speaker": "Dad", "text": "Exactly right! 24 divided by 6 is 4. See? You got it!"},
+      {"speaker": "You", "text": "That's easier than I thought! Can you help me with the next one too?"},
+      {"speaker": "Dad", "text": "Of course! What's the next problem?"},
+      {"speaker": "You", "text": "It says 35 divided by 7. So if I have 35 candies and 7 friends... that's 5 each!"},
+      {"speaker": "Dad", "text": "Perfect! You're getting really good at this. I'm proud of you!"}
+    ]
+  },
+  {
+    "id": "daily_2",
+    "title": "Asking to Borrow Something",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hey Emma, can I borrow your colored pencils? I forgot mine at home."},
+      {"speaker": "Emma", "text": "Sure! Which colors do you need?"},
+      {"speaker": "You", "text": "I need red, blue, and green for my drawing. Can I use those three?"},
+      {"speaker": "Emma", "text": "Of course! Here you go. What are you drawing?"},
+      {"speaker": "You", "text": "I'm drawing a rainbow over a garden. Do you also have yellow and orange?"},
+      {"speaker": "Emma", "text": "Yes! Take the whole box. Just give it back after class, okay?"},
+      {"speaker": "You", "text": "Thank you so much! I promise I'll be careful with them."},
+      {"speaker": "Emma", "text": "No problem! Your drawings are always really pretty."},
+      {"speaker": "You", "text": "Thanks! I'll let you borrow my markers anytime you want."},
+      {"speaker": "Emma", "text": "That's so nice! We can share art supplies all the time."}
+    ]
+  },
+  {
+    "id": "daily_3",
+    "title": "Asking for a Glass of Water",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, can I have a glass of water, please? I'm really thirsty."},
+      {"speaker": "Host", "text": "Of course! Would you like it cold or room temperature?"},
+      {"speaker": "You", "text": "Cold, please! With some ice if you have it."},
+      {"speaker": "Host", "text": "Here you go! Would you also like some lemon in it?"},
+      {"speaker": "You", "text": "Yes, please! I love lemon water. Thank you!"},
+      {"speaker": "Host", "text": "You're welcome! Are you hungry too? I have some cookies."},
+      {"speaker": "You", "text": "That would be nice! Can I have one, please?"},
+      {"speaker": "Host", "text": "Help yourself! They're chocolate chip — I baked them this morning."},
+      {"speaker": "You", "text": "Mmm, these are delicious! Can I please have the recipe?"},
+      {"speaker": "Host", "text": "Sure! I'll write it down for you. It's very easy to make!"}
+    ]
+  },
+  {
+    "id": "daily_4",
+    "title": "Asking Permission to Go Outside",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Mom, can I go outside and play? My friends are at the park."},
+      {"speaker": "Mom", "text": "Have you finished your homework yet?"},
+      {"speaker": "You", "text": "Yes, I finished everything! Can I go now, please?"},
+      {"speaker": "Mom", "text": "Okay, but first — did you clean your room like I asked?"},
+      {"speaker": "You", "text": "Oh... not yet. Can I clean it when I come back? I promise I will!"},
+      {"speaker": "Mom", "text": "Hmm, how about you clean it quickly now, and then you can go?"},
+      {"speaker": "You", "text": "Okay, deal! It'll only take me ten minutes. Can I stay until five o'clock?"},
+      {"speaker": "Mom", "text": "That's fine, but no later than five. Take your phone with you."},
+      {"speaker": "You", "text": "I will! Can I also take my football? We want to play a match."},
+      {"speaker": "Mom", "text": "Sure! Have fun, and be careful crossing the street."}
+    ]
+  },
+  {
+    "id": "daily_5",
+    "title": "Asking the Teacher a Question",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, Mrs. Brown? Can I ask you a question about the lesson?"},
+      {"speaker": "Teacher", "text": "Of course! What would you like to know?"},
+      {"speaker": "You", "text": "You said the Earth goes around the Sun. How long does that take?"},
+      {"speaker": "Teacher", "text": "Great question! It takes about 365 days — that's one whole year."},
+      {"speaker": "You", "text": "Oh, so that's why we have a new year every 365 days! Is that right?"},
+      {"speaker": "Teacher", "text": "Exactly! You're making great connections. Do you have any more questions?"},
+      {"speaker": "You", "text": "Yes! Why do we have seasons? Is it because of the Sun too?"},
+      {"speaker": "Teacher", "text": "Yes! The Earth is tilted, so different parts get more sunlight at different times."},
+      {"speaker": "You", "text": "That's so cool! Can I do my project about the Solar System?"},
+      {"speaker": "Teacher", "text": "That's a wonderful idea! I think you'll do an amazing job."}
+    ]
+  },
+  {
+    "id": "daily_6",
+    "title": "Asking for the Wi-Fi Password",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi! Could I get the Wi-Fi password, please? I need to do some research."},
+      {"speaker": "Staff", "text": "Sure! The password is on this card. It's 'SunnyDay2026' — all one word."},
+      {"speaker": "You", "text": "Sunny-Day-2026... Is the S capital?"},
+      {"speaker": "Staff", "text": "Yes, capital S and capital D. The rest is lowercase."},
+      {"speaker": "You", "text": "Got it! Let me try... hmm, it's not connecting. Did I type it wrong?"},
+      {"speaker": "Staff", "text": "Make sure you're connecting to 'CafeWiFi' and not the guest network."},
+      {"speaker": "You", "text": "Oh, I see it now! CafeWiFi... and the password... it's working!"},
+      {"speaker": "Staff", "text": "Great! The connection is pretty fast, so you should be all set."},
+      {"speaker": "You", "text": "Thank you so much! Is it okay to use it for about an hour?"},
+      {"speaker": "Staff", "text": "Absolutely! Take your time. There's no time limit."}
+    ]
+  },
+  {
+    "id": "daily_7",
+    "title": "Asking for a Ride to School",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Dad, can you drive me to school today? It's raining really hard."},
+      {"speaker": "Dad", "text": "Sure, I can take you. What time do you need to be there?"},
+      {"speaker": "You", "text": "I need to be there by eight o'clock. Is that okay?"},
+      {"speaker": "Dad", "text": "That's fine! We should leave by seven thirty then. Are you ready?"},
+      {"speaker": "You", "text": "Almost! I just need to pack my lunch. Can you wait five minutes?"},
+      {"speaker": "Dad", "text": "Of course. Do you have everything else? Books, homework, pencil case?"},
+      {"speaker": "You", "text": "Yes, everything is in my backpack! Oh wait — can we also pick up Lily? She lives next door."},
+      {"speaker": "Dad", "text": "Good idea! Text her and tell her we'll be outside in five minutes."},
+      {"speaker": "You", "text": "She says thank you! Can you also pick us up after school at three?"},
+      {"speaker": "Dad", "text": "I'll be there at three. Have a great day at school, both of you!"}
+    ]
+  },
+  {
+    "id": "daily_8",
+    "title": "Asking to Use the Bathroom",
+    "difficulty": "Beginner",
+    "lines": 8,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, where is the bathroom, please?"},
+      {"speaker": "Staff", "text": "It's down the hallway, second door on the right."},
+      {"speaker": "You", "text": "Thank you! Is it open, or do I need a key?"},
+      {"speaker": "Staff", "text": "You'll need this key. Just bring it back when you're done."},
+      {"speaker": "You", "text": "Okay, I'll bring it right back. Thank you!"},
+      {"speaker": "Staff", "text": "No problem! There's hand soap and paper towels inside."},
+      {"speaker": "You", "text": "Here's the key back. Thank you so much for your help!"},
+      {"speaker": "Staff", "text": "You're welcome! Have a nice day."}
+    ]
+  },
+  {
+    "id": "daily_9",
+    "title": "Asking to Return an Item",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi, I'd like to return this shirt, please. It doesn't fit me."},
+      {"speaker": "Cashier", "text": "I'm sorry to hear that! Do you have the receipt?"},
+      {"speaker": "You", "text": "Yes, here it is. I bought it three days ago. Can I get a refund?"},
+      {"speaker": "Cashier", "text": "Since it's within our 30-day return policy, yes! Would you prefer a refund or store credit?"},
+      {"speaker": "You", "text": "A refund, please. Can it go back on my card?"},
+      {"speaker": "Cashier", "text": "Absolutely! Can I see the card you used to pay? It'll take 3-5 business days."},
+      {"speaker": "You", "text": "Here's my card. Also, can I exchange it for a smaller size instead?"},
+      {"speaker": "Cashier", "text": "Let me check if we have your size... yes, we have a small! Would you like to try it on first?"},
+      {"speaker": "You", "text": "Yes, please! Where are the fitting rooms?"},
+      {"speaker": "Cashier", "text": "Right behind you, to the left. Take your time!"},
+      {"speaker": "You", "text": "This one fits perfectly! Can I do the exchange instead of the refund?"},
+      {"speaker": "Cashier", "text": "Of course! Same price, so no extra charge. Here's your new receipt. Enjoy!"}
+    ]
+  },
+  {
+    "id": "daily_10",
+    "title": "Asking for Help at the Post Office",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi! I need to send this package to my grandmother. Can you help me?"},
+      {"speaker": "Clerk", "text": "Of course! Where does your grandmother live?"},
+      {"speaker": "You", "text": "She lives in London, England. How much does it cost to send it there?"},
+      {"speaker": "Clerk", "text": "Let me weigh it first... it's 2 kilograms. Standard shipping is $15, and express is $30."},
+      {"speaker": "You", "text": "How long does standard shipping take? Her birthday is in two weeks."},
+      {"speaker": "Clerk", "text": "Standard takes 7-10 business days. Express takes 3-5 days. I'd recommend express to be safe."},
+      {"speaker": "You", "text": "I'll go with express then! Can I also add tracking so I know when it arrives?"},
+      {"speaker": "Clerk", "text": "Tracking is included with express! You'll get updates by email. Do you have a customs form?"},
+      {"speaker": "You", "text": "No, what's that? Do I need to fill something out?"},
+      {"speaker": "Clerk", "text": "Yes, for international packages you need to describe what's inside. Here's the form."},
+      {"speaker": "You", "text": "It's a scarf and some chocolates. Do I write that on the form?"},
+      {"speaker": "Clerk", "text": "Yes! Write 'gift' as the purpose, list the items, and their value. Then we're all set!"}
+    ]
+  },
+  {
+    "id": "daily_11",
+    "title": "Asking for a Haircut",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi! I'd like a haircut, please. Do you have any openings right now?"},
+      {"speaker": "Barber", "text": "You're in luck! I can take you right now. Have a seat. What are you looking for?"},
+      {"speaker": "You", "text": "I want it shorter on the sides but a bit longer on top. Not too short, though."},
+      {"speaker": "Barber", "text": "Sure! Something like this? Let me show you a picture."},
+      {"speaker": "You", "text": "Yes, that's exactly what I want! Can you also trim the back?"},
+      {"speaker": "Barber", "text": "Absolutely! Would you like a fade on the sides or just a regular trim?"},
+      {"speaker": "You", "text": "What's a fade? Can you explain the difference?"},
+      {"speaker": "Barber", "text": "A fade gradually goes from very short to longer as it goes up. A regular trim keeps the same length all around."},
+      {"speaker": "You", "text": "I think I'll try the fade! It sounds cool. How long will it take?"},
+      {"speaker": "Barber", "text": "About twenty minutes. Want me to wash your hair first?"},
+      {"speaker": "You", "text": "Yes, please! How much does a haircut cost here?"},
+      {"speaker": "Barber", "text": "It's fifteen dollars. The hair wash is included. Let's get started!"}
+    ]
+  },
+  {
+    "id": "daily_12",
+    "title": "Asking to Join a Sports Team",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi, Coach! I'd like to join the basketball team. Is there still room?"},
+      {"speaker": "Coach", "text": "Hi there! We'd love to have more players. Have you played basketball before?"},
+      {"speaker": "You", "text": "I've played with my friends at the park, but never on a real team. Can I still try out?"},
+      {"speaker": "Coach", "text": "Absolutely! Everyone is welcome. Tryouts are this Thursday after school."},
+      {"speaker": "You", "text": "Great! What time does it start, and what should I bring?"},
+      {"speaker": "Coach", "text": "It starts at 3:30 PM in the gym. Bring sneakers, a water bottle, and comfortable clothes."},
+      {"speaker": "You", "text": "Do I need my own basketball, or does the school have them?"},
+      {"speaker": "Coach", "text": "We have basketballs for everyone! Just come ready to play and have fun."},
+      {"speaker": "You", "text": "What will we do during tryouts? I'm a little nervous."},
+      {"speaker": "Coach", "text": "Don't be nervous! We'll do some dribbling, passing, and a short practice game. It's very relaxed."},
+      {"speaker": "You", "text": "That sounds fun! How often does the team practice?"},
+      {"speaker": "Coach", "text": "We practice Tuesdays and Thursdays, and games are on Saturdays. See you Thursday!"}
+    ]
+  },
+  {
+    "id": "daily_13",
+    "title": "Asking for Pocket Money",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Mom, can I have some pocket money this week? I want to save for a book."},
+      {"speaker": "Mom", "text": "That depends! Have you been doing your chores?"},
+      {"speaker": "You", "text": "Yes! I made my bed every day and helped wash the dishes twice."},
+      {"speaker": "Mom", "text": "Good job! How much do you need?"},
+      {"speaker": "You", "text": "The book costs ten dollars. Can I get five dollars this week and save the rest from next week?"},
+      {"speaker": "Mom", "text": "That's smart thinking! I like that you're planning ahead."},
+      {"speaker": "You", "text": "Thank you! Can I also earn extra by helping with the garden?"},
+      {"speaker": "Mom", "text": "That's a great idea! I'll give you two extra dollars for helping with the garden."},
+      {"speaker": "You", "text": "Awesome! So that's seven dollars this week. Only three more to go!"},
+      {"speaker": "Mom", "text": "You'll have enough in no time! I'm proud of you for saving up."}
+    ]
+  },
+  {
+    "id": "daily_14",
+    "title": "Asking for Food at a Friend's House",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Mrs. Taylor, may I have a snack, please? I'm a little hungry."},
+      {"speaker": "Mrs. Taylor", "text": "Of course, sweetheart! We have fruit, crackers, and yogurt. What would you like?"},
+      {"speaker": "You", "text": "Can I have some crackers and yogurt, please?"},
+      {"speaker": "Mrs. Taylor", "text": "Sure! Would you like strawberry or vanilla yogurt?"},
+      {"speaker": "You", "text": "Strawberry, please! That's my favorite flavor."},
+      {"speaker": "Mrs. Taylor", "text": "Here you go! Would you also like a glass of milk or juice?"},
+      {"speaker": "You", "text": "Can I have some apple juice, please?"},
+      {"speaker": "Mrs. Taylor", "text": "Of course! Here's your juice. Are you allergic to anything I should know about?"},
+      {"speaker": "You", "text": "No allergies! Thank you so much, Mrs. Taylor. Everything is really yummy."},
+      {"speaker": "Mrs. Taylor", "text": "You're welcome! You have such nice manners. Help yourself anytime."}
+    ]
+  },
+  {
+    "id": "daily_15",
+    "title": "Asking for Directions on the Bus",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, does this bus go to the Central Mall?"},
+      {"speaker": "Driver", "text": "Yes, it does! Central Mall is the seventh stop from here."},
+      {"speaker": "You", "text": "Thank you! How much is the fare? I've never taken this bus before."},
+      {"speaker": "Driver", "text": "It's two dollars for a single ride. Do you have a bus pass?"},
+      {"speaker": "You", "text": "No, I don't. Can I pay with coins?"},
+      {"speaker": "Driver", "text": "Yes, exact change only. The machine doesn't give change back."},
+      {"speaker": "You", "text": "I have two dollar coins right here. Where should I put them?"},
+      {"speaker": "Driver", "text": "Right in that box next to me. Good! Now have a seat anywhere you'd like."},
+      {"speaker": "You", "text": "Thank you! Will you announce the stops, or should I count them?"},
+      {"speaker": "Driver", "text": "I'll announce them, but I can also give you a wave when we're getting close."},
+      {"speaker": "You", "text": "That would be really helpful! About how long is the ride?"},
+      {"speaker": "Driver", "text": "About fifteen minutes. Sit back and relax — I'll let you know when we're there!"}
+    ]
+  },
+  {
+    "id": "daily_16",
+    "title": "Asking to Order Pizza on the Phone",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi! I'd like to order a pizza for delivery, please."},
+      {"speaker": "Staff", "text": "Sure thing! What size would you like — small, medium, or large?"},
+      {"speaker": "You", "text": "A large one, please. What toppings do you have?"},
+      {"speaker": "Staff", "text": "We have pepperoni, mushrooms, olives, peppers, onions, and extra cheese."},
+      {"speaker": "You", "text": "Can I get half pepperoni and half mushroom? My sister likes different toppings."},
+      {"speaker": "Staff", "text": "No problem! Half and half it is. Would you like anything else with that?"},
+      {"speaker": "You", "text": "Yes, can I also add a side of garlic bread and a bottle of lemonade?"},
+      {"speaker": "Staff", "text": "Got it! Your total comes to twenty-two dollars. What's your delivery address?"},
+      {"speaker": "You", "text": "It's 42 Oak Street, Apartment 3B. How long will it take?"},
+      {"speaker": "Staff", "text": "About 30-40 minutes. Would you like to pay by card over the phone or cash on delivery?"},
+      {"speaker": "You", "text": "Cash on delivery, please. Can I also get some napkins and plates?"},
+      {"speaker": "Staff", "text": "We'll include those! Your order number is 456. See you in about 30 minutes!"}
+    ]
+  },
+  {
+    "id": "daily_17",
+    "title": "Asking the Neighbor for a Favor",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Hi, Mr. Wilson! Sorry to bother you. Could I ask you a favor?"},
+      {"speaker": "Mr. Wilson", "text": "No bother at all! What do you need?"},
+      {"speaker": "You", "text": "Our ball went over the fence into your garden. Can I come get it, please?"},
+      {"speaker": "Mr. Wilson", "text": "Of course! Let me open the side gate for you."},
+      {"speaker": "You", "text": "Thank you! I'm really sorry about that. I hope it didn't damage any flowers."},
+      {"speaker": "Mr. Wilson", "text": "No damage at all! I see it right there by the roses. Go ahead and grab it."},
+      {"speaker": "You", "text": "Got it! Thanks so much. Oh, by the way — your garden looks really beautiful!"},
+      {"speaker": "Mr. Wilson", "text": "Thank you! I've been growing these tomatoes all summer. Would you like to take some home?"},
+      {"speaker": "You", "text": "Really? That would be amazing! My mom loves fresh tomatoes."},
+      {"speaker": "Mr. Wilson", "text": "Here, take these big red ones. Tell your mom I said hello!"},
+      {"speaker": "You", "text": "I will! Thank you so much, Mr. Wilson. Can I help you water the garden sometime?"},
+      {"speaker": "Mr. Wilson", "text": "That's very kind! I'd love the help. Come by anytime on the weekends."}
+    ]
+  },
+  {
     "id": "premium_1",
     "title": "At the Restaurant - Full Service",
     "difficulty": "Advanced",
