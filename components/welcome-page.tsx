@@ -93,9 +93,9 @@ export default function WelcomePage() {
 				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
 					<Logo size="md" showText={true} />
 					{/* Desktop Menu */}
-					<div className="hidden sm:flex items-center gap-2">
-						<a href="/about" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">About</a>
-						<a href="/contact" className="px-3 py-2 text-sm rounded-xl bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20 transition">Contact</a>
+					<div className="hidden sm:flex items-center gap-1.5">
+						<a href="/about" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">About</a>
+						<a href="/contact" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">Contact</a>
             {!appInstalled && (
               <Button
                 className="ml-2 px-4 py-2 text-sm rounded-xl bg-[#00aeef] text-white hover:bg-[#0090c5] shadow-sm"
@@ -248,27 +248,20 @@ export default function WelcomePage() {
           >
 						<Button 
 							size="lg"
-							className="btn-primary-kid group relative overflow-hidden text-xl px-8 py-6 rounded-2xl shadow-2xl hover:shadow-purple-500/50"
+							className="text-lg px-8 py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300"
 							onClick={() => router.push('/register')}
 						>
-							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-								<span className="absolute -inset-8 rounded-full blur-2xl bg-violet-500/30 animate-pulse" />
-							</span>
-							<span className="relative z-10 flex items-center gap-2">
-								<Star className="w-6 h-6 animate-float" />
-								Start Learning Now!
-							</span>
+							<Star className="w-5 h-5 mr-2" />
+							Start Learning Now!
 						</Button>
             
 						<Button 
 							size="lg"
-							className="group relative overflow-hidden text-xl px-8 py-6 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 text-white border-2 border-blue-400/50 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 transition-all duration-300 rounded-2xl font-semibold"
+							variant="outline"
+							className="text-lg px-8 py-5 rounded-2xl border-2 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white bg-white/80 dark:bg-white/10 hover:bg-white hover:shadow-md dark:hover:bg-white/20 font-semibold transition-all duration-300"
 							onClick={() => router.push('/login')}
 						>
-							<span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-								<span className="absolute -inset-8 rounded-full blur-2xl bg-blue-500/30 animate-pulse" />
-							</span>
-							<span className="relative z-10">I Already Have an Account</span>
+							I Already Have an Account
 						</Button>
           </motion.div>
 
@@ -339,44 +332,47 @@ export default function WelcomePage() {
             Perfect for Every Age!
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {[
               {
                 age: "Ages 3-5",
                 title: "Little Learners",
                 features: ["Alphabet & Phonics", "Colors & Animals", "Simple Words"],
-                gradient: "from-yellow-400 to-orange-400"
+                from: "from-amber-500", to: "to-orange-500",
+                shadow: "shadow-amber-500/20",
               },
               {
                 age: "Ages 6-8", 
                 title: "Word Builders",
                 features: ["Sentence Building", "Basic Grammar", "Spelling Games"],
-                gradient: "from-green-400 to-emerald-400"
+                from: "from-emerald-500", to: "to-teal-500",
+                shadow: "shadow-emerald-500/20",
               },
               {
                 age: "Ages 9-12",
                 title: "Language Masters", 
                 features: ["Creative Writing", "Conversations", "Advanced Grammar"],
-                gradient: "from-purple-400 to-indigo-400"
+                from: "from-violet-500", to: "to-indigo-500",
+                shadow: "shadow-violet-500/20",
               }
             ].map((group, index) => (
               <motion.div
                 key={index}
-                className="card-kid p-6"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 2 + (index * 0.2) }}
-                whileHover={{ scale: 1.05 }}
+                className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-lg dark:border-slate-700/60 dark:bg-slate-900/95"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2 + (index * 0.15), duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -4 }}
               >
-                <div className={`w-20 h-20 bg-gradient-to-r ${group.gradient} rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg text-2xl font-bold`}>
+                <div className={`w-16 h-16 bg-gradient-to-br ${group.from} ${group.to} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg ${group.shadow} text-xl font-bold`}>
                   {group.age.split(' ')[1]}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{group.age}</h3>
-                <h4 className="text-lg font-semibold text-gray-600 dark:text-white/80 mb-4">{group.title}</h4>
-                <ul className="text-gray-600 dark:text-white/70 space-y-1">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1">{group.age}</h3>
+                <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4">{group.title}</h4>
+                <ul className="text-sm text-slate-700 dark:text-slate-300 space-y-1.5">
                   {group.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center justify-center gap-2">
-                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
                       {feature}
                     </li>
                   ))}
