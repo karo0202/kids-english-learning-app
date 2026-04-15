@@ -13,11 +13,9 @@ import { AgeAdaptiveContainer, AgeGroupBadge } from '@/components/age-adaptive-u
 import { checkModuleAccess, refreshSubscriptionStatus, clearSubscriptionCache, ModuleAccess, FREE_MODULES, PREMIUM_MODULES } from '@/lib/subscription'
 import { progressManager } from '@/lib/progress'
 import LearningModuleTiles from '@/components/learning/learning-module-tiles'
-import { useTranslation } from '@/lib/i18n'
 
 export default function LearningPage() {
   const router = useRouter()
-  const { t, dir } = useTranslation()
   const [user, setUser] = useState<any>(null)
   const [children, setChildren] = useState<any[]>([])
   const [selectedChild, setSelectedChild] = useState<any>(null)
@@ -274,13 +272,13 @@ export default function LearningPage() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#00aeef]/20 flex items-center justify-center">
               <span className="text-3xl">👶</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('noChildrenAdded')}</h2>
-            <p className="text-gray-600 mb-6">{t('addChildFirst')}</p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">No Children Added</h2>
+            <p className="text-gray-600 mb-6">Please add a child first to start learning!</p>
             <Button 
               onClick={() => router.push('/add-child')}
               className="bg-[#00aeef] hover:bg-[#003366] text-white"
             >
-              {t('addFirstChild')}
+              Add Your First Child
             </Button>
           </CardContent>
         </Card>
@@ -309,13 +307,13 @@ export default function LearningPage() {
                 onClick={() => router.push('/dashboard')}
                 className="text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 border border-transparent hover:border-slate-200 dark:hover:border-white/10"
               >
-                <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2 rotate-180' : 'mr-2'}`} />
-                <span className="hidden xs:inline">{t('backToDashboard')}</span>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                <span className="hidden xs:inline">Back to Dashboard</span>
               </Button>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles className="w-5 h-5 hidden sm:block" style={{ color: accentColor }} />
-                  <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">{t('learningCenter')}</h1>
+                  <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">Learning Center</h1>
                   {selectedChild?.ageGroup && (
                     <AgeGroupBadge ageGroup={selectedChild.ageGroup as AgeGroup} />
                   )}
@@ -336,7 +334,7 @@ export default function LearningPage() {
                 whileHover={{ scale: 1.05 }}
               >
                 <Star className="w-4 h-4 text-yellow-600" />
-                <span className="text-xs md:text-sm font-medium text-yellow-800">{t('keepItUp')}</span>
+                <span className="text-xs md:text-sm font-medium text-yellow-800">Keep it up!</span>
               </motion.div>
               <motion.div 
                 className="flex items-center gap-1 px-2 md:px-3 py-1 rounded-full shadow-md"
@@ -345,7 +343,7 @@ export default function LearningPage() {
               >
                 <Trophy className="w-4 h-4" style={{ color: accentColor }} />
                 <span className="text-xs md:text-sm font-medium" style={{ color: accentColor }}>
-                  {t('personalizedForAge')}
+                  Personalized for age
                 </span>
               </motion.div>
             </div>
@@ -404,7 +402,7 @@ export default function LearningPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h2 className="text-base md:text-lg font-semibold text-slate-800 dark:text-white mb-3 tracking-tight">{t('selectChild')}</h2>
+            <h2 className="text-base md:text-lg font-semibold text-slate-800 dark:text-white mb-3 tracking-tight">Select Child</h2>
                 <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
               {children.map((child) => (
                 <motion.div
@@ -440,7 +438,7 @@ export default function LearningPage() {
         {/* Learning Modules */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">{t('chooseLearningPath')}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-[#8c0066] dark:from-white dark:to-[#8eca40] bg-clip-text text-transparent tracking-tight">Choose your learning path</h2>
             <Button
               variant="outline"
               size="sm"
@@ -453,7 +451,7 @@ export default function LearningPage() {
               ) : (
                 <RefreshCw className="w-4 h-4 mr-2" />
               )}
-              {refreshingAccess ? t('refreshing') : t('refreshAccess')}
+              {refreshingAccess ? 'Refreshing…' : 'Refresh access'}
             </Button>
           </div>
           {showModuleTips && (
@@ -465,9 +463,13 @@ export default function LearningPage() {
                   </div>
                   <div>
                     <p className="text-sm md:text-base font-semibold text-slate-800 dark:text-white">
-                      {t('tipForParents')}
+                      Tip for parents
                     </p>
-                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-200" dangerouslySetInnerHTML={{ __html: t('tipText') }} />
+                    <p className="text-xs md:text-sm text-slate-700 dark:text-slate-200">
+                      Start with <span className="font-semibold">Reading</span> to learn new words, then let your child
+                      relax with <span className="font-semibold">Games</span>. Little learners (3–5) love games and coloring;
+                      older kids (9–12) often enjoy grammar and puzzles.
+                    </p>
                   </div>
                 </div>
                 <div className="flex md:flex-col gap-2 md:gap-1">
@@ -477,7 +479,7 @@ export default function LearningPage() {
                     className="text-xs md:text-sm rounded-2xl"
                     onClick={() => setShowModuleTips(false)}
                   >
-                    {t('hideTip')}
+                    Hide tip
                   </Button>
                 </div>
               </CardContent>
@@ -509,7 +511,7 @@ export default function LearningPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-4 tracking-tight">{t('todaysProgress')}</h3>
+          <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-4 tracking-tight">Today's Progress</h3>
           <div className="grid grid-cols-3 gap-3 md:gap-4 text-xs md:text-base">
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
@@ -518,7 +520,7 @@ export default function LearningPage() {
               <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#00aeef]">
                 {todayLessons}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">{t('totalLessons')}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Total Lessons</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
@@ -527,7 +529,7 @@ export default function LearningPage() {
               <div className="text-2xl md:text-3xl font-bold text-[#00aeef] dark:text-[#8eca40]">
                 {todayNewWords}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">{t('activitiesDone')}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Activities Done</div>
             </motion.div>
             <motion.div 
               className="text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
@@ -536,7 +538,7 @@ export default function LearningPage() {
               <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#8eca40]">
                 {todayMinutes}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">{t('minutesComingSoon')}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Minutes (coming soon)</div>
             </motion.div>
           </div>
         </motion.div>

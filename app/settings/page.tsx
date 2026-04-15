@@ -14,13 +14,10 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from '@/lib/theme-context'
 import DataManagement from '@/components/data-management'
 import SubscriptionBillingHelp from '@/components/subscription-billing-help'
-import LanguageSwitcher from '@/components/language-switcher'
-import { useTranslation } from '@/lib/i18n'
 
 export default function SettingsPage() {
   const router = useRouter()
   const { theme, setTheme } = useTheme()
-  const { t, dir } = useTranslation()
   const [preferences, setPreferences] = useState({
     soundEnabled: true,
     musicEnabled: true,
@@ -28,6 +25,7 @@ export default function SettingsPage() {
   })
 
   useEffect(() => {
+    // Load preferences from localStorage
     const savedPrefs = localStorage.getItem('user_preferences')
     if (savedPrefs) {
       try {
@@ -47,16 +45,21 @@ export default function SettingsPage() {
     const newPreferences = { ...preferences, [key]: value }
     setPreferences(newPreferences)
     
+    // Save to localStorage
     localStorage.setItem('user_preferences', JSON.stringify(newPreferences))
+    // Also write specific keys other modules can read directly
     if (key === 'soundEnabled') localStorage.setItem('audio_sound_enabled', String(value))
     if (key === 'musicEnabled') localStorage.setItem('audio_music_enabled', String(value))
     if (key === 'difficulty') localStorage.setItem('learning_difficulty', String(value))
+    // Broadcast change for listeners
     try { window.dispatchEvent(new CustomEvent('app:settings-updated', { detail: { key, value, all: newPreferences } })) } catch {}
     
+    // Apply audio settings immediately
     if (key === 'soundEnabled') {
       if (value) {
+        // Simple audio feedback
         const audio = new Audio('/sounds/click.mp3')
-        audio.play().catch(() => {})
+        audio.play().catch(() => {}) // Ignore errors if audio fails
       }
     }
   }
@@ -74,6 +77,7 @@ export default function SettingsPage() {
       audio.loop = true
       audio.volume = 0.6
       audio.play().catch(() => {})
+      // Stop playback automatically after 4s
       setTimeout(() => { try { audio.pause(); audio.currentTime = 0 } catch {} }, 4000)
     } catch {}
   }
@@ -94,14 +98,14 @@ export default function SettingsPage() {
                 onClick={() => router.back()}
                 className="flex items-center gap-2"
               >
-                <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
-                {t('back')}
+                <ArrowLeft className="w-4 h-4" />
+                Back
               </Button>
               <div className="flex items-center gap-3">
                 <Mascot emotion="happy" size="medium" />
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{t('settings')}</h1>
-                  <p className="text-gray-600 dark:text-white/70">{t('customizeExperience')}</p>
+                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Settings</h1>
+                  <p className="text-gray-600 dark:text-white/70">Customize your learning experience! ⚙️</p>
                 </div>
               </div>
             </div>
@@ -111,36 +115,16 @@ export default function SettingsPage() {
 
       <div className="container mx-auto px-4 py-10">
         <div className="max-w-5xl mx-auto space-y-10">
-
-          {/* Language Settings */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10 shadow-xl">
-              <CardHeader>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                  🌐
-                  {t('language')}
-                </h2>
-              </CardHeader>
-              <CardContent>
-                <LanguageSwitcher />
-              </CardContent>
-            </Card>
-          </motion.div>
-
           {/* Audio Settings */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
           >
             <Card className="bg-white/70 backdrop-blur-xl border-white/60 dark:bg-white/5 dark:border-white/10 shadow-xl">
               <CardHeader>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Volume2 className="w-6 h-6 text-blue-500" />
-                  {t('audioSettings')}
+                  Audio Settings
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -153,8 +137,8 @@ export default function SettingsPage() {
                       <VolumeX className="w-6 h-6 text-gray-400" />
                     )}
                     <div>
-                      <h3 className="font-bold text-gray-800 dark:text-white">{t('soundEffects')}</h3>
-                      <p className="text-sm text-gray-600 dark:text-white/70">{t('soundDesc')}</p>
+                      <h3 className="font-bold text-gray-800 dark:text-white">Sound Effects</h3>
+                      <p className="text-sm text-gray-600 dark:text-white/70">Play sounds for interactions and feedback</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -164,13 +148,13 @@ export default function SettingsPage() {
                       onClick={testSound}
                       disabled={!preferences.soundEnabled}
                     >
-                      {t('testSound')}
+                      Test Sound
                     </Button>
                     <Button
                       variant={preferences.soundEnabled ? "default" : "outline"}
                       onClick={() => updatePreference('soundEnabled', !preferences.soundEnabled)}
                     >
-                      {preferences.soundEnabled ? t('enabled') : t('disabled')}
+                      {preferences.soundEnabled ? 'Enabled' : 'Disabled'}
                     </Button>
                   </div>
                 </div>
@@ -184,8 +168,8 @@ export default function SettingsPage() {
                       <Music className="w-6 h-6 text-gray-400" />
                     )}
                     <div>
-                      <h3 className="font-bold text-gray-800 dark:text-white">{t('backgroundMusic')}</h3>
-                      <p className="text-sm text-gray-600 dark:text-white/70">{t('musicDesc')}</p>
+                      <h3 className="font-bold text-gray-800 dark:text-white">Background Music</h3>
+                      <p className="text-sm text-gray-600 dark:text-white/70">Play gentle music while learning</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -195,13 +179,13 @@ export default function SettingsPage() {
                       onClick={testMusic}
                       disabled={!preferences.musicEnabled}
                     >
-                      {t('testMusic')}
+                      Test Music
                     </Button>
                     <Button
                       variant={preferences.musicEnabled ? "default" : "outline"}
                       onClick={() => updatePreference('musicEnabled', !preferences.musicEnabled)}
                     >
-                      {preferences.musicEnabled ? t('enabled') : t('disabled')}
+                      {preferences.musicEnabled ? 'Enabled' : 'Disabled'}
                     </Button>
                   </div>
                 </div>
@@ -219,24 +203,25 @@ export default function SettingsPage() {
               <CardHeader>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Zap className="w-6 h-6 text-yellow-500" />
-                  {t('learningSettings')}
+                  Learning Settings
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Difficulty Level */}
                 <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
-                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">{t('difficultyLevel')}</h3>
-                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">{t('difficultyDesc')}</p>
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">Difficulty Level</h3>
+                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">Choose how challenging the activities should be</p>
                   <div className="flex gap-3">
                     {[
-                      { value: 'easy', label: t('easy'), description: t('easyDesc') },
-                      { value: 'medium', label: t('medium'), description: t('mediumDesc') },
-                      { value: 'hard', label: t('hard'), description: t('hardDesc') }
+                      { value: 'easy', label: 'Easy', color: 'green', description: 'Perfect for beginners' },
+                      { value: 'medium', label: 'Medium', color: 'yellow', description: 'Balanced challenge' },
+                      { value: 'hard', label: 'Hard', color: 'red', description: 'For advanced learners' }
                     ].map((level) => (
                       <Button
                         key={level.value}
                         variant={preferences.difficulty === level.value ? "default" : "outline"}
                         onClick={() => updatePreference('difficulty', level.value)}
-                        className="flex-1"
+                        className={"flex-1"}
                       >
                         <div className="text-center">
                           <div className="font-bold">{level.label}</div>
@@ -260,18 +245,19 @@ export default function SettingsPage() {
               <CardHeader>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Palette className="w-6 h-6 text-pink-500" />
-                  {t('appearance')}
+                  Appearance
                 </h2>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Theme Selection */}
                 <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
-                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">{t('theme')}</h3>
-                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">{t('themeDesc')}</p>
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-3">Theme</h3>
+                  <p className="text-sm text-gray-600 dark:text-white/70 mb-4">Choose your preferred color scheme</p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {[
-                      { value: 'light', label: t('light'), icon: Sun, description: t('lightDesc') },
-                      { value: 'dark', label: t('dark'), icon: Moon, description: t('darkDesc') },
-                      { value: 'auto', label: t('auto'), icon: Monitor, description: t('autoDesc') }
+                      { value: 'light', label: 'Light', icon: Sun, description: 'Bright and cheerful' },
+                      { value: 'dark', label: 'Dark', icon: Moon, description: 'Easy on the eyes' },
+                      { value: 'auto', label: 'Auto', icon: Monitor, description: 'Follows system' }
                     ].map((themeOption) => (
                       <Button
                         key={themeOption.value}
@@ -293,7 +279,7 @@ export default function SettingsPage() {
             </Card>
           </motion.div>
 
-          {/* Subscription & billing */}
+          {/* Subscription & billing (cancel / support) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -312,9 +298,9 @@ export default function SettingsPage() {
               <CardHeader>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Settings className="w-6 h-6 text-blue-500" />
-                  {t('dataManagement')}
+                  Data Management
                 </h2>
-                <p className="text-gray-600 dark:text-white/70">{t('dataManagementDesc')}</p>
+                <p className="text-gray-600 dark:text-white/70">Manage your learning data, backups, and storage</p>
               </CardHeader>
               <CardContent>
                 <DataManagement />
@@ -332,14 +318,14 @@ export default function SettingsPage() {
               <CardHeader>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   <Settings className="w-6 h-6 text-red-500" />
-                  {t('resetSettings')}
+                  Reset Settings
                 </h2>
               </CardHeader>
               <CardContent>
                 <div className="p-4 rounded-2xl border border-red-100 dark:border-white/10 bg-gradient-to-br from-white to-red-50 dark:from-white/5 dark:to-white/5">
-                  <h3 className="font-bold text-gray-800 dark:text-white mb-2">{t('resetToDefaults')}</h3>
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-2">Reset to Defaults</h3>
                   <p className="text-sm text-gray-600 dark:text-white/70 mb-4">
-                    {t('resetDesc')}
+                    This will reset all your settings to their default values
                   </p>
                   <Button
                     variant="outline"
@@ -352,12 +338,13 @@ export default function SettingsPage() {
                       setPreferences(defaultPrefs)
                       setTheme('light')
                       localStorage.setItem('user_preferences', JSON.stringify({...defaultPrefs, theme: 'light'}))
+                      // Simple audio feedback
                       const audio = new Audio('/sounds/click.mp3')
-                      audio.play().catch(() => {})
+                      audio.play().catch(() => {}) // Ignore errors if audio fails
                     }}
                     className="border-red-300 text-red-600 hover:bg-red-50"
                   >
-                    {t('resetSettings')}
+                    Reset Settings
                   </Button>
                 </div>
               </CardContent>

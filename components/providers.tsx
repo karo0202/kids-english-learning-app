@@ -2,7 +2,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { LanguageProvider } from '@/lib/i18n'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
@@ -17,9 +16,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
     </div>
   }
 
-  return (
-    <LanguageProvider>
-      {children}
-    </LanguageProvider>
-  )
+  return <>{children}</>
 }
