@@ -189,20 +189,20 @@ export default function MathFoundationModule() {
         </motion.header>
 
         {/* Tab Navigation */}
-        <nav className="mb-6 -mx-4 px-4">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <nav className="mb-6">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {TAB_CONFIG.map((t) => (
               <button
                 key={t.id}
                 onClick={() => { setTab(t.id); clearFeedback() }}
-                className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 px-2 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all ${
                   tab === t.id
                     ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25 scale-[1.02]'
                     : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-slate-200 dark:border-slate-700 shadow-sm'
                 }`}
               >
-                <span className="text-base">{t.emoji}</span>
-                <span className="hidden sm:inline">{t.label}</span>
+                <span className="text-xl">{t.emoji}</span>
+                <span>{t.label}</span>
               </button>
             ))}
           </div>
