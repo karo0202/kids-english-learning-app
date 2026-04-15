@@ -1,8 +1,8 @@
 'use client'
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Check } from 'lucide-react'
+import { Check, Star, CalendarDays, Infinity, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export interface SubscriptionPlan {
@@ -23,6 +23,12 @@ interface SubscriptionPlanCardProps {
   isSelected?: boolean
 }
 
+const DURATION_META: Record<number, { label: string; icon: typeof Star; gradient: string; badge?: string }> = {
+  30: { label: 'Monthly', icon: Star, gradient: 'from-blue-500 to-cyan-500' },
+  365: { label: 'Yearly', icon: CalendarDays, gradient: 'from-violet-500 to-purple-600', badge: 'Most Popular' },
+  9999: { label: 'Lifetime', icon: Infinity, gradient: 'from-amber-500 to-orange-500', badge: 'Best Value' },
+}
+
 export default function SubscriptionPlanCard({
   plan,
   onSelect,
@@ -30,70 +36,76 @@ export default function SubscriptionPlanCard({
   loading = false,
   isSelected = false,
 }: SubscriptionPlanCardProps) {
-  const durationText =
-    plan.duration === 30
-      ? 'Monthly'
-      : plan.duration === 365
-      ? 'Yearly'
-      : plan.duration === 9999
-      ? 'Lifetime'
-      : `${plan.duration} days`
+  const meta = DURATION_META[plan.duration] || { label: `${plan.duration} days`, icon: Star, gradient: 'from-gray-500 to-gray-600' }
+  const Icon = meta.icon
+  const badge = meta.badge || (isPopular ? 'Popular' : null)
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
-      className="cursor-pointer"
+      className="cursor-pointer relative"
       onClick={() => !loading && onSelect(plan.planId)}
     >
+      {badge && (
+        <div className={`absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg ${
+          plan.duration === 9999
+            ? 'bg-gradient-to-r from-amber-500 to-orange-500'
+            : 'bg-gradient-to-r from-violet-500 to-purple-600'
+        }`}>
+          <span className="flex items-center gap-1">
+            <Sparkles className="w-3 h-3" />
+            {badge}
+          </span>
+        </div>
+      )}
+
       <Card
-        className={`relative h-full transition-all duration-300 ${
+        className={`h-full transition-all duration-300 overflow-hidden ${
           isSelected
-            ? 'border-4 border-purple-500 shadow-2xl bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 ring-4 ring-purple-200 dark:ring-purple-800'
-            : isPopular
-            ? 'border-2 border-purple-500 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 hover:border-purple-600'
-            : 'border-2 border-gray-200 dark:border-gray-700 hover:border-purple-400 hover:shadow-lg'
-        }`}
+            ? 'ring-2 ring-violet-500 dark:ring-violet-400 shadow-xl shadow-violet-100 dark:shadow-violet-900/30 bg-white dark:bg-gray-800'
+            : 'border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 bg-white/80 dark:bg-gray-800/80'
+        } ${isPopular && !isSelected ? 'md:scale-[1.03]' : ''}`}
       >
-        {isSelected && (
-          <div className="absolute -top-3 right-4">
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              Selected
+        <div className={`h-1.5 bg-gradient-to-r ${meta.gradient}`} />
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta.gradient} flex items-center justify-center shadow-md`}>
+              <Icon className="w-5 h-5 text-white" />
             </div>
+            {isSelected && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="w-6 h-6 rounded-full bg-violet-500 flex items-center justify-center"
+              >
+                <Check className="w-4 h-4 text-white" />
+              </motion.div>
+            )}
           </div>
-        )}
-        {isPopular && !isSelected && (
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-              Popular
-            </span>
-          </div>
-        )}
 
-        <CardHeader className="text-center pb-4">
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-            {plan.name}
-          </h3>
-          <p className="text-gray-600 dark:text-gray-300 text-sm">{plan.description}</p>
-          <div className="mt-4">
-            <span className="text-4xl font-bold text-gray-900 dark:text-white">
-              {plan.price}
-            </span>
-            <span className="text-gray-600 dark:text-gray-400 ml-2">
-              {plan.currency} / {durationText}
-            </span>
-          </div>
-        </CardHeader>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{plan.description}</p>
 
-        <CardContent className="space-y-4">
-          <ul className="space-y-3">
+          <div className="mt-3 mb-5">
+            <span className="text-3xl font-extrabold text-gray-900 dark:text-white">
+              {plan.price.toLocaleString()}
+            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1.5">
+              {plan.currency} / {meta.label}
+            </span>
+            {plan.duration === 365 && (
+              <p className="text-xs text-green-600 dark:text-green-400 font-semibold mt-1">Save ~20% vs monthly</p>
+            )}
+          </div>
+
+          <ul className="space-y-2.5 mb-6">
             {plan.features.map((feature, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <span>{feature}</span>
               </li>
             ))}
           </ul>
@@ -104,27 +116,24 @@ export default function SubscriptionPlanCard({
               onSelect(plan.planId)
             }}
             disabled={loading}
-            className={`w-full transition-all ${
+            className={`w-full rounded-xl h-11 font-semibold transition-all ${
               isSelected
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg'
-                : isPopular
-                ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
-                : 'bg-gray-800 hover:bg-gray-900 text-white dark:bg-gray-700 dark:hover:bg-gray-600'
+                ? `bg-gradient-to-r ${meta.gradient} text-white shadow-md hover:shadow-lg`
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
-            size="lg"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Processing...
               </span>
             ) : isSelected ? (
               <span className="flex items-center justify-center gap-2">
                 <Check className="w-4 h-4" />
-                Selected - Continue Below
+                Selected
               </span>
             ) : (
-              'Subscribe Now'
+              'Select Plan'
             )}
           </Button>
         </CardContent>
@@ -132,4 +141,3 @@ export default function SubscriptionPlanCard({
     </motion.div>
   )
 }
-

@@ -7,7 +7,9 @@ import SubscriptionPlanCard, { SubscriptionPlan } from '@/components/subscriptio
 import PaymentButton, { PaymentMethod } from '@/components/subscription/PaymentButton'
 import CryptoInvoiceModal from '@/components/subscription/CryptoInvoiceModal'
 import ManualPaymentModal from '@/components/subscription/ManualPaymentModal'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowLeft, Crown, Sparkles, Shield, X, RefreshCw, LogIn } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function SubscribePage() {
   const router = useRouter()
@@ -76,9 +78,7 @@ export default function SubscribePage() {
     }
 
     const { getAuthToken } = await import('@/lib/simple-auth')
-    // Force refresh token so payment API gets a valid token
     let token = await getAuthToken(true)
-    // If no token, wait for Firebase auth state (e.g. just logged in) and retry once
     if (!token && user) {
       await new Promise((r) => setTimeout(r, 1500))
       token = await getAuthToken(true)
@@ -101,13 +101,12 @@ export default function SubscribePage() {
         body: JSON.stringify({
           planId: selectedPlan,
           paymentMethod,
-          userId: user.id, // Must match token for server verification
+          userId: user.id,
           userEmail: user.email,
           userName: user.name,
         }),
       })
 
-      // Check if response is ok before parsing
       if (!response.ok) {
         let errorData
         try {
@@ -118,19 +117,15 @@ export default function SubscribePage() {
         
         const errorMsg = errorData.message || errorData.error || 'Payment service is currently unavailable'
         if (response.status === 401) {
-          setErrorMessage(
-            'Your session has expired or you are not logged in. Please log in again to continue.'
-          )
+          setErrorMessage('Your session has expired or you are not logged in. Please log in again to continue.')
           setTimeout(() => router.push('/login'), 4000)
         } else if (response.status === 503 || errorData.requiresBackend) {
-          setErrorMessage(
-            'Payment service is currently unavailable. The backend server needs to be deployed to process payments. Please contact support or check back later.'
-          )
+          setErrorMessage('Payment service is currently unavailable. Please contact support or check back later.')
         } else {
           setErrorMessage(errorMsg)
         }
-        setSelectedPaymentMethod(null) // Reset loading state
-        setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
+        setSelectedPaymentMethod(null)
+        setTimeout(() => setErrorMessage(null), 15000)
         return
       }
 
@@ -157,31 +152,25 @@ export default function SubscribePage() {
           })
           setCryptoModalOpen(true)
         } else if (data.paymentUrl) {
-          // Redirect to payment provider
           window.location.href = data.paymentUrl
         } else {
           alert('Payment created. Please follow the instructions provided.')
         }
       } else {
-        // Show better error message
         const errorMsg = data.message || data.error || 'Failed to create payment'
         if (data.requiresBackend) {
-          setErrorMessage(
-            'Payment service is currently unavailable. The backend server needs to be deployed to process payments. Please contact support or check back later.'
-          )
+          setErrorMessage('Payment service is currently unavailable. Please contact support or check back later.')
         } else {
           setErrorMessage(errorMsg)
         }
-        setSelectedPaymentMethod(null) // Reset loading state
-        setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
+        setSelectedPaymentMethod(null)
+        setTimeout(() => setErrorMessage(null), 15000)
       }
     } catch (error: any) {
       console.error('Payment creation error:', error)
-      setSelectedPaymentMethod(null) // Reset loading state
-      setErrorMessage(
-        'Failed to create payment. The payment service is currently unavailable. This usually means the backend server needs to be deployed. Please contact support or check back later.'
-      )
-      setTimeout(() => setErrorMessage(null), 15000) // Clear after 15 seconds
+      setSelectedPaymentMethod(null)
+      setErrorMessage('Failed to create payment. The payment service is currently unavailable. Please contact support or check back later.')
+      setTimeout(() => setErrorMessage(null), 15000)
     }
   }
 
@@ -228,88 +217,103 @@ export default function SubscribePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-violet-200 border-t-violet-600"></div>
+        <p className="text-gray-500 dark:text-gray-400 font-medium">Loading plans...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="container mx-auto max-w-6xl">
+    <div className="min-h-screen py-6 sm:py-10 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="mb-10"
         >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            Choose Your Subscription Plan
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Unlock all premium features and enhance your learning experience
-          </p>
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="mb-4 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-xl"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-semibold mb-3">
+              <Sparkles className="w-3.5 h-3.5" />
+              PREMIUM
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+              Choose Your Subscription Plan
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-lg mx-auto">
+              Unlock all premium features and enhance your child&apos;s learning experience
+            </p>
+          </div>
         </motion.div>
 
-        {/* Error / Empty States */}
-        {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-2xl shadow-lg p-6 mb-10"
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">
-                  {errorMessage?.toLowerCase().includes('log in') ? 'Log in required' : 'Payment Service Unavailable'}
-                </h3>
-                <p className="text-red-700 dark:text-red-400 mb-4">{errorMessage}</p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => {
-                      setErrorMessage(null)
-                      setSelectedPaymentMethod(null)
-                    }}
-                    className="inline-flex items-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
-                  >
-                    Dismiss
-                  </button>
-                  {errorMessage?.toLowerCase().includes('log in') && (
-                    <button
-                      onClick={() => router.push('/login')}
-                      className="inline-flex items-center px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+        {/* Error State */}
+        <AnimatePresence>
+          {errorMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-8 p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-200 mb-1">
+                    {errorMessage?.toLowerCase().includes('log in') ? 'Session Expired' : 'Something went wrong'}
+                  </p>
+                  <p className="text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { setErrorMessage(null); setSelectedPaymentMethod(null) }}
+                      className="rounded-xl text-xs border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30"
                     >
-                      Log in again
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      setLoading(true)
-                      setErrorMessage(null)
-                      fetchPlans()
-                    }}
-                    className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
-                  >
-                    Refresh Plans
-                  </button>
+                      <X className="w-3 h-3 mr-1" /> Dismiss
+                    </Button>
+                    {errorMessage?.toLowerCase().includes('log in') && (
+                      <Button
+                        size="sm"
+                        onClick={() => router.push('/login')}
+                        className="rounded-xl text-xs bg-violet-600 hover:bg-violet-700 text-white"
+                      >
+                        <LogIn className="w-3 h-3 mr-1" /> Log in
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { setLoading(true); setErrorMessage(null); fetchPlans() }}
+                      className="rounded-xl text-xs border-gray-300 dark:border-gray-600"
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" /> Retry
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Subscription Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {/* Plans */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 mb-10">
           {plans.map((plan, index) => (
             <SubscriptionPlanCard
               key={plan.planId}
               plan={plan}
               onSelect={handlePlanSelect}
-              isPopular={index === 1} // Middle plan is popular
+              isPopular={index === 1}
               isSelected={selectedPlan === plan.planId}
               loading={selectedPlan === plan.planId && !!selectedPaymentMethod}
             />
@@ -317,41 +321,73 @@ export default function SubscribePage() {
         </div>
 
         {plans.length === 0 && !errorMessage && (
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-12">
-            Plans will appear here once they are configured in the admin panel.
-          </p>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
+              <Crown className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-gray-500 dark:text-gray-400">Plans will appear here once they are configured.</p>
+          </div>
         )}
 
-        {/* Payment Method - Phone Number Only */}
-        {selectedPlan && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                Complete Your Payment
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
-                Pay via phone number transfer
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
-                Send payment to our phone number and submit your transaction reference to activate your subscription
-              </p>
-            </div>
+        {/* Payment Section */}
+        <AnimatePresence>
+          {selectedPlan && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="max-w-lg mx-auto"
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="h-1.5 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500" />
+                <div className="p-6 sm:p-8">
+                  <div className="text-center mb-6">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                      Complete Your Payment
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Send payment to our phone number and submit your receipt
+                    </p>
+                  </div>
 
-            <div className="flex justify-center">
-              <PaymentButton
-                paymentMethod="fib_manual"
-                onClick={() => handlePaymentMethodSelect('fib_manual')}
-                className="min-w-[350px] text-lg py-6"
-              />
-            </div>
-          </motion.div>
-        )}
+                  {/* Selected plan mini-summary */}
+                  {(() => {
+                    const planInfo = plans.find(p => p.planId === selectedPlan)
+                    if (!planInfo) return null
+                    return (
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 mb-6">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">{planInfo.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{planInfo.description}</p>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                          {planInfo.price.toLocaleString()} <span className="text-xs font-normal text-gray-500">{planInfo.currency}</span>
+                        </p>
+                      </div>
+                    )
+                  })()}
 
-        {/* Crypto Invoice Modal */}
+                  <div className="flex justify-center">
+                    <PaymentButton
+                      paymentMethod="fib_manual"
+                      onClick={() => handlePaymentMethodSelect('fib_manual')}
+                      className="w-full text-base py-5 rounded-xl"
+                    />
+                  </div>
+
+                  <div className="flex items-start gap-2 mt-5 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <Shield className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+                      Your payment will be verified manually. Submit your receipt to activate your subscription.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Modals */}
         {cryptoInvoice && (
           <CryptoInvoiceModal
             isOpen={cryptoModalOpen}
@@ -363,7 +399,6 @@ export default function SubscribePage() {
           />
         )}
 
-        {/* Manual Payment Modal */}
         {manualPaymentData && (
           <ManualPaymentModal
             isOpen={manualModalOpen}
@@ -384,4 +419,3 @@ export default function SubscribePage() {
     </div>
   )
 }
-
