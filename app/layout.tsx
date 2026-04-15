@@ -1,11 +1,10 @@
 
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display, Noto_Sans_Arabic } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { ThemeProvider } from '@/lib/theme-context'
 import { ErrorBoundary } from '@/components/error-boundary'
-// PortraitLock removed to enable landscape mode
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -19,6 +18,13 @@ const playfair = Playfair_Display({
   display: 'swap',
   variable: '--font-playfair',
   weight: ['500', '600', '700'],
+})
+
+const notoSansArabic = Noto_Sans_Arabic({
+  subsets: ['arabic'],
+  display: 'swap',
+  variable: '--font-noto-arabic',
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -83,7 +89,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable} ${notoSansArabic.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.png" type="image/png" />
@@ -104,12 +110,18 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const prefs = localStorage.getItem('user_preferences');
+                var prefs = localStorage.getItem('user_preferences');
                 if (prefs) {
-                  const parsed = JSON.parse(prefs);
+                  var parsed = JSON.parse(prefs);
                   if (parsed.theme === 'dark' || (parsed.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
                   }
+                }
+                var lang = localStorage.getItem('app_language');
+                if (lang === 'ku' || lang === 'ar') {
+                  document.documentElement.lang = lang;
+                  document.documentElement.dir = 'rtl';
+                  document.documentElement.classList.add('rtl');
                 }
               } catch (e) {}
             `,

@@ -14,10 +14,13 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Mascot } from '@/components/ui/mascot'
 import { FirebaseDiagnostics } from '@/components/firebase-diagnostics'
 import { Mail, Lock, ArrowLeft } from 'lucide-react'
+import LanguageSwitcher from '@/components/language-switcher'
+import { useTranslation } from '@/lib/i18n'
 
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t, dir } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
@@ -31,25 +34,21 @@ export default function LoginPage() {
       setError('Authentication failed. Please try again.')
     }
 
-    // Handle Google redirect result
     const handleRedirect = async () => {
       try {
         console.log('Checking for Google redirect result...')
         const result = await handleGoogleRedirect()
         if (result?.user) {
           console.log('Google sign-in successful:', result.user.email)
-          // Save user session
           setUserSession({
             id: result.user.uid,
             email: result.user.email || '',
             name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
             accountType: 'parent'
           })
-          // Set registration date if it doesn't exist (for 7-day free trial)
           if (!getUserRegistrationDate()) {
             setUserRegistrationDate()
           }
-          // Merge children from Firestore/localStorage by email so they’re available right after re-login
           if (result.user.email) {
             import('@/lib/children').then(({ forceMigrateChildrenByEmail }) => {
               forceMigrateChildrenByEmail(result.user.uid, result.user.email || '').catch(() => {})
@@ -71,14 +70,13 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('') // Clear previous errors
+    setError('')
 
     try {
       const c = getAuthClient()
       if (!c) throw new Error('Auth not available on server')
       const result = await signInWithEmailAndPassword(c.auth, formData.email, formData.password)
       
-      // Save user session
       if (result.user) {
         setUserSession({
           id: result.user.uid,
@@ -86,7 +84,6 @@ export default function LoginPage() {
           name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
           accountType: 'parent'
         })
-        // Set registration date if it doesn't exist (for 7-day free trial)
         if (!getUserRegistrationDate()) {
           setUserRegistrationDate()
         }
@@ -106,7 +103,6 @@ export default function LoginPage() {
       console.log('Attempting Google sign-in...')
       const result = await signInWithGoogle()
       if (result?.user) {
-        // Popup succeeded - save user session
         console.log('Google sign-in successful, saving session...')
         setUserSession({
           id: result.user.uid,
@@ -114,7 +110,6 @@ export default function LoginPage() {
           name: result.user.displayName || result.user.email?.split('@')[0] || 'User',
           accountType: 'parent'
         })
-        // Merge children from Firestore/localStorage by email so they’re available right after re-login
         if (result.user.email) {
           import('@/lib/children').then(({ forceMigrateChildrenByEmail }) => {
             forceMigrateChildrenByEmail(result.user.uid, result.user.email || '').catch(() => {})
@@ -123,12 +118,10 @@ export default function LoginPage() {
         console.log('User session saved, redirecting to dashboard...')
         router.push('/dashboard')
       }
-      // If result is null, redirect is happening
     } catch (err: any) {
       console.error('Google sign-in error details:', err)
       const errorMessage = err?.message || 'Google sign-in failed.'
       
-      // Check for specific error types
       if (errorMessage.includes('not initialized') || errorMessage.includes('environment variables')) {
         setError('Firebase configuration error. Please contact support or check your browser console.')
       } else if (errorMessage.includes('unauthorized-domain')) {
@@ -145,7 +138,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Language switcher floating */}
+      <div className={`absolute top-4 ${dir === 'rtl' ? 'left-4' : 'right-4'} z-20`}>
+        <LanguageSwitcher variant="compact" />
+      </div>
+
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
@@ -181,9 +178,9 @@ export default function LoginPage() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              Welcome Back!
+              {t('welcomeBack')}
             </motion.h1>
-            <p className="text-white/90 font-medium">Continue your learning adventure</p>
+            <p className="text-white/90 font-medium">{t('continueAdventure')}</p>
           </CardHeader>
 
           <CardContent className="space-y-6 p-8 relative z-10">
@@ -198,31 +195,31 @@ export default function LoginPage() {
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="relative">
-                <label htmlFor="email" className="sr-only">Email Address</label>
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                <label htmlFor="email" className="sr-only">{t('emailAddress')}</label>
+                <Mail className={`absolute ${dir === 'rtl' ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5`} />
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Email Address"
+                  placeholder={t('emailAddress')}
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300"
+                  className={`${dir === 'rtl' ? 'pr-12' : 'pl-12'} py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300`}
                   required
                 />
               </div>
 
               <div className="relative">
-                <label htmlFor="password" className="sr-only">Password</label>
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                <label htmlFor="password" className="sr-only">{t('password')}</label>
+                <Lock className={`absolute ${dir === 'rtl' ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5`} />
                 <Input
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder={t('password')}
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="pl-12 py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300"
+                  className={`${dir === 'rtl' ? 'pr-12' : 'pl-12'} py-4 text-lg rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-white/70 focus:border-violet-400 focus:bg-white/25 focus:shadow-lg focus:shadow-violet-500/20 transition-all duration-300`}
                   required
                 />
               </div>
@@ -236,7 +233,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white py-4 text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold relative overflow-hidden group"
                 >
-                  <span className="relative z-10">{loading ? 'Signing In...' : 'Continue Learning! 🎓'}</span>
+                  <span className="relative z-10">{loading ? t('signingIn') : t('continueLearning')}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-500/50 to-purple-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </Button>
               </motion.div>
@@ -245,17 +242,16 @@ export default function LoginPage() {
             {/* Social Logins */}
             <div className="flex justify-center">
               <Button onClick={signInGoogle} className="bg-white text-gray-900 hover:bg-gray-100 rounded-xl w-full sm:w-auto">
-                <svg className="mr-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
+                <svg className={dir === 'rtl' ? 'ml-2' : 'mr-2'} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
                   <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.651 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.651-.389-3.917Z"/>
                   <path fill="#FF3D00" d="M6.306 14.691l6.571 4.814C14.6 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.046 6.053 29.268 4 24 4c-7.798 0-14.426 4.437-17.694 10.691Z"/>
                   <path fill="#4CAF50" d="M24 44c5.176 0 9.86-1.977 13.409-5.197l-6.191-5.238C29.031 35.488 26.671 36.5 24 36.5c-5.201 0-9.619-3.331-11.279-7.964l-6.54 5.037C9.41 39.45 16.128 44 24 44Z"/>
                   <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-1.001 2.825-2.994 5.211-5.585 6.932l.005-.004l6.191 5.238C37.52 41.218 44 36 44 24c0-1.341-.138-2.651-.389-3.917Z"/>
                 </svg>
-                Sign in with Google
+                {t('signInGoogle')}
               </Button>
             </div>
 
-            {/* Debug mode - remove in production */}
             {process.env.NODE_ENV === 'development' && (
               <div className="mt-4">
                 <FirebaseDiagnostics />
@@ -264,12 +260,12 @@ export default function LoginPage() {
 
             <div className="text-center pt-4">
               <p className="text-white/80">
-                Don't have an account?{' '}
+                {t('noAccount')}{' '}
                 <button
                   onClick={() => router.push('/register')}
                   className="text-violet-300 hover:text-violet-200 font-semibold underline hover:no-underline transition-all duration-300"
                 >
-                  Create Account
+                  {t('createAccount')}
                 </button>
               </p>
             </div>
@@ -280,8 +276,8 @@ export default function LoginPage() {
                 onClick={() => router.push('/')}
                 className="text-white/70 hover:text-white hover:bg-white/10 transition-all duration-300 rounded-xl"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
+                <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2 rotate-180' : 'mr-2'}`} />
+                {t('backToHome')}
               </Button>
             </div>
           </CardContent>

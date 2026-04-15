@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/sheet'
 import ModulesShowcaseSlides from '@/components/modules-showcase-slides'
 import AppQrBlock from '@/components/app-qr-block'
+import LanguageSwitcher from '@/components/language-switcher'
+import { useTranslation } from '@/lib/i18n'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -27,6 +29,7 @@ type BeforeInstallPromptEvent = Event & {
 
 export default function WelcomePage() {
   const router = useRouter()
+  const { t, dir } = useTranslation()
   const [showAudioSettings, setShowAudioSettings] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
@@ -50,12 +53,10 @@ export default function WelcomePage() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener)
     window.addEventListener('appinstalled', handleAppInstalled)
 
-    // iOS Safari does not support beforeinstallprompt, so we show a custom hint
     const ua = window.navigator.userAgent || ''
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream
     const isInStandalone =
       (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-      // Safari iOS legacy check
       (window.navigator as any).standalone === true
 
     if (isIOS && !isInStandalone) {
@@ -79,145 +80,166 @@ export default function WelcomePage() {
         // ignore and fall through to help
       }
     }
-    // If we don't have a native prompt, show manual install help
     setShowInstallHelp(true)
   }
 
+  const ageGroups = [
+    {
+      age: t('ages3to5'),
+      ageShort: '3-5',
+      title: t('littleLearners'),
+      features: [t('alphabetPhonics'), t('colorsAnimals'), t('simpleWords')],
+      from: 'from-amber-500', to: 'to-orange-500',
+      shadow: 'shadow-amber-500/20',
+    },
+    {
+      age: t('ages6to8'),
+      ageShort: '6-8',
+      title: t('wordBuilders'),
+      features: [t('sentenceBuilding'), t('basicGrammar'), t('spellingGames')],
+      from: 'from-emerald-500', to: 'to-teal-500',
+      shadow: 'shadow-emerald-500/20',
+    },
+    {
+      age: t('ages9to12'),
+      ageShort: '9-12',
+      title: t('languageMasters'),
+      features: [t('creativeWriting'), t('conversations'), t('advancedGrammar')],
+      from: 'from-violet-500', to: 'to-indigo-500',
+      shadow: 'shadow-violet-500/20',
+    },
+  ]
+
   return (
-		<div className="min-h-screen relative">
-			{/* Same kids-learning background as app (from layout); optional extra overlay for landing readability */}
-			<div className="fixed inset-0 -z-10 bg-[url('/images/kids-learning-background.png')] bg-cover bg-center bg-no-repeat" aria-hidden />
-			<div className="fixed inset-0 -z-[1] bg-white/88 backdrop-blur-[2px] dark:bg-[#003366]/88 dark:backdrop-blur-sm pointer-events-none" aria-hidden />
-			{/* Top Nav */}
-			<div className="absolute inset-x-0 top-0 z-20">
-				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
-					<Logo size="md" showText={true} />
-					{/* Desktop Menu */}
-					<div className="hidden sm:flex items-center gap-1.5">
-						<a href="/about" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">About</a>
-						<a href="/contact" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">Contact</a>
+    <div className="min-h-screen relative">
+      <div className="fixed inset-0 -z-10 bg-[url('/images/kids-learning-background.png')] bg-cover bg-center bg-no-repeat" aria-hidden />
+      <div className="fixed inset-0 -z-[1] bg-white/88 backdrop-blur-[2px] dark:bg-[#003366]/88 dark:backdrop-blur-sm pointer-events-none" aria-hidden />
+
+      {/* Top Nav */}
+      <div className="absolute inset-x-0 top-0 z-20">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Logo size="md" showText={true} />
+          {/* Desktop Menu */}
+          <div className="hidden sm:flex items-center gap-1.5">
+            <LanguageSwitcher variant="compact" />
+            <a href="/about" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">{t('about')}</a>
+            <a href="/contact" className="px-3.5 py-2 text-sm rounded-xl bg-white/90 dark:bg-white/10 border border-slate-200/60 dark:border-white/15 text-slate-700 dark:text-white hover:bg-white hover:shadow-sm dark:hover:bg-white/20 transition-all">{t('contact')}</a>
             {!appInstalled && (
               <Button
-                className="ml-2 px-4 py-2 text-sm rounded-xl bg-[#00aeef] text-white hover:bg-[#0090c5] shadow-sm"
+                className={`${dir === 'rtl' ? 'mr-2' : 'ml-2'} px-4 py-2 text-sm rounded-xl bg-[#00aeef] text-white hover:bg-[#0090c5] shadow-sm`}
                 onClick={handleInstallClick}
               >
-                Download app
+                {t('download')}
               </Button>
             )}
-					</div>
-					{/* Mobile Menu */}
-					<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-						<SheetTrigger asChild className="sm:hidden">
-							<Button
-								variant="ghost"
-								size="icon"
-								className="sm:hidden bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20"
-							>
-								<Menu className="h-6 w-6" />
-								<span className="sr-only">Open menu</span>
-							</Button>
-						</SheetTrigger>
-						<SheetContent side="right" className="w-[300px] sm:w-[400px] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
-							<SheetHeader>
-								<SheetTitle className="text-2xl font-bold text-gray-800 dark:text-white">Menu</SheetTitle>
-								<SheetDescription className="text-gray-600 dark:text-gray-400">
-									Navigate to different sections
-								</SheetDescription>
-							</SheetHeader>
-							<div className="mt-8 flex flex-col gap-4">
-								<Button
-									variant="outline"
-									className="w-full justify-start text-left h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-									onClick={() => {
-										router.push('/about')
-										setMobileMenuOpen(false)
-									}}
-								>
-									<BookOpen className="mr-3 h-5 w-5" />
-									<div className="flex flex-col items-start">
-										<span className="font-semibold text-gray-800 dark:text-white">About</span>
-										<span className="text-xs text-gray-600 dark:text-gray-400">Learn about our app</span>
-									</div>
-								</Button>
-								<Button
-									variant="outline"
-									className="w-full justify-start text-left h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-									onClick={() => {
-										router.push('/contact')
-										setMobileMenuOpen(false)
-									}}
-								>
-									<MessageSquare className="mr-3 h-5 w-5" />
-									<div className="flex flex-col items-start">
-										<span className="font-semibold text-gray-800 dark:text-white">Contact</span>
-										<span className="text-xs text-gray-600 dark:text-gray-400">Get in touch with us</span>
-									</div>
-								</Button>
-                {!appInstalled && (
+          </div>
+          {/* Mobile Menu */}
+          <div className="flex sm:hidden items-center gap-1.5">
+            <LanguageSwitcher variant="icon-only" />
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-white dark:hover:bg-white/20"
+                >
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">{t('openMenu')}</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side={dir === 'rtl' ? 'left' : 'right'} className="w-[300px] sm:w-[400px] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900">
+                <SheetHeader>
+                  <SheetTitle className="text-2xl font-bold text-gray-800 dark:text-white">{t('menu')}</SheetTitle>
+                  <SheetDescription className="text-gray-600 dark:text-gray-400">
+                    {t('navigateSections')}
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-8 flex flex-col gap-4">
+                  <LanguageSwitcher variant="compact" className="mb-2" />
                   <Button
-                    className="mt-2 w-full justify-center h-auto py-3 px-4 bg-[#00aeef] text-white hover:bg-[#0090c5]"
-                    onClick={() => {
-                      handleInstallClick()
-                      setMobileMenuOpen(false)
-                    }}
+                    variant="outline"
+                    className={`w-full justify-start ${dir === 'rtl' ? 'text-right' : 'text-left'} h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30`}
+                    onClick={() => { router.push('/about'); setMobileMenuOpen(false) }}
                   >
-                    Download app
+                    <BookOpen className={`${dir === 'rtl' ? 'ml-3' : 'mr-3'} h-5 w-5`} />
+                    <div className={`flex flex-col ${dir === 'rtl' ? 'items-end' : 'items-start'}`}>
+                      <span className="font-semibold text-gray-800 dark:text-white">{t('about')}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{t('aboutDesc')}</span>
+                    </div>
                   </Button>
-                )}
-							</div>
-						</SheetContent>
-					</Sheet>
-				</div>
-			</div>
-			{/* Header */}
-			<div className="container mx-auto px-4 py-8">
-				{/* Floating decorative letters */}
-				<div className="pointer-events-none select-none absolute inset-0 -z-10">
-					<div className="absolute left-6 top-24 text-pink-400/30 text-6xl">A</div>
-					<div className="absolute right-8 top-40 text-purple-400/30 text-7xl">B</div>
-					<div className="absolute left-12 bottom-28 text-blue-400/30 text-5xl">C</div>
-					<div className="absolute right-16 bottom-16 text-emerald-400/30 text-6xl">D</div>
-				</div>
-        <motion.div 
-					className="text-center"
+                  <Button
+                    variant="outline"
+                    className={`w-full justify-start ${dir === 'rtl' ? 'text-right' : 'text-left'} h-auto py-4 px-4 bg-white/80 dark:bg-white/10 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/30`}
+                    onClick={() => { router.push('/contact'); setMobileMenuOpen(false) }}
+                  >
+                    <MessageSquare className={`${dir === 'rtl' ? 'ml-3' : 'mr-3'} h-5 w-5`} />
+                    <div className={`flex flex-col ${dir === 'rtl' ? 'items-end' : 'items-start'}`}>
+                      <span className="font-semibold text-gray-800 dark:text-white">{t('contact')}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{t('contactDesc')}</span>
+                    </div>
+                  </Button>
+                  {!appInstalled && (
+                    <Button
+                      className="mt-2 w-full justify-center h-auto py-3 px-4 bg-[#00aeef] text-white hover:bg-[#0090c5]"
+                      onClick={() => { handleInstallClick(); setMobileMenuOpen(false) }}
+                    >
+                      {t('download')}
+                    </Button>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="pointer-events-none select-none absolute inset-0 -z-10">
+          <div className="absolute left-6 top-24 text-pink-400/30 text-6xl">A</div>
+          <div className="absolute right-8 top-40 text-purple-400/30 text-7xl">B</div>
+          <div className="absolute left-12 bottom-28 text-blue-400/30 text-5xl">C</div>
+          <div className="absolute right-16 bottom-16 text-emerald-400/30 text-6xl">D</div>
+        </div>
+        <motion.div
+          className="text-center"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-					<div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6">
             <Mascot emotion="celebrating" size="large" />
           </div>
-          
-					<div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-white/90 bg-white/95 px-6 py-5 shadow-[0_12px_40px_-12px_rgba(0,51,102,0.18)] backdrop-blur-md dark:border-white/15 dark:bg-slate-900/92 dark:shadow-black/25">
-						<motion.h1
-							className="text-5xl md:text-7xl font-extrabold mb-2 bg-gradient-to-r from-indigo-900 via-violet-800 to-fuchsia-800 bg-clip-text text-transparent dark:from-indigo-200 dark:via-violet-200 dark:to-fuchsia-200"
-							initial={{ scale: 0 }}
-							animate={{ scale: 1 }}
-							transition={{ delay: 0.3, type: 'spring', stiffness: 100 }}
-						>
-							Kids English
-						</motion.h1>
-						<motion.p
-							className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ delay: 0.6 }}
-						>
-							Learning Adventure! 🌟
-						</motion.p>
-					</div>
 
-					<motion.div 
-						className="max-w-3xl mx-auto mb-12"
+          <div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-white/90 bg-white/95 px-6 py-5 shadow-[0_12px_40px_-12px_rgba(0,51,102,0.18)] backdrop-blur-md dark:border-white/15 dark:bg-slate-900/92 dark:shadow-black/25">
+            <motion.h1
+              className="text-5xl md:text-7xl font-extrabold mb-2 bg-gradient-to-r from-indigo-900 via-violet-800 to-fuchsia-800 bg-clip-text text-transparent dark:from-indigo-200 dark:via-violet-200 dark:to-fuchsia-200"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring', stiffness: 100 }}
+            >
+              {t('welcomeTitle')}
+            </motion.h1>
+            <motion.p
+              className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              {t('welcomeSubtitle')}
+            </motion.p>
+          </div>
+
+          <motion.div
+            className="max-w-3xl mx-auto mb-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-						<div className="space-y-4">
+            <div className="space-y-4">
               <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-md dark:border-white/20 dark:bg-slate-900/95 dark:shadow-black/20">
                 <p className="text-base font-medium leading-relaxed text-slate-900 dark:text-white">
-                  Join millions of kids learning English through fun games, interactive activities,
-                  and magical adventures!
+                  {t('welcomeDescription')}
                 </p>
               </div>
               {isIOSStandaloneHintVisible && !installPrompt && !appInstalled && (
@@ -226,43 +248,38 @@ export default function WelcomePage() {
                     <Star className="w-4 h-4 text-amber-500" />
                   </div>
                   <div>
-                    <p className="font-semibold mb-1">
-                      Add this app to your iPhone or iPad
-                    </p>
-                    <p>
-                      Tap the <span className="font-semibold">Share</span> button in Safari, then choose{' '}
-                      <span className="font-semibold">“Add to Home Screen”</span> to install the app.
-                    </p>
+                    <p className="font-semibold mb-1">{t('iosHintTitle')}</p>
+                    <p dangerouslySetInnerHTML={{ __html: t('iosHintText') }} />
                   </div>
                 </div>
               )}
             </div>
-					</motion.div>
+          </motion.div>
 
           {/* CTA Buttons */}
-					<motion.div 
-						className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
           >
-						<Button 
-							size="lg"
-							className="text-lg px-8 py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300"
-							onClick={() => router.push('/register')}
-						>
-							<Star className="w-5 h-5 mr-2" />
-							Start Learning Now!
-						</Button>
-            
-						<Button 
-							size="lg"
-							variant="outline"
-							className="text-lg px-8 py-5 rounded-2xl border-2 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white bg-white/80 dark:bg-white/10 hover:bg-white hover:shadow-md dark:hover:bg-white/20 font-semibold transition-all duration-300"
-							onClick={() => router.push('/login')}
-						>
-							I Already Have an Account
-						</Button>
+            <Button
+              size="lg"
+              className="text-lg px-8 py-5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300"
+              onClick={() => router.push('/register')}
+            >
+              <Star className={`w-5 h-5 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+              {t('startLearning')}
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-5 rounded-2xl border-2 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white bg-white/80 dark:bg-white/10 hover:bg-white hover:shadow-md dark:hover:bg-white/20 font-semibold transition-all duration-300"
+              onClick={() => router.push('/login')}
+            >
+              {t('haveAccount')}
+            </Button>
           </motion.div>
 
           <div id="about-section">
@@ -272,48 +289,48 @@ export default function WelcomePage() {
           {/* Install help modal */}
           {showInstallHelp && !appInstalled && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-              <div className="max-w-md w-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 shadow-xl">
+              <div className={`max-w-md w-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-6 shadow-xl ${dir === 'rtl' ? 'text-right' : ''}`}>
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                      How to install this app
+                      {t('howToInstall')}
                     </h2>
                     <p className="text-sm text-slate-600 dark:text-slate-300">
-                      Follow the steps below to add Kids English to your device.
+                      {t('installSteps')}
                     </p>
                   </div>
                   <button
                     onClick={() => setShowInstallHelp(false)}
                     className="rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300"
-                    aria-label="Close install help"
+                    aria-label={t('close')}
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
-                  <p className="font-semibold">On Android (Chrome):</p>
-                  <ul className="list-disc list-inside pl-1 space-y-1">
-                    <li>Tap the browser menu <span className="font-semibold">(⋮)</span> in the top-right.</li>
-                    <li>Choose <span className="font-semibold">“Install app”</span> or <span className="font-semibold">“Add to Home screen”</span>.</li>
+                  <p className="font-semibold">{t('onAndroid')}</p>
+                  <ul className={`list-disc ${dir === 'rtl' ? 'list-inside pr-1' : 'list-inside pl-1'} space-y-1`}>
+                    <li>{t('androidStep1')}</li>
+                    <li>{t('androidStep2')}</li>
                   </ul>
-                  <p className="font-semibold mt-3">On iPhone / iPad (Safari):</p>
-                  <ul className="list-disc list-inside pl-1 space-y-1">
-                    <li>Tap the <span className="font-semibold">Share</span> icon.</li>
-                    <li>Scroll and tap <span className="font-semibold">“Add to Home Screen”</span>.</li>
+                  <p className="font-semibold mt-3">{t('onIPhone')}</p>
+                  <ul className={`list-disc ${dir === 'rtl' ? 'list-inside pr-1' : 'list-inside pl-1'} space-y-1`}>
+                    <li>{t('iphoneStep1')}</li>
+                    <li>{t('iphoneStep2')}</li>
                   </ul>
-                  <p className="font-semibold mt-3">On computer (Chrome / Edge):</p>
-                  <ul className="list-disc list-inside pl-1 space-y-1">
-                    <li>Open the browser menu.</li>
-                    <li>Select <span className="font-semibold">“Install Kids English”</span> or <span className="font-semibold">“Install app”</span>.</li>
+                  <p className="font-semibold mt-3">{t('onComputer')}</p>
+                  <ul className={`list-disc ${dir === 'rtl' ? 'list-inside pr-1' : 'list-inside pl-1'} space-y-1`}>
+                    <li>{t('computerStep1')}</li>
+                    <li>{t('computerStep2')}</li>
                   </ul>
                 </div>
-                <div className="mt-5 flex justify-end">
+                <div className={`mt-5 flex ${dir === 'rtl' ? 'justify-start' : 'justify-end'}`}>
                   <Button
                     variant="outline"
                     className="text-sm"
                     onClick={() => setShowInstallHelp(false)}
                   >
-                    Got it
+                    {t('gotIt')}
                   </Button>
                 </div>
               </div>
@@ -322,40 +339,18 @@ export default function WelcomePage() {
         </motion.div>
 
         {/* Age Groups */}
-        <motion.div 
+        <motion.div
           className="text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
           <h2 className="mb-8 text-4xl font-bold text-slate-900 drop-shadow-sm dark:text-white dark:drop-shadow-lg">
-            Perfect for Every Age!
+            {t('perfectForEveryAge')}
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            {[
-              {
-                age: "Ages 3-5",
-                title: "Little Learners",
-                features: ["Alphabet & Phonics", "Colors & Animals", "Simple Words"],
-                from: "from-amber-500", to: "to-orange-500",
-                shadow: "shadow-amber-500/20",
-              },
-              {
-                age: "Ages 6-8", 
-                title: "Word Builders",
-                features: ["Sentence Building", "Basic Grammar", "Spelling Games"],
-                from: "from-emerald-500", to: "to-teal-500",
-                shadow: "shadow-emerald-500/20",
-              },
-              {
-                age: "Ages 9-12",
-                title: "Language Masters", 
-                features: ["Creative Writing", "Conversations", "Advanced Grammar"],
-                from: "from-violet-500", to: "to-indigo-500",
-                shadow: "shadow-violet-500/20",
-              }
-            ].map((group, index) => (
+            {ageGroups.map((group, index) => (
               <motion.div
                 key={index}
                 className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-lg dark:border-slate-700/60 dark:bg-slate-900/95"
@@ -365,7 +360,7 @@ export default function WelcomePage() {
                 whileHover={{ y: -4 }}
               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${group.from} ${group.to} rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg ${group.shadow} text-xl font-bold`}>
-                  {group.age.split(' ')[1]}
+                  {group.ageShort}
                 </div>
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1">{group.age}</h3>
                 <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4">{group.title}</h4>
@@ -381,22 +376,22 @@ export default function WelcomePage() {
             ))}
           </div>
         </motion.div>
-			</div>
+      </div>
 
-			{/* Footer */}
-			<div className="container mx-auto px-4 pb-8">
-				<div className="mx-auto max-w-4xl rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-md backdrop-blur-sm dark:border-white/20 dark:bg-slate-900/90 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-					<p className="max-w-xl text-center text-sm font-medium leading-relaxed text-slate-800 md:text-left dark:text-white/85">
-						Built with ❤️ for kids. New: Reading Library, Math in English, Creative Writing, Word & Picture Puzzles, Alphabet Coloring, Daily Challenges, and a Parent Progress Dashboard.
-					</p>
-					<AppQrBlock className="shrink-0" />
+      {/* Footer */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className={`mx-auto max-w-4xl rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-md backdrop-blur-sm dark:border-white/20 dark:bg-slate-900/90 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8`}>
+          <p className={`max-w-xl text-center text-sm font-medium leading-relaxed text-slate-800 ${dir === 'rtl' ? 'md:text-right' : 'md:text-left'} dark:text-white/85`}>
+            {t('footerText')}
+          </p>
+          <AppQrBlock className="shrink-0" />
         </div>
       </div>
-      
+
       {/* Audio Settings Modal */}
-      <AudioSettings 
-        isOpen={showAudioSettings} 
-        onClose={() => setShowAudioSettings(false)} 
+      <AudioSettings
+        isOpen={showAudioSettings}
+        onClose={() => setShowAudioSettings(false)}
       />
     </div>
   )

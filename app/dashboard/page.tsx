@@ -13,9 +13,11 @@ import {
 } from 'lucide-react'
 import { getUserSubscription } from '@/lib/crypto-payment'
 import { progressManager } from '@/lib/progress'
+import { useTranslation } from '@/lib/i18n'
 
 export default function DashboardPage() {
   const router = useRouter()
+  const { t, dir } = useTranslation()
   const [user, setUser] = useState<any>(null)
   const [children, setChildren] = useState<Child[]>([])
   const [loading, setLoading] = useState(true)
@@ -296,7 +298,7 @@ const handleDeleteChild = async (childId: string) => {
             <div className="animate-spin rounded-full h-32 w-32 border-4 border-purple-200 dark:border-purple-800 mx-auto mb-4"></div>
             <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-purple-500 dark:border-purple-400 absolute top-0 left-1/2 -translate-x-1/2"></div>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">Loading your dashboard...</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">{t('loadingDashboard')}</p>
         </div>
       </div>
     )
@@ -310,7 +312,7 @@ const handleDeleteChild = async (childId: string) => {
           <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
             <span className="text-3xl">🔒</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Please log in</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('pleaseLogin')}</h2>
           <p className="text-gray-600 mb-6">You need to be logged in to access the dashboard.</p>
           <Button 
             onClick={() => router.push('/login')}
@@ -345,7 +347,7 @@ const handleDeleteChild = async (childId: string) => {
                   Kids English
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
-                  Welcome back, {user?.name || 'Parent'}!
+                  {t('welcomeDashboard')}, {user?.name || 'Parent'}!
                 </p>
               </div>
               {subscription?.isPremium && (
@@ -376,24 +378,24 @@ const handleDeleteChild = async (childId: string) => {
                 onClick={() => router.push('/parent-dashboard')}
                 className="hidden md:flex bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 text-white font-medium px-4 text-sm rounded-xl shadow-sm"
               >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Progress
+                <BarChart3 className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+                {t('progress')}
               </Button>
               <Button 
                 onClick={() => router.push('/rewards')}
                 variant="outline"
                 className="hidden md:flex font-medium px-4 text-sm rounded-xl border-slate-200 dark:border-slate-700"
               >
-                <Gift className="w-4 h-4 mr-2" />
-                Rewards
+                <Gift className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+                {t('rewards')}
               </Button>
               {!subscription?.isPremium && (
                 <Button 
                   onClick={() => router.push('/payment')}
                   className="hidden md:flex bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-medium px-4 text-sm rounded-xl shadow-sm"
                 >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Upgrade
+                  <Sparkles className={`w-4 h-4 ${dir === 'rtl' ? 'ml-2' : 'mr-2'}`} />
+                  {t('upgrade')}
                 </Button>
               )}
               
@@ -445,7 +447,7 @@ const handleDeleteChild = async (childId: string) => {
                 size="icon" 
                 onClick={() => router.push('/settings')}
                 className="hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-xl"
-                title="Settings"
+                title={t('settings')}
               >
                 <Settings className="w-5 h-5" />
               </Button>
@@ -454,7 +456,7 @@ const handleDeleteChild = async (childId: string) => {
                 size="icon" 
                 onClick={handleLogout}
                 className="hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl"
-                title="Logout"
+                title={t('logout')}
               >
                 <LogOut className="w-5 h-5" />
               </Button>
