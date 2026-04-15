@@ -5712,613 +5712,372 @@ export default function GrammarModule() {
 
   const currentExerciseData = selectedTopic?.exercises[currentExercise]
 
+  const DIFFICULTY_STYLES = {
+    beginner: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300', gradient: 'from-emerald-400 to-teal-500', light: 'from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20', border: 'border-emerald-200 dark:border-emerald-800/50' },
+    intermediate: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', gradient: 'from-amber-400 to-orange-500', light: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20', border: 'border-amber-200 dark:border-amber-800/50' },
+    advanced: { bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300', gradient: 'from-violet-400 to-purple-500', light: 'from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20', border: 'border-violet-200 dark:border-violet-800/50' },
+  }
+
+  const FILTER_OPTIONS = [
+    { id: 'all' as const, label: 'All Topics', emoji: '📚' },
+    { id: 'beginner' as const, label: 'Beginner', emoji: '🌱' },
+    { id: 'intermediate' as const, label: 'Intermediate', emoji: '⚡' },
+    { id: 'advanced' as const, label: 'Advanced', emoji: '🏆' },
+  ]
+
   return (
-    <div className="min-h-screen">
-      {/* Header - Embers premium */}
-      <div className="bg-white/80 dark:bg-[#003366]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-[#003366] sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/learning')}
-                className="hover:bg-[#00aeef]/10 dark:hover:bg-[#00aeef]/20 rounded-xl transition-all hover:scale-105 text-slate-700 dark:text-slate-200"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="p-2.5 bg-gradient-to-br from-[#8c0066] to-[#00aeef] rounded-xl shadow-lg ring-2 ring-black/5 dark:ring-white/5">
-                    <BookOpen className="w-6 h-6 text-white" />
-                  </div>
-                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-[#8c0066] via-[#00aeef] to-[#8eca40] bg-clip-text text-transparent">
-                    English Grammar
-                  </h1>
-                </div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mt-1 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#00aeef]" />
-                  Learn grammar from A to Z
-                </p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50/50 via-white to-violet-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950/20">
+      <div className="max-w-5xl mx-auto px-4 py-5 sm:py-8">
+
+        {/* Header */}
+        <motion.header
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-6"
+        >
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => selectedTopic ? setSelectedTopic(null) : router.push('/learning')}
+              className="rounded-full w-10 h-10 p-0 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+                <span className="text-2xl">📖</span> English Grammar
+              </h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Learn grammar from A to Z</p>
             </div>
-            {selectedTopic && (
-              <div className="flex items-center gap-6">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="px-4 py-2 bg-[#8eca40]/20 dark:bg-[#8eca40]/15 rounded-xl border border-[#00aeef]/30 dark:border-[#00aeef]/40 shadow-md"
-                >
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-[#00aeef]" />
-                    <div>
-                      <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold">Score</div>
-                      <div className="text-xl font-bold text-[#8c0066] dark:text-[#8eca40]">
-                        {score} / {totalExercises}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="px-4 py-2 bg-[#003366]/10 dark:bg-[#003366]/20 rounded-xl border border-[#003366]/30 dark:border-[#003366]/50 shadow-md"
-                >
-                  <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-[#8c0066] dark:text-[#8eca40]" />
-                    <div>
-                      <div className="text-xs text-slate-600 dark:text-slate-300 font-semibold">Progress</div>
-                      <div className="text-xl font-bold text-[#003366] dark:text-slate-200">
-                        {currentExercise + 1} / {totalExercises}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            )}
           </div>
-        </div>
-      </div>
+          {selectedTopic && (
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                <div className="flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{score}/{totalExercises}</span>
+                </div>
+              </div>
+              <div className="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+                <span className="text-sm font-bold text-indigo-700 dark:text-indigo-300">{currentExercise + 1}/{totalExercises}</span>
+              </div>
+            </div>
+          )}
+        </motion.header>
 
-      <div className="container mx-auto px-4 py-8">
+        <AnimatePresence mode="wait">
         {!selectedTopic ? (
-          <>
-            {/* Topic Selection - Premium Enhanced */}
-            <div className="mb-8">
-              <div className="flex flex-wrap gap-3 mb-6">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setFilter('all')}
-                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    filter === 'all'
-                      ? 'bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white shadow-lg shadow-[#00aeef]/25'
-                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
-                  }`}
-                >
-                  All Topics
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setFilter('beginner')}
-                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    filter === 'beginner'
-                      ? 'bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white shadow-lg shadow-[#00aeef]/25'
-                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
-                  }`}
-                >
-                  Beginner
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setFilter('intermediate')}
-                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    filter === 'intermediate'
-                      ? 'bg-gradient-to-r from-[#00aeef] to-[#8eca40] text-white shadow-lg shadow-[#8eca40]/25'
-                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
-                  }`}
-                >
-                  Intermediate
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setFilter('advanced')}
-                  className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                    filter === 'advanced'
-                      ? 'bg-gradient-to-r from-[#003366] to-[#8c0066] text-white shadow-lg'
-                      : 'bg-white/90 dark:bg-[#003366]/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/40 hover:shadow-md'
-                  }`}
-                >
-                  Advanced
-                </motion.button>
+          <motion.div key="topics" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            {/* Filters */}
+            <div className="mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {FILTER_OPTIONS.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setFilter(f.id)}
+                    className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all ${
+                      filter === f.id
+                        ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 scale-[1.02]'
+                        : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 border border-slate-200 dark:border-slate-700 shadow-sm'
+                    }`}
+                  >
+                    <span>{f.emoji}</span>
+                    <span>{f.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Topics Grid - Embers premium */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Topic Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredTopics.map((topic, index) => {
                 const TopicIcon = TOPIC_ICONS[topic.id] ?? BookOpen
+                const ds = DIFFICULTY_STYLES[topic.difficulty]
+                const isCompleted = completedTopics.has(topic.id)
                 return (
-                <motion.div
-                  key={topic.id}
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: index * 0.06, type: "spring", stiffness: 120 }}
-                  whileHover={{ y: -4 }}
-                  className="h-full"
-                >
-                  <Card
-                    className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-all duration-300 h-full ${
-                      completedTopics.has(topic.id) 
-                        ? 'border-[#8c0066]/40 dark:border-[#8c0066]/50 bg-white/95 dark:bg-[#003366]/40 shadow-xl shadow-[#00aeef]/10 ring-2 ring-[#00aeef]/20' 
-                        : 'border-slate-200/80 dark:border-[#003366] bg-white/90 dark:bg-[#003366]/30 hover:border-[#00aeef]/40 hover:shadow-xl hover:shadow-[#00aeef]/10'
-                    }`}
-                    onClick={() => handleTopicSelect(topic)}
+                  <motion.div
+                    key={topic.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.04 }}
+                    whileHover={{ y: -4 }}
+                    className="group"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#00aeef]/0 via-[#8eca40]/0 to-[#8c0066]/0 group-hover:from-[#00aeef]/5 group-hover:via-transparent group-hover:to-[#8c0066]/5 transition-all duration-300" />
-                    {completedTopics.has(topic.id) && (
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00aeef]/20 to-transparent rounded-bl-full" />
-                    )}
-                    <CardContent className="p-6 relative z-10">
-                      <div className="flex items-start gap-4 mb-4">
-                        <motion.div
-                          whileHover={{ scale: 1.08 }}
-                          className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8c0066] to-[#00aeef] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
-                        >
-                          <TopicIcon className="w-7 h-7" strokeWidth={2} />
-                        </motion.div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-                              {topic.title}
-                            </h3>
-                            {completedTopics.has(topic.id) && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="flex items-center gap-1 px-2 py-1 bg-[#00aeef]/15 dark:bg-[#00aeef]/25 rounded-full"
-                              >
-                                <CheckCircle className="w-3.5 h-3.5 text-[#00aeef]" />
-                                <span className="text-xs font-semibold text-[#8c0066] dark:text-[#8eca40]">Done</span>
-                              </motion.div>
-                            )}
+                    <div
+                      className={`cursor-pointer rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 bg-gradient-to-br ${ds.light} border ${ds.border} shadow-md hover:shadow-xl ${
+                        isCompleted ? 'ring-2 ring-emerald-400 dark:ring-emerald-500' : ''
+                      }`}
+                      onClick={() => handleTopicSelect(topic)}
+                    >
+                      <div className={`h-1.5 bg-gradient-to-r ${ds.gradient}`} />
+                      <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${ds.gradient} flex items-center justify-center shadow-md`}>
+                            <TopicIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
                           </div>
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <p className="text-sm font-medium text-[#003366] dark:text-slate-400">
-                              {topic.category}
-                            </p>
-                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
-                              topic.difficulty === 'beginner' 
-                                ? 'bg-[#8c0066]/20 text-[#8c0066] dark:bg-[#8eca40]/20 dark:text-[#8eca40]' :
-                                topic.difficulty === 'intermediate' 
-                                ? 'bg-[#00aeef]/20 text-[#00aeef] dark:bg-[#00aeef]/30 dark:text-[#8eca40]' :
-                                'bg-[#003366]/30 text-[#003366] dark:text-slate-300'
-                            }`}>
+                          <div className="flex items-center gap-1.5">
+                            {isCompleted && (
+                              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">
+                                <CheckCircle className="w-3 h-3" /> Done
+                              </span>
+                            )}
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${ds.bg} ${ds.text}`}>
                               {topic.difficulty}
                             </span>
                           </div>
                         </div>
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed line-clamp-2">
-                        {topic.description}
-                      </p>
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-200/80 dark:border-[#003366]/60">
-                        <div className="flex items-center gap-2 text-sm font-medium text-[#8c0066] dark:text-[#8eca40]">
-                          <BookOpen className="w-4 h-4" />
-                          <span>{topic.exercises.length} exercises</span>
+
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white">{topic.title}</h3>
+                        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{topic.category}</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed line-clamp-2 flex-1">{topic.description}</p>
+
+                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                            <BookOpen className="w-3.5 h-3.5" />
+                            {topic.exercises.length} exercises
+                          </span>
+                          <span className={`text-xs font-bold ${ds.text} group-hover:translate-x-0.5 transition-transform`}>
+                            Start →
+                          </span>
                         </div>
-                        <motion.div whileHover={{ x: 4 }} className="text-[#00aeef]">
-                          <ArrowLeft className="w-5 h-5 rotate-180" />
-                        </motion.div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
+                    </div>
+                  </motion.div>
+                )
               })}
             </div>
-          </>
+          </motion.div>
         ) : (
-          <>
-            {/* Topic Content - Embers premium */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-6"
-            >
-              <Card className="mb-6 border border-slate-200/80 dark:border-[#003366] shadow-2xl bg-white/95 dark:bg-[#003366]/30 overflow-hidden relative rounded-3xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00aeef]/10 dark:bg-[#00aeef]/5 rounded-full blur-3xl -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#8eca40]/10 dark:bg-[#8eca40]/5 rounded-full blur-3xl -ml-24 -mb-24" />
-                <CardHeader className="relative z-10 pb-6 border-b border-slate-200/80 dark:border-[#003366]/60">
-                  <div className="flex items-start gap-6">
-                    {(() => {
-                      const TopicIconInner = TOPIC_ICONS[selectedTopic.id] ?? BookOpen
-                      return (
-                        <motion.div
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                          className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#8c0066] to-[#00aeef] flex items-center justify-center shadow-lg ring-2 ring-black/5 dark:ring-white/5 text-white"
-                        >
-                          <TopicIconInner className="w-8 h-8" strokeWidth={2} />
-                        </motion.div>
-                      )
-                    })()}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h2 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">
-                          {selectedTopic.title}
-                        </h2>
-                        <motion.span
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.2 }}
-                          className="px-3 py-1 bg-[#8c0066]/20 text-[#8c0066] dark:bg-[#00aeef]/20 dark:text-[#8eca40] text-xs font-bold rounded-full"
-                        >
-                          {selectedTopic.difficulty.toUpperCase()}
-                        </motion.span>
+          <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            {/* Topic Detail */}
+            {(() => {
+              const ds = DIFFICULTY_STYLES[selectedTopic.difficulty]
+              const TopicIconDetail = TOPIC_ICONS[selectedTopic.id] ?? BookOpen
+              return (
+                <>
+                  <div className={`rounded-3xl overflow-hidden bg-gradient-to-br ${ds.light} border ${ds.border} shadow-xl mb-6`}>
+                    <div className={`h-2 bg-gradient-to-r ${ds.gradient}`} />
+                    <div className="p-5 sm:p-8">
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${ds.gradient} flex items-center justify-center shadow-lg shrink-0`}>
+                          <TopicIconDetail className="w-7 h-7 text-white" strokeWidth={2} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{selectedTopic.title}</h2>
+                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${ds.bg} ${ds.text}`}>{selectedTopic.difficulty}</span>
+                          </div>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{selectedTopic.category} · {selectedTopic.description}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-[#00aeef]" />
-                        <p className="text-[#003366] dark:text-slate-400 font-semibold text-lg">
-                          {selectedTopic.category}
-                        </p>
+
+                      {/* Explanation */}
+                      <div className="rounded-2xl bg-white/70 dark:bg-slate-800/50 p-5 border border-slate-200/50 dark:border-slate-700/50 mb-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <BookOpen className="w-4 h-4 text-indigo-500" />
+                          <h3 className="text-base font-bold text-slate-800 dark:text-white">What is {selectedTopic.title}?</h3>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => premiumTTS.speak(selectedTopic.explanation, { voice: 'clear', rate: 0.75, volume: 1 })}
+                            className="ml-auto rounded-full w-8 h-8 p-0"
+                          >
+                            <Volume2 className="w-4 h-4 text-indigo-500" />
+                          </Button>
+                        </div>
+                        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{selectedTopic.explanation}</p>
                       </div>
-                      <p className="text-slate-600 dark:text-slate-300 mt-2 text-sm">
-                        {selectedTopic.description}
-                      </p>
+
+                      {/* Examples */}
+                      <div className="mb-6">
+                        <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+                          <Star className="w-4 h-4 text-amber-500" /> Examples
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {selectedTopic.examples.slice(0, 6).map((example, idx) => (
+                            <div key={idx} className="flex items-center gap-2 p-3 rounded-xl bg-white/60 dark:bg-slate-800/40 border border-slate-200/40 dark:border-slate-700/40">
+                              <span className="text-amber-500 text-xs">●</span>
+                              <p className="text-sm text-slate-700 dark:text-slate-300 flex-1">{example}</p>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); premiumTTS.speak(example, { voice: 'clear', rate: 0.75, volume: 1 }) }}
+                                className="shrink-0 text-slate-400 hover:text-indigo-500 transition-colors"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => {
+                            if (selectedTopic.exercises.length > 0) {
+                              setCurrentExercise(0); setScore(0); setTotalExercises(selectedTopic.exercises.length); setSelectedAnswer(null); setShowResult(false)
+                            }
+                          }}
+                          className={`flex-1 h-12 rounded-2xl bg-gradient-to-r ${ds.gradient} text-white font-bold shadow-lg`}
+                          disabled={selectedTopic.exercises.length === 0}
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Start Exercises ({selectedTopic.exercises.length})
+                        </Button>
+                        <Button onClick={() => setSelectedTopic(null)} variant="outline" className="h-12 px-5 rounded-2xl border-slate-200 dark:border-slate-600">
+                          <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="relative z-10 pt-8">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="mb-8 p-6 bg-slate-50/80 dark:bg-[#003366]/20 rounded-2xl border border-slate-200/80 dark:border-[#003366]/50 shadow-md"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-gradient-to-br from-[#8c0066] to-[#00aeef] rounded-lg shadow-md text-white">
-                        <BookOpen className="w-5 h-5" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                        What is {selectedTopic.title}?
-                      </h3>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => premiumTTS.speak(selectedTopic.explanation, { voice: 'clear', rate: 0.75, volume: 1 })}
-                        className="flex-shrink-0 rounded-full border-2 border-[#00aeef]/40 hover:bg-[#00aeef]/10"
-                        title="Listen to definition"
-                      >
-                        <Volume2 className="w-5 h-5 text-[#00aeef]" />
-                      </Button>
-                    </div>
-                    <p className="text-slate-700 dark:text-slate-200 text-lg leading-relaxed">
-                      {selectedTopic.explanation}
-                    </p>
-                  </motion.div>
 
-                  {/* Examples Section - Premium with Animation */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="mb-8"
-                  >
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-md">
-                        <Star className="w-5 h-5 text-white fill-white" />
-                      </div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                        Examples
-                      </h3>
-                      <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-sm font-semibold rounded-full">
-                        {selectedTopic.examples.length} examples
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {selectedTopic.examples.map((example, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          transition={{ delay: 0.3 + idx * 0.05, type: "spring", stiffness: 100 }}
-                          whileHover={{ scale: 1.02, y: -2 }}
-                          className="group relative p-4 bg-white dark:bg-[#003366]/30 rounded-xl border-2 border-slate-200 dark:border-[#003366] hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60 shadow-md hover:shadow-xl transition-all duration-300"
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 mt-1">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                                <Star className="w-4 h-4 text-white fill-white" />
-                              </div>
-                            </div>
-                            <p className="text-gray-800 dark:text-gray-100 text-base font-medium leading-relaxed flex-1">
-                              {example}
-                            </p>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => premiumTTS.speak(example, { voice: 'clear', rate: 0.75, volume: 1 })}
-                              className="flex-shrink-0 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
-                              title="Listen to example"
-                            >
-                              <Volume2 className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                  {/* Exercise Card */}
+                  {currentExerciseData && (
+                    <motion.div key={currentExercise} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+                      <div className="bg-white dark:bg-slate-800/90 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+                        {/* Progress bar */}
+                        <div className="h-1.5 bg-slate-100 dark:bg-slate-700">
+                          <motion.div
+                            className={`h-full bg-gradient-to-r ${ds.gradient}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${((currentExercise + 1) / totalExercises) * 100}%` }}
+                            transition={{ duration: 0.4 }}
+                          />
+                        </div>
+                        <div className="p-5 sm:p-8">
+                          <div className="flex items-center justify-between mb-5">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+                              Exercise {currentExercise + 1} <span className="text-slate-400 font-normal text-sm">of {totalExercises}</span>
+                            </h3>
+                            <Button variant="ghost" size="sm" onClick={handleReset} className="rounded-full w-8 h-8 p-0">
+                              <RotateCcw className="w-4 h-4" />
                             </Button>
                           </div>
-                          {/* Hover effect overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#00aeef]/0 to-[#8eca40]/0 group-hover:from-[#00aeef]/5 group-hover:to-[#8eca40]/5 rounded-xl transition-all duration-300 pointer-events-none" />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-4">
-                    <Button
-                      onClick={() => {
-                        if (selectedTopic.exercises.length > 0) {
-                          setCurrentExercise(0)
-                          setScore(0)
-                          setTotalExercises(selectedTopic.exercises.length)
-                          setSelectedAnswer(null)
-                          setShowResult(false)
-                        }
-                      }}
-                      className="flex-1 bg-gradient-to-r from-[#8c0066] to-[#00aeef] hover:from-[#8c0066] hover:to-[#00aeef] hover:shadow-[#00aeef]/30 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                      disabled={selectedTopic.exercises.length === 0}
-                    >
-                      <Play className="w-5 h-5 mr-2" />
-                      Start Exercises ({selectedTopic.exercises.length})
-                    </Button>
-                    <Button
-                      onClick={() => setSelectedTopic(null)}
-                      variant="outline"
-                      className="px-6 border-2 border-slate-300 dark:border-[#003366] hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/50 rounded-xl font-semibold transition-all"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Exercise */}
-            {currentExerciseData && (
-              <motion.div
-                key={currentExercise}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="mb-6"
-              >
-                <Card className="card-kid">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
-                        Exercise {currentExercise + 1}
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleReset}
-                        className="rounded-xl"
-                      >
-                        <RotateCcw className="w-5 h-5" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-6">
-                      <p className="text-xl text-gray-700 dark:text-white/80 mb-6">
-                        {currentExerciseData.question}
-                      </p>
-
-                      {currentExerciseData.type === 'multiple-choice' && currentExerciseData.options && (
-                        <div className="space-y-3">
-                          {currentExerciseData.options.map((option, idx) => (
-                            <motion.button
-                              key={idx}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={() => handleAnswerSelect(option)}
-                              onTouchStart={() => handleAnswerSelect(option)}
-                              disabled={showResult}
-                              type="button"
-                              className={`w-full p-4 text-left rounded-xl border-2 transition-all ${
-                                showResult
-                                  ? option === currentExerciseData.correctAnswer
-                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                    : selectedAnswer === option
-                                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                    : 'border-gray-200 dark:border-gray-700'
-                                  : selectedAnswer === option
-                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
-                              }`}
-                              style={{ pointerEvents: 'auto', zIndex: 10 }}
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                  showResult
-                                    ? option === currentExerciseData.correctAnswer
-                                      ? 'border-green-500 bg-green-500'
-                                      : selectedAnswer === option
-                                      ? 'border-red-500 bg-red-500'
-                                      : 'border-gray-300'
-                                    : selectedAnswer === option
-                                    ? 'border-[#00aeef] bg-[#00aeef]'
-                                    : 'border-gray-300'
-                                }`}>
-                                  {showResult && option === currentExerciseData.correctAnswer && (
-                                    <CheckCircle className="w-4 h-4 text-white" />
-                                  )}
-                                  {showResult && selectedAnswer === option && option !== currentExerciseData.correctAnswer && (
-                                    <XCircle className="w-4 h-4 text-white" />
-                                  )}
-                                </div>
-                                <span className="text-gray-800 dark:text-white font-medium">
-                                  {option}
-                                </span>
-                              </div>
-                            </motion.button>
-                          ))}
-                        </div>
-                      )}
-
-                      {currentExerciseData.type === 'fill-blank' && currentExerciseData.options && (
-                        <div className="space-y-3">
-                          {currentExerciseData.options.map((option, idx) => (
-                            <motion.button
-                              key={idx}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={() => handleAnswerSelect(option)}
-                              onTouchStart={() => handleAnswerSelect(option)}
-                              disabled={showResult}
-                              type="button"
-                              className={`w-full p-4 text-center rounded-xl border-2 transition-all ${
-                                showResult
-                                  ? option === currentExerciseData.correctAnswer
-                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                    : selectedAnswer === option
-                                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                    : 'border-gray-200 dark:border-gray-700'
-                                  : selectedAnswer === option
-                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
-                              }`}
-                              style={{ pointerEvents: 'auto', zIndex: 10 }}
-                            >
-                              <span className="text-gray-800 dark:text-white font-medium text-lg">
-                                {option}
-                              </span>
-                            </motion.button>
-                          ))}
-                        </div>
-                      )}
-
-                      {currentExerciseData.type === 'identify' && currentExerciseData.options && (
-                        <div className="space-y-3">
-                          {currentExerciseData.options.map((option, idx) => (
-                            <motion.button
-                              key={idx}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={() => handleAnswerSelect(option)}
-                              onTouchStart={() => handleAnswerSelect(option)}
-                              disabled={showResult}
-                              type="button"
-                              className={`w-full p-4 text-center rounded-xl border-2 transition-all ${
-                                showResult
-                                  ? option === currentExerciseData.correctAnswer
-                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                    : selectedAnswer === option
-                                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                    : 'border-gray-200 dark:border-gray-700'
-                                  : selectedAnswer === option
-                                  ? 'border-[#00aeef] bg-[#00aeef]/10 dark:bg-[#00aeef]/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-[#00aeef]/50 dark:hover:border-[#00aeef]/60'
-                              }`}
-                              style={{ pointerEvents: 'auto', zIndex: 10 }}
-                            >
-                              <span className="text-gray-800 dark:text-white font-medium text-lg">
-                                {option}
-                              </span>
-                            </motion.button>
-                          ))}
-                        </div>
-                      )}
-
-                      {showResult && currentExerciseData.explanation && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className={`mt-6 p-4 rounded-xl ${
-                            isCorrect
-                              ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500'
-                              : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {isCorrect ? (
-                              <CheckCircle className="w-6 h-6 text-green-500 mt-1 flex-shrink-0" />
-                            ) : (
-                              <XCircle className="w-6 h-6 text-red-500 mt-1 flex-shrink-0" />
-                            )}
-                            <div>
-                              <p className={`font-semibold mb-1 ${
-                                isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
-                              }`}>
-                                {isCorrect ? 'Correct! 🎉' : 'Not quite. Try again!'}
-                              </p>
-                              <p className="text-gray-700 dark:text-white/80">
-                                {currentExerciseData.explanation}
-                              </p>
+                          {/* Mobile score */}
+                          <div className="flex sm:hidden items-center gap-2 mb-4">
+                            <div className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">Score: {score}/{totalExercises}</span>
                             </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </div>
 
-                    <div className="flex gap-3">
-                      {!showResult ? (
-                        <Button
-                          onClick={handleSubmitAnswer}
-                          disabled={!selectedAnswer}
-                          className="flex-1 bg-gradient-to-r from-[#8c0066] to-[#00aeef] text-white hover:opacity-95"
-                          size="lg"
-                        >
-                          Check Answer
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={handleNextExercise}
-                          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
-                          size="lg"
-                        >
-                          {currentExercise < selectedTopic.exercises.length - 1 ? 'Next Exercise' : 'Complete Topic'}
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
+                          <p className="text-base sm:text-lg text-slate-700 dark:text-slate-200 mb-5 font-medium">{currentExerciseData.question}</p>
 
-            {/* Completion Message */}
-            {currentExercise >= (selectedTopic?.exercises.length || 0) - 1 && showResult && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
-              >
-                <Card className="card-kid bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
-                  <CardContent className="p-8">
-                    <Award className="w-16 h-16 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold mb-2">Topic Complete! 🎉</h3>
-                    <p className="text-lg mb-4">
-                      You scored {score} out of {totalExercises}!
-                    </p>
-                    <Button
-                      onClick={() => setSelectedTopic(null)}
-                      className="bg-white text-green-600 hover:bg-gray-100"
-                      size="lg"
-                    >
-                      Back to Topics
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </>
+                          {/* Unified option renderer */}
+                          {currentExerciseData.options && (
+                            <div className="space-y-2.5">
+                              {currentExerciseData.options.map((option, idx) => {
+                                const isAnswer = Array.isArray(currentExerciseData.correctAnswer)
+                                  ? currentExerciseData.correctAnswer.includes(option)
+                                  : currentExerciseData.correctAnswer === option
+                                return (
+                                  <motion.button
+                                    key={idx}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => handleAnswerSelect(option)}
+                                    disabled={showResult}
+                                    type="button"
+                                    className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${
+                                      showResult
+                                        ? isAnswer
+                                          ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20'
+                                          : selectedAnswer === option
+                                          ? 'border-red-400 bg-red-50 dark:bg-red-900/20'
+                                          : 'border-slate-200 dark:border-slate-700 opacity-60'
+                                        : selectedAnswer === option
+                                        ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
+                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10'
+                                    }`}
+                                    style={{ pointerEvents: 'auto' }}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold ${
+                                        showResult
+                                          ? isAnswer
+                                            ? 'border-emerald-400 bg-emerald-400 text-white'
+                                            : selectedAnswer === option
+                                            ? 'border-red-400 bg-red-400 text-white'
+                                            : 'border-slate-300 dark:border-slate-600 text-slate-400'
+                                          : selectedAnswer === option
+                                          ? 'border-indigo-400 bg-indigo-400 text-white'
+                                          : 'border-slate-300 dark:border-slate-600 text-slate-400'
+                                      }`}>
+                                        {showResult && isAnswer ? <CheckCircle className="w-4 h-4" /> :
+                                         showResult && selectedAnswer === option ? <XCircle className="w-4 h-4" /> :
+                                         String.fromCharCode(65 + idx)}
+                                      </div>
+                                      <span className="text-slate-800 dark:text-white font-medium text-sm sm:text-base">{option}</span>
+                                    </div>
+                                  </motion.button>
+                                )
+                              })}
+                            </div>
+                          )}
+
+                          {/* Feedback */}
+                          {showResult && currentExerciseData.explanation && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`mt-5 p-4 rounded-2xl flex items-start gap-3 ${
+                                isCorrect
+                                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'
+                                  : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                              }`}
+                            >
+                              <span className="text-xl mt-0.5">{isCorrect ? '🎉' : '💡'}</span>
+                              <div>
+                                <p className={`font-bold text-sm ${isCorrect ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
+                                  {isCorrect ? 'Correct!' : 'Not quite right'}
+                                </p>
+                                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{currentExerciseData.explanation}</p>
+                              </div>
+                            </motion.div>
+                          )}
+
+                          {/* Action */}
+                          <div className="mt-6">
+                            {!showResult ? (
+                              <Button
+                                onClick={handleSubmitAnswer}
+                                disabled={!selectedAnswer}
+                                className={`w-full h-12 rounded-2xl bg-gradient-to-r ${ds.gradient} text-white font-bold shadow-lg`}
+                              >
+                                <Sparkles className="w-4 h-4 mr-2" /> Check Answer
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={handleNextExercise}
+                                className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold shadow-lg"
+                              >
+                                {currentExercise < selectedTopic.exercises.length - 1 ? 'Next Exercise →' : '✓ Complete Topic'}
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Completion */}
+                  {currentExercise >= (selectedTopic?.exercises.length || 0) - 1 && showResult && (
+                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
+                      <div className="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white p-8 sm:p-10 shadow-xl">
+                        <Award className="w-16 h-16 mx-auto mb-4 opacity-90" />
+                        <h3 className="text-2xl font-extrabold mb-2">Topic Complete! 🎉</h3>
+                        <p className="text-lg opacity-90 mb-6">You scored {score} out of {totalExercises}!</p>
+                        <Button onClick={() => setSelectedTopic(null)} className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold rounded-2xl px-8 h-12 shadow-lg">
+                          Back to Topics
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </>
+              )
+            })()}
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
     </div>
   )
