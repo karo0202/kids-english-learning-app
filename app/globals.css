@@ -204,7 +204,6 @@ button,
   pointer-events: auto !important;
   cursor: pointer !important;
   position: relative;
-  z-index: 10;
 }
 
 /* Mobile touch fixes */
@@ -529,15 +528,6 @@ button,
     background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
     background-size: 1000px 100%;
     animation: shimmer-flow 2s infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
   }
 
   .animate-bounce-in {
@@ -985,12 +975,6 @@ button,
   .hover-rotate:hover {
     transform: none;
   }
-  
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* Accessibility improvements */
@@ -1017,17 +1001,15 @@ button,
   white-space: normal;
 }
 
-/* Focus visible improvements */
-*:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Better focus for keyboard navigation */
+/* Focus visible — unified ring style for interactive elements */
 button:focus-visible,
 a:focus-visible,
-[role="button"]:focus-visible {
+[role="button"]:focus-visible,
+[role="switch"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+  border-radius: inherit;
 }

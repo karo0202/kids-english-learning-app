@@ -30,9 +30,17 @@ export default function MathElementaryModule() {
 
   const WORD_PROBLEMS = [
     { q: 'Anna has 7 apples. She buys 5 more. How many apples altogether?', ans: 12 },
-    { q: 'Tom has 15 marbles. He gives 6 to his friend. How many are left? (Take away)', ans: 9 },
+    { q: 'Tom has 15 marbles. He gives 6 to his friend. How many are left?', ans: 9 },
     { q: 'There are 8 birds. 3 fly away. How many birds stay?', ans: 5 },
     { q: 'Lily has 4 pencils. Her mom gives her 9 more. How many in total?', ans: 13 },
+    { q: 'A baker makes 12 cupcakes. He sells 7. How many cupcakes are left?', ans: 5 },
+    { q: 'There are 6 red balloons and 8 blue balloons. How many balloons in all?', ans: 14 },
+    { q: 'Sara has 20 stickers. She gives 11 to her sister. How many does Sara have now?', ans: 9 },
+    { q: 'A bus has 9 passengers. At the next stop, 6 more people get on. How many passengers now?', ans: 15 },
+    { q: 'You have 3 bags. Each bag has 5 toys. How many toys altogether?', ans: 15 },
+    { q: 'A farmer collects 16 eggs. He uses 8 for breakfast. How many eggs are left?', ans: 8 },
+    { q: 'There are 10 children in a park. 4 go home. Then 3 more arrive. How many children are in the park now?', ans: 9 },
+    { q: 'Mom buys 2 packs of juice. Each pack has 6 bottles. How many bottles of juice in total?', ans: 12 },
   ]
   const wordProblem = WORD_PROBLEMS[wpIndex % WORD_PROBLEMS.length]
 
@@ -176,15 +184,44 @@ export default function MathElementaryModule() {
               <div className="space-y-6">
                 <p className="text-slate-600 dark:text-slate-300 text-sm">Telling time: hour and half-hour. Vocabulary: clock, hour, minute.</p>
                 <div className="rounded-xl bg-slate-100 dark:bg-slate-700/50 p-6 border border-slate-200/60 dark:border-slate-600/60 text-center">
+                  <div className="text-6xl mb-2">🕐</div>
                   <p className="text-4xl font-mono font-bold text-slate-800 dark:text-white tabular-nums">{hour}:{halfHour ? '30' : '00'}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{halfHour ? 'half past' : "o'clock"} {['twelve','one','two','three','four','five','six','seven','eight','nine','ten','eleven'][hour % 12]}</p>
+                  <p className="text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">What time is it?</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" onClick={() => setHour((h) => (h === 0 ? 11 : h - 1))} className="rounded-xl border-slate-200 dark:border-slate-600">Hour −</Button>
-                  <Button variant="outline" onClick={() => setHour((h) => (h === 11 ? 0 : h + 1))} className="rounded-xl border-slate-200 dark:border-slate-600">Hour +</Button>
-                  <Button variant="outline" onClick={() => setHalfHour((h) => !h)} className="rounded-xl border-slate-200 dark:border-slate-600">{halfHour ? 'Half past' : "O'clock"}</Button>
+                <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+                  {(() => {
+                    const hourNames = ['twelve','one','two','three','four','five','six','seven','eight','nine','ten','eleven']
+                    const correctText = halfHour ? `half past ${hourNames[hour % 12]}` : `${hourNames[hour % 12]} o'clock`
+                    const wrongHour1 = (hour + 2) % 12
+                    const wrongHour2 = (hour + 5) % 12
+                    const options = [
+                      correctText,
+                      halfHour ? `${hourNames[wrongHour1]} o'clock` : `half past ${hourNames[wrongHour1]}`,
+                      `${hourNames[wrongHour2]} o'clock`,
+                      halfHour ? `half past ${hourNames[wrongHour2]}` : `${hourNames[(hour + 3) % 12]} o'clock`
+                    ].sort(() => Math.random() - 0.5)
+                    return options.map((opt, i) => (
+                      <Button key={i} variant="outline"
+                        className={`rounded-xl border-slate-200 dark:border-slate-600 min-h-[48px] font-semibold ${timeFeedback === 'correct' && opt === correctText ? 'bg-emerald-100 border-emerald-400' : ''}`}
+                        onClick={() => {
+                          if (opt === correctText) {
+                            setTimeFeedback('correct')
+                            setTimeout(() => {
+                              setHour(Math.floor(Math.random() * 12))
+                              setHalfHour(Math.random() > 0.5)
+                              setTimeFeedback(null)
+                            }, 800)
+                          } else {
+                            setTimeFeedback('try-again')
+                          }
+                        }}
+                      >{opt}</Button>
+                    ))
+                  })()}
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Say the time in English.</p>
+                {timeFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium text-center">Correct! Great job telling the time!</p>}
+                {timeFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium text-center">Look at the clock again. Try another answer!</p>}
+                <Button variant="outline" size="sm" onClick={() => { setHour(Math.floor(Math.random() * 12)); setHalfHour(Math.random() > 0.5); setTimeFeedback(null) }} className="rounded-xl mt-2">New Time</Button>
               </div>
             )}
 

@@ -33,7 +33,7 @@ import {
   Mic,
   PenTool,
   Puzzle,
-  Calculator,
+  GraduationCap,
 } from 'lucide-react'
 
 const ICONS: Record<BadgeIconKey, typeof Sparkles> = {
@@ -145,7 +145,7 @@ export default function RewardsPage() {
       { label: 'Speaking', count: ms.speaking, Icon: Mic, href: '/learning' },
       { label: 'Games', count: ms.games, Icon: Gamepad2, href: '/learning' },
       { label: 'Puzzle', count: ms.puzzle, Icon: Puzzle, href: '/learning' },
-      { label: 'Grammar', count: ms.grammar, Icon: Calculator, href: '/learning' },
+      { label: 'Grammar', count: ms.grammar, Icon: GraduationCap, href: '/learning' },
     ],
     [ms.reading, ms.writing, ms.speaking, ms.games, ms.puzzle, ms.grammar]
   )
@@ -378,7 +378,7 @@ export default function RewardsPage() {
                 className={`flex flex-col items-center gap-1 rounded-2xl border border-slate-200/80 dark:border-slate-600 bg-white/80 dark:bg-slate-900/60 px-2 py-3 text-center ${cardHover} active:scale-[0.98]`}
               >
                 <Icon className="w-5 h-5 text-[#00aeef]" />
-                <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 leading-tight">{label}</span>
+                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 leading-tight">{label}</span>
                 <span className="text-lg font-bold text-slate-800 dark:text-white tabular-nums">{count}</span>
               </button>
             ))}
@@ -421,11 +421,11 @@ export default function RewardsPage() {
                         transition={{ delay: i * 0.04, duration: 0.35 }}
                       >
                         <div
-                          className="h-full w-full rounded-full"
+                          className="h-full w-full rounded-full transition-all duration-300"
                           style={{
                             background: lit
                               ? 'linear-gradient(to right, #22c55e, #16a34a)'
-                              : 'transparent',
+                              : 'rgba(148, 163, 184, 0.25)',
                           }}
                         />
                       </motion.div>
@@ -491,10 +491,10 @@ export default function RewardsPage() {
                           <p className="text-xs font-bold text-indigo-900 dark:text-indigo-50 leading-tight">
                             {def.title}
                           </p>
-                          <p className="text-[10px] text-indigo-700/85 dark:text-indigo-200/90 mt-0.5 leading-snug">
+                          <p className="text-[11px] text-indigo-700/85 dark:text-indigo-200/90 mt-0.5 leading-snug">
                             {unlocked ? 'Nice work!' : def.hint}
                           </p>
-                          <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-1 tabular-nums">
+                          <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 tabular-nums">
                             {badgeProgressLabel(progress, def.id)}
                           </p>
                         </div>

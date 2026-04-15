@@ -147,15 +147,19 @@ export default function SettingsPage() {
                       size="sm"
                       onClick={testSound}
                       disabled={!preferences.soundEnabled}
+                      className="hidden sm:inline-flex"
                     >
-                      Test Sound
+                      Test
                     </Button>
-                    <Button
-                      variant={preferences.soundEnabled ? "default" : "outline"}
+                    <button
+                      role="switch"
+                      aria-checked={preferences.soundEnabled}
+                      aria-label="Toggle sound effects"
                       onClick={() => updatePreference('soundEnabled', !preferences.soundEnabled)}
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${preferences.soundEnabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}
                     >
-                      {preferences.soundEnabled ? 'Enabled' : 'Disabled'}
-                    </Button>
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${preferences.soundEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
                   </div>
                 </div>
 
@@ -178,15 +182,19 @@ export default function SettingsPage() {
                       size="sm"
                       onClick={testMusic}
                       disabled={!preferences.musicEnabled}
+                      className="hidden sm:inline-flex"
                     >
-                      Test Music
+                      Test
                     </Button>
-                    <Button
-                      variant={preferences.musicEnabled ? "default" : "outline"}
+                    <button
+                      role="switch"
+                      aria-checked={preferences.musicEnabled}
+                      aria-label="Toggle background music"
                       onClick={() => updatePreference('musicEnabled', !preferences.musicEnabled)}
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${preferences.musicEnabled ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'}`}
                     >
-                      {preferences.musicEnabled ? 'Enabled' : 'Disabled'}
-                    </Button>
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${preferences.musicEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
                   </div>
                 </div>
               </CardContent>
@@ -211,23 +219,28 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-white/5 dark:to-white/5">
                   <h3 className="font-bold text-gray-800 dark:text-white mb-3">Difficulty Level</h3>
                   <p className="text-sm text-gray-600 dark:text-white/70 mb-4">Choose how challenging the activities should be</p>
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
-                      { value: 'easy', label: 'Easy', color: 'green', description: 'Perfect for beginners' },
-                      { value: 'medium', label: 'Medium', color: 'yellow', description: 'Balanced challenge' },
-                      { value: 'hard', label: 'Hard', color: 'red', description: 'For advanced learners' }
+                      { value: 'easy', label: 'Easy', emoji: '🌱', description: 'Perfect for beginners', activeColor: 'bg-green-500 hover:bg-green-600 text-white border-green-500' },
+                      { value: 'medium', label: 'Medium', emoji: '⚡', description: 'Balanced challenge', activeColor: 'bg-amber-500 hover:bg-amber-600 text-white border-amber-500' },
+                      { value: 'hard', label: 'Hard', emoji: '🔥', description: 'For advanced learners', activeColor: 'bg-red-500 hover:bg-red-600 text-white border-red-500' }
                     ].map((level) => (
-                      <Button
+                      <button
                         key={level.value}
-                        variant={preferences.difficulty === level.value ? "default" : "outline"}
                         onClick={() => updatePreference('difficulty', level.value)}
-                        className={"flex-1"}
+                        aria-pressed={preferences.difficulty === level.value}
+                        className={`flex-1 py-3 px-4 rounded-xl border-2 font-medium transition-all duration-200 ${
+                          preferences.difficulty === level.value
+                            ? `${level.activeColor} shadow-md scale-[1.02]`
+                            : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-white/5 text-gray-700 dark:text-white hover:border-gray-300 dark:hover:border-gray-500'
+                        }`}
                       >
                         <div className="text-center">
-                          <div className="font-bold">{level.label}</div>
+                          <span className="text-lg">{level.emoji}</span>
+                          <div className="font-bold text-sm mt-1">{level.label}</div>
                           <div className="text-xs opacity-80">{level.description}</div>
                         </div>
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </div>

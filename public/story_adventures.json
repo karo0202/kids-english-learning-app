@@ -44,5 +44,57 @@
       { "text": "You find a map that leads to a friendly feast.", "choices": [ { "text": "Join the feast", "next": -1, "points": 10 } ] },
       { "text": "The book teaches a new word that glows in the air.", "choices": [ { "text": "Say the word", "next": -1, "points": 10 } ] }
     ]
+  },
+  {
+    "id": "dinosaur-island",
+    "title": "Dinosaur Island",
+    "nodes": [
+      { "text": "Your boat lands on a mysterious island. You hear a loud ROAR! What do you do?", "choices": [ { "text": "Follow the sound", "next": 1, "points": 5 }, { "text": "Hide behind a rock", "next": 2, "points": 5 } ] },
+      { "text": "You find a friendly baby dinosaur! It looks hungry and alone.", "choices": [ { "text": "Give it some fruit", "next": 3, "points": 10 }, { "text": "Try to pet it gently", "next": 4, "points": 5 } ] },
+      { "text": "From behind the rock, you see dinosaur footprints leading to a valley.", "choices": [ { "text": "Follow the footprints", "next": 4, "points": 10 }, { "text": "Stay hidden", "next": 5, "points": 5 } ] },
+      { "text": "The baby dinosaur is happy! It leads you to a nest with colorful eggs. Each egg has a letter on it!", "choices": [ { "text": "Spell a word with the letters", "next": 6, "points": 15 }, { "text": "Count all the eggs", "next": 6, "points": 10 } ] },
+      { "text": "You reach a beautiful valley where dinosaurs of all sizes play together peacefully.", "choices": [ { "text": "Join their game", "next": 6, "points": 10 }, { "text": "Draw a picture of them", "next": 6, "points": 10 } ] },
+      { "text": "A tiny pterodactyl flies down with a message: 'Welcome, friend!'", "choices": [ { "text": "Write a message back", "next": 6, "points": 10 } ] },
+      { "text": "You made friends with the dinosaurs! They wave goodbye as your boat sails away. What an adventure!", "choices": [ { "text": "Wave goodbye!", "next": -1, "points": 10 } ] }
+    ]
+  },
+  {
+    "id": "candy-kingdom",
+    "title": "The Candy Kingdom",
+    "nodes": [
+      { "text": "You walk through a chocolate gate into a kingdom made of candy! A gummy bear guard greets you.", "choices": [ { "text": "Say 'Hello!'", "next": 1, "points": 5 }, { "text": "Ask for directions", "next": 2, "points": 5 } ] },
+      { "text": "The guard smiles and says: 'To enter, you must answer a question. What is 3 + 4?'", "choices": [ { "text": "Say 'Seven!'", "next": 3, "points": 10 }, { "text": "Count on your fingers", "next": 3, "points": 5 } ] },
+      { "text": "He points to a lollipop road and a licorice bridge. 'Both lead to the palace!'", "choices": [ { "text": "Take the lollipop road", "next": 4, "points": 5 }, { "text": "Cross the licorice bridge", "next": 5, "points": 5 } ] },
+      { "text": "You enter the palace! The Candy Queen asks you to help sort candies by color.", "choices": [ { "text": "Sort red and blue", "next": 6, "points": 10 }, { "text": "Sort green and yellow", "next": 6, "points": 10 } ] },
+      { "text": "On the lollipop road, you find letters written in frosting. They spell a word!", "choices": [ { "text": "Read the word aloud", "next": 6, "points": 10 } ] },
+      { "text": "Under the bridge, you find a riddle: 'I am sweet but not candy. I come from bees. What am I?'", "choices": [ { "text": "Say 'Honey!'", "next": 6, "points": 15 } ] },
+      { "text": "The Candy Queen gives you a golden lollipop trophy. 'You are the smartest visitor today!' she says.", "choices": [ { "text": "Thank the Queen!", "next": -1, "points": 10 } ] }
+    ]
+  },
+  {
+    "id": "weather-wizard",
+    "title": "The Weather Wizard",
+    "nodes": [
+      { "text": "You meet a wizard who controls the weather, but his spell book is missing pages! Can you help?", "choices": [ { "text": "Help find the pages", "next": 1, "points": 5 }, { "text": "Ask what happened", "next": 2, "points": 5 } ] },
+      { "text": "The wizard says: 'The first page is about SUN. Can you tell me what the sun gives us?'", "choices": [ { "text": "Light and warmth!", "next": 3, "points": 10 }, { "text": "Daytime!", "next": 3, "points": 10 } ] },
+      { "text": "'The wind blew my pages away! One went to the snowy mountain, one to the rainy lake, one to the sunny beach.'", "choices": [ { "text": "Go to the mountain first", "next": 4, "points": 5 }, { "text": "Go to the lake first", "next": 5, "points": 5 } ] },
+      { "text": "Page found! It says 'RAIN.' The wizard asks: 'What falls from clouds during rain?'", "choices": [ { "text": "Water drops!", "next": 6, "points": 10 } ] },
+      { "text": "On the snowy mountain, you find a page frozen in ice. It says 'SNOW.' Snowflakes have how many sides?", "choices": [ { "text": "Six!", "next": 6, "points": 15 }, { "text": "I'm not sure", "next": 6, "points": 5 } ] },
+      { "text": "At the lake, the page floats on a lily pad. It says 'WIND.' You catch it just in time!", "choices": [ { "text": "Read it to the wizard", "next": 6, "points": 10 } ] },
+      { "text": "The spell book is complete! The wizard creates a beautiful rainbow to thank you. 'You are a true weather hero!'", "choices": [ { "text": "Enjoy the rainbow!", "next": -1, "points": 10 } ] }
+    ]
+  },
+  {
+    "id": "pirate-treasure",
+    "title": "Pirate Treasure Hunt",
+    "nodes": [
+      { "text": "You find an old treasure map in a bottle on the beach! An X marks the spot on a nearby island.", "choices": [ { "text": "Build a raft", "next": 1, "points": 5 }, { "text": "Find a boat", "next": 2, "points": 5 } ] },
+      { "text": "Your raft reaches the island. You see palm trees and a sign with a riddle: 'I have hands but cannot clap. What am I?'", "choices": [ { "text": "A clock!", "next": 3, "points": 15 }, { "text": "I need to think...", "next": 3, "points": 5 } ] },
+      { "text": "A friendly parrot says: 'Squawk! To find the treasure, count the coconuts in the tree!'", "choices": [ { "text": "Count them", "next": 3, "points": 10 } ] },
+      { "text": "You follow the map through the jungle. There are three colored stones: red, blue, and green. The map says 'Choose the color of the sky.'", "choices": [ { "text": "Pick the blue stone", "next": 4, "points": 10 }, { "text": "Pick the green stone", "next": 5, "points": 5 } ] },
+      { "text": "The blue stone opens a secret path! You find a wooden chest covered in vines.", "choices": [ { "text": "Open the chest!", "next": 6, "points": 10 } ] },
+      { "text": "Hmm, that wasn't right. The parrot says: 'Try again! What color is the sky?'", "choices": [ { "text": "Blue!", "next": 4, "points": 5 } ] },
+      { "text": "Inside the treasure chest are golden letters that spell 'KNOWLEDGE IS THE GREATEST TREASURE.' The real treasure was learning all along!", "choices": [ { "text": "Celebrate your adventure!", "next": -1, "points": 15 } ] }
+    ]
   }
 ]

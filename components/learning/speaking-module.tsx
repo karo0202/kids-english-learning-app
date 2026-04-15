@@ -10,7 +10,8 @@ import { ProgressRing } from '@/components/ui/progress-ring'
 import { 
   Mic, MicOff, Volume2, RefreshCw, CheckCircle, 
   ArrowLeft, Star, Trophy, Play, Pause, Award, 
-  Zap, Target, Heart, Crown, Sparkles, RotateCcw, Settings
+  Zap, Target, Heart, Crown, Sparkles, RotateCcw, Settings,
+  MessageCircle
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { audioManager } from '@/lib/audio'
@@ -45,7 +46,7 @@ export default function SpeakingModule() {
   const [totalWords, setTotalWords] = useState(10)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
-  const [activityType, setActivityType] = useState<'pronunciation' | 'singspeak'>('pronunciation')
+  const [activityType, setActivityType] = useState<'pronunciation' | 'singspeak' | 'dialogue'>('pronunciation')
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [lastResult, setLastResult] = useState<{ word: string; transcript: string; correct: boolean } | null>(null)
   const advancingRef = useRef<boolean>(false)
@@ -172,6 +173,15 @@ export default function SpeakingModule() {
   const [songIndex, setSongIndex] = useState(0)
   const [songLineIndex, setSongLineIndex] = useState(0)
   const [isSinging, setIsSinging] = useState(false)
+
+  // Dialogue Practice state
+  type DialogueLine = { speaker: string; text: string }
+  type Dialogue = { id: string; title: string; difficulty: string; dialogue: DialogueLine[] }
+  const [dialogues, setDialogues] = useState<Dialogue[]>([])
+  const [dialogueIndex, setDialogueIndex] = useState(0)
+  const [dialogueLineIdx, setDialogueLineIdx] = useState(0)
+  const [dialoguePlaying, setDialoguePlaying] = useState(false)
+  const [dialogueUserTurn, setDialogueUserTurn] = useState(false)
 
 
   const getSampleWords = (): Word[] => {
@@ -458,6 +468,20 @@ export default function SpeakingModule() {
       setSongLineIndex(0)
     }
     loadSongs()
+
+    // Load Dialogue Practice data
+    const loadDialogues = async () => {
+      try {
+        const res = await fetch('/premium_dialogues.json', { cache: 'no-store' })
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data) && data.length > 0) {
+            setDialogues(data)
+          }
+        }
+      } catch {}
+    }
+    loadDialogues()
 
     // Initialize premium TTS voices
     premiumTTS.loadVoices()
@@ -967,8 +991,32 @@ export default function SpeakingModule() {
 
   const activities = [
     { id: 'pronunciation', name: 'Pronunciation Practice', icon: <Mic className="w-5 h-5" /> },
-    { id: 'singspeak', name: 'Sing & Speak', icon: <Volume2 className="w-5 h-5" /> }
+    { id: 'singspeak', name: 'Sing & Speak', icon: <Volume2 className="w-5 h-5" /> },
+    { id: 'dialogue', name: 'Dialogue Practice', icon: <MessageCircle className="w-5 h-5" /> }
   ]
+
+  const speakDialogueLine = async (text: string) => {
+    setDialoguePlaying(true)
+    await premiumTTS.speak(text, { rate: 0.8 })
+    setDialoguePlaying(false)
+  }
+
+  const advanceDialogue = () => {
+    const d = dialogues[dialogueIndex]
+    if (!d) return
+    const nextIdx = dialogueLineIdx + 1
+    if (nextIdx >= d.dialogue.length) {
+      setDialogueUserTurn(false)
+      return
+    }
+    setDialogueLineIdx(nextIdx)
+    const nextLine = d.dialogue[nextIdx]
+    const isEvenSpeaker = nextLine.speaker === d.dialogue[0].speaker
+    setDialogueUserTurn(!isEvenSpeaker)
+    if (isEvenSpeaker) {
+      speakDialogueLine(nextLine.text)
+    }
+  }
 
   const progress = totalWords > 0 ? (correctWords / totalWords) * 100 : 0
 
@@ -1652,6 +1700,100 @@ export default function SpeakingModule() {
                       <RefreshCw className="w-4 h-4 mr-2" /> Restart
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+
+        {activityType === 'dialogue' && (
+          <div className="max-w-4xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="card-speaking">
+                <CardContent className="p-8">
+                  <div className="text-center mb-6">
+                    <h3 className="text-3xl font-bold text-gray-800 mb-2">Dialogue Practice</h3>
+                    <p className="text-gray-600">Practice real conversations by taking turns speaking!</p>
+                  </div>
+
+                  {dialogues.length === 0 ? (
+                    <p className="text-center text-gray-500">Loading dialogues...</p>
+                  ) : (
+                    <>
+                      <div className="flex flex-wrap gap-2 justify-center mb-6">
+                        {dialogues.map((d, i) => (
+                          <Button key={d.id} variant={dialogueIndex === i ? 'default' : 'outline'} onClick={() => { setDialogueIndex(i); setDialogueLineIdx(0); setDialogueUserTurn(false) }}>
+                            {d.title}
+                          </Button>
+                        ))}
+                      </div>
+
+                      <div className="bg-white/70 rounded-xl p-6 border border-gray-100 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-xl font-bold text-gray-800">{dialogues[dialogueIndex].title}</h4>
+                          <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700">{dialogues[dialogueIndex].difficulty}</span>
+                        </div>
+                        <div className="space-y-3 max-h-96 overflow-y-auto">
+                          {dialogues[dialogueIndex].dialogue.slice(0, dialogueLineIdx + 1).map((line, idx) => {
+                            const isFirstSpeaker = line.speaker === dialogues[dialogueIndex].dialogue[0].speaker
+                            return (
+                              <div key={idx} className={`flex ${isFirstSpeaker ? 'justify-start' : 'justify-end'}`}>
+                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${isFirstSpeaker ? 'bg-blue-50 text-blue-900' : 'bg-green-50 text-green-900'}`}>
+                                  <p className="text-xs font-semibold mb-1 opacity-70">{line.speaker}</p>
+                                  <p className="text-sm leading-relaxed">{line.text}</p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
+                        {dialogueLineIdx === 0 && (
+                          <Button className="btn-primary-kid" onClick={() => {
+                            speakDialogueLine(dialogues[dialogueIndex].dialogue[0].text)
+                          }} disabled={dialoguePlaying}>
+                            <Play className="w-4 h-4 mr-2" /> Start Conversation
+                          </Button>
+                        )}
+
+                        {dialogueLineIdx > 0 && dialogueLineIdx < dialogues[dialogueIndex].dialogue.length - 1 && (
+                          <>
+                            <Button variant="outline" onClick={() => {
+                              speakDialogueLine(dialogues[dialogueIndex].dialogue[dialogueLineIdx].text)
+                            }} disabled={dialoguePlaying}>
+                              <Volume2 className="w-4 h-4 mr-2" /> Replay Line
+                            </Button>
+                            <Button className="btn-primary-kid" onClick={advanceDialogue} disabled={dialoguePlaying}>
+                              <MessageCircle className="w-4 h-4 mr-2" /> {dialogueUserTurn ? 'Say Your Line & Next' : 'Next Line'}
+                            </Button>
+                          </>
+                        )}
+
+                        {dialogueLineIdx >= dialogues[dialogueIndex].dialogue.length - 1 && (
+                          <>
+                            <div className="text-center w-full mb-3">
+                              <p className="text-green-600 font-semibold">Great job! You completed this dialogue!</p>
+                            </div>
+                            <Button className="btn-primary-kid" onClick={() => {
+                              setDialogueLineIdx(0)
+                              setDialogueUserTurn(false)
+                            }}>
+                              <RotateCcw className="w-4 h-4 mr-2" /> Practice Again
+                            </Button>
+                            <Button variant="outline" onClick={() => {
+                              const next = (dialogueIndex + 1) % dialogues.length
+                              setDialogueIndex(next)
+                              setDialogueLineIdx(0)
+                              setDialogueUserTurn(false)
+                            }}>
+                              Next Dialogue
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>

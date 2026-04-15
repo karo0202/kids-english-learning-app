@@ -12,6 +12,8 @@ import {
   Brain, BookOpen, Target, Search, Zap, Heart, Sparkles
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { progressManager } from '@/lib/progress'
+import { ChallengeManager } from '@/lib/challenges'
 import OptimizedImage from '../common/optimized-image'
 import VirtualizedList from '../common/virtualized-list'
 import { useDebounce, usePerformanceMonitor } from '@/hooks/use-performance'
@@ -338,7 +340,7 @@ export default function GamesModule() {
     loadQuiz()
 
     // Load Word Hunt content
-    const defaultHunt = ['CAT', 'DOG', 'BIRD', 'FISH', 'TREE', 'CLOUD', 'SUN', 'MOON', 'GRASS', 'RIVER']
+    const defaultHunt = ['CAT', 'DOG', 'BIRD', 'FISH', 'LION', 'SUN', 'MOON', 'STAR', 'TREE', 'FLOWER', 'APPLE', 'BOOK', 'HAPPY', 'RED', 'BLUE']
     const loadHunt = async () => {
       try {
         const res = await fetch('/word_hunt.json', { cache: 'no-store' })
@@ -368,23 +370,28 @@ export default function GamesModule() {
 
   // Initialize Memory Match Game
   const initializeMemoryGame = () => {
-    const words = ['CAT', 'DOG', 'SUN', 'TREE', 'FISH', 'BIRD']
+    const wordPool: { word: string; emoji: string }[] = [
+      { word: 'CAT', emoji: '🐱' }, { word: 'DOG', emoji: '🐶' },
+      { word: 'SUN', emoji: '☀️' }, { word: 'TREE', emoji: '🌳' },
+      { word: 'FISH', emoji: '🐟' }, { word: 'BIRD', emoji: '🐦' },
+      { word: 'STAR', emoji: '⭐' }, { word: 'MOON', emoji: '🌙' },
+      { word: 'LION', emoji: '🦁' }, { word: 'BEAR', emoji: '🐻' },
+      { word: 'FROG', emoji: '🐸' }, { word: 'DUCK', emoji: '🦆' },
+      { word: 'CAKE', emoji: '🎂' }, { word: 'BOOK', emoji: '📚' },
+      { word: 'RAIN', emoji: '🌧️' }, { word: 'SNOW', emoji: '❄️' },
+      { word: 'BALL', emoji: '⚽' }, { word: 'BELL', emoji: '🔔' },
+      { word: 'APPLE', emoji: '🍎' }, { word: 'HOUSE', emoji: '🏠' },
+      { word: 'HEART', emoji: '❤️' }, { word: 'MUSIC', emoji: '🎵' },
+      { word: 'FLOWER', emoji: '🌸' }, { word: 'ROCKET', emoji: '🚀' },
+    ]
+    const shuffledPool = [...wordPool].sort(() => Math.random() - 0.5)
+    const chosen = shuffledPool.slice(0, 6)
     const gameCards: GameCard[] = []
     
-    const cacheBuster = `?v=${Date.now()}&bust=${Math.random()}`
-    const wordImages: { [key: string]: string } = {
-      'CAT': `https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop&crop=center${cacheBuster}`,
-      'DOG': `https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop&crop=center${cacheBuster}`,
-      'SUN': `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop&crop=center${cacheBuster}`,
-      'TREE': `https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200&h=200&fit=crop&crop=center${cacheBuster}`,
-      'FISH': `https://images.unsplash.com/photo-1753644350123-9cb32be6e0b5?w=200&h=200&fit=crop&crop=center${cacheBuster}`,
-      'BIRD': `https://images.unsplash.com/photo-1444464666168-49d633b86797?w=200&h=200&fit=crop&crop=center${cacheBuster}`
-    }
-    
-    words.forEach((word, index) => {
+    chosen.forEach((item) => {
       gameCards.push(
-        { id: `${word}-word`, word, image: '', matched: false, flipped: false },
-        { id: `${word}-img`, word, image: wordImages[word] || `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop&crop=center`, matched: false, flipped: false }
+        { id: `${item.word}-word`, word: item.word, image: '', matched: false, flipped: false },
+        { id: `${item.word}-emoji`, word: item.word, image: item.emoji, matched: false, flipped: false }
       )
     })
 
@@ -427,6 +434,7 @@ export default function GamesModule() {
           setMatchedPairs(prev => prev + 1)
           setScore(prev => prev + 20)
           setFlippedCards([])
+          try { progressManager.addScore(20, 5) } catch {}
         }, 1000)
       } else {
         // No match
@@ -448,6 +456,7 @@ export default function GamesModule() {
     if (answerIndex === quizQuestions[currentQuestion].correct) {
       setQuizScore(prev => prev + 10)
       setScore(prev => prev + 10)
+      try { progressManager.addScore(10, 5) } catch {}
     }
 
     setTimeout(() => {
@@ -456,7 +465,10 @@ export default function GamesModule() {
         setSelectedAnswer(null)
         setShowQuizResult(false)
       } else {
-        // Quiz complete
+        try {
+          progressManager.addModuleProgress('games', 1)
+          ChallengeManager.getInstance().updateChallengeProgress('games', 1)
+        } catch {}
         setGameActive(false)
       }
     }, 2000)
@@ -716,11 +728,9 @@ export default function GamesModule() {
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
                         {card.image ? (
-                          <img 
-                            src={card.image} 
-                            alt={card.word}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
+                          <div className="text-5xl sm:text-6xl select-none" aria-label={card.word}>
+                            {card.image}
+                          </div>
                         ) : (
                           <div className="text-gray-900 text-lg font-bold text-center">
                             {card.word}
@@ -987,8 +997,18 @@ export default function GamesModule() {
                   <div className="grid grid-cols-1 gap-3 max-w-md mx-auto">
                     {stories[storyIndex].nodes[nodeIndex].choices.map((c, i) => (
                       <Button key={i} className="btn-primary-kid" onClick={() => {
-                        if (typeof c.points === 'number') setScore(prev => prev + c.points!)
-                        if (c.next === -1) { setStoryActive(false); return }
+                        if (typeof c.points === 'number') {
+                          setScore(prev => prev + c.points!)
+                          try { progressManager.addScore(c.points!, 3) } catch {}
+                        }
+                        if (c.next === -1) {
+                          try {
+                            progressManager.addModuleProgress('games', 1)
+                            ChallengeManager.getInstance().updateChallengeProgress('games', 1)
+                          } catch {}
+                          setStoryActive(false)
+                          return
+                        }
                         setNodeIndex(c.next)
                       }}>
                         {c.text}
@@ -1179,6 +1199,11 @@ export default function GamesModule() {
                         setSpellingAttempts(a => a + 1)
                         if (correct) {
                           setScore(prev => prev + 10)
+                          try {
+                            progressManager.addScore(10, 5)
+                            progressManager.addModuleProgress('games', 1)
+                            ChallengeManager.getInstance().updateChallengeProgress('games', 1)
+                          } catch {}
                           setTimeout(() => {
                             setSpellingCorrect(null)
                             setSpellingInput('')

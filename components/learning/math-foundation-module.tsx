@@ -32,7 +32,20 @@ const COLORS = [
   { name: 'Pink', word: 'Pink', hex: 'bg-pink-400' },
 ]
 
-type Tab = 'numbers' | 'counting' | 'moreless' | 'same' | 'order' | 'shapes' | 'colors' | 'matchshape'
+type Tab = 'numbers' | 'counting' | 'moreless' | 'same' | 'order' | 'shapes' | 'colors' | 'matchshape' | 'stories'
+
+const FOUNDATION_STORIES = [
+  { q: 'You have 3 🍎 apples. Mom gives you 2 more 🍎. How many apples now?', ans: 5, hint: '3 + 2 = ?' },
+  { q: 'There are 4 🐶 puppies. 1 runs away. How many puppies are left?', ans: 3, hint: '4 - 1 = ?' },
+  { q: 'You see 2 🐱 cats and 3 🐱 more cats come. How many cats in all?', ans: 5, hint: '2 + 3 = ?' },
+  { q: 'You have 5 🎈 balloons. 2 fly away! How many do you have now?', ans: 3, hint: '5 - 2 = ?' },
+  { q: 'There are 6 ⭐ stars. You draw 1 more ⭐. How many stars altogether?', ans: 7, hint: '6 + 1 = ?' },
+  { q: '4 🦋 butterflies are in the garden. 4 more join! How many now?', ans: 8, hint: '4 + 4 = ?' },
+  { q: 'You have 7 🍪 cookies. You eat 3. How many are left?', ans: 4, hint: '7 - 3 = ?' },
+  { q: 'There are 3 🚗 red cars and 3 🚙 blue cars. How many cars in total?', ans: 6, hint: '3 + 3 = ?' },
+  { q: 'You pick 2 🌸 flowers, then 5 more 🌸. How many flowers do you have?', ans: 7, hint: '2 + 5 = ?' },
+  { q: '8 🐟 fish swim in a pond. 2 swim away. How many fish are left?', ans: 6, hint: '8 - 2 = ?' },
+]
 
 export default function MathFoundationModule() {
   const router = useRouter()
@@ -48,6 +61,10 @@ export default function MathFoundationModule() {
   const [orderFeedback, setOrderFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [matchShapeFeedback, setMatchShapeFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [matchShapeIndex, setMatchShapeIndex] = useState(0)
+  const [storyIndex, setStoryIndex] = useState(0)
+  const [storyAnswer, setStoryAnswer] = useState('')
+  const [storyFeedback, setStoryFeedback] = useState<'correct' | 'try-again' | null>(null)
+  const [showStoryHint, setShowStoryHint] = useState(false)
 
   const level = { max: 20, color: 'from-emerald-400 to-emerald-600' }
   const shownObjects = OBJECTS.slice(0, currentNumber)
@@ -99,6 +116,7 @@ export default function MathFoundationModule() {
     { id: 'shapes', label: 'Shapes' },
     { id: 'colors', label: 'Colors' },
     { id: 'matchshape', label: 'Match shape' },
+    { id: 'stories', label: 'Math Stories' },
   ]
 
   return (
@@ -452,6 +470,64 @@ export default function MathFoundationModule() {
                 {matchShapeFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium">Yes! It is a {SHAPES[matchShapeIndex].word}.</p>}
                 {matchShapeFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium">Look at the shape. How many sides? Try again.</p>}
                 <Button variant="outline" size="sm" onClick={() => { setMatchShapeIndex((i) => (i === SHAPES.length - 1 ? 0 : i + 1)); setMatchShapeFeedback(null); }} className="rounded-xl mt-2">Next shape</Button>
+              </div>
+            )}
+
+            {tab === 'stories' && (
+              <div className="space-y-6">
+                <p className="text-slate-800 dark:text-white font-medium">Read the math story and type your answer!</p>
+                <motion.div
+                  key={storyIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-amber-50 dark:bg-amber-900/30 rounded-2xl p-6 border-2 border-amber-200 dark:border-amber-700 text-center"
+                >
+                  <p className="text-xl sm:text-2xl font-medium text-slate-800 dark:text-white leading-relaxed">
+                    {FOUNDATION_STORIES[storyIndex].q}
+                  </p>
+                  {showStoryHint && (
+                    <p className="mt-3 text-amber-600 dark:text-amber-400 text-lg font-semibold">{FOUNDATION_STORIES[storyIndex].hint}</p>
+                  )}
+                </motion.div>
+                <div className="flex items-center justify-center gap-3">
+                  <input
+                    type="number"
+                    value={storyAnswer}
+                    onChange={(e) => { setStoryAnswer(e.target.value); setStoryFeedback(null) }}
+                    className="w-24 h-14 text-center text-2xl font-bold rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                    placeholder="?"
+                  />
+                  <Button
+                    onClick={() => {
+                      const num = parseInt(storyAnswer, 10)
+                      if (num === FOUNDATION_STORIES[storyIndex].ans) {
+                        setStoryFeedback('correct')
+                        setTimeout(() => {
+                          setStoryIndex((i) => (i + 1) % FOUNDATION_STORIES.length)
+                          setStoryAnswer('')
+                          setStoryFeedback(null)
+                          setShowStoryHint(false)
+                        }, 800)
+                      } else {
+                        setStoryFeedback('try-again')
+                      }
+                    }}
+                    className="btn-primary-kid h-14 px-6"
+                  >
+                    Check
+                  </Button>
+                </div>
+                {storyFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium text-center text-lg">Correct! Great job! 🎉</p>}
+                {storyFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium text-center">Not quite. Try again!</p>}
+                <div className="flex items-center justify-center gap-3">
+                  <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setShowStoryHint(true)}>
+                    Show Hint
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-xl" onClick={() => { setStoryIndex((i) => (i + 1) % FOUNDATION_STORIES.length); setStoryAnswer(''); setStoryFeedback(null); setShowStoryHint(false) }}>
+                    Skip
+                  </Button>
+                </div>
+                <p className="text-xs text-slate-400 text-center">Story {storyIndex + 1} of {FOUNDATION_STORIES.length}</p>
               </div>
             )}
             <p className="mt-8 pt-4 border-t border-slate-200/60 dark:border-slate-600/60 text-xs text-slate-500 dark:text-slate-400">

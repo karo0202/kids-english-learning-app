@@ -3,7 +3,7 @@ export interface DailyChallenge {
   id: string
   title: string
   description: string
-  type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle'
+  type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle' | 'grammar'
   target: number
   current: number
   reward: number
@@ -48,7 +48,7 @@ export class ChallengeManager {
     tomorrow.setDate(tomorrow.getDate() + 1)
     const expiresAt = tomorrow.toISOString()
 
-    const baseChallenges: Omit<DailyChallenge, 'id' | 'current' | 'completed' | 'expiresAt'>[] = [
+    const allChallenges: Omit<DailyChallenge, 'id' | 'current' | 'completed' | 'expiresAt'>[] = [
       {
         title: 'Word Master',
         description: 'Complete 5 word building activities',
@@ -59,9 +59,9 @@ export class ChallengeManager {
       },
       {
         title: 'Speaking Star',
-        description: 'Practice pronunciation for 10 minutes',
+        description: 'Practice 8 pronunciation words',
         type: 'speaking',
-        target: 10,
+        target: 8,
         reward: 75,
         difficulty: 'medium'
       },
@@ -96,10 +96,82 @@ export class ChallengeManager {
         target: 5,
         reward: 70,
         difficulty: 'medium'
+      },
+      {
+        title: 'Grammar Guru',
+        description: 'Complete 5 grammar exercises',
+        type: 'grammar',
+        target: 5,
+        reward: 80,
+        difficulty: 'medium'
+      },
+      {
+        title: 'Bookworm',
+        description: 'Finish reading 1 complete book',
+        type: 'reading',
+        target: 1,
+        reward: 100,
+        difficulty: 'hard'
+      },
+      {
+        title: 'Spelling Bee',
+        description: 'Spell 5 words correctly in Spelling Bee',
+        type: 'games',
+        target: 5,
+        reward: 60,
+        difficulty: 'easy'
+      },
+      {
+        title: 'Sentence Builder',
+        description: 'Unscramble 3 sentences',
+        type: 'writing',
+        target: 3,
+        reward: 45,
+        difficulty: 'easy'
+      },
+      {
+        title: 'Song Singer',
+        description: 'Practice 2 sing-along songs',
+        type: 'speaking',
+        target: 2,
+        reward: 55,
+        difficulty: 'easy'
+      },
+      {
+        title: 'Creative Writer',
+        description: 'Write 1 creative story',
+        type: 'writing',
+        target: 1,
+        reward: 90,
+        difficulty: 'hard'
+      },
+      {
+        title: 'Grammar Expert',
+        description: 'Score 80%+ on 3 grammar topics',
+        type: 'grammar',
+        target: 3,
+        reward: 100,
+        difficulty: 'hard'
+      },
+      {
+        title: 'Adventure Hero',
+        description: 'Complete 2 story adventures',
+        type: 'games',
+        target: 2,
+        reward: 70,
+        difficulty: 'medium'
       }
     ]
 
-    this.challenges = baseChallenges.map((challenge, index) => ({
+    const seed = today.split('-').reduce((a, b) => a + parseInt(b), 0)
+    const shuffled = [...allChallenges].sort((a, b) => {
+      const ha = (seed * 31 + allChallenges.indexOf(a)) % 100
+      const hb = (seed * 31 + allChallenges.indexOf(b)) % 100
+      return ha - hb
+    })
+    const selected = shuffled.slice(0, 6)
+
+    this.challenges = selected.map((challenge, index) => ({
       ...challenge,
       id: `daily_${today}_${index}`,
       current: 0,
@@ -112,7 +184,7 @@ export class ChallengeManager {
   }
 
   // Update challenge progress
-  updateChallengeProgress(type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle', amount: number = 1): void {
+  updateChallengeProgress(type: 'speaking' | 'writing' | 'reading' | 'games' | 'puzzle' | 'grammar', amount: number = 1): void {
     const today = new Date().toISOString().split('T')[0]
     
     this.challenges.forEach(challenge => {
@@ -129,10 +201,13 @@ export class ChallengeManager {
     this.saveChallenges()
   }
 
-  // Award challenge reward
   private awardReward(reward: number): void {
-    // This would integrate with the progress manager
-    console.log(`Awarded ${reward} points for completing challenge`)
+    try {
+      const { progressManager } = require('@/lib/progress')
+      progressManager.addScore(reward, Math.floor(reward / 5))
+    } catch {
+      // Progress manager may not be available in all contexts
+    }
   }
 
   // Get today's challenges

@@ -20,6 +20,22 @@ export default function MathIntermediateModule() {
   const [perimFeedback, setPerimFeedback] = useState<'correct' | 'try-again' | null>(null)
   const [perimLen, setPerimLen] = useState(6)
   const [perimWid, setPerimWid] = useState(4)
+  const [decimalIndex, setDecimalIndex] = useState(0)
+  const [decimalAnswer, setDecimalAnswer] = useState('')
+  const [decimalFeedback, setDecimalFeedback] = useState<'correct' | 'try-again' | null>(null)
+
+  const DECIMAL_QUESTIONS = [
+    { q: 'Write 1/2 as a decimal:', ans: '0.5' },
+    { q: 'Write 1/4 as a decimal:', ans: '0.25' },
+    { q: 'Write 3/4 as a decimal:', ans: '0.75' },
+    { q: 'What is 0.5 + 0.5?', ans: '1' },
+    { q: 'What is 0.25 + 0.75?', ans: '1' },
+    { q: 'What is 0.1 + 0.2?', ans: '0.3' },
+    { q: 'What is 50% as a decimal?', ans: '0.5' },
+    { q: 'What is 25% as a decimal?', ans: '0.25' },
+    { q: 'What is 0.5 × 2?', ans: '1' },
+    { q: 'What is 1.5 + 0.5?', ans: '2' },
+  ]
 
   const GEOMETRY = [
     { name: 'Area', word: 'Area', desc: 'The space inside a shape. We measure it in square units.' },
@@ -45,7 +61,15 @@ export default function MathIntermediateModule() {
     { q: 'A rectangle has length 5 and width 3. What is the area? (Area = length × width)', ans: 15 },
     { q: 'A rectangle has length 8 and width 4. What is the area?', ans: 32 },
     { q: 'Maria has 24 stickers. She shares them equally among 4 friends. How many does each friend get?', ans: 6 },
-    { q: 'A box has 5 rows of 6 apples. How many apples in total? (Multiply)', ans: 30 },
+    { q: 'A box has 5 rows of 6 apples. How many apples in total?', ans: 30 },
+    { q: 'A train travels 60 km per hour. How far does it travel in 3 hours?', ans: 180 },
+    { q: 'A book has 120 pages. Sam reads 15 pages each day. How many days will it take to finish?', ans: 8 },
+    { q: 'There are 45 students. The teacher puts them in groups of 9. How many groups are there?', ans: 5 },
+    { q: 'A square garden has sides of 7 meters. What is the perimeter? (4 × side)', ans: 28 },
+    { q: 'A store sells pencils for $3 each. How much do 12 pencils cost?', ans: 36 },
+    { q: 'Sara scores 85, 90, and 95 on three tests. What is her total score?', ans: 270 },
+    { q: 'A pizza is cut into 8 equal slices. 3 people each eat 2 slices. How many slices are left?', ans: 2 },
+    { q: 'A factory makes 250 toys per day. How many toys in 4 days?', ans: 1000 },
   ]
   const wordProblem = WORD_PROBLEMS[wpIndex % WORD_PROBLEMS.length]
 
@@ -143,6 +167,31 @@ export default function MathIntermediateModule() {
                   <p className="font-semibold text-slate-800 dark:text-white">¼ = 0.25 (zero point two five)</p>
                   <p className="font-semibold text-slate-800 dark:text-white">¾ = 0.75 (zero point seven five)</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">We use a decimal point to write parts of a whole. 50% means half; 25% means one quarter.</p>
+                </div>
+                <div className="border-t border-slate-200 dark:border-slate-600 pt-4">
+                  <p className="font-semibold text-slate-800 dark:text-white mb-3">Practice ({decimalIndex + 1}/{DECIMAL_QUESTIONS.length}):</p>
+                  <motion.div key={decimalIndex} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                    <p className="text-lg font-medium text-slate-800 dark:text-white">{DECIMAL_QUESTIONS[decimalIndex].q}</p>
+                  </motion.div>
+                  <div className="flex items-center justify-center gap-3 mt-3">
+                    <input
+                      type="text"
+                      value={decimalAnswer}
+                      onChange={(e) => { setDecimalAnswer(e.target.value); setDecimalFeedback(null) }}
+                      className="w-28 h-12 text-center text-xl font-bold rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                      placeholder="?"
+                    />
+                    <Button onClick={() => {
+                      const clean = decimalAnswer.trim()
+                      const expected = DECIMAL_QUESTIONS[decimalIndex].ans
+                      if (clean === expected || parseFloat(clean) === parseFloat(expected)) {
+                        setDecimalFeedback('correct')
+                        setTimeout(() => { setDecimalIndex((i) => (i + 1) % DECIMAL_QUESTIONS.length); setDecimalAnswer(''); setDecimalFeedback(null) }, 700)
+                      } else { setDecimalFeedback('try-again') }
+                    }} className="btn-primary-kid h-12 px-5">Check</Button>
+                  </div>
+                  {decimalFeedback === 'correct' && <p className="text-emerald-600 dark:text-emerald-400 font-medium text-center mt-2">Correct!</p>}
+                  {decimalFeedback === 'try-again' && <p className="text-amber-600 dark:text-amber-400 font-medium text-center mt-2">Not quite. Try again!</p>}
                 </div>
               </div>
             )}

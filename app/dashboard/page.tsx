@@ -1077,70 +1077,31 @@ const handleDeleteChild = async (childId: string) => {
         {/* Quick Stats */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-6">Quick Stats</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-            >
-              <Card className="card-kid text-center py-6 group relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-cyan-600/0 group-hover:from-blue-500/10 group-hover:to-cyan-600/10 transition-all duration-500"></div>
-                <CardContent className="relative">
-                  <motion.div 
-                    className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center shadow-lg"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0 }}
-                  >
-                    <span className="text-2xl">📚</span>
-                  </motion.div>
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">12</h3>
-                  <p className="text-gray-600 dark:text-white/70 font-medium">Lessons Completed</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-            >
-              <Card className="card-kid text-center py-6 group relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-emerald-600/0 group-hover:from-green-500/10 group-hover:to-emerald-600/10 transition-all duration-500"></div>
-                <CardContent className="relative">
-                  <motion.div 
-                    className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                  >
-                    <span className="text-2xl">🏆</span>
-                  </motion.div>
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">5</h3>
-                  <p className="text-gray-600 dark:text-white/70 font-medium">Achievements</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-            >
-              <Card className="card-kid text-center py-6 group relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-600/0 group-hover:from-purple-500/10 group-hover:to-pink-600/10 transition-all duration-500"></div>
-                <CardContent className="relative">
-                  <motion.div 
-                    className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center shadow-lg"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                  >
-                    <span className="text-2xl">🔥</span>
-                  </motion.div>
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">7</h3>
-                  <p className="text-gray-600 dark:text-white/70 font-medium">Day Streak</p>
-                </CardContent>
-              </Card>
-            </motion.div>
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
+            {[
+              { emoji: '📚', value: rewardStats?.level ?? 0, label: 'Level', from: 'from-blue-400', to: 'to-cyan-500', textFrom: 'from-blue-600', textTo: 'to-cyan-600', delay: 0 },
+              { emoji: '🏆', value: rewardStats?.badges ?? 0, label: 'Badges', from: 'from-green-400', to: 'to-emerald-500', textFrom: 'from-green-600', textTo: 'to-emerald-600', delay: 0.1 },
+              { emoji: '🔥', value: rewardStats?.streak ?? 0, label: 'Day Streak', from: 'from-purple-400', to: 'to-pink-500', textFrom: 'from-purple-600', textTo: 'to-pink-600', delay: 0.2 },
+            ].map((stat) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: stat.delay }}
+                whileHover={{ scale: 1.05, y: -4 }}
+              >
+                <Card className="card-kid text-center py-4 sm:py-6 group relative overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.from}/0 ${stat.to}/0 group-hover:${stat.from}/10 group-hover:${stat.to}/10 transition-all duration-500`} />
+                  <CardContent className="relative p-2 sm:p-6">
+                    <div className={`w-11 h-11 sm:w-14 sm:h-14 mx-auto mb-2 sm:mb-3 rounded-2xl bg-gradient-to-br ${stat.from} ${stat.to} flex items-center justify-center shadow-lg`}>
+                      <span className="text-xl sm:text-2xl">{stat.emoji}</span>
+                    </div>
+                    <h3 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r ${stat.textFrom} ${stat.textTo} bg-clip-text text-transparent`}>{stat.value}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-white/70 font-medium">{stat.label}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>

@@ -82,8 +82,7 @@ export default function LearningPage() {
         (ms.puzzle || 0) +
         (ms.grammar || 0)
       )
-      // Time in minutes is not stored yet; keep it zero for now so UI is consistent.
-      setTodayMinutes(0)
+      setTodayMinutes(progress.totalScore || 0)
     } catch (e) {
       console.error('Error loading child progress:', e)
       setTodayLessons(0)
@@ -213,8 +212,9 @@ export default function LearningPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00aeef]"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#00aeef]/30 border-t-[#00aeef]"></div>
+        <p className="text-slate-600 dark:text-slate-400 font-medium animate-pulse">Loading your lessons...</p>
       </div>
     )
   }
@@ -289,8 +289,9 @@ export default function LearningPage() {
   // Show loading if no child is selected yet
   if (!selectedChild) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00aeef]"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#00aeef]/30 border-t-[#00aeef]"></div>
+        <p className="text-slate-600 dark:text-slate-400 font-medium animate-pulse">Setting up your profile...</p>
       </div>
     )
   }
@@ -538,7 +539,7 @@ export default function LearningPage() {
               <div className="text-2xl md:text-3xl font-bold text-[#8c0066] dark:text-[#8eca40]">
                 {todayMinutes}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Minutes (coming soon)</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium mt-1">Total Score</div>
             </motion.div>
           </div>
         </motion.div>

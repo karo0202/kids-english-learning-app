@@ -238,28 +238,25 @@ export class ProgressManager {
 
     const achievements = this.progress.achievements
     const newAchievements: string[] = []
+    const ms = this.progress.moduleStats
 
-    // First activity achievement
-    if (this.progress.completedActivities === 1 && !achievements.includes('first_activity')) {
-      newAchievements.push('first_activity')
+    const check = (id: string, condition: boolean) => {
+      if (condition && !achievements.includes(id)) newAchievements.push(id)
     }
 
-    // Streak achievements
-    if (this.progress.currentStreak >= 7 && !achievements.includes('week_streak')) {
-      newAchievements.push('week_streak')
-    }
+    check('first_activity', this.progress.completedActivities >= 1)
+    check('ten_activities', this.progress.completedActivities >= 10)
+    check('fifty_activities', this.progress.completedActivities >= 50)
+    check('week_streak', this.progress.currentStreak >= 7)
+    check('two_week_streak', this.progress.currentStreak >= 14)
+    check('score_master', this.progress.totalScore >= 1000)
+    check('high_scorer', this.progress.totalScore >= 5000)
+    check('level_explorer', this.progress.level >= 5)
+    check('reading_fan', (ms?.reading ?? 0) >= 5)
+    check('writing_pro', (ms?.writing ?? 0) >= 10)
+    check('grammar_hero', (ms?.grammar ?? 0) >= 10)
+    check('game_master', (ms?.games ?? 0) >= 10)
 
-    // Score achievements
-    if (this.progress.totalScore >= 1000 && !achievements.includes('score_master')) {
-      newAchievements.push('score_master')
-    }
-
-    // Level achievements
-    if (this.progress.level >= 5 && !achievements.includes('level_explorer')) {
-      newAchievements.push('level_explorer')
-    }
-
-    // Add new achievements
     achievements.push(...newAchievements)
     this.progress.achievements = [...new Set(achievements)]
 

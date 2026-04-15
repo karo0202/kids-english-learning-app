@@ -32,9 +32,9 @@ export function ProgressRing({
         width={size}
         className="transform -rotate-90"
       >
-        {/* Background circle */}
+        {/* Background circle — dark-mode aware */}
         <circle
-          stroke="#E5E7EB"
+          className="stroke-gray-200 dark:stroke-gray-700"
           fill="transparent"
           strokeWidth={strokeWidth}
           r={normalizedRadius}
@@ -67,7 +67,7 @@ export function ProgressRing({
         {children || (
           <div className="text-center">
             <motion.div 
-              className="text-2xl font-bold text-gray-700"
+              className="text-2xl font-bold text-gray-700 dark:text-gray-200"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ 

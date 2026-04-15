@@ -19,6 +19,7 @@ import { User, Mail, Lock, Baby, Heart } from 'lucide-react'
 export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     // Handle Google redirect result
@@ -130,8 +131,7 @@ export default function RegisterPage() {
       router.push('/dashboard')
     } catch (error: any) {
       console.error('Registration error:', error)
-      // Show user-friendly error message
-      alert(error?.message || 'Registration failed. Please try again.')
+      setErrorMsg(error?.message || 'Registration failed. Please try again.')
       // Don't redirect if there was an error
     } finally {
       setLoading(false)
@@ -189,7 +189,12 @@ export default function RegisterPage() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {errorMsg && (
+              <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm" role="alert">
+                {errorMsg}
+              </div>
+            )}
+            <form onSubmit={(e) => { setErrorMsg(''); handleSubmit(e); }} className="space-y-4">
               {/* Parent Information */}
               <div className="space-y-4">
                 <div className="text-lg font-semibold text-gray-700 flex items-center gap-2">
@@ -273,7 +278,7 @@ export default function RegisterPage() {
                     name="childAge"
                     value={formData.childAge}
                     onChange={(e) => setFormData({...formData, childAge: e.target.value})}
-                    className="w-full pl-3 py-3 text-lg rounded-xl border-2 focus:border-pink-400 bg-white"
+                    className="w-full pl-3 py-3 text-lg rounded-xl border-2 focus:border-pink-400 bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-white"
                     required
                   >
                     <option value="">Select Child's Age</option>

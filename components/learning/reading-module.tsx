@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { premiumTTS } from '@/lib/premium-tts'
+import { progressManager } from '@/lib/progress'
+import { ChallengeManager } from '@/lib/challenges'
 import OptimizedImage from '../common/optimized-image'
 import { useImagePreload, useDebounce } from '@/hooks/use-performance'
 import { jsPDF } from 'jspdf'
@@ -308,6 +310,11 @@ export default function ReadingModule() {
       setShowFeedback(true)
       setScore(prev => prev + 25)
       setCompletedBooks(prev => prev + 1)
+      try {
+        progressManager.addScore(25, 10)
+        progressManager.addModuleProgress('reading', 1)
+        ChallengeManager.getInstance().updateChallengeProgress('reading', 1)
+      } catch {}
       
       setTimeout(() => {
         setShowFeedback(false)

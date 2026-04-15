@@ -13,6 +13,8 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { premiumTTS } from '@/lib/premium-tts'
+import { progressManager } from '@/lib/progress'
+import { ChallengeManager } from '@/lib/challenges'
 
 interface GrammarTopic {
   id: string
@@ -5672,6 +5674,10 @@ export default function GrammarModule() {
 
     if (correct) {
       setScore(prev => prev + 1)
+      try {
+        progressManager.addScore(10, 5)
+        ChallengeManager.getInstance().updateChallengeProgress('grammar', 1)
+      } catch {}
     }
   }
 
@@ -5685,6 +5691,10 @@ export default function GrammarModule() {
     } else {
       // Completed all exercises
       setCompletedTopics(prev => new Set([...prev, selectedTopic.id]))
+      try {
+        progressManager.addModuleProgress('grammar', 1)
+        progressManager.addScore(25, 10)
+      } catch {}
       setSelectedTopic(null)
       setCurrentExercise(0)
       setScore(0)

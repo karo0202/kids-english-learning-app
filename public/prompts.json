@@ -13,6 +13,100 @@
     "title": "Rainy Day",
     "prompt": "It is raining outside. Describe what you do at home and how you feel.",
     "words": ["rain", "window", "warm", "music"]
+  },
+  {
+    "title": "My Favorite Food",
+    "prompt": "Write about your favorite food. What does it taste like? When do you eat it?",
+    "words": ["delicious", "cook", "share", "taste"]
+  },
+  {
+    "title": "A Trip to the Zoo",
+    "prompt": "You visit a zoo for the first time. Describe the animals you see and your favorite one.",
+    "words": ["animal", "cage", "roar", "feather"]
+  },
+  {
+    "title": "The Friendly Robot",
+    "prompt": "You find a friendly robot in your backyard. What does it look like? What do you do together?",
+    "words": ["robot", "button", "help", "metal"]
+  },
+  {
+    "title": "My Best Birthday",
+    "prompt": "Write about your best birthday party ever, real or imaginary. What made it special?",
+    "words": ["cake", "balloon", "present", "candle"]
+  },
+  {
+    "title": "Under the Sea",
+    "prompt": "Imagine you can breathe underwater. Describe what you see and who you meet in the ocean.",
+    "words": ["fish", "coral", "treasure", "bubble"]
+  },
+  {
+    "title": "The Secret Garden",
+    "prompt": "You discover a hidden garden behind a wall. What grows there? What happens when you enter?",
+    "words": ["flower", "gate", "butterfly", "grow"]
+  },
+  {
+    "title": "My Superhero Day",
+    "prompt": "If you had superpowers for one day, what would you do? How would you help people?",
+    "words": ["power", "save", "fly", "strong"]
+  },
+  {
+    "title": "A Letter to My Future Self",
+    "prompt": "Write a letter to yourself 10 years from now. What do you hope for?",
+    "words": ["dream", "grow", "learn", "hope"]
+  },
+  {
+    "title": "Camping Adventure",
+    "prompt": "You go camping in the forest with your family. What do you do? What sounds do you hear at night?",
+    "words": ["tent", "fire", "stars", "forest"]
+  },
+  {
+    "title": "The Lost Kitten",
+    "prompt": "You find a tiny kitten on your way home. Write about how you help it and what happens next.",
+    "words": ["kitten", "lost", "care", "home"]
+  },
+  {
+    "title": "Snow Day Fun",
+    "prompt": "School is closed because of snow! Describe your perfect snow day from morning to night.",
+    "words": ["snowman", "sled", "cocoa", "cold"]
+  },
+  {
+    "title": "My Dream Treehouse",
+    "prompt": "Describe your dream treehouse. What does it look like? What is inside?",
+    "words": ["ladder", "window", "branch", "cozy"]
+  },
+  {
+    "title": "The Talking Animal",
+    "prompt": "One morning your pet starts talking! What does it say? What adventures do you have?",
+    "words": ["speak", "surprised", "laugh", "adventure"]
+  },
+  {
+    "title": "A New Student",
+    "prompt": "A new student joins your class from another country. How do you make them feel welcome?",
+    "words": ["hello", "share", "friend", "kind"]
+  },
+  {
+    "title": "Space Explorer",
+    "prompt": "You are chosen to fly to Mars! Describe your journey and what you find when you land.",
+    "words": ["rocket", "planet", "stars", "discover"]
+  },
+  {
+    "title": "The Time Machine",
+    "prompt": "You build a time machine! Do you go to the past or the future? What do you see?",
+    "words": ["machine", "travel", "ancient", "future"]
+  },
+  {
+    "title": "My Favorite Season",
+    "prompt": "What is your favorite season and why? Describe how the world looks and what you do.",
+    "words": ["season", "weather", "outside", "nature"]
+  },
+  {
+    "title": "Helping at Home",
+    "prompt": "Write about a time you helped your family with something. How did it make you feel?",
+    "words": ["help", "clean", "proud", "together"]
+  },
+  {
+    "title": "The Magical Library",
+    "prompt": "You visit a library where the books come alive! What story jumps out of its pages?",
+    "words": ["book", "story", "character", "magic"]
   }
 ]
-

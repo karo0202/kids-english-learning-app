@@ -18,5 +18,77 @@
       "Seven, eight, nine, we will do just fine!",
       "Ten we cheer, a perfect line!"
     ]
+  },
+  {
+    "id": "s3",
+    "title": "Colors of the Rainbow",
+    "lines": [
+      "Red and orange, yellow too,",
+      "Green and blue, I love the view!",
+      "Purple shines up in the sky,",
+      "Rainbow colors way up high!",
+      "Can you name them one by one?",
+      "Saying colors is so fun!"
+    ]
+  },
+  {
+    "id": "s4",
+    "title": "The Animal Parade",
+    "lines": [
+      "The cat goes meow, the dog goes woof,",
+      "The cow goes moo from under the roof!",
+      "The duck says quack by the little lake,",
+      "The snake goes hiss, the frog says croak!",
+      "The lion roars loud and the birds all sing,",
+      "What a wonderful sound that the animals bring!"
+    ]
+  },
+  {
+    "id": "s5",
+    "title": "Days of the Week",
+    "lines": [
+      "Monday, Tuesday, here we go,",
+      "Wednesday, Thursday, watch me grow!",
+      "Friday comes and then hooray,",
+      "Saturday is my favorite play day!",
+      "Sunday's here for rest and fun,",
+      "Seven days and the week is done!"
+    ]
+  },
+  {
+    "id": "s6",
+    "title": "My Body Parts",
+    "lines": [
+      "Head, shoulders, knees, and toes,",
+      "Eyes and ears and mouth and nose!",
+      "I can clap my hands up high,",
+      "I can wave and say goodbye!",
+      "Wiggle fingers, stomp your feet,",
+      "Move your body to the beat!"
+    ]
+  },
+  {
+    "id": "s7",
+    "title": "The Weather Song",
+    "lines": [
+      "Is it sunny, is it hot?",
+      "Grab your hat and find a spot!",
+      "Is it rainy, grab your coat,",
+      "Puddles here and there to float!",
+      "Is it snowy, cold and white?",
+      "Build a snowman, hold on tight!"
+    ]
+  },
+  {
+    "id": "s8",
+    "title": "Polite Words Song",
+    "lines": [
+      "Please and thank you, that is nice,",
+      "Kind words are like a bowl of rice!",
+      "Excuse me when you need to pass,",
+      "I am sorry makes things last.",
+      "You are welcome, have a seat,",
+      "Polite words make life so sweet!"
+    ]
   }
 ]

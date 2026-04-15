@@ -1,8 +1,12 @@
 {
   "size": 12,
   "words": [
-    "CAT", "DOG", "BIRD", "FISH", "LION", "TIGER", "HORSE", "SHEEP",
-    "SUN", "MOON", "STAR", "CLOUD", "RAIN", "SNOW", "WIND", "STORM",
-    "TREE", "LEAF", "FLOWER", "GRASS", "RIVER", "LAKE", "OCEAN", "MOUNTAIN"
+    "CAT", "DOG", "BIRD", "FISH", "LION",
+    "SUN", "MOON", "STAR", "RAIN", "SNOW",
+    "TREE", "FLOWER", "RIVER", "OCEAN",
+    "APPLE", "CAKE", "MILK", "BREAD",
+    "BOOK", "PENCIL", "SCHOOL", "LEARN",
+    "HAPPY", "KIND", "BRAVE", "SMART",
+    "RED", "BLUE", "GREEN", "YELLOW"
   ]
 }
