@@ -1,5 +1,306 @@
 [
   {
+    "id": "beginner_1",
+    "title": "Meeting a New Friend",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Alex", "text": "Hi! My name is Alex. What's your name?"},
+      {"speaker": "You", "text": "Hello! My name is Sam. Nice to meet you!"},
+      {"speaker": "Alex", "text": "Nice to meet you too, Sam! How old are you?"},
+      {"speaker": "You", "text": "I'm ten years old. How about you?"},
+      {"speaker": "Alex", "text": "I'm ten too! Do you go to school nearby?"},
+      {"speaker": "You", "text": "Yes, I go to Maple Street School. It's really close to my house."},
+      {"speaker": "Alex", "text": "That's cool! What's your favorite subject?"},
+      {"speaker": "You", "text": "I love science! We did a fun experiment last week. What about you?"},
+      {"speaker": "Alex", "text": "I like art the best. I love painting and drawing animals."},
+      {"speaker": "You", "text": "That sounds awesome! Maybe we can play together after school sometime."}
+    ]
+  },
+  {
+    "id": "beginner_2",
+    "title": "Ordering Ice Cream",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Shopkeeper", "text": "Welcome to Sunny Scoops! What can I get for you today?"},
+      {"speaker": "You", "text": "Hi! Can I see what flavors you have, please?"},
+      {"speaker": "Shopkeeper", "text": "Of course! We have chocolate, vanilla, strawberry, mango, and mint chip."},
+      {"speaker": "You", "text": "Mmm, they all sound yummy! Can I try the mango?"},
+      {"speaker": "Shopkeeper", "text": "Sure! Here's a little taste. What do you think?"},
+      {"speaker": "You", "text": "It's delicious! I'd like one scoop of mango, please."},
+      {"speaker": "Shopkeeper", "text": "Great choice! Would you like it in a cone or a cup?"},
+      {"speaker": "You", "text": "In a cone, please. Can I also get some sprinkles on top?"},
+      {"speaker": "Shopkeeper", "text": "Absolutely! Here you go. That will be two dollars, please."},
+      {"speaker": "You", "text": "Here you are. Thank you so much! It looks amazing!"}
+    ]
+  },
+  {
+    "id": "beginner_3",
+    "title": "At the Library",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Librarian", "text": "Good afternoon! Welcome to the library. Can I help you find something?"},
+      {"speaker": "You", "text": "Hi! I'm looking for a book about dinosaurs. Do you have any?"},
+      {"speaker": "Librarian", "text": "We sure do! The children's section has a whole shelf about dinosaurs. Follow me!"},
+      {"speaker": "You", "text": "Wow, there are so many! Which one is the most popular?"},
+      {"speaker": "Librarian", "text": "This one is great for kids your age. It has lots of pictures and fun facts."},
+      {"speaker": "You", "text": "I love the pictures! Can I borrow this one, please?"},
+      {"speaker": "Librarian", "text": "Of course! Do you have a library card?"},
+      {"speaker": "You", "text": "Yes, here it is! How long can I keep the book?"},
+      {"speaker": "Librarian", "text": "You can keep it for two weeks. Don't forget to return it on time!"},
+      {"speaker": "You", "text": "I won't forget. Thank you for your help! I can't wait to read it."}
+    ]
+  },
+  {
+    "id": "beginner_4",
+    "title": "Asking for Directions",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me! Can you help me? I'm a bit lost."},
+      {"speaker": "Stranger", "text": "Of course! Where are you trying to go?"},
+      {"speaker": "You", "text": "I'm looking for the park. Is it far from here?"},
+      {"speaker": "Stranger", "text": "Not at all! It's just a five-minute walk. Go straight down this street."},
+      {"speaker": "You", "text": "Okay, go straight. Then what do I do?"},
+      {"speaker": "Stranger", "text": "When you reach the traffic light, turn left. You'll see the park on your right."},
+      {"speaker": "You", "text": "Turn left at the traffic light, then it's on my right. Got it!"},
+      {"speaker": "Stranger", "text": "That's right! You'll see a big fountain at the entrance. You can't miss it."},
+      {"speaker": "You", "text": "A big fountain? That sounds beautiful! Thank you so much for your help."},
+      {"speaker": "Stranger", "text": "You're welcome! Enjoy the park. It's really lovely today."}
+    ]
+  },
+  {
+    "id": "beginner_5",
+    "title": "At the Grocery Store",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, where can I find the apples?"},
+      {"speaker": "Worker", "text": "The fruits are in aisle three, right at the back of the store."},
+      {"speaker": "You", "text": "Thank you! Do you know if you have any green apples?"},
+      {"speaker": "Worker", "text": "Yes, we do! We have both green and red apples today."},
+      {"speaker": "You", "text": "Great! I also need some bread. Where is that?"},
+      {"speaker": "Worker", "text": "The bakery section is at the front of the store, near the entrance."},
+      {"speaker": "You", "text": "Perfect. One more thing — do you have any fresh orange juice?"},
+      {"speaker": "Worker", "text": "Yes! The juice is in the cold drinks section, aisle five."},
+      {"speaker": "You", "text": "Aisle five, got it. Thank you so much for helping me!"},
+      {"speaker": "Worker", "text": "No problem! If you need anything else, just ask. Happy shopping!"}
+    ]
+  },
+  {
+    "id": "beginner_6",
+    "title": "Morning Routine - Getting Ready",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Mom", "text": "Good morning, sweetheart! Time to wake up. It's seven o'clock."},
+      {"speaker": "You", "text": "Good morning, Mom! Five more minutes, please?"},
+      {"speaker": "Mom", "text": "Come on, you don't want to be late for school! Breakfast is ready."},
+      {"speaker": "You", "text": "Okay, I'm getting up! What's for breakfast today?"},
+      {"speaker": "Mom", "text": "I made scrambled eggs and toast. There's also some orange juice."},
+      {"speaker": "You", "text": "Yummy! I love scrambled eggs. Let me brush my teeth first."},
+      {"speaker": "Mom", "text": "Good idea. Don't forget to wash your face too!"},
+      {"speaker": "You", "text": "I won't! Mom, have you seen my blue backpack?"},
+      {"speaker": "Mom", "text": "It's in the living room, next to the sofa. Hurry up and eat!"},
+      {"speaker": "You", "text": "Found it! Thanks, Mom. I'm ready for a great day at school!"}
+    ]
+  },
+  {
+    "id": "beginner_7",
+    "title": "Playing at the Playground",
+    "difficulty": "Beginner",
+    "lines": 10,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Friend", "text": "Hey! Want to play on the swings with me?"},
+      {"speaker": "You", "text": "Sure! I love the swings! Can you push me first?"},
+      {"speaker": "Friend", "text": "Of course! Hold on tight. Ready? Here we go!"},
+      {"speaker": "You", "text": "Wheee! This is so fun! I'm going so high!"},
+      {"speaker": "Friend", "text": "Okay, my turn now! Let's switch places."},
+      {"speaker": "You", "text": "Alright! I'll push you. Do you want to go fast or slow?"},
+      {"speaker": "Friend", "text": "Fast, please! I want to touch the sky!"},
+      {"speaker": "You", "text": "Ha ha! You're flying! What should we play next?"},
+      {"speaker": "Friend", "text": "Let's go on the slide! I'll race you to the top!"},
+      {"speaker": "You", "text": "You're on! Last one to the top is a silly goose!"}
+    ]
+  },
+  {
+    "id": "intermediate_1",
+    "title": "At the Airport - Checking In",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Agent", "text": "Good morning! Welcome to SkyWay Airlines. May I see your passport and boarding pass?"},
+      {"speaker": "You", "text": "Good morning! Here's my passport. I booked online but haven't printed my boarding pass yet."},
+      {"speaker": "Agent", "text": "No problem! I can look up your booking. What's your last name and confirmation number?"},
+      {"speaker": "You", "text": "My last name is Johnson, and the confirmation number is ABC123."},
+      {"speaker": "Agent", "text": "Got it! I see your flight to London at 2:30 PM. How many bags are you checking in?"},
+      {"speaker": "You", "text": "I have one suitcase to check in and one carry-on bag. Is that okay?"},
+      {"speaker": "Agent", "text": "That's fine! Your checked bag must be under 23 kilograms. Let me weigh it for you."},
+      {"speaker": "You", "text": "Sure! I hope it's not too heavy. I packed a lot of souvenirs."},
+      {"speaker": "Agent", "text": "It's 21 kilograms — just under the limit! Would you prefer a window or aisle seat?"},
+      {"speaker": "You", "text": "A window seat, please! I love looking at the clouds and the view from above."},
+      {"speaker": "Agent", "text": "You're all set! Here's your boarding pass. Your gate is B7, and boarding starts at 1:45 PM."},
+      {"speaker": "You", "text": "Thank you so much! Where can I find gate B7?"}
+    ]
+  },
+  {
+    "id": "intermediate_2",
+    "title": "Visiting the Pet Shop",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Shopkeeper", "text": "Hello there! Welcome to Happy Paws. Are you looking for a new pet?"},
+      {"speaker": "You", "text": "Hi! Yes, my family and I want to get our first pet. We're not sure what kind, though."},
+      {"speaker": "Shopkeeper", "text": "That's exciting! Do you have a big house or a small apartment?"},
+      {"speaker": "You", "text": "We live in an apartment, so we need something that doesn't need a big yard."},
+      {"speaker": "Shopkeeper", "text": "I'd recommend a cat, a hamster, or a small dog breed. They do well in apartments."},
+      {"speaker": "You", "text": "I think a cat would be nice! Are they easy to take care of?"},
+      {"speaker": "Shopkeeper", "text": "Cats are quite independent! They need food, water, a litter box, and lots of love."},
+      {"speaker": "You", "text": "That sounds manageable. Do you have any kittens available right now?"},
+      {"speaker": "Shopkeeper", "text": "We have three adorable kittens! This orange one is very playful, and the gray one is super cuddly."},
+      {"speaker": "You", "text": "Oh, the gray one is so cute! Can I hold it?"},
+      {"speaker": "Shopkeeper", "text": "Of course! Be gentle. See? It likes you already — it's purring!"},
+      {"speaker": "You", "text": "I love it! I'll talk to my parents, but I really want this one. What do we need to buy?"}
+    ]
+  },
+  {
+    "id": "intermediate_3",
+    "title": "School Science Fair",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Teacher", "text": "Great job on your science fair project, everyone! Sam, can you present yours first?"},
+      {"speaker": "You", "text": "Sure! My project is about how plants grow with different types of water."},
+      {"speaker": "Teacher", "text": "Interesting! What types of water did you test?"},
+      {"speaker": "You", "text": "I used tap water, salt water, and sugar water. I watered three plants for two weeks."},
+      {"speaker": "Teacher", "text": "And what were your results? Which water helped the plant grow the most?"},
+      {"speaker": "You", "text": "The plant with tap water grew the tallest. The salt water plant turned brown and died."},
+      {"speaker": "Teacher", "text": "That's a great observation! Why do you think salt water was harmful to the plant?"},
+      {"speaker": "You", "text": "I think the salt dried out the roots. Plants can't absorb water when there's too much salt."},
+      {"speaker": "Teacher", "text": "Excellent reasoning! What about the sugar water plant?"},
+      {"speaker": "You", "text": "It grew a little, but not as much as the tap water plant. I think sugar attracted bugs too."},
+      {"speaker": "Teacher", "text": "Very thorough experiment! If you could do it again, what would you change?"},
+      {"speaker": "You", "text": "I'd test more plants and try different amounts of salt and sugar to see the exact effects."}
+    ]
+  },
+  {
+    "id": "intermediate_4",
+    "title": "Ordering Food at a Café",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Barista", "text": "Hi! Welcome to Cozy Cup Café. What can I get started for you?"},
+      {"speaker": "You", "text": "Hi! I'm looking at the menu. What do you recommend for something cold?"},
+      {"speaker": "Barista", "text": "Our iced caramel latte is really popular! We also have fruit smoothies if you prefer something refreshing."},
+      {"speaker": "You", "text": "A fruit smoothie sounds great! What flavors do you have?"},
+      {"speaker": "Barista", "text": "We have mango-banana, strawberry-blueberry, and tropical passion fruit."},
+      {"speaker": "You", "text": "I'll try the mango-banana one, please. Can you make it with almond milk?"},
+      {"speaker": "Barista", "text": "Sure thing! Would you also like to add protein powder or honey?"},
+      {"speaker": "You", "text": "Just honey, please. And could I also get a chocolate croissant?"},
+      {"speaker": "Barista", "text": "Absolutely! The croissants are freshly baked this morning. For here or to go?"},
+      {"speaker": "You", "text": "For here, please. Do you have a table near the window?"},
+      {"speaker": "Barista", "text": "That table by the window is free! Your total is eight dollars and fifty cents."},
+      {"speaker": "You", "text": "Here you go. Thank you! This place is really cozy."}
+    ]
+  },
+  {
+    "id": "intermediate_5",
+    "title": "At the Doctor - Feeling Sick",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "Doctor", "text": "Hello! How are you feeling today? Your mom said you haven't been well."},
+      {"speaker": "You", "text": "Hi, Doctor. I have a sore throat and my head hurts a lot."},
+      {"speaker": "Doctor", "text": "I'm sorry to hear that. How long have you been feeling this way?"},
+      {"speaker": "You", "text": "It started three days ago. I also feel really tired and my nose is stuffy."},
+      {"speaker": "Doctor", "text": "Let me take a look. Open your mouth wide and say 'Aah' for me."},
+      {"speaker": "You", "text": "Aah! Is my throat very red?"},
+      {"speaker": "Doctor", "text": "It's a little red, but nothing too serious. Let me check your temperature too."},
+      {"speaker": "You", "text": "It felt warm last night. My mom gave me some medicine before bed."},
+      {"speaker": "Doctor", "text": "Your temperature is slightly high — 37.8 degrees. It looks like you have a cold."},
+      {"speaker": "You", "text": "Oh no! Do I need to take medicine?"},
+      {"speaker": "Doctor", "text": "I'll give you some cough syrup and throat lozenges. You also need lots of rest and water."},
+      {"speaker": "You", "text": "Okay, Doctor. When can I go back to school?"}
+    ]
+  },
+  {
+    "id": "intermediate_6",
+    "title": "Shopping for Clothes",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Excuse me, I'm looking for a jacket. Where is the kids' section?"},
+      {"speaker": "Sales Person", "text": "The kids' clothing is upstairs on the second floor. I can show you if you'd like!"},
+      {"speaker": "You", "text": "Yes, please! I need a warm jacket for winter."},
+      {"speaker": "Sales Person", "text": "Here we are! We have puffer jackets, fleece jackets, and waterproof coats. What color do you like?"},
+      {"speaker": "You", "text": "I really like blue. Do you have a blue puffer jacket?"},
+      {"speaker": "Sales Person", "text": "We do! What size are you? Let me find one that fits you."},
+      {"speaker": "You", "text": "I'm not sure about my size. Can I try this one on?"},
+      {"speaker": "Sales Person", "text": "Of course! The fitting rooms are right over there. Let me know how it fits."},
+      {"speaker": "You", "text": "It's a little big on me. Do you have a smaller size?"},
+      {"speaker": "Sales Person", "text": "Let me check. Here, try this one — it's one size smaller."},
+      {"speaker": "You", "text": "This one fits perfectly! How much does it cost?"},
+      {"speaker": "Sales Person", "text": "It's thirty-five dollars, and it's on sale today — twenty percent off!"}
+    ]
+  },
+  {
+    "id": "intermediate_7",
+    "title": "Birthday Party Planning",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Mom, my birthday is next week! Can I have a party with my friends?"},
+      {"speaker": "Mom", "text": "Of course! How many friends do you want to invite?"},
+      {"speaker": "You", "text": "I'd like to invite about eight friends. Can we have it at the park?"},
+      {"speaker": "Mom", "text": "The park is a great idea! What kind of theme do you want?"},
+      {"speaker": "You", "text": "I want a space theme! With planets and stars and rocket decorations."},
+      {"speaker": "Mom", "text": "That sounds fun! We can get space-themed plates, balloons, and a rocket cake."},
+      {"speaker": "You", "text": "A rocket cake? That would be so cool! Can it be chocolate flavor?"},
+      {"speaker": "Mom", "text": "Absolutely! What games do you want to play at the party?"},
+      {"speaker": "You", "text": "We could do a treasure hunt, musical chairs, and maybe a water balloon fight!"},
+      {"speaker": "Mom", "text": "Great ideas! We should also plan some prizes for the winners. What do you think?"},
+      {"speaker": "You", "text": "Small toys or candy bags would be perfect! Everyone loves getting prizes."},
+      {"speaker": "Mom", "text": "Then it's settled! Let's make invitation cards tonight and hand them out tomorrow."}
+    ]
+  },
+  {
+    "id": "intermediate_8",
+    "title": "At the Movie Theater",
+    "difficulty": "Intermediate",
+    "lines": 12,
+    "premium": false,
+    "dialogue": [
+      {"speaker": "You", "text": "Two tickets for 'Space Heroes,' please. Is the 3:00 PM showing available?"},
+      {"speaker": "Cashier", "text": "Let me check... yes! We have seats in the front, middle, and back rows. Where would you like to sit?"},
+      {"speaker": "You", "text": "The middle is best. Can we get two seats next to each other?"},
+      {"speaker": "Cashier", "text": "Row F, seats 8 and 9 are available right in the center. That's twelve dollars each."},
+      {"speaker": "You", "text": "Perfect! Can I pay with a card?"},
+      {"speaker": "Cashier", "text": "Of course! Here are your tickets. Would you like anything from the snack bar?"},
+      {"speaker": "You", "text": "Yes! Can I have a medium popcorn and two sodas, please?"},
+      {"speaker": "Cashier", "text": "Sure! Would you like butter on your popcorn?"},
+      {"speaker": "You", "text": "Yes, extra butter please! And can I also get some gummy bears?"},
+      {"speaker": "Cashier", "text": "Here you go! Your total for snacks is fifteen dollars. The movie starts in twenty minutes."},
+      {"speaker": "You", "text": "Thank you! Which way is Theater 4?"},
+      {"speaker": "Cashier", "text": "Go down the hall and it's the third door on your left. Enjoy the movie!"}
+    ]
+  },
+  {
     "id": "premium_1",
     "title": "At the Restaurant - Full Service",
     "difficulty": "Advanced",
@@ -21,10 +322,10 @@
     ]
   },
   {
-    "id": "premium_2", 
+    "id": "premium_2",
     "title": "Job Interview - Complete Process",
     "difficulty": "Advanced",
-    "lines": 15,
+    "lines": 14,
     "premium": true,
     "dialogue": [
       {"speaker": "Interviewer", "text": "Good morning! Thank you for coming in today. I'm Sarah, the hiring manager. Please, have a seat."},
@@ -40,15 +341,14 @@
       {"speaker": "Interviewer", "text": "I agree completely. Do you have any questions about the role or our company?"},
       {"speaker": "Candidate", "text": "Yes, I'd love to know more about the team structure and growth opportunities within the company."},
       {"speaker": "Interviewer", "text": "Great question! We have a collaborative team of 12, and we offer excellent professional development programs."},
-      {"speaker": "Candidate", "text": "That sounds like a perfect environment for growth. I'm very interested in contributing to your team's success."},
-      {"speaker": "Interviewer", "text": "Wonderful! We'll be in touch within the next week. Thank you for your time today."}
+      {"speaker": "Candidate", "text": "That sounds like a perfect environment for growth. I'm very interested in contributing to your team's success."}
     ]
   },
   {
     "id": "premium_3",
     "title": "Travel Planning - Complete Trip",
-    "difficulty": "Advanced", 
-    "lines": 18,
+    "difficulty": "Advanced",
+    "lines": 16,
     "premium": true,
     "dialogue": [
       {"speaker": "Travel Agent", "text": "Good afternoon! I'm here to help you plan your dream vacation. Where would you like to go?"},
@@ -66,9 +366,7 @@
       {"speaker": "Travel Agent", "text": "Excellent! I'll include food tours, cooking classes, and recommendations for authentic local restaurants."},
       {"speaker": "Customer", "text": "Perfect! We're also interested in some guided tours of historical sites and museums."},
       {"speaker": "Travel Agent", "text": "I'll arrange private guides for the Louvre, Colosseum, and Sagrada Familia, plus skip-the-line tickets."},
-      {"speaker": "Customer", "text": "That sounds amazing! What about transportation between cities?"},
-      {"speaker": "Travel Agent", "text": "I recommend high-speed trains - comfortable, scenic, and environmentally friendly. Much better than flying!"},
-      {"speaker": "Customer", "text": "Wonderful! This sounds like the trip of a lifetime. When can we finalize the booking?"}
+      {"speaker": "Customer", "text": "That sounds amazing! What about transportation between cities?"}
     ]
   },
   {
@@ -98,7 +396,7 @@
     "id": "premium_5",
     "title": "Doctor Visit - Complete Consultation",
     "difficulty": "Advanced",
-    "lines": 16,
+    "lines": 14,
     "premium": true,
     "dialogue": [
       {"speaker": "Doctor", "text": "Good morning! I'm Dr. Smith. What brings you in today?"},
@@ -114,9 +412,122 @@
       {"speaker": "Doctor", "text": "We'll check your blood sugar, thyroid function, and complete blood count. I'll also recommend a sleep study."},
       {"speaker": "Patient", "text": "A sleep study? Do you think I might have sleep apnea?"},
       {"speaker": "Doctor", "text": "It's possible. Your symptoms could be related to sleep quality. In the meantime, try to maintain regular sleep hours."},
-      {"speaker": "Patient", "text": "I'll do my best. Should I avoid anything specific while we wait for the results?"},
-      {"speaker": "Doctor", "text": "Avoid caffeine after 2 PM, limit screen time before bed, and try relaxation techniques. I'll call you with results in 3-5 days."},
       {"speaker": "Patient", "text": "Thank you, Doctor. I appreciate your thorough approach to my concerns."}
+    ]
+  },
+  {
+    "id": "premium_6",
+    "title": "Hotel Check-In - Vacation Stay",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Receptionist", "text": "Good afternoon and welcome to the Grand Beach Resort! Do you have a reservation?"},
+      {"speaker": "Guest", "text": "Yes, we do! It's under the name Thompson. We booked a family suite for five nights."},
+      {"speaker": "Receptionist", "text": "Let me pull that up... here it is! A family suite with an ocean view, checking out on Saturday. Is that correct?"},
+      {"speaker": "Guest", "text": "That's right! We're very excited. Is it possible to get a room on a higher floor?"},
+      {"speaker": "Receptionist", "text": "Absolutely! I can put you on the eighth floor. You'll have a beautiful view of the sunset from there."},
+      {"speaker": "Guest", "text": "That sounds wonderful! What amenities are included with our suite?"},
+      {"speaker": "Receptionist", "text": "Your suite includes complimentary breakfast, pool access, a mini fridge, and free Wi-Fi. We also have a kids' club."},
+      {"speaker": "Guest", "text": "A kids' club? Our children would love that! What kind of activities do they offer?"},
+      {"speaker": "Receptionist", "text": "They have arts and crafts, swimming lessons, treasure hunts, and movie nights. It runs from 9 AM to 5 PM daily."},
+      {"speaker": "Guest", "text": "That's perfect! What about restaurants on the property?"},
+      {"speaker": "Receptionist", "text": "We have three restaurants: an Italian bistro, a seafood grill, and a poolside café. I recommend making dinner reservations."},
+      {"speaker": "Guest", "text": "Could you book us a table at the seafood grill for tomorrow evening at seven?"},
+      {"speaker": "Receptionist", "text": "Done! Table for four at 7 PM. Here are your room keys — take the elevator to the eighth floor, room 812."},
+      {"speaker": "Guest", "text": "Thank you so much! You've been incredibly helpful. We can't wait to explore the resort."}
+    ]
+  },
+  {
+    "id": "premium_7",
+    "title": "House Hunting - Viewing an Apartment",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Agent", "text": "Welcome! Thank you for coming to see the apartment. Let me give you a quick tour."},
+      {"speaker": "Buyer", "text": "Thank you! We've been looking forward to this. The photos online looked very promising."},
+      {"speaker": "Agent", "text": "This is the living room — it's quite spacious with large windows that let in lots of natural light."},
+      {"speaker": "Buyer", "text": "It's beautiful! I love the hardwood floors. How old is the building?"},
+      {"speaker": "Agent", "text": "The building was renovated two years ago. All the plumbing and electrical systems are completely new."},
+      {"speaker": "Buyer", "text": "That's reassuring. What about heating and cooling? Are utilities included in the rent?"},
+      {"speaker": "Agent", "text": "The apartment has central air conditioning and heating. Utilities are separate, but they're typically around $100 per month."},
+      {"speaker": "Buyer", "text": "That's reasonable. Can we see the kitchen? We love cooking."},
+      {"speaker": "Agent", "text": "Right this way! The kitchen has granite countertops, stainless steel appliances, and a dishwasher."},
+      {"speaker": "Buyer", "text": "Very nice! Is there a balcony or any outdoor space?"},
+      {"speaker": "Agent", "text": "Yes! There's a private balcony off the master bedroom with a lovely garden view. Perfect for morning coffee."},
+      {"speaker": "Buyer", "text": "This apartment is really ticking all our boxes. What about parking and public transportation?"},
+      {"speaker": "Agent", "text": "There's underground parking included, and the subway station is a two-minute walk from the building entrance."},
+      {"speaker": "Buyer", "text": "That's incredibly convenient. We're very interested. What are the next steps for applying?"}
+    ]
+  },
+  {
+    "id": "premium_8",
+    "title": "Bank Visit - Opening an Account",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Banker", "text": "Good morning! Welcome to National Trust Bank. How can I assist you today?"},
+      {"speaker": "Customer", "text": "Good morning! I'd like to open a new savings account. What options do you have?"},
+      {"speaker": "Banker", "text": "We have three savings accounts: Basic, Premium, and Student. Each has different interest rates and features."},
+      {"speaker": "Customer", "text": "I just graduated from college, so the Student account might not apply anymore. What's the difference between Basic and Premium?"},
+      {"speaker": "Banker", "text": "The Basic account has no monthly fees with a minimum balance of $500. The Premium requires $2,000 but offers a higher interest rate."},
+      {"speaker": "Customer", "text": "I think the Basic account would work best for now. What documents do I need?"},
+      {"speaker": "Banker", "text": "I'll need a government-issued ID, proof of address, and your Social Security number. Do you have those with you?"},
+      {"speaker": "Customer", "text": "Yes, I brought my driver's license and a utility bill. Here they are."},
+      {"speaker": "Banker", "text": "Perfect! Let me process these. Would you also like to set up online banking and a debit card?"},
+      {"speaker": "Customer", "text": "Definitely! I'd love to manage my account online. Is the mobile app easy to use?"},
+      {"speaker": "Banker", "text": "Very easy! You can check your balance, transfer money, and even deposit checks with your phone's camera."},
+      {"speaker": "Customer", "text": "That's very convenient. One more question — can I set up automatic transfers to my savings?"},
+      {"speaker": "Banker", "text": "Absolutely! Many customers set up a weekly or monthly automatic transfer. It's a great way to build savings."},
+      {"speaker": "Customer", "text": "I'd like to do a monthly transfer of $200. Thank you for explaining everything so clearly!"}
+    ]
+  },
+  {
+    "id": "premium_9",
+    "title": "Calling Tech Support",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Support", "text": "Thank you for calling TechHelp. My name is Mike. How can I help you today?"},
+      {"speaker": "Caller", "text": "Hi Mike! My laptop has been running very slowly for the past few days. I'm not sure what's wrong."},
+      {"speaker": "Support", "text": "I'm sorry to hear that. Let's troubleshoot together. When did you first notice the slowdown?"},
+      {"speaker": "Caller", "text": "It started about three days ago. Programs take forever to open, and sometimes the screen freezes."},
+      {"speaker": "Support", "text": "Have you installed any new software or updates recently?"},
+      {"speaker": "Caller", "text": "Yes, I think there was an automatic update last week. Could that be causing the problem?"},
+      {"speaker": "Support", "text": "It's possible. Let's check a few things. Can you tell me how much storage space you have left?"},
+      {"speaker": "Caller", "text": "Let me check... it says I have only 5 gigabytes free out of 256 gigabytes total."},
+      {"speaker": "Support", "text": "That's very low! A nearly full hard drive can significantly slow down your computer. We should free up some space."},
+      {"speaker": "Caller", "text": "What should I delete? I don't want to lose any important files."},
+      {"speaker": "Support", "text": "Let's start by clearing your temporary files and emptying the recycle bin. That's usually safe and can free up several gigabytes."},
+      {"speaker": "Caller", "text": "Okay, I cleared them. It freed up 12 gigabytes! What else can I do?"},
+      {"speaker": "Support", "text": "Great start! I also recommend uninstalling programs you don't use and moving large files to cloud storage or an external drive."},
+      {"speaker": "Caller", "text": "That makes sense! My laptop already feels a bit faster. Thank you so much, Mike!"}
+    ]
+  },
+  {
+    "id": "premium_10",
+    "title": "At the Mechanic - Car Trouble",
+    "difficulty": "Advanced",
+    "lines": 14,
+    "premium": true,
+    "dialogue": [
+      {"speaker": "Mechanic", "text": "Good morning! What seems to be the trouble with your car?"},
+      {"speaker": "Driver", "text": "Hi! My car has been making a strange squeaking noise when I press the brakes."},
+      {"speaker": "Mechanic", "text": "Squeaking brakes can mean a few things. When did you first notice it?"},
+      {"speaker": "Driver", "text": "About a week ago. It's getting louder. I'm worried something might be wrong."},
+      {"speaker": "Mechanic", "text": "Let me take a look. Do you remember when you last had your brake pads changed?"},
+      {"speaker": "Driver", "text": "I think it was about two years ago. I drive about 15,000 miles a year."},
+      {"speaker": "Mechanic", "text": "That's around 30,000 miles — brake pads typically last 25,000 to 50,000 miles. Let me inspect them."},
+      {"speaker": "Driver", "text": "Sure! How long will the inspection take?"},
+      {"speaker": "Mechanic", "text": "Just about 30 minutes. I'll also check your rotors and brake fluid while I'm at it."},
+      {"speaker": "Driver", "text": "Thank you! Is there a waiting area where I can sit?"},
+      {"speaker": "Mechanic", "text": "Yes, right through that door. There's coffee and Wi-Fi. I'll come find you when I'm done."},
+      {"speaker": "Driver", "text": "Great, thanks! About how much does a brake pad replacement usually cost?"},
+      {"speaker": "Mechanic", "text": "For your car model, it's usually between $200 and $350 including parts and labor. I'll give you an exact quote."},
+      {"speaker": "Driver", "text": "Sounds fair. I'd rather fix it now than risk driving with worn brakes. Safety first!"}
     ]
   }
 ]

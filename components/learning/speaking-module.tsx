@@ -182,6 +182,14 @@ export default function SpeakingModule() {
   const [dialogueLineIdx, setDialogueLineIdx] = useState(0)
   const [dialoguePlaying, setDialoguePlaying] = useState(false)
   const [dialogueUserTurn, setDialogueUserTurn] = useState(false)
+  const [dialogueFilter, setDialogueFilter] = useState<'All' | 'Beginner' | 'Intermediate' | 'Advanced'>('All')
+
+  const filteredDialogues = useMemo(() => {
+    if (dialogueFilter === 'All') return dialogues
+    return dialogues.filter(d => d.difficulty === dialogueFilter)
+  }, [dialogues, dialogueFilter])
+
+  const currentDialogue = filteredDialogues[dialogueIndex] ?? null
 
 
   const getSampleWords = (): Word[] => {
@@ -1002,16 +1010,15 @@ export default function SpeakingModule() {
   }
 
   const advanceDialogue = () => {
-    const d = dialogues[dialogueIndex]
-    if (!d) return
+    if (!currentDialogue) return
     const nextIdx = dialogueLineIdx + 1
-    if (nextIdx >= d.dialogue.length) {
+    if (nextIdx >= currentDialogue.dialogue.length) {
       setDialogueUserTurn(false)
       return
     }
     setDialogueLineIdx(nextIdx)
-    const nextLine = d.dialogue[nextIdx]
-    const isEvenSpeaker = nextLine.speaker === d.dialogue[0].speaker
+    const nextLine = currentDialogue.dialogue[nextIdx]
+    const isEvenSpeaker = nextLine.speaker === currentDialogue.dialogue[0].speaker
     setDialogueUserTurn(!isEvenSpeaker)
     if (isEvenSpeaker) {
       speakDialogueLine(nextLine.text)
@@ -1712,86 +1719,137 @@ export default function SpeakingModule() {
               <Card className="card-speaking">
                 <CardContent className="p-8">
                   <div className="text-center mb-6">
-                    <h3 className="text-3xl font-bold text-gray-800 mb-2">Dialogue Practice</h3>
-                    <p className="text-gray-600">Practice real conversations by taking turns speaking!</p>
+                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">💬 Dialogue Practice</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Practice real conversations by taking turns speaking!</p>
                   </div>
 
                   {dialogues.length === 0 ? (
                     <p className="text-center text-gray-500">Loading dialogues...</p>
                   ) : (
                     <>
-                      <div className="flex flex-wrap gap-2 justify-center mb-6">
-                        {dialogues.map((d, i) => (
-                          <Button key={d.id} variant={dialogueIndex === i ? 'default' : 'outline'} onClick={() => { setDialogueIndex(i); setDialogueLineIdx(0); setDialogueUserTurn(false) }}>
-                            {d.title}
-                          </Button>
-                        ))}
+                      {/* Difficulty Filter Tabs */}
+                      <div className="flex justify-center gap-2 mb-5">
+                        {(['All', 'Beginner', 'Intermediate', 'Advanced'] as const).map(level => {
+                          const colors: Record<string, string> = {
+                            All: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
+                            Beginner: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+                            Intermediate: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+                            Advanced: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
+                          }
+                          const activeColors: Record<string, string> = {
+                            All: 'bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900',
+                            Beginner: 'bg-emerald-600 text-white',
+                            Intermediate: 'bg-amber-500 text-white',
+                            Advanced: 'bg-rose-600 text-white',
+                          }
+                          const count = level === 'All' ? dialogues.length : dialogues.filter(d => d.difficulty === level).length
+                          return (
+                            <button
+                              key={level}
+                              onClick={() => { setDialogueFilter(level); setDialogueIndex(0); setDialogueLineIdx(0); setDialogueUserTurn(false) }}
+                              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${dialogueFilter === level ? activeColors[level] : colors[level]} hover:scale-105`}
+                            >
+                              {level} ({count})
+                            </button>
+                          )
+                        })}
                       </div>
 
-                      <div className="bg-white/70 rounded-xl p-6 border border-gray-100 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-xl font-bold text-gray-800">{dialogues[dialogueIndex].title}</h4>
-                          <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700">{dialogues[dialogueIndex].difficulty}</span>
-                        </div>
-                        <div className="space-y-3 max-h-96 overflow-y-auto">
-                          {dialogues[dialogueIndex].dialogue.slice(0, dialogueLineIdx + 1).map((line, idx) => {
-                            const isFirstSpeaker = line.speaker === dialogues[dialogueIndex].dialogue[0].speaker
-                            return (
-                              <div key={idx} className={`flex ${isFirstSpeaker ? 'justify-start' : 'justify-end'}`}>
-                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${isFirstSpeaker ? 'bg-blue-50 text-blue-900' : 'bg-green-50 text-green-900'}`}>
-                                  <p className="text-xs font-semibold mb-1 opacity-70">{line.speaker}</p>
-                                  <p className="text-sm leading-relaxed">{line.text}</p>
-                                </div>
+                      {/* Dialogue Cards Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 max-h-64 overflow-y-auto pr-1">
+                        {filteredDialogues.map((d, i) => {
+                          const diffColors: Record<string, { border: string; bg: string; badge: string }> = {
+                            Beginner: { border: 'border-emerald-200 dark:border-emerald-800', bg: 'bg-emerald-50 dark:bg-emerald-900/20', badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300' },
+                            Intermediate: { border: 'border-amber-200 dark:border-amber-800', bg: 'bg-amber-50 dark:bg-amber-900/20', badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300' },
+                            Advanced: { border: 'border-rose-200 dark:border-rose-800', bg: 'bg-rose-50 dark:bg-rose-900/20', badge: 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300' },
+                          }
+                          const dc = diffColors[d.difficulty] ?? diffColors.Beginner
+                          const isActive = dialogueIndex === i
+                          return (
+                            <button
+                              key={d.id}
+                              onClick={() => { setDialogueIndex(i); setDialogueLineIdx(0); setDialogueUserTurn(false) }}
+                              className={`text-left p-3 rounded-xl border-2 transition-all hover:shadow-md ${isActive ? `${dc.border} ${dc.bg} ring-2 ring-offset-1 ring-blue-400` : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300'}`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 leading-tight">{d.title}</p>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${dc.badge}`}>{d.difficulty}</span>
                               </div>
-                            )
-                          })}
-                        </div>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{d.dialogue.length} lines</p>
+                            </button>
+                          )
+                        })}
                       </div>
 
-                      <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
-                        {dialogueLineIdx === 0 && (
-                          <Button className="btn-primary-kid" onClick={() => {
-                            speakDialogueLine(dialogues[dialogueIndex].dialogue[0].text)
-                          }} disabled={dialoguePlaying}>
-                            <Play className="w-4 h-4 mr-2" /> Start Conversation
-                          </Button>
-                        )}
-
-                        {dialogueLineIdx > 0 && dialogueLineIdx < dialogues[dialogueIndex].dialogue.length - 1 && (
-                          <>
-                            <Button variant="outline" onClick={() => {
-                              speakDialogueLine(dialogues[dialogueIndex].dialogue[dialogueLineIdx].text)
-                            }} disabled={dialoguePlaying}>
-                              <Volume2 className="w-4 h-4 mr-2" /> Replay Line
-                            </Button>
-                            <Button className="btn-primary-kid" onClick={advanceDialogue} disabled={dialoguePlaying}>
-                              <MessageCircle className="w-4 h-4 mr-2" /> {dialogueUserTurn ? 'Say Your Line & Next' : 'Next Line'}
-                            </Button>
-                          </>
-                        )}
-
-                        {dialogueLineIdx >= dialogues[dialogueIndex].dialogue.length - 1 && (
-                          <>
-                            <div className="text-center w-full mb-3">
-                              <p className="text-green-600 font-semibold">Great job! You completed this dialogue!</p>
+                      {/* Active Dialogue */}
+                      {currentDialogue && (
+                        <>
+                          <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="text-xl font-bold text-gray-800 dark:text-gray-100">{currentDialogue.title}</h4>
+                              <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">{currentDialogue.difficulty}</span>
                             </div>
-                            <Button className="btn-primary-kid" onClick={() => {
-                              setDialogueLineIdx(0)
-                              setDialogueUserTurn(false)
-                            }}>
-                              <RotateCcw className="w-4 h-4 mr-2" /> Practice Again
-                            </Button>
-                            <Button variant="outline" onClick={() => {
-                              const next = (dialogueIndex + 1) % dialogues.length
-                              setDialogueIndex(next)
-                              setDialogueLineIdx(0)
-                              setDialogueUserTurn(false)
-                            }}>
-                              Next Dialogue
-                            </Button>
-                          </>
-                        )}
-                      </div>
+                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                              {currentDialogue.dialogue.slice(0, dialogueLineIdx + 1).map((line, idx) => {
+                                const isFirstSpeaker = line.speaker === currentDialogue.dialogue[0].speaker
+                                return (
+                                  <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${isFirstSpeaker ? 'justify-start' : 'justify-end'}`}>
+                                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${isFirstSpeaker ? 'bg-blue-50 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100' : 'bg-green-50 text-green-900 dark:bg-green-900/30 dark:text-green-100'}`}>
+                                      <p className="text-xs font-semibold mb-1 opacity-70">{line.speaker}</p>
+                                      <p className="text-sm leading-relaxed">{line.text}</p>
+                                    </div>
+                                  </motion.div>
+                                )
+                              })}
+                            </div>
+                          </div>
+
+                          <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
+                            {dialogueLineIdx === 0 && (
+                              <Button className="btn-primary-kid" onClick={() => {
+                                speakDialogueLine(currentDialogue.dialogue[0].text)
+                              }} disabled={dialoguePlaying}>
+                                <Play className="w-4 h-4 mr-2" /> Start Conversation
+                              </Button>
+                            )}
+
+                            {dialogueLineIdx > 0 && dialogueLineIdx < currentDialogue.dialogue.length - 1 && (
+                              <>
+                                <Button variant="outline" onClick={() => {
+                                  speakDialogueLine(currentDialogue.dialogue[dialogueLineIdx].text)
+                                }} disabled={dialoguePlaying}>
+                                  <Volume2 className="w-4 h-4 mr-2" /> Replay Line
+                                </Button>
+                                <Button className="btn-primary-kid" onClick={advanceDialogue} disabled={dialoguePlaying}>
+                                  <MessageCircle className="w-4 h-4 mr-2" /> {dialogueUserTurn ? 'Say Your Line & Next' : 'Next Line'}
+                                </Button>
+                              </>
+                            )}
+
+                            {dialogueLineIdx >= currentDialogue.dialogue.length - 1 && (
+                              <>
+                                <div className="text-center w-full mb-3">
+                                  <p className="text-green-600 dark:text-green-400 font-semibold">Great job! You completed this dialogue! 🎉</p>
+                                </div>
+                                <Button className="btn-primary-kid" onClick={() => {
+                                  setDialogueLineIdx(0)
+                                  setDialogueUserTurn(false)
+                                }}>
+                                  <RotateCcw className="w-4 h-4 mr-2" /> Practice Again
+                                </Button>
+                                <Button variant="outline" onClick={() => {
+                                  const next = (dialogueIndex + 1) % filteredDialogues.length
+                                  setDialogueIndex(next)
+                                  setDialogueLineIdx(0)
+                                  setDialogueUserTurn(false)
+                                }}>
+                                  Next Dialogue →
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </CardContent>
